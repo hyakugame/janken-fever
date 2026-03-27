@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>百式ゲーム王国</title>
+<title>ç¾å¼ã²ã¼ã çå½</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Boogaloo&display=swap" rel="stylesheet">
 <style>
 :root{--gold:#ffdd00;--grn:#11dd55;--red:#ff3333;--blu:#00aaff;--pnk:#ff44cc;--ora:#ff8800;--pur:#9944ff;}
 *,::before,::after{margin:0;padding:0;box-sizing:border-box}
-body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;font-family:'Boogaloo',cursive;overflow-y:auto;overflow-x:hidden;padding:12px 0 24px}
+body{background:linear-gradient(160deg,#7718cc 0%,#5510bb 40%,#2244dd 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;font-family:'Boogaloo',cursive;overflow-y:auto;overflow-x:hidden;padding:12px 0 24px}
 .cab{width:min(480px,99vw);background:linear-gradient(170deg,#1e0a44,#0e0428 60%,#080818);border-radius:20px;border:3px solid var(--pur);box-shadow:0 0 0 1px #bb66ff,0 0 40px rgba(120,0,255,.5);display:flex;flex-direction:column}
 .mq{background:rgba(0,0,0,.5);border-bottom:2px solid var(--pur);padding:5px 0;overflow:hidden;position:relative}
 .mq::before,.mq::after{content:'';position:absolute;top:0;bottom:0;width:16px;z-index:2}
@@ -48,7 +48,7 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
 .pin-dot{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(150,100,255,.4);font-size:20px;color:rgba(150,100,255,.4);display:flex;align-items:center;justify-content:center}
 .pin-dot.filled{background:rgba(100,0,200,.5);border-color:var(--pnk);color:var(--pnk)}
 .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:240px;margin:0 auto}
-.nb{background:rgba(255,255,255,.18);border:2px solid rgba(220,160,255,.7);border-radius:16px;color:#fff;font-family:'Zen Dots',cursive;font-size:26px;padding:18px;cursor:pointer;transition:all .1s}
+.nb{background:rgba(255,255,255,.18);border:2px solid rgba(220,160,255,.7);border-radius:16px;color:#fff;font-family:'Zen Dots',cursive;font-size:28px;padding:20px;cursor:pointer;transition:all .1s}
 .nb:active{background:rgba(150,100,255,.3);transform:scale(.95)}.nb:disabled{opacity:.4;cursor:not-allowed}
 .nb-del{background:rgba(255,80,80,.12);border-color:rgba(255,80,80,.3);font-size:12px}
 .nb-ok{background:rgba(255,220,0,.12);border-color:rgba(255,220,0,.4);color:var(--gold);font-size:12px}
@@ -96,7 +96,7 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
 .cw{display:flex;flex-direction:column;align-items:center;gap:4px}
 .card{width:60px;height:86px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:2px solid rgba(255,255,255,.12);box-shadow:0 4px 12px rgba(0,0,0,.6)}
 .card.up{background:linear-gradient(135deg,#fff,#f0f0ff)}.card.up.r{color:#cc0000}.card.up.b{color:#111133}
-.card.dn{background:linear-gradient(135deg,#2a0860,#160430)}.card.dn::after{content:'🃏';font-size:26px;opacity:.3}
+.card.dn{background:linear-gradient(135deg,#2a0860,#160430)}.card.dn::after{content:'ð';font-size:26px;opacity:.3}
 .card.hd{transform:translateY(-10px);border-color:var(--gold);box-shadow:0 0 16px rgba(255,220,0,.6),0 4px 12px rgba(0,0,0,.6)}
 .card.wg{animation:wg .5s ease infinite alternate}
 @keyframes wg{0%{box-shadow:0 0 8px rgba(255,220,0,.4)}100%{box-shadow:0 0 28px rgba(255,220,0,1)}}
@@ -111,11 +111,11 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
 .rz{font-size:15px;color:rgba(200,160,255,.4);font-family:'Boogaloo',cursive}
 .pk-btns{display:flex;gap:8px;padding:6px 10px 10px;flex-shrink:0}
 .bg{display:flex;gap:5px;align-items:center}
-.bb{background:rgba(255,255,255,.16);border:2px solid rgba(220,180,255,.55);border-radius:14px;color:#fff;font-family:'Zen Dots',cursive;font-size:20px;padding:14px 20px;cursor:pointer;transition:all .1s}
+.bb{background:rgba(255,255,255,.16);border:2px solid rgba(220,180,255,.55);border-radius:14px;color:#fff;font-family:'Zen Dots',cursive;font-size:22px;padding:16px 22px;cursor:pointer;transition:all .1s}
 .bb:hover{background:rgba(255,255,255,.14)}.bb:active{transform:scale(.95)}.bb:disabled{opacity:.25;cursor:not-allowed}
 .bm{background:linear-gradient(160deg,#cc0044,#880022);color:#fff;border:none;border-radius:10px;font-family:'Zen Dots',cursive;font-size:11px;padding:10px;cursor:pointer;box-shadow:0 3px 0 #440011;transition:all .1s}
 .bm:active{transform:translateY(2px);box-shadow:0 1px 0 #440011}.bm:disabled{opacity:.25;cursor:not-allowed}
-.db{flex:1;background:linear-gradient(160deg,var(--gold),var(--ora));color:#1a0800;border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:23px;padding:17px;cursor:pointer;box-shadow:0 8px 0 #886600;transition:all .1s}
+.db{flex:1;background:linear-gradient(160deg,var(--gold),var(--ora));color:#1a0800;border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:24px;padding:18px;cursor:pointer;box-shadow:0 8px 0 #886600;transition:all .1s}
 .db:active{transform:translateY(4px);box-shadow:0 1px 0 #884400}.db:disabled{opacity:.25;cursor:not-allowed}
 
 /* UP GAME */
@@ -131,7 +131,7 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
 .ug-r{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .uc{width:60px;height:84px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:2px solid rgba(255,255,255,.1);box-shadow:0 4px 12px rgba(0,0,0,.6)}
 .uc.up{background:linear-gradient(135deg,#fff,#f0f0ff)}.uc.up.r{color:#cc0000}.uc.up.b{color:#111133}
-.uc.dn{background:linear-gradient(135deg,#1a0440,#0a0220)}.uc.dn::after{content:'？';font-size:22px;color:rgba(150,100,255,.25);font-family:'Zen Dots',cursive}
+.uc.dn{background:linear-gradient(135deg,#1a0440,#0a0220)}.uc.dn::after{content:'ï¼';font-size:22px;color:rgba(150,100,255,.25);font-family:'Zen Dots',cursive}
 .uc.sel{border-color:var(--gold);box-shadow:0 0 16px rgba(255,220,0,.6)}
 .uc.rw{border-color:var(--grn);box-shadow:0 0 16px rgba(17,221,85,.7)}
 .uc.rl{border-color:var(--red);box-shadow:0 0 16px rgba(255,50,50,.7)}
@@ -157,12 +157,12 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
 <body>
 <div class="cab">
   <div class="mq"><div class="mq-inner">
-    <span>★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ </span>
-    <span>★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ </span>
+    <span>â ç¾å¼ã²ã¼ã çå½ â HYAKUSHIKI GAME KINGDOM â ã¡ãã«ãè²¯ãã¦çèãç®æãï¼ â ç¾å¼ã²ã¼ã çå½ â HYAKUSHIKI GAME KINGDOM â ã¡ãã«ãè²¯ãã¦çèãç®æãï¼ â </span>
+    <span>â ç¾å¼ã²ã¼ã çå½ â HYAKUSHIKI GAME KINGDOM â ã¡ãã«ãè²¯ãã¦çèãç®æãï¼ â ç¾å¼ã²ã¼ã çå½ â HYAKUSHIKI GAME KINGDOM â ã¡ãã«ãè²¯ãã¦çèãç®æãï¼ â </span>
   </div></div>
   <div class="tp">
     <div class="led-row"><div class="led la"></div><div class="led lb"></div><div class="led lc"></div><div class="led ld"></div><div class="led le"></div><div class="led lf"></div><div class="led le"></div><div class="led ld"></div><div class="led lc"></div><div class="led lb"></div><div class="led la"></div></div>
-    <div class="cab-title">🏰 百式ゲーム王国</div>
+    <div class="cab-title">ð° ç¾å¼ã²ã¼ã çå½</div>
     <div class="cab-sub">HYAKUSHIKI GAME KINGDOM</div>
   </div>
   <div class="screen">
@@ -170,20 +170,20 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
 
     <!-- LOGIN -->
     <div id="slogin" class="gs active">
-      <div class="login-logo">🏰 百式ゲーム王国へ<br>ようこそ！</div>
+      <div class="login-logo">ð° ç¾å¼ã²ã¼ã çå½ã¸<br>ããããï¼</div>
       <div class="login-box">
         <div class="login-tabs">
-          <div class="login-tab active" id="tab-l" onclick="switchTab('login')">ログイン</div>
-          <div class="login-tab" id="tab-s" onclick="switchTab('signup')">新規登録</div>
+          <div class="login-tab active" id="tab-l" onclick="switchTab('login')">ã­ã°ã¤ã³</div>
+          <div class="login-tab" id="tab-s" onclick="switchTab('signup')">æ°è¦ç»é²</div>
         </div>
-        <div class="login-box-title" id="lbt">名前とPINで入場</div>
-        <input class="login-input" id="lname" placeholder="なまえ（10文字以内）" maxlength="10"/>
-        <div class="pin-row"><div class="pin-dot" id="p0">●</div><div class="pin-dot" id="p1">●</div><div class="pin-dot" id="p2">●</div><div class="pin-dot" id="p3">●</div></div>
+        <div class="login-box-title" id="lbt">ååã¨PINã§å¥å ´</div>
+        <input class="login-input" id="lname" placeholder="ãªã¾ãï¼10æå­ä»¥åï¼" maxlength="10"/>
+        <div class="pin-row"><div class="pin-dot" id="p0">â</div><div class="pin-dot" id="p1">â</div><div class="pin-dot" id="p2">â</div><div class="pin-dot" id="p3">â</div></div>
         <div class="numpad">
           <button class="nb" onclick="pin('1')">1</button><button class="nb" onclick="pin('2')">2</button><button class="nb" onclick="pin('3')">3</button>
           <button class="nb" onclick="pin('4')">4</button><button class="nb" onclick="pin('5')">5</button><button class="nb" onclick="pin('6')">6</button>
           <button class="nb" onclick="pin('7')">7</button><button class="nb" onclick="pin('8')">8</button><button class="nb" onclick="pin('9')">9</button>
-          <button class="nb nb-del" onclick="pin('del')">← 消す</button><button class="nb" onclick="pin('0')">0</button><button class="nb nb-ok" onclick="pin('ok')">OK ✓</button>
+          <button class="nb nb-del" onclick="pin('del')">â æ¶ã</button><button class="nb" onclick="pin('0')">0</button><button class="nb nb-ok" onclick="pin('ok')">OK â</button>
         </div>
         <div class="login-msg" id="lmsg"></div>
       </div>
@@ -195,30 +195,30 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
         <div class="lobby-av" id="lav">?</div>
         <div style="flex:1">
           <div class="lobby-name" id="lobby-name">---</div>
-          <div class="lobby-medals">🪙 <span id="lobby-medals">0</span>枚</div>
+          <div class="lobby-medals">ðª <span id="lobby-medals">0</span>æ</div>
         </div>
-        <button class="lobby-logout" onclick="logout()">ログアウト</button>
+        <button class="lobby-logout" onclick="logout()">ã­ã°ã¢ã¦ã</button>
       </div>
       <div class="lobby-body">
         <div class="lobby-sec">GAME SELECT</div>
         <div class="game-card poker-c" onclick="startPoker()">
           <div class="gc-inner">
-            <div class="gc-icon">🃏</div>
+            <div class="gc-icon">ð</div>
             <div style="flex:1">
-              <div class="gc-name">メダルポーカー</div>
-              <div class="gc-desc">5枚で役を揃えよう！<br>MAX BET ロイヤルフラッシュ → ×1000枚！</div>
+              <div class="gc-name">ã¡ãã«ãã¼ã«ã¼</div>
+              <div class="gc-desc">5æã§å½¹ãæãããï¼<br>MAX BET ã­ã¤ã¤ã«ãã©ãã·ã¥ â Ã1000æï¼</div>
             </div>
-            <div class="gc-arr">▶</div>
+            <div class="gc-arr">â¶</div>
           </div>
         </div>
         <div class="game-card janken-c" onclick="openJanken()">
           <div class="gc-inner">
-            <div class="gc-icon">✊</div>
+            <div class="gc-icon">â</div>
             <div style="flex:1">
               <div class="gc-name">GU-CHOKI-PA FEVER</div>
-              <div class="gc-desc">じゃんけん→ルーレット→ハイ＆ロー！<br>メダルを倍々にしよう！</div>
+              <div class="gc-desc">ãããããâã«ã¼ã¬ããâãã¤ï¼ã­ã¼ï¼<br>ã¡ãã«ãåãã«ãããï¼</div>
             </div>
-            <div class="gc-arr">▶</div>
+            <div class="gc-arr">â¶</div>
           </div>
         </div>
       </div>
@@ -228,15 +228,15 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
     <div id="spoker" class="gs">
       <div class="pt"><div class="pt-inner">
         <div class="pt-hdr"><div style="flex:1"></div><div class="pt-hb">1</div><div class="pt-hb">2</div><div class="pt-hb">3</div><div class="pt-hb">4</div><div class="pt-hb" style="color:var(--red)">5</div></div>
-        <div class="pt-row" id="pt-rf"><div class="pt-n">ロイヤルフラッシュ</div><div class="pt-odds"><div class="pt-o">100</div><div class="pt-o">200</div><div class="pt-o">300</div><div class="pt-o">400</div><div class="pt-o mx">1000</div></div></div>
-        <div class="pt-row" id="pt-sf"><div class="pt-n">ストレートフラッシュ</div><div class="pt-odds"><div class="pt-o">50</div><div class="pt-o">100</div><div class="pt-o">150</div><div class="pt-o">200</div><div class="pt-o mx">250</div></div></div>
-        <div class="pt-row" id="pt-4k"><div class="pt-n">フォーカード</div><div class="pt-odds"><div class="pt-o">20</div><div class="pt-o">40</div><div class="pt-o">60</div><div class="pt-o">80</div><div class="pt-o mx">100</div></div></div>
-        <div class="pt-row" id="pt-fh"><div class="pt-n">フルハウス</div><div class="pt-odds"><div class="pt-o">9</div><div class="pt-o">18</div><div class="pt-o">27</div><div class="pt-o">36</div><div class="pt-o mx">45</div></div></div>
-        <div class="pt-row" id="pt-fl"><div class="pt-n">フラッシュ</div><div class="pt-odds"><div class="pt-o">6</div><div class="pt-o">12</div><div class="pt-o">18</div><div class="pt-o">24</div><div class="pt-o mx">30</div></div></div>
-        <div class="pt-row" id="pt-st"><div class="pt-n">ストレート</div><div class="pt-odds"><div class="pt-o">4</div><div class="pt-o">8</div><div class="pt-o">12</div><div class="pt-o">16</div><div class="pt-o mx">20</div></div></div>
-        <div class="pt-row" id="pt-3k"><div class="pt-n">スリーカード</div><div class="pt-odds"><div class="pt-o">3</div><div class="pt-o">6</div><div class="pt-o">9</div><div class="pt-o">12</div><div class="pt-o mx">15</div></div></div>
-        <div class="pt-row" id="pt-2p"><div class="pt-n">ツーペア</div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">4</div><div class="pt-o">6</div><div class="pt-o">8</div><div class="pt-o mx">10</div></div></div>
-        <div class="pt-row" id="pt-1p"><div class="pt-n">ワンペア(J以上)</div><div class="pt-odds"><div class="pt-o">1</div><div class="pt-o">2</div><div class="pt-o">3</div><div class="pt-o">4</div><div class="pt-o mx">5</div></div></div>
+        <div class="pt-row" id="pt-rf"><div class="pt-n">ã­ã¤ã¤ã«ãã©ãã·ã¥</div><div class="pt-odds"><div class="pt-o">100</div><div class="pt-o">200</div><div class="pt-o">300</div><div class="pt-o">400</div><div class="pt-o mx">1000</div></div></div>
+        <div class="pt-row" id="pt-sf"><div class="pt-n">ã¹ãã¬ã¼ããã©ãã·ã¥</div><div class="pt-odds"><div class="pt-o">50</div><div class="pt-o">100</div><div class="pt-o">150</div><div class="pt-o">200</div><div class="pt-o mx">250</div></div></div>
+        <div class="pt-row" id="pt-4k"><div class="pt-n">ãã©ã¼ã«ã¼ã</div><div class="pt-odds"><div class="pt-o">20</div><div class="pt-o">40</div><div class="pt-o">60</div><div class="pt-o">80</div><div class="pt-o mx">100</div></div></div>
+        <div class="pt-row" id="pt-fh"><div class="pt-n">ãã«ãã¦ã¹</div><div class="pt-odds"><div class="pt-o">9</div><div class="pt-o">18</div><div class="pt-o">27</div><div class="pt-o">36</div><div class="pt-o mx">45</div></div></div>
+        <div class="pt-row" id="pt-fl"><div class="pt-n">ãã©ãã·ã¥</div><div class="pt-odds"><div class="pt-o">6</div><div class="pt-o">12</div><div class="pt-o">18</div><div class="pt-o">24</div><div class="pt-o mx">30</div></div></div>
+        <div class="pt-row" id="pt-st"><div class="pt-n">ã¹ãã¬ã¼ã</div><div class="pt-odds"><div class="pt-o">4</div><div class="pt-o">8</div><div class="pt-o">12</div><div class="pt-o">16</div><div class="pt-o mx">20</div></div></div>
+        <div class="pt-row" id="pt-3k"><div class="pt-n">ã¹ãªã¼ã«ã¼ã</div><div class="pt-odds"><div class="pt-o">3</div><div class="pt-o">6</div><div class="pt-o">9</div><div class="pt-o">12</div><div class="pt-o mx">15</div></div></div>
+        <div class="pt-row" id="pt-2p"><div class="pt-n">ãã¼ãã¢</div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">4</div><div class="pt-o">6</div><div class="pt-o">8</div><div class="pt-o mx">10</div></div></div>
+        <div class="pt-row" id="pt-1p"><div class="pt-n">ã¯ã³ãã¢(Jä»¥ä¸)</div><div class="pt-odds"><div class="pt-o">1</div><div class="pt-o">2</div><div class="pt-o">3</div><div class="pt-o">4</div><div class="pt-o mx">5</div></div></div>
       </div></div>
       <div class="pk-hud">
         <div class="pk-hud-col m"><div class="pk-lbl">MEDALS</div><div class="pk-val" id="pk-med">0</div></div>
@@ -244,11 +244,11 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
         <div class="pk-hud-col w"><div class="pk-lbl">WIN</div><div class="pk-val" id="pk-win">0</div></div>
       </div>
       <div class="ca" id="pk-ca"></div>
-      <div class="rd" id="pk-rd"><div class="rz">DEAL を押してスタート</div></div>
+      <div class="rd" id="pk-rd"><div class="rz">DEAL ãæ¼ãã¦ã¹ã¿ã¼ã</div></div>
       <div class="pk-btns">
         <div class="bg">
-          <button class="bb" id="bn-" onclick="chgB(-1)">－</button>
-          <button class="bb" id="bn+" onclick="chgB(1)">＋</button>
+          <button class="bb" id="bn-" onclick="chgB(-1)">ï¼</button>
+          <button class="bb" id="bn+" onclick="chgB(1)">ï¼</button>
           <button class="bm" id="bnM" onclick="chgB(99)">MAX</button>
         </div>
         <button class="db" id="dbn" onclick="dealDraw()">DEAL</button>
@@ -257,20 +257,20 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
 
     <!-- UP GAME -->
     <div id="supgame" class="gs">
-      <div class="ug-hdr" id="ugh">🎯 アップゲーム</div>
+      <div class="ug-hdr" id="ugh">ð¯ ã¢ããã²ã¼ã </div>
       <div class="ug-info">
-        <div class="ug-box"><div class="ug-bl">現在</div><div class="ug-bv" style="font-size:20px;color:var(--gold)" id="ugc">0枚</div></div>
-        <div class="ug-box"><div class="ug-bl">ダブル勝ち</div><div class="ug-bv" style="font-size:18px;color:var(--grn)" id="ugd">0枚</div></div>
-        <div class="ug-box"><div class="ug-bl">ハーフ勝ち</div><div class="ug-bv" style="font-size:18px;color:var(--blu)" id="ugh2">0枚</div></div>
+        <div class="ug-box"><div class="ug-bl">ç¾å¨</div><div class="ug-bv" style="font-size:20px;color:var(--gold)" id="ugc">0æ</div></div>
+        <div class="ug-box"><div class="ug-bl">ããã«åã¡</div><div class="ug-bv" style="font-size:18px;color:var(--grn)" id="ugd">0æ</div></div>
+        <div class="ug-box"><div class="ug-bl">ãã¼ãåã¡</div><div class="ug-bv" style="font-size:18px;color:var(--blu)" id="ugh2">0æ</div></div>
       </div>
-      <div class="sg">強さ：2＞A＞K＞Q＞J＞10＞9＞…＞3（2が最強）</div>
+      <div class="sg">å¼·ãï¼2ï¼Aï¼Kï¼Qï¼Jï¼10ï¼9ï¼â¦ï¼3ï¼2ãæå¼·ï¼</div>
       <div class="ug-cards">
         <div class="ug-l">
-          <div class="ug-ll">基準カード</div>
+          <div class="ug-ll">åºæºã«ã¼ã</div>
           <div class="uc dn" id="ulc"></div>
           <div class="ug-ls" id="uls"></div>
         </div>
-        <div style="font-size:20px;color:rgba(200,160,255,.4)">→</div>
+        <div style="font-size:20px;color:rgba(200,160,255,.4)">â</div>
         <div class="ug-r">
           <div class="uc dn" id="uc0" onclick="pickUG(0)"></div>
           <div class="uc dn" id="uc1" onclick="pickUG(1)"></div>
@@ -278,17 +278,17 @@ body{background:linear-gradient(160deg,#5a1099 0%,#3a0c77 40%,#1e3399 100%);min-
           <div class="uc dn" id="uc3" onclick="pickUG(3)"></div>
         </div>
       </div>
-      <div class="ug-res" id="ugr">左のカードが開いたら1枚選んでください</div>
+      <div class="ug-res" id="ugr">å·¦ã®ã«ã¼ããéããã1æé¸ãã§ãã ãã</div>
       <div class="ug-btns">
-        <button class="ub ud" id="ubd" onclick="ugS('d')" disabled>🔥 ダブルアップ</button>
-        <button class="ub uh" id="ubh" onclick="ugS('h')" disabled>💫 ハーフアップ</button>
-        <button class="ub uq" id="ubq" onclick="ugQ()" disabled>💰 やめる</button>
+        <button class="ub ud" id="ubd" onclick="ugS('d')" disabled>ð¥ ããã«ã¢ãã</button>
+        <button class="ub uh" id="ubh" onclick="ugS('h')" disabled>ð« ãã¼ãã¢ãã</button>
+        <button class="ub uq" id="ubq" onclick="ugQ()" disabled>ð° ããã</button>
       </div>
     </div>
   </div>
 
   <div class="ctrl hidden" id="ctrl">
-    <button class="cbtn" onclick="goLobby()">← ロビーへ</button>
+    <button class="cbtn" onclick="goLobby()">â ã­ãã¼ã¸</button>
   </div>
 </div>
 
@@ -304,7 +304,7 @@ async function sbPatch(p,b){try{const r=await fetch(SB+'/rest/v1/'+p,{method:'PA
 
 async function getUser(n){const r=await sbGet('game_users?select=*&name=eq.'+encodeURIComponent(n));return r&&r.length>0?r[0]:null;}
 async function createUser(n,pin){
-  // まずINSERT
+  // ã¾ãINSERT
   let insertOk = false;
   try{
     const r=await fetch(SB+'/rest/v1/game_users',{
@@ -316,21 +316,21 @@ async function createUser(n,pin){
       insertOk=true;
     } else {
       const txt=await r.text();
-      // エラー内容をユーザーに見せる
-      setMsg('登録エラー('+r.status+'): '+txt.slice(0,80),'err');
+      // ã¨ã©ã¼åå®¹ãã¦ã¼ã¶ã¼ã«è¦ãã
+      setMsg('ç»é²ã¨ã©ã¼('+r.status+'): '+txt.slice(0,80),'err');
       return null;
     }
   }catch(e){
-    setMsg('接続エラー: '+e.message,'err');
+    setMsg('æ¥ç¶ã¨ã©ã¼: '+e.message,'err');
     return null;
   }
-  // INSERT成功 → GETで取得（最大8回リトライ）
+  // INSERTæå â GETã§åå¾ï¼æå¤§8åãªãã©ã¤ï¼
   for(let i=0;i<8;i++){
     await new Promise(r=>setTimeout(r,500));
     const u=await getUser(n);
     if(u)return u;
   }
-  // 取得できなくても仮のユーザーオブジェクトを返す
+  // åå¾ã§ããªãã¦ãä»®ã®ã¦ã¼ã¶ã¼ãªãã¸ã§ã¯ããè¿ã
   return {id:null,name:n,pin:pin,medals:100};
 }
 async function saveMedals(id,m){if(!id)return;return sbPatch('game_users?id=eq.'+id,{medals:m});}
@@ -341,10 +341,10 @@ let ugM=0,ugMode='',ugOn=false,ugPk=false,ugIdx=-1,ugLc=null,ugRc=[];
 
 function show(id){document.querySelectorAll('.gs').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('ctrl').classList.toggle('hidden',!['spoker','supgame'].includes(id));}
 function setMsg(t,c){const e=document.getElementById('lmsg');e.textContent=t;e.className='login-msg'+(c?' '+c:'');}
-function updPin(){for(let i=0;i<4;i++){const e=document.getElementById('p'+i);if(i<pinBuf.length){e.textContent='★';e.classList.add('filled');}else{e.textContent='●';e.classList.remove('filled');}}}
+function updPin(){for(let i=0;i<4;i++){const e=document.getElementById('p'+i);if(i<pinBuf.length){e.textContent='â';e.classList.add('filled');}else{e.textContent='â';e.classList.remove('filled');}}}
 function disableNP(v){document.querySelectorAll('.nb').forEach(b=>b.disabled=v);}
 
-function switchTab(m){lmode=m;document.getElementById('tab-l').classList.toggle('active',m==='login');document.getElementById('tab-s').classList.toggle('active',m==='signup');document.getElementById('lbt').textContent=m==='login'?'名前とPINで入場':'名前(10文字)とPIN(4桁)を決めてね';setMsg('','');pinBuf='';updPin();}
+function switchTab(m){lmode=m;document.getElementById('tab-l').classList.toggle('active',m==='login');document.getElementById('tab-s').classList.toggle('active',m==='signup');document.getElementById('lbt').textContent=m==='login'?'ååã¨PINã§å¥å ´':'åå(10æå­)ã¨PIN(4æ¡)ãæ±ºãã¦ã­';setMsg('','');pinBuf='';updPin();}
 
 function pin(v){
   if(v==='del'){pinBuf=pinBuf.slice(0,-1);}
@@ -355,22 +355,22 @@ function pin(v){
 
 async function doAuth(){
   const name=document.getElementById('lname').value.trim();
-  if(!name){setMsg('名前を入力してください','err');return;}
-  if(pinBuf.length<4){setMsg('4桁のPINを入力してください','err');return;}
-  setMsg('確認中…','ing');disableNP(true);
+  if(!name){setMsg('ååãå¥åãã¦ãã ãã','err');return;}
+  if(pinBuf.length<4){setMsg('4æ¡ã®PINãå¥åãã¦ãã ãã','err');return;}
+  setMsg('ç¢ºèªä¸­â¦','ing');disableNP(true);
   if(lmode==='login'){
     const u=await getUser(name);
     disableNP(false);
-    if(!u){setMsg('ユーザーが見つかりません','err');pinBuf='';updPin();return;}
-    if(u.pin!==pinBuf){setMsg('PINが違います','err');pinBuf='';updPin();return;}
-    user=u;setMsg('ログイン成功！','ok');setTimeout(goLobby,500);
+    if(!u){setMsg('ã¦ã¼ã¶ã¼ãè¦ã¤ããã¾ãã','err');pinBuf='';updPin();return;}
+    if(u.pin!==pinBuf){setMsg('PINãéãã¾ã','err');pinBuf='';updPin();return;}
+    user=u;setMsg('ã­ã°ã¤ã³æåï¼','ok');setTimeout(goLobby,500);
   } else {
     const ex=await getUser(name);
-    if(ex){disableNP(false);setMsg('その名前はすでに使われています','err');return;}
+    if(ex){disableNP(false);setMsg('ãã®ååã¯ãã§ã«ä½¿ããã¦ãã¾ã','err');return;}
     const u=await createUser(name,pinBuf);
     disableNP(false);
-    if(!u){setMsg('登録に失敗しました。もう一度お試しください','err');return;}
-    user=u;setMsg('登録完了！ようこそ '+name+' さん！','ok');setTimeout(goLobby,700);
+    if(!u){setMsg('ç»é²ã«å¤±æãã¾ãããããä¸åº¦ãè©¦ããã ãã','err');return;}
+    user=u;setMsg('ç»é²å®äºï¼ãããã '+name+' ããï¼','ok');setTimeout(goLobby,700);
   }
 }
 
@@ -387,26 +387,26 @@ function goLobby(){
 function updLM(){if(user)document.getElementById('lobby-medals').textContent=user.medals;}
 function openJanken(){
   const base=location.href.replace(/poker_fever[^/]*$/,'');
-  window.open(base+'index.html','_blank')||alert('じゃんけんフィーバーは index.html です！同じサーバーに置いてください。');
+  window.open(base+'index.html','_blank')||alert('ããããããã£ã¼ãã¼ã¯ index.html ã§ãï¼åããµã¼ãã¼ã«ç½®ãã¦ãã ããã');
 }
 
 // POKER
-const S=['♠','♥','♦','♣'],SR=[false,true,true,false];
+const S=['â ','â¥','â¦','â£'],SR=[false,true,true,false];
 const PAY=[
-  {id:'rf',n:'ロイヤルフラッシュ',o:[100,200,300,400,1000]},
-  {id:'sf',n:'ストレートフラッシュ',o:[50,100,150,200,250]},
-  {id:'4k',n:'フォーカード',o:[20,40,60,80,100]},
-  {id:'fh',n:'フルハウス',o:[9,18,27,36,45]},
-  {id:'fl',n:'フラッシュ',o:[6,12,18,24,30]},
-  {id:'st',n:'ストレート',o:[4,8,12,16,20]},
-  {id:'3k',n:'スリーカード',o:[3,6,9,12,15]},
-  {id:'2p',n:'ツーペア',o:[2,4,6,8,10]},
-  {id:'1p',n:'ワンペア(J以上)',o:[1,2,3,4,5]}
+  {id:'rf',n:'ã­ã¤ã¤ã«ãã©ãã·ã¥',o:[100,200,300,400,1000]},
+  {id:'sf',n:'ã¹ãã¬ã¼ããã©ãã·ã¥',o:[50,100,150,200,250]},
+  {id:'4k',n:'ãã©ã¼ã«ã¼ã',o:[20,40,60,80,100]},
+  {id:'fh',n:'ãã«ãã¦ã¹',o:[9,18,27,36,45]},
+  {id:'fl',n:'ãã©ãã·ã¥',o:[6,12,18,24,30]},
+  {id:'st',n:'ã¹ãã¬ã¼ã',o:[4,8,12,16,20]},
+  {id:'3k',n:'ã¹ãªã¼ã«ã¼ã',o:[3,6,9,12,15]},
+  {id:'2p',n:'ãã¼ãã¢',o:[2,4,6,8,10]},
+  {id:'1p',n:'ã¯ã³ãã¢(Jä»¥ä¸)',o:[1,2,3,4,5]}
 ];
 function cl(n){if(n===1)return'A';if(n===11)return'J';if(n===12)return'Q';if(n===13)return'K';return String(n);}
 function mkD(){let d=[];for(let s=0;s<4;s++)for(let n=1;n<=13;n++)d.push({s,n});return d.sort(()=>Math.random()-.5);}
 
-function startPoker(){if(!user)return;bet=1;win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
+function startPoker(){if(!user)return;bet=1;win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL ãæ¼ãã¦ã¹ã¿ã¼ã</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
 function updH(){document.getElementById('pk-med').textContent=user?user.medals:0;document.getElementById('pk-bet').textContent=bet;document.getElementById('pk-win').textContent=win;}
 function chgB(d){if(phase!=='deal')return;bet=Math.max(1,Math.min(5,d===99?5:bet+d));updPT();updH();}
 function updPT(){PAY.forEach(p=>{const r=document.getElementById('pt-'+p.id);if(!r)return;r.classList.remove('hi');r.querySelectorAll('.pt-o').forEach((o,i)=>o.classList.toggle('cur',i===bet-1));});}
@@ -428,12 +428,12 @@ function renderC(){
 
 function dealDraw(){if(phase==='deal')doDeal();else if(phase==='draw')doDraw();}
 function doDeal(){
-  if(!user||user.medals<bet){document.getElementById('pk-rd').innerHTML='<div class="rz">メダルが足りません！</div>';return;}
+  if(!user||user.medals<bet){document.getElementById('pk-rd').innerHTML='<div class="rz">ã¡ãã«ãè¶³ãã¾ããï¼</div>';return;}
   user.medals-=bet;win=0;updH();updLM();
   deck=mkD();hand=deck.splice(0,5);held=Array(5).fill(false);
   phase='draw';renderC();
   document.getElementById('dbn').textContent='DRAW';setBB(false);
-  const r=chkR(hand);document.getElementById('pk-rd').innerHTML=r?'<div class="rz">'+r.n+'</div>':' <div class="rz">役なし</div>';
+  const r=chkR(hand);document.getElementById('pk-rd').innerHTML=r?'<div class="rz">'+r.n+'</div>':' <div class="rz">å½¹ãªã</div>';
   autoH();renderC();
 }
 function doDraw(){
@@ -445,12 +445,12 @@ function doDraw(){
     const m=r.o[bet-1];win=m;user.medals+=m;
     document.querySelectorAll('.card').forEach(c=>c.classList.add('wg'));
     document.getElementById('pt-'+r.id).classList.add('hi');
-    document.getElementById('pk-rd').innerHTML='<div class="rn">'+r.n+'</div><div class="rw">+'+m+'枚！</div>';
+    document.getElementById('pk-rd').innerHTML='<div class="rn">'+r.n+'</div><div class="rw">+'+m+'æï¼</div>';
     updH();updLM();saveMedals(user.id,user.medals);
     phase='deal';document.getElementById('dbn').textContent='DEAL';setBB(true);
     setTimeout(()=>showUG(m),900);
   } else {
-    document.getElementById('pk-rd').innerHTML='<div class="rz">役なし</div>';
+    document.getElementById('pk-rd').innerHTML='<div class="rz">å½¹ãªã</div>';
     phase='deal';document.getElementById('dbn').textContent='DEAL';setBB(true);
     updH();saveMedals(user.id,user.medals);
   }
@@ -477,11 +477,11 @@ function autoH(){
 // UP GAME
 function showUG(m){
   ugM=m;ugOn=false;ugPk=false;ugIdx=-1;
-  document.getElementById('ugh').textContent='🎯 アップゲーム';
-  document.getElementById('ugc').textContent=m+'枚';
-  document.getElementById('ugd').textContent=(m*2)+'枚';
-  document.getElementById('ugh2').textContent=(m+Math.floor(m/2))+'枚';
-  document.getElementById('ugr').textContent='どうしますか？';
+  document.getElementById('ugh').textContent='ð¯ ã¢ããã²ã¼ã ';
+  document.getElementById('ugc').textContent=m+'æ';
+  document.getElementById('ugd').textContent=(m*2)+'æ';
+  document.getElementById('ugh2').textContent=(m+Math.floor(m/2))+'æ';
+  document.getElementById('ugr').textContent='ã©ããã¾ããï¼';
   document.getElementById('ugr').className='ug-res';
   for(let i=0;i<4;i++){const e=document.getElementById('uc'+i);e.className='uc dn';e.innerHTML='';}
   document.getElementById('ulc').className='uc dn';document.getElementById('ulc').innerHTML='';
@@ -490,7 +490,7 @@ function showUG(m){
   show('supgame');
 }
 function ugStr(n){if(n===2)return 14;if(n===1)return 13;return n;}
-function ugSL(n){if(n===2)return'2(最強)';if(n===1)return'A';return cl(n);}
+function ugSL(n){if(n===2)return'2(æå¼·)';if(n===1)return'A';return cl(n);}
 
 function ugS(m){
   ugMode=m;ugOn=true;ugPk=false;ugIdx=-1;
@@ -505,7 +505,7 @@ function ugS(m){
     e.className='uc up lo '+(SR[ugLc.s]?'r':'b');
     e.innerHTML='<div style="position:absolute;top:3px;left:5px;font-family:Zen Dots,sans-serif;font-size:12px">'+cl(ugLc.n)+'<br>'+S[ugLc.s]+'</div><div style="font-size:22px">'+S[ugLc.s]+'</div>';
     document.getElementById('uls').textContent=ugSL(ugLc.n);
-    document.getElementById('ugr').textContent='右の4枚から1枚選んでください';
+    document.getElementById('ugr').textContent='å³ã®4æãã1æé¸ãã§ãã ãã';
   },400);
 }
 
@@ -527,33 +527,33 @@ function openUC(i,last){
 function judgeUG(rs,ls){
   ugOn=false;
   const e=document.getElementById('ugr');
-  if(rs===ls){e.textContent='引き分け！もう一度！';e.className='ug-res';setTimeout(()=>ugS(ugMode),1500);return;}
+  if(rs===ls){e.textContent='å¼ãåãï¼ããä¸åº¦ï¼';e.className='ug-res';setTimeout(()=>ugS(ugMode),1500);return;}
   if(rs>ls){
     if(ugMode==='d')ugM=ugM*2;else ugM=ugM+Math.floor(ugM/2);
-    e.textContent='勝ち！→ '+ugM+'枚！';e.className='ug-res ok';
+    e.textContent='åã¡ï¼â '+ugM+'æï¼';e.className='ug-res ok';
     document.getElementById('uc'+ugIdx).classList.add('rw');
-    document.getElementById('ugc').textContent=ugM+'枚';
-    document.getElementById('ugd').textContent=(ugM*2)+'枚';
-    document.getElementById('ugh2').textContent=(ugM+Math.floor(ugM/2))+'枚';
+    document.getElementById('ugc').textContent=ugM+'æ';
+    document.getElementById('ugd').textContent=(ugM*2)+'æ';
+    document.getElementById('ugh2').textContent=(ugM+Math.floor(ugM/2))+'æ';
     setTimeout(()=>{
-      e.textContent='続ける？それともやめる？';
+      e.textContent='ç¶ããï¼ããã¨ããããï¼';
       document.getElementById('ubd').disabled=false;document.getElementById('ubh').disabled=false;document.getElementById('ubq').disabled=false;
     },1500);
   } else {
     document.getElementById('uc'+ugIdx).classList.add('rl');
     if(ugMode==='d'){
-      e.textContent='負け…メダルを失った…';e.className='ug-res ng';ugM=0;
+      e.textContent='è² ãâ¦ã¡ãã«ãå¤±ã£ãâ¦';e.className='ug-res ng';ugM=0;
       setTimeout(()=>backP(),2500);
     } else {
       const sv=Math.floor(ugM/2);
-      e.textContent='負け…でも '+sv+'枚は確保！';e.className='ug-res ng';
+      e.textContent='è² ãâ¦ã§ã '+sv+'æã¯ç¢ºä¿ï¼';e.className='ug-res ng';
       ugM=sv;user.medals+=sv;saveMedals(user.id,user.medals);updLM();
-      setTimeout(()=>{document.getElementById('ubq').disabled=false;document.getElementById('ubq').textContent='💰 確定('+sv+'枚)';},1500);
+      setTimeout(()=>{document.getElementById('ubq').disabled=false;document.getElementById('ubq').textContent='ð° ç¢ºå®('+sv+'æ)';},1500);
     }
   }
 }
 function ugQ(){user.medals+=ugM;saveMedals(user.id,user.medals);updLM();backP();}
-function backP(){phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
+function backP(){phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL ãæ¼ãã¦ã¹ã¿ã¼ã</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
 </script>
 </body>
 </html>
