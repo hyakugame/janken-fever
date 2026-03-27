@@ -6,21 +6,554 @@
 <title>百式ゲーム王国</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Boogaloo&display=swap" rel="stylesheet">
 <style>
-:root{
-  --red:#ff3333;--yel:#ffdd00;--grn:#11dd55;
-  --blu:#00aaff;--pnk:#ff44cc;--ora:#ff8800;--pur:#aa66ff;
-}
+:root{--gold:#ffdd00;--grn:#11dd55;--red:#ff3333;--blu:#00aaff;--pnk:#ff44cc;--ora:#ff8800;--pur:#9944ff;}
 *,::before,::after{margin:0;padding:0;box-sizing:border-box}
-body{
-  background:linear-gradient(160deg,#6614aa 0%,#4408aa 40%,#1a44cc 100%);
-  min-height:100vh;display:flex;align-items:flex-start;justify-content:center;
-  font-family:'Boogaloo',cursive;overflow-y:auto;overflow-x:hidden;padding:12px 0 24px;
+body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;font-family:'Boogaloo',cursive;overflow-y:auto;overflow-x:hidden;padding:12px 0 24px}
+.cab{width:min(480px,99vw);background:linear-gradient(170deg,#1e0a44,#0e0428 60%,#080818);border-radius:20px;border:3px solid var(--pur);box-shadow:0 0 0 1px #bb66ff,0 0 40px rgba(120,0,255,.5);display:flex;flex-direction:column}
+.mq{background:rgba(0,0,0,.5);border-bottom:2px solid var(--pur);padding:5px 0;overflow:hidden;position:relative}
+.mq::before,.mq::after{content:'';position:absolute;top:0;bottom:0;width:16px;z-index:2}
+.mq::before{left:0;background:linear-gradient(90deg,rgba(0,0,0,.8),transparent)}
+.mq::after{right:0;background:linear-gradient(-90deg,rgba(0,0,0,.8),transparent)}
+.mq-inner{display:flex;width:max-content;animation:mqs 14s linear infinite}
+@keyframes mqs{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.mq-inner span{font-family:'Zen Dots',cursive;font-size:12px;padding:0 20px;white-space:nowrap;background:linear-gradient(90deg,var(--gold),var(--pnk),var(--blu),var(--grn),var(--gold));background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rb 3s linear infinite}
+@keyframes rb{0%{background-position:0%}100%{background-position:200%}}
+.tp{background:rgba(0,0,0,.4);padding:10px 16px 8px;text-align:center;border-bottom:2px solid var(--pur)}
+.led-row{display:flex;justify-content:center;gap:5px;margin-bottom:6px}
+.led{width:8px;height:8px;border-radius:50%;animation:lp 1.2s ease-in-out infinite}
+.la{background:var(--red);box-shadow:0 0 5px var(--red)}.lb{background:var(--ora);box-shadow:0 0 5px var(--ora);animation-delay:.1s}.lc{background:var(--gold);box-shadow:0 0 5px var(--gold);animation-delay:.2s}.ld{background:var(--grn);box-shadow:0 0 5px var(--grn);animation-delay:.3s}.le{background:var(--blu);box-shadow:0 0 5px var(--blu);animation-delay:.4s}.lf{background:var(--pnk);box-shadow:0 0 5px var(--pnk);animation-delay:.5s}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.2;transform:scale(.6)}}
+.cab-title{font-family:'Zen Dots',cursive;font-size:clamp(14px,4vw,22px);line-height:1.4;background:linear-gradient(135deg,#fff,var(--gold) 40%,var(--pnk) 70%,var(--blu));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.cab-sub{font-size:9px;color:rgba(180,140,255,.5);letter-spacing:.2em;font-family:'Zen Dots',cursive;margin-top:2px}
+.screen{background:linear-gradient(180deg,#120030,#080018);position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column}
+.screen::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:200;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px)}
+.fl{position:absolute;left:0;right:0;height:2px;background:rgba(150,80,255,.07);animation:scan 9s linear infinite;pointer-events:none;z-index:201}
+@keyframes scan{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:110%;opacity:0}}
+.gs{display:none;flex-direction:column;flex:1;position:relative;z-index:1}.gs.active{display:flex}
+@keyframes blk{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* LOGIN */
+#slogin{align-items:center;justify-content:center;gap:14px;padding:20px;background:radial-gradient(ellipse at 50% 30%,rgba(100,0,200,.4),transparent 70%)}
+.login-logo{font-family:'Zen Dots',cursive;font-size:clamp(22px,6vw,34px);text-align:center;line-height:1.5;background:linear-gradient(135deg,var(--gold),var(--pnk),var(--blu));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-box{background:rgba(255,255,255,.07);border:2px solid rgba(150,100,255,.4);border-radius:16px;padding:16px;width:100%;max-width:320px}
+.login-tabs{display:flex;margin-bottom:12px;border-radius:10px;overflow:hidden;border:1px solid rgba(150,100,255,.3)}
+.login-tab{flex:1;padding:8px;text-align:center;font-family:'Zen Dots',cursive;font-size:11px;cursor:pointer;background:rgba(255,255,255,.05);color:rgba(200,160,255,.6);transition:all .1s}
+.login-tab.active{background:rgba(100,0,200,.4);color:#fff}
+.login-box-title{font-family:'Zen Dots',cursive;font-size:11px;color:rgba(200,160,255,.65);margin-bottom:10px;text-align:center}
+.login-input{background:rgba(255,255,255,.1);border:2px solid rgba(150,100,255,.4);border-radius:10px;color:#fff;font-family:'Boogaloo',cursive;font-size:20px;padding:10px 14px;width:100%;outline:none;margin-bottom:10px}
+.login-input:focus{border-color:var(--gold)}.login-input::placeholder{color:rgba(200,160,255,.35)}
+.pin-row{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
+.pin-dot{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(150,100,255,.4);font-size:20px;color:rgba(150,100,255,.4);display:flex;align-items:center;justify-content:center}
+.pin-dot.filled{background:rgba(100,0,200,.5);border-color:var(--pnk);color:var(--pnk)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:240px;margin:0 auto}
+.nb{background:rgba(255,255,255,.1);border:1px solid rgba(150,100,255,.3);border-radius:12px;color:#fff;font-family:'Zen Dots',cursive;font-size:18px;padding:12px;cursor:pointer;transition:all .1s}
+.nb:active{background:rgba(150,100,255,.3);transform:scale(.95)}.nb:disabled{opacity:.4;cursor:not-allowed}
+.nb-del{background:rgba(255,80,80,.12);border-color:rgba(255,80,80,.3);font-size:12px}
+.nb-ok{background:rgba(255,220,0,.12);border-color:rgba(255,220,0,.4);color:var(--gold);font-size:12px}
+.login-msg{font-size:13px;text-align:center;min-height:20px;margin-top:6px}
+.login-msg.ok{color:var(--grn)}.login-msg.err{color:var(--red);animation:shake .3s ease}.login-msg.ing{color:var(--gold);animation:blk .8s step-end infinite}
+
+/* LOBBY */
+#slobby{align-items:center;justify-content:flex-start;overflow-y:auto}
+.lobby-hdr{background:rgba(0,0,0,.5);padding:14px 16px;width:100%;display:flex;align-items:center;gap:12px;border-bottom:2px solid rgba(120,0,255,.4)}
+.lobby-av{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#6600cc,#cc0066);display:flex;align-items:center;justify-content:center;font-family:'Zen Dots',cursive;font-size:20px;color:#fff;border:2px solid rgba(255,200,0,.5)}
+.lobby-name{font-family:'Zen Dots',cursive;font-size:16px;color:#fff;margin-bottom:2px}
+.lobby-medals{font-family:'Zen Dots',cursive;font-size:18px;color:var(--gold);text-shadow:0 0 8px rgba(255,220,0,.4)}
+.lobby-logout{background:rgba(255,255,255,.07);border:1px solid rgba(200,160,255,.3);color:rgba(200,160,255,.55);border-radius:50px;font-family:'Boogaloo',cursive;font-size:12px;padding:6px 14px;cursor:pointer;margin-left:auto}
+.lobby-body{display:flex;flex-direction:column;gap:10px;padding:14px;width:100%}
+.lobby-sec{font-family:'Zen Dots',cursive;font-size:10px;color:rgba(200,160,255,.4);letter-spacing:.2em;margin-bottom:2px}
+.game-card{background:rgba(255,255,255,.07);border:2px solid rgba(150,100,255,.3);border-radius:18px;padding:16px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.game-card:hover{border-color:rgba(200,150,255,.6);transform:translateY(-2px);box-shadow:0 8px 24px rgba(100,0,200,.3)}
+.game-card:active{transform:translateY(1px)}
+.gc-inner{display:flex;align-items:center;gap:14px}
+.gc-icon{font-size:48px;filter:drop-shadow(0 0 12px rgba(255,200,0,.4));flex-shrink:0}
+.gc-name{font-family:'Zen Dots',cursive;font-size:15px;color:#fff;margin-bottom:4px}
+.gc-desc{font-size:12px;color:rgba(200,160,255,.6);line-height:1.5}
+.gc-arr{font-size:22px;color:rgba(200,160,255,.4);margin-left:auto}
+.poker-c{border-color:rgba(255,200,0,.35)}.janken-c{border-color:rgba(255,68,204,.35)}
+
+/* POKER */
+#spoker{align-items:center;justify-content:flex-start;overflow:hidden}
+.pt{background:rgba(0,0,0,.5);width:100%;border-bottom:2px solid rgba(100,0,200,.3);padding:8px 10px;flex-shrink:0}
+.pt-inner{display:flex;flex-direction:column;gap:1px;min-width:300px}
+.pt-hdr{display:flex;margin-bottom:2px}
+.pt-hb{width:30px;text-align:center;font-family:'Zen Dots',cursive;font-size:9px;color:rgba(200,160,255,.4)}
+.pt-row{display:flex;align-items:center;padding:2px 4px;border-radius:4px;border:1px solid transparent;transition:all .2s}
+.pt-row.hi{background:rgba(255,220,0,.18);border-color:rgba(255,220,0,.5)}
+.pt-n{flex:1;color:rgba(200,160,255,.75);font-family:'Boogaloo',cursive;font-size:12px}
+.pt-odds{display:flex;gap:3px}
+.pt-o{width:30px;text-align:center;font-family:'Zen Dots',cursive;font-size:10px;color:rgba(200,160,255,.4);background:rgba(255,255,255,.04);border-radius:3px;padding:1px 0}
+.pt-o.cur{color:var(--gold);background:rgba(255,220,0,.14)}.pt-o.mx{color:var(--red);background:rgba(255,50,50,.12)}
+.pk-hud{display:flex;justify-content:space-between;padding:6px 12px;background:rgba(0,0,0,.4);border-bottom:1px solid rgba(100,0,200,.3);flex-shrink:0}
+.pk-hud-col{display:flex;flex-direction:column;align-items:center}
+.pk-lbl{font-size:9px;letter-spacing:.15em;font-family:'Zen Dots',cursive;opacity:.5}
+.pk-val{font-size:26px;font-family:'Zen Dots',cursive;line-height:1}
+.pk-hud-col.m .pk-lbl,.pk-hud-col.m .pk-val{color:var(--gold);text-shadow:0 0 8px rgba(255,220,0,.4)}
+.pk-hud-col.w .pk-lbl,.pk-hud-col.w .pk-val{color:var(--grn);text-shadow:0 0 8px rgba(17,221,85,.3)}
+.ca{display:flex;gap:5px;padding:10px 8px 4px;justify-content:center;flex-shrink:0}
+.cw{display:flex;flex-direction:column;align-items:center;gap:4px}
+.card{width:60px;height:86px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:2px solid rgba(255,255,255,.12);box-shadow:0 4px 12px rgba(0,0,0,.6)}
+.card.up{background:linear-gradient(135deg,#fff,#f0f0ff)}.card.up.r{color:#cc0000}.card.up.b{color:#111133}
+.card.dn{background:linear-gradient(135deg,#2a0860,#160430)}.card.dn::after{content:'🃏';font-size:26px;opacity:.3}
+.card.hd{transform:translateY(-10px);border-color:var(--gold);box-shadow:0 0 16px rgba(255,220,0,.6),0 4px 12px rgba(0,0,0,.6)}
+.card.wg{animation:wg .5s ease infinite alternate}
+@keyframes wg{0%{box-shadow:0 0 8px rgba(255,220,0,.4)}100%{box-shadow:0 0 28px rgba(255,220,0,1)}}
+.ct{position:absolute;top:4px;left:6px;font-family:'Zen Dots',cursive;font-size:13px;line-height:1.2}
+.cs{font-size:26px;line-height:1}
+.cb{position:absolute;bottom:4px;right:6px;font-family:'Zen Dots',cursive;font-size:13px;line-height:1.2;transform:rotate(180deg)}
+.hl{font-family:'Zen Dots',cursive;font-size:10px;color:var(--gold);min-height:14px}
+.hl.h{visibility:hidden}
+.rd{text-align:center;padding:4px 8px;min-height:46px;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}
+.rn{font-family:'Zen Dots',cursive;font-size:clamp(16px,4.5vw,24px);color:var(--gold);text-shadow:0 0 16px rgba(255,220,0,.7);animation:pop .3s ease}
+.rw{font-size:13px;color:var(--grn);font-family:'Zen Dots',cursive}
+.rz{font-size:15px;color:rgba(200,160,255,.4);font-family:'Boogaloo',cursive}
+.pk-btns{display:flex;gap:8px;padding:6px 10px 10px;flex-shrink:0}
+.bg{display:flex;gap:5px;align-items:center}
+.bb{background:rgba(255,255,255,.16);border:2px solid rgba(220,180,255,.55);border-radius:14px;color:#fff;font-family:'Zen Dots',cursive;font-size:20px;padding:14px 20px;cursor:pointer;transition:all .1s}
+.bb:hover{background:rgba(255,255,255,.14)}.bb:active{transform:scale(.95)}.bb:disabled{opacity:.25;cursor:not-allowed}
+.bm{background:linear-gradient(160deg,#cc0044,#880022);color:#fff;border:none;border-radius:10px;font-family:'Zen Dots',cursive;font-size:11px;padding:10px;cursor:pointer;box-shadow:0 3px 0 #440011;transition:all .1s}
+.bm:active{transform:translateY(2px);box-shadow:0 1px 0 #440011}.bm:disabled{opacity:.25;cursor:not-allowed}
+.db{flex:1;background:linear-gradient(160deg,var(--gold),var(--ora));color:#1a0800;border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:23px;padding:17px;cursor:pointer;box-shadow:0 8px 0 #886600;transition:all .1s}
+.db:active{transform:translateY(4px);box-shadow:0 1px 0 #884400}.db:disabled{opacity:.25;cursor:not-allowed}
+
+/* UP GAME */
+#supgame{align-items:center;justify-content:center;gap:10px;padding:12px 10px;background:radial-gradient(ellipse at 50% 30%,rgba(0,80,180,.3),rgba(10,0,40,.5) 70%)}
+.ug-hdr{font-family:'Zen Dots',cursive;font-size:clamp(14px,4vw,20px);color:var(--gold);text-align:center}
+.ug-info{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.ug-box{background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:12px;padding:7px 14px;text-align:center}
+.ug-bl{font-size:10px;color:rgba(200,160,255,.55);letter-spacing:.1em;font-family:'Zen Dots',cursive}
+.ug-bv{font-family:'Zen Dots',cursive;line-height:1.1}
+.sg{background:rgba(255,255,255,.06);border:1px solid rgba(150,100,255,.2);border-radius:8px;padding:6px 12px;font-size:10px;color:rgba(200,160,255,.5);font-family:'Zen Dots',cursive;text-align:center}
+.ug-cards{display:flex;align-items:center;gap:10px;justify-content:center}
+.ug-l{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ug-r{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.uc{width:60px;height:84px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:2px solid rgba(255,255,255,.1);box-shadow:0 4px 12px rgba(0,0,0,.6)}
+.uc.up{background:linear-gradient(135deg,#fff,#f0f0ff)}.uc.up.r{color:#cc0000}.uc.up.b{color:#111133}
+.uc.dn{background:linear-gradient(135deg,#1a0440,#0a0220)}.uc.dn::after{content:'？';font-size:22px;color:rgba(150,100,255,.25);font-family:'Zen Dots',cursive}
+.uc.sel{border-color:var(--gold);box-shadow:0 0 16px rgba(255,220,0,.6)}
+.uc.rw{border-color:var(--grn);box-shadow:0 0 16px rgba(17,221,85,.7)}
+.uc.rl{border-color:var(--red);box-shadow:0 0 16px rgba(255,50,50,.7)}
+.uc.lo{border-color:var(--blu);box-shadow:0 0 12px rgba(0,170,255,.4)}
+.ug-ll{font-size:10px;font-family:'Zen Dots',cursive;color:rgba(200,160,255,.55);min-height:14px}
+.ug-ls{font-size:10px;color:rgba(255,220,0,.5);font-family:'Zen Dots',cursive;text-align:center}
+.ug-res{font-family:'Boogaloo',cursive;font-size:clamp(16px,4.5vw,24px);min-height:32px;text-align:center;color:rgba(200,160,255,.45)}
+.ug-res.ok{color:var(--gold);text-shadow:0 0 12px rgba(255,220,0,.6)}.ug-res.ng{color:var(--red);animation:shake .4s ease}
+.ug-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.ub{border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:12px;padding:11px 16px;cursor:pointer;transition:all .1s}
+.ub:active{transform:translateY(3px)}.ub:disabled{opacity:.25;cursor:not-allowed}
+.ud{background:linear-gradient(160deg,#ff4444,#cc1111);color:#fff;box-shadow:0 4px 0 #880000}
+.uh{background:linear-gradient(160deg,#ff8800,#cc5500);color:#fff;box-shadow:0 4px 0 #882200}
+.uq{background:linear-gradient(160deg,#11aa44,#008822);color:#fff;box-shadow:0 4px 0 #004411}
+
+/* CTRL */
+.ctrl{background:rgba(0,0,0,.4);border-top:2px solid var(--pur);border-radius:0 0 18px 18px;padding:10px 14px 14px;display:flex;gap:8px;justify-content:center}
+.ctrl.hidden{display:none}
+.cbtn{border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:12px;padding:11px 22px;cursor:pointer;transition:all .1s;position:relative;overflow:hidden;background:linear-gradient(160deg,#8844ff,#5511cc);color:#fff;box-shadow:0 4px 0 #330088}
+.cbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #330088}
+</style>
+</head>
+<body>
+<div class="cab">
+  <div class="mq"><div class="mq-inner">
+    <span>★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ </span>
+    <span>★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ </span>
+  </div></div>
+  <div class="tp">
+    <div class="led-row"><div class="led la"></div><div class="led lb"></div><div class="led lc"></div><div class="led ld"></div><div class="led le"></div><div class="led lf"></div><div class="led le"></div><div class="led ld"></div><div class="led lc"></div><div class="led lb"></div><div class="led la"></div></div>
+    <div class="cab-title">🏰 百式ゲーム王国</div>
+    <div class="cab-sub">HYAKUSHIKI GAME KINGDOM</div>
+  </div>
+  <div class="screen">
+    <div class="fl"></div>
+
+    <!-- LOGIN -->
+    <div id="slogin" class="gs active">
+      <div class="login-logo">🏰 百式ゲーム王国へ<br>ようこそ！</div>
+      <div class="login-box">
+        <div class="login-tabs">
+          <div class="login-tab active" id="tab-l" onclick="switchTab('login')">ログイン</div>
+          <div class="login-tab" id="tab-s" onclick="switchTab('signup')">新規登録</div>
+        </div>
+        <div class="login-box-title" id="lbt">名前とPINで入場</div>
+        <input class="login-input" id="lname" placeholder="なまえ（10文字以内）" maxlength="10"/>
+        <div class="pin-row"><div class="pin-dot" id="p0">●</div><div class="pin-dot" id="p1">●</div><div class="pin-dot" id="p2">●</div><div class="pin-dot" id="p3">●</div></div>
+        <div class="numpad">
+          <button class="nb" onclick="pin('1')">1</button><button class="nb" onclick="pin('2')">2</button><button class="nb" onclick="pin('3')">3</button>
+          <button class="nb" onclick="pin('4')">4</button><button class="nb" onclick="pin('5')">5</button><button class="nb" onclick="pin('6')">6</button>
+          <button class="nb" onclick="pin('7')">7</button><button class="nb" onclick="pin('8')">8</button><button class="nb" onclick="pin('9')">9</button>
+          <button class="nb nb-del" onclick="pin('del')">← 消す</button><button class="nb" onclick="pin('0')">0</button><button class="nb nb-ok" onclick="pin('ok')">OK ✓</button>
+        </div>
+        <div class="login-msg" id="lmsg"></div>
+      </div>
+    </div>
+
+    <!-- LOBBY -->
+    <div id="slobby" class="gs">
+      <div class="lobby-hdr">
+        <div class="lobby-av" id="lav">?</div>
+        <div style="flex:1">
+          <div class="lobby-name" id="lobby-name">---</div>
+          <div class="lobby-medals">🪙 <span id="lobby-medals">0</span>枚</div>
+        </div>
+        <button class="lobby-logout" onclick="logout()">ログアウト</button>
+      </div>
+      <div class="lobby-body">
+        <div class="lobby-sec">GAME SELECT</div>
+        <div class="game-card poker-c" onclick="startPoker()">
+          <div class="gc-inner">
+            <div class="gc-icon">🃏</div>
+            <div style="flex:1">
+              <div class="gc-name">メダルポーカー</div>
+              <div class="gc-desc">5枚で役を揃えよう！<br>MAX BET ロイヤルフラッシュ → ×1000枚！</div>
+            </div>
+            <div class="gc-arr">▶</div>
+          </div>
+        </div>
+        <div class="game-card janken-c" onclick="openJanken()">
+          <div class="gc-inner">
+            <div class="gc-icon">✊</div>
+            <div style="flex:1">
+              <div class="gc-name">GU-CHOKI-PA FEVER</div>
+              <div class="gc-desc">じゃんけん→ルーレット→ハイ＆ロー！<br>メダルを倍々にしよう！</div>
+            </div>
+            <div class="gc-arr">▶</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POKER -->
+    <div id="spoker" class="gs">
+      <div class="pt"><div class="pt-inner">
+        <div class="pt-hdr"><div style="flex:1"></div><div class="pt-hb">1</div><div class="pt-hb">2</div><div class="pt-hb">3</div><div class="pt-hb">4</div><div class="pt-hb" style="color:var(--red)">5</div></div>
+        <div class="pt-row" id="pt-rf"><div class="pt-n">ロイヤルフラッシュ</div><div class="pt-odds"><div class="pt-o">100</div><div class="pt-o">200</div><div class="pt-o">300</div><div class="pt-o">400</div><div class="pt-o mx">1000</div></div></div>
+        <div class="pt-row" id="pt-sf"><div class="pt-n">ストレートフラッシュ</div><div class="pt-odds"><div class="pt-o">50</div><div class="pt-o">100</div><div class="pt-o">150</div><div class="pt-o">200</div><div class="pt-o mx">250</div></div></div>
+        <div class="pt-row" id="pt-4k"><div class="pt-n">フォーカード</div><div class="pt-odds"><div class="pt-o">20</div><div class="pt-o">40</div><div class="pt-o">60</div><div class="pt-o">80</div><div class="pt-o mx">100</div></div></div>
+        <div class="pt-row" id="pt-fh"><div class="pt-n">フルハウス</div><div class="pt-odds"><div class="pt-o">9</div><div class="pt-o">18</div><div class="pt-o">27</div><div class="pt-o">36</div><div class="pt-o mx">45</div></div></div>
+        <div class="pt-row" id="pt-fl"><div class="pt-n">フラッシュ</div><div class="pt-odds"><div class="pt-o">6</div><div class="pt-o">12</div><div class="pt-o">18</div><div class="pt-o">24</div><div class="pt-o mx">30</div></div></div>
+        <div class="pt-row" id="pt-st"><div class="pt-n">ストレート</div><div class="pt-odds"><div class="pt-o">4</div><div class="pt-o">8</div><div class="pt-o">12</div><div class="pt-o">16</div><div class="pt-o mx">20</div></div></div>
+        <div class="pt-row" id="pt-3k"><div class="pt-n">スリーカード</div><div class="pt-odds"><div class="pt-o">3</div><div class="pt-o">6</div><div class="pt-o">9</div><div class="pt-o">12</div><div class="pt-o mx">15</div></div></div>
+        <div class="pt-row" id="pt-2p"><div class="pt-n">ツーペア</div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">4</div><div class="pt-o">6</div><div class="pt-o">8</div><div class="pt-o mx">10</div></div></div>
+        <div class="pt-row" id="pt-1p"><div class="pt-n">ワンペア(J以上)</div><div class="pt-odds"><div class="pt-o">1</div><div class="pt-o">2</div><div class="pt-o">3</div><div class="pt-o">4</div><div class="pt-o mx">5</div></div></div>
+      </div></div>
+      <div class="pk-hud">
+        <div class="pk-hud-col m"><div class="pk-lbl">MEDALS</div><div class="pk-val" id="pk-med">0</div></div>
+        <div class="pk-hud-col"><div class="pk-lbl" style="color:rgba(255,255,255,.5)">BET</div><div class="pk-val" id="pk-bet">1</div></div>
+        <div class="pk-hud-col w"><div class="pk-lbl">WIN</div><div class="pk-val" id="pk-win">0</div></div>
+      </div>
+      <div class="ca" id="pk-ca"></div>
+      <div class="rd" id="pk-rd"><div class="rz">DEAL を押してスタート</div></div>
+      <div class="pk-btns">
+        <div class="bg">
+          <button class="bb" id="bn-" onclick="chgB(-1)">－</button>
+          <button class="bb" id="bn+" onclick="chgB(1)">＋</button>
+          <button class="bm" id="bnM" onclick="chgB(99)">MAX</button>
+        </div>
+        <button class="db" id="dbn" onclick="dealDraw()">DEAL</button>
+      </div>
+    </div>
+
+    <!-- UP GAME -->
+    <div id="supgame" class="gs">
+      <div class="ug-hdr" id="ugh">🎯 アップゲーム</div>
+      <div class="ug-info">
+        <div class="ug-box"><div class="ug-bl">現在</div><div class="ug-bv" style="font-size:20px;color:var(--gold)" id="ugc">0枚</div></div>
+        <div class="ug-box"><div class="ug-bl">ダブル勝ち</div><div class="ug-bv" style="font-size:18px;color:var(--grn)" id="ugd">0枚</div></div>
+        <div class="ug-box"><div class="ug-bl">ハーフ勝ち</div><div class="ug-bv" style="font-size:18px;color:var(--blu)" id="ugh2">0枚</div></div>
+      </div>
+      <div class="sg">強さ：2＞A＞K＞Q＞J＞10＞9＞…＞3（2が最強）</div>
+      <div class="ug-cards">
+        <div class="ug-l">
+          <div class="ug-ll">基準カード</div>
+          <div class="uc dn" id="ulc"></div>
+          <div class="ug-ls" id="uls"></div>
+        </div>
+        <div style="font-size:20px;color:rgba(200,160,255,.4)">→</div>
+        <div class="ug-r">
+          <div class="uc dn" id="uc0" onclick="pickUG(0)"></div>
+          <div class="uc dn" id="uc1" onclick="pickUG(1)"></div>
+          <div class="uc dn" id="uc2" onclick="pickUG(2)"></div>
+          <div class="uc dn" id="uc3" onclick="pickUG(3)"></div>
+        </div>
+      </div>
+      <div class="ug-res" id="ugr">左のカードが開いたら1枚選んでください</div>
+      <div class="ug-btns">
+        <button class="ub ud" id="ubd" onclick="ugS('d')" disabled>🔥 ダブルアップ</button>
+        <button class="ub uh" id="ubh" onclick="ugS('h')" disabled>💫 ハーフアップ</button>
+        <button class="ub uq" id="ubq" onclick="ugQ()" disabled>💰 やめる</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctrl hidden" id="ctrl">
+    <button class="cbtn" onclick="goLobby()">← ロビーへ</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
+const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+const H={'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Accept':'application/json'};
+
+async function sbGet(p){try{const r=await fetch(SB+'/rest/v1/'+p,{headers:H});if(!r.ok)return null;return await r.json();}catch(e){return null;}}
+async function sbPost(p,b){try{const r=await fetch(SB+'/rest/v1/'+p,{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(b)});return r.ok;}catch(e){return false;}}
+async function sbPatch(p,b){try{const r=await fetch(SB+'/rest/v1/'+p,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(b)});return r.ok;}catch(e){return false;}}
+
+async function getUser(n){const r=await sbGet('game_users?select=*&name=eq.'+encodeURIComponent(n));return r&&r.length>0?r[0]:null;}
+async function createUser(n,pin){
+  // まずINSERT
+  let insertOk = false;
+  try{
+    const r=await fetch(SB+'/rest/v1/game_users',{
+      method:'POST',
+      headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({name:n,pin:pin,medals:100})
+    });
+    if(r.ok||r.status===201||r.status===204){
+      insertOk=true;
+    } else {
+      const txt=await r.text();
+      // エラー内容をユーザーに見せる
+      setMsg('登録エラー('+r.status+'): '+txt.slice(0,80),'err');
+      return null;
+    }
+  }catch(e){
+    setMsg('接続エラー: '+e.message,'err');
+    return null;
+  }
+  // INSERT成功 → GETで取得（最大8回リトライ）
+  for(let i=0;i<8;i++){
+    await new Promise(r=>setTimeout(r,500));
+    const u=await getUser(n);
+    if(u)return u;
+  }
+  // 取得できなくても仮のユーザーオブジェクトを返す
+  return {id:null,name:n,pin:pin,medals:100};
 }
-.cab{
-  width:min(480px,99vw);
-  background:linear-gradient(160deg,#9944ee 0%,#7722cc 50%,#3355dd 100%);
-  border-radius:24px 24px 14px 14px;
-  border:3px solid var(--pur);
-  box-shadow:0 0 0 1px #cc99ff,0 0 40px rgba(170,102,255,.55),0 0 80px rgba(170,102,255,.2),inset 0 1px 0 rgba(255,255,255,.12);
-  display:flex;flex-direction:column;
+async function saveMedals(id,m){if(!id)return;return sbPatch('game_users?id=eq.'+id,{medals:m});}
+
+let user=null,pinBuf='',lmode='login';
+let deck=[],hand=[],held=[],bet=1,win=0,phase='deal';
+let ugM=0,ugMode='',ugOn=false,ugPk=false,ugIdx=-1,ugLc=null,ugRc=[];
+
+function show(id){document.querySelectorAll('.gs').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('ctrl').classList.toggle('hidden',!['spoker','supgame'].includes(id));}
+function setMsg(t,c){const e=document.getElementById('lmsg');e.textContent=t;e.className='login-msg'+(c?' '+c:'');}
+function updPin(){for(let i=0;i<4;i++){const e=document.getElementById('p'+i);if(i<pinBuf.length){e.textContent='★';e.classList.add('filled');}else{e.textContent='●';e.classList.remove('filled');}}}
+function disableNP(v){document.querySelectorAll('.nb').forEach(b=>b.disabled=v);}
+
+function switchTab(m){lmode=m;document.getElementById('tab-l').classList.toggle('active',m==='login');document.getElementById('tab-s').classList.toggle('active',m==='signup');document.getElementById('lbt').textContent=m==='login'?'名前とPINで入場':'名前(10文字)とPIN(4桁)を決めてね';setMsg('','');pinBuf='';updPin();}
+
+function pin(v){
+  if(v==='del'){pinBuf=pinBuf.slice(0,-1);}
+  else if(v==='ok'){doAuth();}
+  else{if(pinBuf.length>=4)return;pinBuf+=v;if(pinBuf.length===4&&lmode==='login')doAuth();}
+  updPin();
 }
+
+async function doAuth(){
+  const name=document.getElementById('lname').value.trim();
+  if(!name){setMsg('名前を入力してください','err');return;}
+  if(pinBuf.length<4){setMsg('4桁のPINを入力してください','err');return;}
+  setMsg('確認中…','ing');disableNP(true);
+  if(lmode==='login'){
+    const u=await getUser(name);
+    disableNP(false);
+    if(!u){setMsg('ユーザーが見つかりません','err');pinBuf='';updPin();return;}
+    if(u.pin!==pinBuf){setMsg('PINが違います','err');pinBuf='';updPin();return;}
+    user=u;setMsg('ログイン成功！','ok');setTimeout(goLobby,500);
+  } else {
+    const ex=await getUser(name);
+    if(ex){disableNP(false);setMsg('その名前はすでに使われています','err');return;}
+    const u=await createUser(name,pinBuf);
+    disableNP(false);
+    if(!u){setMsg('登録に失敗しました。もう一度お試しください','err');return;}
+    user=u;setMsg('登録完了！ようこそ '+name+' さん！','ok');setTimeout(goLobby,700);
+  }
+}
+
+function logout(){user=null;pinBuf='';updPin();document.getElementById('lname').value='';setMsg('','');document.getElementById('ctrl').classList.add('hidden');show('slogin');}
+
+function goLobby(){
+  if(!user)return;
+  document.getElementById('lav').textContent=user.name[0].toUpperCase();
+  document.getElementById('lobby-name').textContent=user.name;
+  document.getElementById('lobby-medals').textContent=user.medals;
+  document.getElementById('ctrl').classList.add('hidden');
+  show('slobby');
+}
+function updLM(){if(user)document.getElementById('lobby-medals').textContent=user.medals;}
+function openJanken(){
+  const base=location.href.replace(/poker_fever[^/]*$/,'');
+  window.open(base+'index.html','_blank')||alert('じゃんけんフィーバーは index.html です！同じサーバーに置いてください。');
+}
+
+// POKER
+const S=['♠','♥','♦','♣'],SR=[false,true,true,false];
+const PAY=[
+  {id:'rf',n:'ロイヤルフラッシュ',o:[100,200,300,400,1000]},
+  {id:'sf',n:'ストレートフラッシュ',o:[50,100,150,200,250]},
+  {id:'4k',n:'フォーカード',o:[20,40,60,80,100]},
+  {id:'fh',n:'フルハウス',o:[9,18,27,36,45]},
+  {id:'fl',n:'フラッシュ',o:[6,12,18,24,30]},
+  {id:'st',n:'ストレート',o:[4,8,12,16,20]},
+  {id:'3k',n:'スリーカード',o:[3,6,9,12,15]},
+  {id:'2p',n:'ツーペア',o:[2,4,6,8,10]},
+  {id:'1p',n:'ワンペア(J以上)',o:[1,2,3,4,5]}
+];
+function cl(n){if(n===1)return'A';if(n===11)return'J';if(n===12)return'Q';if(n===13)return'K';return String(n);}
+function mkD(){let d=[];for(let s=0;s<4;s++)for(let n=1;n<=13;n++)d.push({s,n});return d.sort(()=>Math.random()-.5);}
+
+function startPoker(){if(!user)return;bet=1;win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
+function updH(){document.getElementById('pk-med').textContent=user?user.medals:0;document.getElementById('pk-bet').textContent=bet;document.getElementById('pk-win').textContent=win;}
+function chgB(d){if(phase!=='deal')return;bet=Math.max(1,Math.min(5,d===99?5:bet+d));updPT();updH();}
+function updPT(){PAY.forEach(p=>{const r=document.getElementById('pt-'+p.id);if(!r)return;r.classList.remove('hi');r.querySelectorAll('.pt-o').forEach((o,i)=>o.classList.toggle('cur',i===bet-1));});}
+function setBB(on){['bn-','bn+','bnM'].forEach(id=>document.getElementById(id).disabled=!on);}
+
+function renderFD(){const a=document.getElementById('pk-ca');a.innerHTML='';for(let i=0;i<5;i++){const w=document.createElement('div');w.className='cw';const c=document.createElement('div');c.className='card dn';const l=document.createElement('div');l.className='hl h';l.textContent='HOLD';w.appendChild(c);w.appendChild(l);a.appendChild(w);}}
+function renderC(){
+  const a=document.getElementById('pk-ca');a.innerHTML='';
+  hand.forEach((c,i)=>{
+    const w=document.createElement('div');w.className='cw';
+    const cd=document.createElement('div');
+    cd.className='card up '+(SR[c.s]?'r':'b')+(held[i]?' hd':'');
+    if(phase==='draw')cd.onclick=()=>{held[i]=!held[i];renderC();};
+    cd.innerHTML='<div class="ct">'+cl(c.n)+'<br>'+S[c.s]+'</div><div class="cs">'+S[c.s]+'</div><div class="cb">'+cl(c.n)+'</div>';
+    const l=document.createElement('div');l.className='hl'+(held[i]?'':' h');l.textContent='HOLD';
+    w.appendChild(cd);w.appendChild(l);a.appendChild(w);
+  });
+}
+
+function dealDraw(){if(phase==='deal')doDeal();else if(phase==='draw')doDraw();}
+function doDeal(){
+  if(!user||user.medals<bet){document.getElementById('pk-rd').innerHTML='<div class="rz">メダルが足りません！</div>';return;}
+  user.medals-=bet;win=0;updH();updLM();
+  deck=mkD();hand=deck.splice(0,5);held=Array(5).fill(false);
+  phase='draw';renderC();
+  document.getElementById('dbn').textContent='DRAW';setBB(false);
+  const r=chkR(hand);document.getElementById('pk-rd').innerHTML=r?'<div class="rz">'+r.n+'</div>':' <div class="rz">役なし</div>';
+  autoH();renderC();
+}
+function doDraw(){
+  for(let i=0;i<5;i++)if(!held[i])hand[i]=deck.shift();
+  phase='result';renderC();
+  document.querySelectorAll('[id^=pt-]').forEach(e=>e.classList.remove('hi'));
+  const r=chkR(hand);
+  if(r){
+    const m=r.o[bet-1];win=m;user.medals+=m;
+    document.querySelectorAll('.card').forEach(c=>c.classList.add('wg'));
+    document.getElementById('pt-'+r.id).classList.add('hi');
+    document.getElementById('pk-rd').innerHTML='<div class="rn">'+r.n+'</div><div class="rw">+'+m+'枚！</div>';
+    updH();updLM();saveMedals(user.id,user.medals);
+    phase='deal';document.getElementById('dbn').textContent='DEAL';setBB(true);
+    setTimeout(()=>showUG(m),900);
+  } else {
+    document.getElementById('pk-rd').innerHTML='<div class="rz">役なし</div>';
+    phase='deal';document.getElementById('dbn').textContent='DEAL';setBB(true);
+    updH();saveMedals(user.id,user.medals);
+  }
+}
+
+function chkR(h){
+  const ns=h.map(c=>c.n).sort((a,b)=>a-b),ss=h.map(c=>c.s);
+  const fl=ss.every(s=>s===ss[0]);
+  const st=(()=>{const u=[...new Set(ns)];if(u.length!==5)return false;if(u[4]-u[0]===4)return true;if(JSON.stringify(u)==='[1,2,3,4,5]')return true;if(JSON.stringify(u)==='[1,10,11,12,13]')return true;return false;})();
+  const royal=fl&&[1,10,11,12,13].every(n=>ns.includes(n));
+  const cnt={};ns.forEach(n=>cnt[n]=(cnt[n]||0)+1);
+  const vs=Object.values(cnt).sort((a,b)=>b-a);
+  const hp=Object.entries(cnt).filter(([n,c])=>c>=2&&(Number(n)>=11||Number(n)===1));
+  if(royal)return PAY[0];if(st&&fl)return PAY[1];if(vs[0]===4)return PAY[2];if(vs[0]===3&&vs[1]===2)return PAY[3];if(fl)return PAY[4];if(st)return PAY[5];if(vs[0]===3)return PAY[6];if(vs[0]===2&&vs[1]===2)return PAY[7];if(vs[0]===2&&hp.length>0)return PAY[8];return null;
+}
+function autoH(){
+  held=Array(5).fill(false);
+  const r=chkR(hand);
+  if(r&&['rf','sf','4k','fh'].includes(r.id)){held=Array(5).fill(true);return;}
+  for(let s=0;s<4;s++){const idx=hand.map((c,i)=>c.s===s?i:-1).filter(i=>i>=0);if(idx.length>=4){idx.forEach(i=>held[i]=true);return;}}
+  if(r){const cnt={};hand.forEach((c,i)=>{cnt[c.n]=cnt[c.n]||[];cnt[c.n].push(i);});Object.values(cnt).forEach(a=>{if(a.length>=2)a.forEach(i=>held[i]=true);});}
+}
+
+// UP GAME
+function showUG(m){
+  ugM=m;ugOn=false;ugPk=false;ugIdx=-1;
+  document.getElementById('ugh').textContent='🎯 アップゲーム';
+  document.getElementById('ugc').textContent=m+'枚';
+  document.getElementById('ugd').textContent=(m*2)+'枚';
+  document.getElementById('ugh2').textContent=(m+Math.floor(m/2))+'枚';
+  document.getElementById('ugr').textContent='どうしますか？';
+  document.getElementById('ugr').className='ug-res';
+  for(let i=0;i<4;i++){const e=document.getElementById('uc'+i);e.className='uc dn';e.innerHTML='';}
+  document.getElementById('ulc').className='uc dn';document.getElementById('ulc').innerHTML='';
+  document.getElementById('uls').textContent='';
+  document.getElementById('ubd').disabled=false;document.getElementById('ubh').disabled=false;document.getElementById('ubq').disabled=false;
+  show('supgame');
+}
+function ugStr(n){if(n===2)return 14;if(n===1)return 13;return n;}
+function ugSL(n){if(n===2)return'2(最強)';if(n===1)return'A';return cl(n);}
+
+function ugS(m){
+  ugMode=m;ugOn=true;ugPk=false;ugIdx=-1;
+  document.getElementById('ubd').disabled=true;document.getElementById('ubh').disabled=true;document.getElementById('ubq').disabled=true;
+  const d=mkD();ugLc=d[0];ugRc=[d[1],d[2],d[3],d[4]];
+  for(let i=0;i<4;i++){const e=document.getElementById('uc'+i);e.className='uc dn';e.innerHTML='';}
+  document.getElementById('ulc').className='uc dn';document.getElementById('ulc').innerHTML='';
+  document.getElementById('uls').textContent='';
+  document.getElementById('ugr').textContent='';document.getElementById('ugr').className='ug-res';
+  setTimeout(()=>{
+    const e=document.getElementById('ulc');
+    e.className='uc up lo '+(SR[ugLc.s]?'r':'b');
+    e.innerHTML='<div style="position:absolute;top:3px;left:5px;font-family:Zen Dots,sans-serif;font-size:12px">'+cl(ugLc.n)+'<br>'+S[ugLc.s]+'</div><div style="font-size:22px">'+S[ugLc.s]+'</div>';
+    document.getElementById('uls').textContent=ugSL(ugLc.n);
+    document.getElementById('ugr').textContent='右の4枚から1枚選んでください';
+  },400);
+}
+
+function pickUG(i){
+  if(!ugOn||ugPk||!ugLc)return;
+  ugPk=true;ugIdx=i;
+  document.getElementById('uc'+i).classList.add('sel');
+  const others=[0,1,2,3].filter(x=>x!==i);
+  let d=400;
+  others.forEach(x=>{setTimeout(()=>openUC(x,false),d);d+=500;});
+  setTimeout(()=>openUC(i,true),d);
+}
+function openUC(i,last){
+  const c=ugRc[i],e=document.getElementById('uc'+i);
+  e.className='uc up '+(SR[c.s]?'r':'b');
+  e.innerHTML='<div style="position:absolute;top:3px;left:5px;font-family:Zen Dots,sans-serif;font-size:12px">'+cl(c.n)+'<br>'+S[c.s]+'</div><div style="font-size:22px">'+S[c.s]+'</div>';
+  if(last)setTimeout(()=>judgeUG(ugStr(c.n),ugStr(ugLc.n)),400);
+}
+function judgeUG(rs,ls){
+  ugOn=false;
+  const e=document.getElementById('ugr');
+  if(rs===ls){e.textContent='引き分け！もう一度！';e.className='ug-res';setTimeout(()=>ugS(ugMode),1500);return;}
+  if(rs>ls){
+    if(ugMode==='d')ugM=ugM*2;else ugM=ugM+Math.floor(ugM/2);
+    e.textContent='勝ち！→ '+ugM+'枚！';e.className='ug-res ok';
+    document.getElementById('uc'+ugIdx).classList.add('rw');
+    document.getElementById('ugc').textContent=ugM+'枚';
+    document.getElementById('ugd').textContent=(ugM*2)+'枚';
+    document.getElementById('ugh2').textContent=(ugM+Math.floor(ugM/2))+'枚';
+    setTimeout(()=>{
+      e.textContent='続ける？それともやめる？';
+      document.getElementById('ubd').disabled=false;document.getElementById('ubh').disabled=false;document.getElementById('ubq').disabled=false;
+    },1500);
+  } else {
+    document.getElementById('uc'+ugIdx).classList.add('rl');
+    if(ugMode==='d'){
+      e.textContent='負け…メダルを失った…';e.className='ug-res ng';ugM=0;
+      setTimeout(()=>backP(),2500);
+    } else {
+      const sv=Math.floor(ugM/2);
+      e.textContent='負け…でも '+sv+'枚は確保！';e.className='ug-res ng';
+      ugM=sv;user.medals+=sv;saveMedals(user.id,user.medals);updLM();
+      setTimeout(()=>{document.getElementById('ubq').disabled=false;document.getElementById('ubq').textContent='💰 確定('+sv+'枚)';},1500);
+    }
+  }
+}
+function ugQ(){user.medals+=ugM;saveMedals(user.id,user.medals);updLM();backP();}
+function backP(){phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
+</script>
+</body>
+</html>
