@@ -6,10 +6,12 @@
 <title>百式ゲーム王国</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Boogaloo&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#ffdd00;--grn:#11dd55;--red:#ff3333;--blu:#00aaff;--pnk:#ff44cc;--ora:#ff8800;--pur:#9944ff;}
+:root{
+  --gold:#FFD700;--gold2:#FFA500;--dark:#0a0e1a;--dark2:#0f1628;--dark3:#1a2540;--blue:#1e3a6e;--blue2:#2952a3;--accent:#00d4ff;--green:#00e676;--red:#ff4444;--white:#ffffff;
+--gold:#ffdd00;--grn:#11dd55;--red:#ff3333;--blu:#00aaff;--pnk:#ff44cc;--ora:#ff8800;--pur:#9944ff;}
 *,::before,::after{margin:0;padding:0;box-sizing:border-box}
 body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;font-family:'Boogaloo',cursive;overflow-y:auto;overflow-x:hidden;padding:12px 0 24px}
-.cab{width:min(480px,99vw);background:linear-gradient(170deg,#1e0a44,#0e0428 60%,#080818);border-radius:20px;border:3px solid var(--pur);box-shadow:0 0 0 1px #bb66ff,0 0 40px rgba(120,0,255,.5);display:flex;flex-direction:column}
+.cab{width:min(480px,99vw);flex:1;background:linear-gradient(170deg,#1e0a44,#0e0428 60%,#080818);border-radius:20px;border:2px solid #FFD700;box-shadow:0 0 0 1px #bb66ff,0 0 40px rgba(120,0,255,.5);display:flex;flex-direction:column}
 .mq{background:rgba(0,0,0,.5);border-bottom:2px solid var(--pur);padding:5px 0;overflow:hidden;position:relative}
 .mq::before,.mq::after{content:'';position:absolute;top:0;bottom:0;width:16px;z-index:2}
 .mq::before{left:0;background:linear-gradient(90deg,rgba(0,0,0,.8),transparent)}
@@ -18,7 +20,7 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 @keyframes mqs{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .mq-inner span{font-family:'Zen Dots',cursive;font-size:12px;padding:0 20px;white-space:nowrap;background:linear-gradient(90deg,var(--gold),var(--pnk),var(--blu),var(--grn),var(--gold));background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rb 3s linear infinite}
 @keyframes rb{0%{background-position:0%}100%{background-position:200%}}
-.tp{background:rgba(0,0,0,.4);padding:10px 16px 8px;text-align:center;border-bottom:2px solid var(--pur)}
+.tp{background:linear-gradient(90deg,#0a0e1a,#1a2540,#0a0e1a);padding:10px 16px 8px;text-align:center;border-bottom:2px solid #FFD700}
 .led-row{display:flex;justify-content:center;gap:5px;margin-bottom:6px}
 .led{width:8px;height:8px;border-radius:50%;animation:lp 1.2s ease-in-out infinite}
 .la{background:var(--red);box-shadow:0 0 5px var(--red)}.lb{background:var(--ora);box-shadow:0 0 5px var(--ora);animation-delay:.1s}.lc{background:var(--gold);box-shadow:0 0 5px var(--gold);animation-delay:.2s}.ld{background:var(--grn);box-shadow:0 0 5px var(--grn);animation-delay:.3s}.le{background:var(--blu);box-shadow:0 0 5px var(--blu);animation-delay:.4s}.lf{background:var(--pnk);box-shadow:0 0 5px var(--pnk);animation-delay:.5s}
@@ -35,37 +37,37 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 
 /* LOGIN */
-#slogin{align-items:center;justify-content:center;gap:14px;padding:20px;background:radial-gradient(ellipse at 50% 30%,rgba(100,0,200,.4),transparent 70%)}
-.login-logo{font-family:'Zen Dots',cursive;font-size:clamp(22px,6vw,34px);text-align:center;line-height:1.5;background:linear-gradient(135deg,var(--gold),var(--pnk),var(--blu));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.login-box{background:rgba(255,255,255,.07);border:2px solid rgba(150,100,255,.4);border-radius:16px;padding:16px;width:100%;max-width:320px}
+#slogin{align-items:center;justify-content:center;gap:16px;padding:20px 16px;background:radial-gradient(ellipse at 50% 30%,rgba(255,215,0,.08),transparent 70%)}
+.login-logo{font-family:'Zen Dots',cursive;font-size:clamp(18px,5vw,26px);text-align:center;line-height:1.5;background:linear-gradient(135deg,#FFD700,#FFA500,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 12px rgba(255,215,0,.5));animation:bob 2s ease-in-out infinite}
+.login-box{background:rgba(255,255,255,.06);border:2px solid rgba(255,215,0,.4);border-radius:16px;padding:18px;width:100%;max-width:320px;box-shadow:inset 0 1px 0 rgba(255,215,0,.1)}
 .login-tabs{display:flex;margin-bottom:12px;border-radius:10px;overflow:hidden;border:1px solid rgba(150,100,255,.3)}
 .login-tab{flex:1;padding:8px;text-align:center;font-family:'Zen Dots',cursive;font-size:11px;cursor:pointer;background:rgba(255,255,255,.05);color:rgba(200,160,255,.6);transition:all .1s}
-.login-tab.active{background:rgba(100,0,200,.4);color:#fff}
+.login-tab.active{background:linear-gradient(160deg,#FFD700,#FF8C00);color:#0a0e1a;font-weight:bold}
 .login-box-title{font-family:'Zen Dots',cursive;font-size:11px;color:rgba(200,160,255,.65);margin-bottom:10px;text-align:center}
-.login-input{background:rgba(255,255,255,.1);border:2px solid rgba(150,100,255,.4);border-radius:10px;color:#fff;font-family:'Boogaloo',cursive;font-size:20px;padding:10px 14px;width:100%;outline:none;margin-bottom:10px}
-.login-input:focus{border-color:var(--gold)}.login-input::placeholder{color:rgba(200,160,255,.35)}
+.login-input{background:rgba(255,255,255,.07);border:2px solid rgba(255,215,0,.4);border-radius:12px;color:#fff;font-family:'Boogaloo',cursive;font-size:24px;padding:13px 16px;width:100%;outline:none;margin-bottom:12px}
+.login-input:focus{border-color:#FFD700;box-shadow:0 0 12px rgba(255,215,0,.3)}.login-input::placeholder{color:rgba(200,160,255,.35)}
 .pin-row{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
-.pin-dot{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(150,100,255,.4);font-size:20px;color:rgba(150,100,255,.4);display:flex;align-items:center;justify-content:center}
-.pin-dot.filled{background:rgba(100,0,200,.5);border-color:var(--pnk);color:var(--pnk)}
+.pin-dot{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.06);border:2px solid rgba(255,215,0,.4);font-size:24px;color:rgba(255,215,0,.4);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.pin-dot.filled{background:rgba(255,215,0,.3);border-color:#FFD700;color:#FFD700;box-shadow:0 0 14px rgba(255,215,0,.6)}
 .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:240px;margin:0 auto}
-.nb{background:rgba(255,255,255,.1);border:1px solid rgba(150,100,255,.3);border-radius:12px;color:#fff;font-family:'Zen Dots',cursive;font-size:18px;padding:12px;cursor:pointer;transition:all .1s}
-.nb:active{background:rgba(150,100,255,.3);transform:scale(.95)}.nb:disabled{opacity:.4;cursor:not-allowed}
+.nb{background:rgba(255,255,255,.08);border:2px solid rgba(255,215,0,.35);border-radius:14px;color:#FFD700;font-family:'Zen Dots',cursive;font-size:24px;padding:16px;cursor:pointer;transition:all .12s;position:relative;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.4)}
+.nb:active{background:rgba(255,215,0,.2);transform:scale(.94)}.nb:disabled{opacity:.4;cursor:not-allowed}
 .nb-del{background:rgba(255,80,80,.12);border-color:rgba(255,80,80,.3);font-size:12px}
 .nb-ok{background:rgba(255,220,0,.12);border-color:rgba(255,220,0,.4);color:var(--gold);font-size:12px}
 .login-msg{font-size:13px;text-align:center;min-height:20px;margin-top:6px}
 .login-msg.ok{color:var(--grn)}.login-msg.err{color:var(--red);animation:shake .3s ease}.login-msg.ing{color:var(--gold);animation:blk .8s step-end infinite}
 
 /* LOBBY */
-#slobby{align-items:center;justify-content:flex-start;overflow-y:auto}
-.lobby-hdr{background:rgba(0,0,0,.5);padding:14px 16px;width:100%;display:flex;align-items:center;gap:12px;border-bottom:2px solid rgba(120,0,255,.4)}
-.lobby-av{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#6600cc,#cc0066);display:flex;align-items:center;justify-content:center;font-family:'Zen Dots',cursive;font-size:20px;color:#fff;border:2px solid rgba(255,200,0,.5)}
-.lobby-name{font-family:'Zen Dots',cursive;font-size:16px;color:#fff;margin-bottom:2px}
+#slobby{align-items:center;justify-content:flex-start;overflow-y:auto;background:linear-gradient(180deg,#0f1628,#0a0e1a)}
+.lobby-hdr{background:linear-gradient(90deg,#1a2540,#0f1628);padding:14px 16px;width:100%;display:flex;align-items:center;gap:12px;border-bottom:2px solid #FFD700}
+.lobby-av{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FFA500);display:flex;align-items:center;justify-content:center;font-family:'Zen Dots',cursive;font-size:22px;color:#0a0e1a;font-weight:bold;border:2px solid rgba(255,215,0,.8);box-shadow:0 0 16px rgba(255,215,0,.5);flex-shrink:0}
+.lobby-name{font-family:'Zen Dots',cursive;font-size:18px;color:#FFD700;margin-bottom:3px;text-shadow:0 0 10px rgba(255,215,0,.5)}
 .lobby-medals{font-family:'Zen Dots',cursive;font-size:18px;color:var(--gold);text-shadow:0 0 8px rgba(255,220,0,.4)}
 .lobby-logout{background:rgba(255,255,255,.07);border:1px solid rgba(200,160,255,.3);color:rgba(200,160,255,.55);border-radius:50px;font-family:'Boogaloo',cursive;font-size:12px;padding:6px 14px;cursor:pointer;margin-left:auto}
 .lobby-body{display:flex;flex-direction:column;gap:10px;padding:14px;width:100%}
 .lobby-sec{font-family:'Zen Dots',cursive;font-size:10px;color:rgba(200,160,255,.4);letter-spacing:.2em;margin-bottom:2px}
-.game-card{background:rgba(255,255,255,.07);border:2px solid rgba(150,100,255,.3);border-radius:18px;padding:16px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
-.game-card:hover{border-color:rgba(200,150,255,.6);transform:translateY(-2px);box-shadow:0 8px 24px rgba(100,0,200,.3)}
+.game-card{background:linear-gradient(135deg,#1a2540,#0f1628);border:2px solid rgba(255,215,0,.4);border-radius:16px;padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.game-card:hover{border-color:#FFD700;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,215,0,.25)}
 .game-card:active{transform:translateY(1px)}
 .gc-inner{display:flex;align-items:center;gap:14px}
 .gc-icon{font-size:48px;filter:drop-shadow(0 0 12px rgba(255,200,0,.4));flex-shrink:0}
@@ -75,8 +77,8 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 .poker-c{border-color:rgba(255,200,0,.35)}.janken-c{border-color:rgba(255,68,204,.35)}
 
 /* POKER */
-#spoker{align-items:center;justify-content:flex-start;overflow:hidden}
-.pt{background:rgba(0,0,0,.5);width:100%;border-bottom:2px solid rgba(100,0,200,.3);padding:8px 10px;flex-shrink:0}
+#spoker{align-items:center;justify-content:flex-start;overflow:hidden;background:linear-gradient(180deg,#0f1628,#0a0e1a)}
+.pt{background:linear-gradient(90deg,#0a0e1a,#1a2540,#0a0e1a);width:100%;border-bottom:2px solid rgba(255,215,0,.4);padding:8px 10px;flex-shrink:0}
 .pt-inner{display:flex;flex-direction:column;gap:1px;min-width:300px}
 .pt-hdr{display:flex;margin-bottom:2px}
 .pt-hb{width:30px;text-align:center;font-family:'Zen Dots',cursive;font-size:9px;color:rgba(200,160,255,.4)}
@@ -86,11 +88,11 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 .pt-odds{display:flex;gap:3px}
 .pt-o{width:30px;text-align:center;font-family:'Zen Dots',cursive;font-size:10px;color:rgba(200,160,255,.4);background:rgba(255,255,255,.04);border-radius:3px;padding:1px 0}
 .pt-o.cur{color:var(--gold);background:rgba(255,220,0,.14)}.pt-o.mx{color:var(--red);background:rgba(255,50,50,.12)}
-.pk-hud{display:flex;justify-content:space-between;padding:6px 12px;background:rgba(0,0,0,.4);border-bottom:1px solid rgba(100,0,200,.3);flex-shrink:0}
+.pk-hud{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:linear-gradient(90deg,#1a2540,#0f1628,#1a2540);border-bottom:2px solid #FFD700;flex-shrink:0}
 .pk-hud-col{display:flex;flex-direction:column;align-items:center}
 .pk-lbl{font-size:9px;letter-spacing:.15em;font-family:'Zen Dots',cursive;opacity:.5}
 .pk-val{font-size:26px;font-family:'Zen Dots',cursive;line-height:1}
-.pk-hud-col.m .pk-lbl,.pk-hud-col.m .pk-val{color:var(--gold);text-shadow:0 0 8px rgba(255,220,0,.4)}
+.pk-hud-col.m .pk-lbl,.pk-hud-col.m .pk-val{color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,.7)}
 .pk-hud-col.w .pk-lbl,.pk-hud-col.w .pk-val{color:var(--grn);text-shadow:0 0 8px rgba(17,221,85,.3)}
 .ca{display:flex;gap:5px;padding:10px 8px 4px;justify-content:center;flex-shrink:0}
 .cw{display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -106,20 +108,20 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 .hl{font-family:'Zen Dots',cursive;font-size:10px;color:var(--gold);min-height:14px}
 .hl.h{visibility:hidden}
 .rd{text-align:center;padding:4px 8px;min-height:46px;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}
-.rn{font-family:'Zen Dots',cursive;font-size:clamp(16px,4.5vw,24px);color:var(--gold);text-shadow:0 0 16px rgba(255,220,0,.7);animation:pop .3s ease}
+.rn{font-family:'Zen Dots',cursive;font-size:clamp(22px,6vw,30px);color:#FFD700;text-shadow:0 0 16px rgba(255,215,0,.8),0 0 30px rgba(255,165,0,.4);animation:pop .28s cubic-bezier(.36,2,.5,1)}
 .rw{font-size:13px;color:var(--grn);font-family:'Zen Dots',cursive}
 .rz{font-size:15px;color:rgba(200,160,255,.4);font-family:'Boogaloo',cursive}
 .pk-btns{display:flex;gap:8px;padding:6px 10px 10px;flex-shrink:0}
 .bg{display:flex;gap:5px;align-items:center}
-.bb{background:rgba(255,255,255,.16);border:2px solid rgba(220,180,255,.55);border-radius:14px;color:#fff;font-family:'Zen Dots',cursive;font-size:20px;padding:14px 20px;cursor:pointer;transition:all .1s}
+.bb{background:rgba(255,255,255,.08);border:2px solid rgba(255,215,0,.4);border-radius:12px;color:#FFD700;font-family:'Zen Dots',cursive;font-size:18px;padding:12px 18px;cursor:pointer;transition:all .1s;box-shadow:0 3px 8px rgba(0,0,0,.3)}
 .bb:hover{background:rgba(255,255,255,.14)}.bb:active{transform:scale(.95)}.bb:disabled{opacity:.25;cursor:not-allowed}
-.bm{background:linear-gradient(160deg,#cc0044,#880022);color:#fff;border:none;border-radius:10px;font-family:'Zen Dots',cursive;font-size:11px;padding:10px;cursor:pointer;box-shadow:0 3px 0 #440011;transition:all .1s}
+.bm{background:linear-gradient(160deg,#ff4444,#cc0000);color:#fff;border:none;border-radius:12px;font-family:'Zen Dots',cursive;font-size:13px;padding:12px 14px;cursor:pointer;box-shadow:0 4px 0 #880000,0 0 12px rgba(255,50,50,.4);transition:all .1s}
 .bm:active{transform:translateY(2px);box-shadow:0 1px 0 #440011}.bm:disabled{opacity:.25;cursor:not-allowed}
-.db{flex:1;background:linear-gradient(160deg,var(--gold),var(--ora));color:#1a0800;border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:23px;padding:17px;cursor:pointer;box-shadow:0 8px 0 #886600;transition:all .1s}
+.db{flex:1;background:linear-gradient(160deg,#FFD700,#FF8C00);color:#0a0e1a;border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:20px;padding:15px;cursor:pointer;box-shadow:0 6px 0 #8B4500,0 0 20px rgba(255,215,0,.5),inset 0 2px 0 rgba(255,255,255,.3);transition:all .1s;position:relative;overflow:hidden;font-weight:bold}
 .db:active{transform:translateY(4px);box-shadow:0 1px 0 #884400}.db:disabled{opacity:.25;cursor:not-allowed}
 
 /* UP GAME */
-#supgame{align-items:center;justify-content:center;gap:10px;padding:12px 10px;background:radial-gradient(ellipse at 50% 30%,rgba(0,80,180,.3),rgba(10,0,40,.5) 70%)}
+#supgame{align-items:center;justify-content:center;gap:10px;padding:12px 10px;background:radial-gradient(ellipse at 50% 30%,rgba(0,212,255,.15),rgba(10,14,26,.9) 70%)}
 .ug-hdr{font-family:'Zen Dots',cursive;font-size:clamp(14px,4vw,20px);color:var(--gold);text-align:center}
 .ug-info{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .ug-box{background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:12px;padding:7px 14px;text-align:center}
@@ -150,11 +152,75 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 /* CTRL */
 .ctrl{background:rgba(0,0,0,.4);border-top:2px solid var(--pur);border-radius:0 0 18px 18px;padding:10px 14px 14px;display:flex;gap:8px;justify-content:center}
 .ctrl.hidden{display:none}
-.cbtn{border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:12px;padding:11px 22px;cursor:pointer;transition:all .1s;position:relative;overflow:hidden;background:linear-gradient(160deg,#8844ff,#5511cc);color:#fff;box-shadow:0 4px 0 #330088}
+.cbtn{border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:15px;padding:14px 28px;cursor:pointer;transition:all .1s;position:relative;overflow:hidden;background:linear-gradient(160deg,#FFD700,#FF8C00);color:#0a0e1a;font-weight:bold;box-shadow:0 5px 0 #8B4500,0 0 18px rgba(255,215,0,.4)}
 .cbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #330088}
+@keyframes bonusPop{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}70%{transform:translate(-50%,-50%) scale(1.05)}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+
+/* ════ サイドバー ════ */
+body{flex-direction:row;align-items:flex-start;}
+#sidebar{
+  width:200px;min-width:180px;max-width:200px;
+  background:linear-gradient(180deg,#0f1628,#0a0e1a);
+  border-right:2px solid rgba(255,215,0,.4);
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  padding:16px 12px;gap:12px;
+  position:sticky;top:0;
+  flex-shrink:0;
+}
+#sidebar.hidden{display:none}
+.sb-logo{text-align:center;padding-bottom:12px;border-bottom:1px solid rgba(255,215,0,.3);margin-bottom:4px}
+.sb-logo-t{font-family:'Zen Dots',cursive;font-size:13px;color:#FFD700;line-height:1.3}
+.sb-av{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#FFA500);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Zen Dots',cursive;font-size:24px;color:#0a0e1a;font-weight:bold;
+  border:2px solid rgba(255,215,0,.8);box-shadow:0 0 16px rgba(255,215,0,.4);
+  margin:0 auto 8px}
+.sb-name{font-family:'Zen Dots',cursive;font-size:14px;color:#fff;text-align:center;margin-bottom:4px}
+.sb-medals-box{background:linear-gradient(135deg,#1a2540,#0f1628);border:2px solid #FFD700;
+  border-radius:12px;padding:10px 8px;text-align:center;
+  box-shadow:0 0 12px rgba(255,215,0,.2)}
+.sb-medals-lbl{font-family:'Zen Dots',cursive;font-size:10px;color:rgba(255,215,0,.7);letter-spacing:.15em;margin-bottom:2px}
+.sb-medals-val{font-family:'Zen Dots',cursive;font-size:28px;color:#FFD700;
+  text-shadow:0 0 12px rgba(255,215,0,.8);line-height:1}
+.sb-medals-unit{font-family:'Zen Dots',cursive;font-size:12px;color:rgba(255,215,0,.7)}
+.sb-daily{background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.4);
+  border-radius:8px;padding:6px 8px;text-align:center;font-family:'Zen Dots',cursive;font-size:10px;color:#00e676}
+.sb-logout{background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.3);
+  color:rgba(255,215,0,.7);border-radius:50px;font-family:'Boogaloo',cursive;
+  font-size:13px;padding:7px;cursor:pointer;transition:all .1s;margin-top:auto;width:100%}
+.sb-logout:hover{background:rgba(255,68,68,.2);border-color:#ff4444;color:#ff4444}
+.sb-nav{display:flex;flex-direction:column;gap:6px}
+.sb-nav-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.25);
+  border-radius:10px;padding:10px 8px;cursor:pointer;transition:all .15s;
+  font-family:'Boogaloo',cursive;font-size:14px;color:rgba(255,255,255,.8);text-align:center}
+.sb-nav-btn:hover{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.6);color:#FFD700}
+.sb-nav-btn.active{background:rgba(255,215,0,.15);border-color:#FFD700;color:#FFD700}
+/* レスポンシブ: 狭いときはサイドバー非表示 */
+@media(max-width:480px){#sidebar{display:none}.cab{width:100vw;max-width:100vw}}
 </style>
 </head>
 <body>
+<div id="sidebar" class="hidden">
+  <div class="sb-logo">
+    <div style="font-size:28px">🏰</div>
+    <div class="sb-logo-t">百式ゲーム王国</div>
+  </div>
+  <div class="sb-av" id="sb-av">?</div>
+  <div class="sb-name" id="sb-name">---</div>
+  <div class="sb-medals-box">
+    <div class="sb-medals-lbl">🪙 MEDALS</div>
+    <div class="sb-medals-val" id="sb-medals">0</div>
+    <div class="sb-medals-unit">枚</div>
+  </div>
+  <div class="sb-daily" id="sb-daily">📅 デイリーボーナス<br>準備中...</div>
+  <div class="sb-nav">
+    <div class="sb-nav-btn" onclick="goLobby()">🏠 ロビー</div>
+    <div class="sb-nav-btn" onclick="startPoker()">🃏 ポーカー</div>
+    <div class="sb-nav-btn" onclick="openJanken()">✊ じゃんけん</div>
+  </div>
+  <button class="sb-logout" onclick="logout()">ログアウト</button>
+</div>
 <div class="cab">
   <div class="mq"><div class="mq-inner">
     <span>★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを貯めて王者を目指せ！ ★ </span>
@@ -294,6 +360,22 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 
 <script>
 'use strict';
+
+function updSidebar(){
+  if(!user){document.getElementById('sidebar').classList.add('hidden');return;}
+  document.getElementById('sidebar').classList.remove('hidden');
+  document.getElementById('sb-av').textContent=user.name[0].toUpperCase();
+  document.getElementById('sb-name').textContent=user.name;
+  document.getElementById('sb-medals').textContent=user.medals;
+  // デイリーボーナス状態確認
+  const TODAY=new Date().toISOString().slice(0,10);
+  const got=localStorage.getItem('daily_'+user.id)===TODAY;
+  document.getElementById('sb-daily').innerHTML=got?'✅ ボーナスもらい済み':'🎁 今日のボーナス待機中';
+  document.getElementById('sb-daily').style.color=got?'rgba(0,230,118,.7)':'#FFD700';
+  document.getElementById('sb-daily').style.borderColor=got?'rgba(0,230,118,.4)':'rgba(255,215,0,.4)';
+  document.getElementById('sb-daily').style.background=got?'rgba(0,230,118,.08)':'rgba(255,215,0,.08)';
+}
+
 const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
 const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
 const H={'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Accept':'application/json'};
@@ -374,7 +456,31 @@ async function doAuth(){
   }
 }
 
-function logout(){user=null;pinBuf='';updPin();document.getElementById('lname').value='';setMsg('','');document.getElementById('ctrl').classList.add('hidden');show('slogin');}
+function logout(){user=null;pinBuf='';updPin();document.getElementById('lname').value='';setMsg('','');document.getElementById('ctrl').classList.add('hidden');document.getElementById('sidebar').classList.add('hidden');show('slogin');}
+
+
+// ════ デイリーボーナス ════
+async function checkDailyBonus(userId, currentMedals) {
+  const TODAY = new Date().toISOString().slice(0,10);
+  const KEY = 'daily_' + userId;
+  // Supabaseにlast_bonus_dateカラムがないのでlocalStorageを使う
+  const last = localStorage.getItem(KEY);
+  if(last === TODAY) return currentMedals; // 今日もらい済み
+  // ボーナス付与
+  const newMedals = currentMedals + 100;
+  await sbPatch('game_users?id=eq.'+userId, {medals: newMedals});
+  localStorage.setItem(KEY, TODAY);
+  showBonusNotice();
+  return newMedals;
+}
+function showBonusNotice(){
+  const el = document.createElement('div');
+  el.id = 'daily-bonus-notice';
+  el.innerHTML = '🎁 デイリーボーナス<br><span style="font-size:28px;color:#FFD700">＋100枚</span><br>もらった！';
+  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);background:linear-gradient(135deg,#1a2540,#0f1628);border:3px solid #FFD700;border-radius:20px;padding:24px 32px;text-align:center;font-family:Zen Dots,cursive;color:#fff;z-index:9999;box-shadow:0 0 40px rgba(255,215,0,.6);animation:bonusPop .5s cubic-bezier(.36,2,.5,1) forwards';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 2500);
+}
 
 function goLobby(){
   if(!user)return;
