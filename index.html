@@ -9,11 +9,11 @@
 :root{--red:#ff3333;--yel:#ffdd00;--grn:#11dd55;--blu:#00aaff;--pnk:#ff44cc;--ora:#ff8800;}
 *,::before,::after{margin:0;padding:0;box-sizing:border-box}
 body{
-  background:linear-gradient(160deg,#3d0a66 0%,#280855 40%,#142266 100%);
+  background:linear-gradient(180deg,#0a0e1a 0%,#0f1628 60%,#0a0e1a 100%);
   min-height:100vh;display:flex;align-items:flex-start;justify-content:center;
   font-family:'Boogaloo',cursive;overflow-y:auto;overflow-x:hidden;padding:12px 0 24px;
 }
-.cab{width:min(460px,99vw);background:linear-gradient(160deg,#4a1e88 0%,#2e1266 50%,#1a2876 100%);border-radius:22px 22px 12px 12px;border:3px solid #aa66ff;box-shadow:0 0 0 1px #cc88ff,0 0 40px rgba(170,102,255,.6),0 0 80px rgba(170,102,255,.25);display:flex;flex-direction:column}
+.cab{width:min(460px,99vw);background:linear-gradient(180deg,#0f1628 0%,#1a2540 100%);border-radius:22px 22px 12px 12px;border:3px solid #aa66ff;box-shadow:0 0 30px rgba(255,215,0,.3),0 0 60px rgba(255,165,0,.1),inset 0 1px 0 rgba(255,215,0,.2);display:flex;flex-direction:column}
 .mq-wrap{background:rgba(0,0,0,.4);border-bottom:2px solid #8844ff;padding:5px 0;overflow:hidden;position:relative}
 .mq-wrap::before{content:'';position:absolute;left:0;top:0;bottom:0;width:20px;background:linear-gradient(90deg,rgba(0,0,0,.8),transparent);z-index:2}
 .mq-wrap::after{content:'';position:absolute;right:0;top:0;bottom:0;width:20px;background:linear-gradient(-90deg,rgba(0,0,0,.8),transparent);z-index:2}
@@ -26,9 +26,9 @@ body{
 .led{width:9px;height:9px;border-radius:50%;animation:lp 1.2s ease-in-out infinite}
 .l0{background:var(--red);box-shadow:0 0 6px var(--red)}.l1{background:var(--ora);box-shadow:0 0 6px var(--ora);animation-delay:.1s}.l2{background:var(--yel);box-shadow:0 0 6px var(--yel);animation-delay:.2s}.l3{background:var(--grn);box-shadow:0 0 6px var(--grn);animation-delay:.3s}.l4{background:var(--blu);box-shadow:0 0 6px var(--blu);animation-delay:.4s}.l5{background:var(--pnk);box-shadow:0 0 6px var(--pnk);animation-delay:.5s}
 @keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.2;transform:scale(.6)}}
-.cab-t{font-family:'Zen Dots',cursive;font-size:clamp(16px,4.5vw,24px);line-height:1.4;background:linear-gradient(135deg,#fff 0%,#ffdd00 30%,#ff44cc 60%,#00aaff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.cab-t{font-family:'Zen Dots',cursive;font-size:clamp(20px,5.5vw,32px);line-height:1.4;background:linear-gradient(135deg,#FFD700 0%,#FFA500 50%,#FFD700 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 8px rgba(255,215,0,.5))}
 .cab-s{font-size:10px;color:rgba(200,160,255,.6);letter-spacing:.2em;margin-top:3px;font-family:'Zen Dots',cursive}
-.screen{background:linear-gradient(180deg,#2e1450 0%,#1e0c40 100%);position:relative;overflow:hidden;min-height:500px;display:flex;flex-direction:column}
+.screen{background:linear-gradient(180deg,#0f1628 0%,#0a0e1a 100%);position:relative;overflow:hidden;min-height:500px;display:flex;flex-direction:column}
 .screen::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:200;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px)}
 .fl{position:absolute;left:0;right:0;height:2px;background:rgba(180,100,255,.08);animation:scA 9s linear infinite;pointer-events:none;z-index:201}
 @keyframes scA{0%{top:-2px;opacity:0}5%{opacity:1}95%{opacity:1}100%{top:110%;opacity:0}}
@@ -61,7 +61,7 @@ body{
 .att-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 
 /* RANKING */
-#srank{align-items:stretch;padding:14px 12px;gap:10px;background:radial-gradient(ellipse at 50% 20%,rgba(0,100,200,.3),transparent 70%)}
+#srank{background:linear-gradient(180deg,#0f1628,#0a0e1a)}
 /* SETUP SCREEN */
 #ssetup{align-items:center;justify-content:flex-start;gap:0;padding:0;overflow-y:auto;background:linear-gradient(180deg,#1a0840,#0d1240)}
 .setup-inner{display:flex;flex-direction:column;gap:12px;padding:16px;width:100%}
@@ -190,7 +190,7 @@ body{
 .nr{font-size:15px;color:#44ff88;text-shadow:0 0 10px rgba(68,255,136,.6);animation:blk .8s step-end infinite}
 .stars{font-size:44px;animation:hb .9s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(255,220,0,.8))}
 .btn-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
-.abtn{background:linear-gradient(160deg,#8844ff,#5511cc);color:#fff;border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:12px;padding:11px 16px;cursor:pointer;box-shadow:0 5px 0 #330088,0 0 12px rgba(136,68,255,.4);transition:all .1s}.abtn:active{transform:translateY(4px);box-shadow:0 1px 0 #330088}.abtn:hover{background:linear-gradient(160deg,#aa66ff,#6622dd)}
+.abtn{border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:15px;padding:13px 22px;cursor:pointer;transition:all .1s;background:linear-gradient(160deg,#FFD700,#FF8C00);color:#0a0e1a;font-weight:bold;box-shadow:0 5px 0 #8B4500,0 0 16px rgba(255,215,0,.4)}.abtn:active{transform:translateY(4px);box-shadow:0 1px 0 #8B4500}.abtn:hover{background:linear-gradient(160deg,#aa66ff,#6622dd)}
 .abtn.line-btn{background:linear-gradient(160deg,#06c755,#04a344);box-shadow:0 5px 0 #026622,0 0 12px rgba(6,199,85,.4)}.abtn.line-btn:hover{background:linear-gradient(160deg,#11dd66,#06b844)}
 </style>
 </head>
@@ -356,7 +356,7 @@ body{
       <div class="nr" id="gr-nr" style="display:none">★ NEW RECORD! ★</div>
       <div class="btn-row">
         <button class="abtn" onclick="startGame()">もう一度！</button>
-        <button class="abtn" onclick="goAttract()">タイトルへ</button><button class="abtn" onclick="location.href='poker_fever.html'" style="background:linear-gradient(160deg,#ffaa00,#ff6600);box-shadow:0 5px 0 #884400">🏰 王国へ</button>
+        <button class="abtn" onclick="goAttract()">タイトルへ</button><button class="abtn" onclick="location.href='poker_fever.html'" style="background:linear-gradient(160deg,#FFD700,#FF8C00);box-shadow:0 5px 0 #8B4500;color:#0a0e1a;font-weight:bold">🏰 王国へ</button>
         <button class="abtn" onclick="showRanking()">ランキング</button>
         <button class="abtn line-btn" onclick="shareToLINE()">📲 LINE</button>
       </div>
