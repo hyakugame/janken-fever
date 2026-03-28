@@ -153,39 +153,170 @@ body{background:#111;min-height:100vh;display:flex;font-family:var(--font-jp);ov
 .bm:disabled{opacity:.25;cursor:not-allowed}
 .db{flex:1;background:linear-gradient(180deg,#FFE000,#FFB300);color:#000;border:none;border-radius:8px;font-family:var(--font-en);font-size:22px;font-weight:900;padding:14px;cursor:pointer;box-shadow:0 5px 0 #886000,0 0 20px rgba(255,215,0,.4);letter-spacing:.08em;transition:all .1s;text-shadow:0 1px 0 rgba(255,255,255,.3)}
 .db:active{transform:translateY(4px);box-shadow:0 1px 0 #B37700}
-.db:disabled{opacity:.25;cursor:not-allowed}#supgame{align-items:center;justify-content:center;gap:10px;padding:10px;background:var(--dark)}
-.ug-hdr{font-family:var(--font-jp);font-weight:900;font-size:clamp(15px,4vw,20px);text-align:center;color:var(--gold)}
-.ug-info{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.ug-box{background:var(--dark2);border:2px solid #444;border-radius:8px;padding:7px 14px;text-align:center}
-.ug-bl{font-family:var(--font-en);font-size:10px;font-weight:700;color:#666;letter-spacing:.1em}
-.ug-bv{font-family:var(--font-en);font-size:20px;font-weight:900}
-.sg{background:var(--dark2);border:1px solid #333;border-radius:6px;padding:5px 10px;font-size:11px;color:#777;font-family:var(--font-jp);text-align:center}
-.ug-cards{display:flex;align-items:center;gap:14px;justify-content:center}
-.ug-l{display:flex;flex-direction:column;align-items:center;gap:4px}
-.ug-r{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.uc{width:60px;height:84px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:2px solid #555;box-shadow:0 3px 8px rgba(0,0,0,.5)}
-.uc.up{background:#fff}
-.uc.up.r{color:#C62828}
-.uc.up.b{color:#1A237E}
-.uc.dn{background:linear-gradient(135deg,#1A1A2E,#16213E);border-color:#333}
-.uc.sel{border-color:var(--gold);box-shadow:0 0 12px rgba(245,166,35,.6)}
-.uc.rwin{border-color:var(--green2);box-shadow:0 0 14px rgba(67,160,71,.7)}
-.uc.rlose{border-color:var(--red3);box-shadow:0 0 14px rgba(229,57,53,.7)}
-.uc.lopen{border-color:var(--blue2);}
-.ug-ll{font-family:var(--font-jp);font-size:10px;font-weight:700;color:#666;min-height:14px}
-.ug-ls{font-family:var(--font-en);font-size:12px;font-weight:700;color:var(--gold);text-align:center}
-.ug-res{font-family:var(--font-jp);font-weight:900;font-size:clamp(16px,4.5vw,22px);min-height:30px;text-align:center;color:#666}
-.ug-res.ok{color:var(--gold);animation:pop .3s ease}
-.ug-res.ng{color:var(--red3);animation:shake .4s ease}
-.ug-btns{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
-.ub{border:none;border-radius:20px;font-family:var(--font-jp);font-weight:700;font-size:14px;padding:13px 18px;cursor:pointer;transition:all .12s}
-.ub:active{transform:translateY(3px)}
-.ub:disabled{opacity:.25;cursor:not-allowed}
-.ud{background:var(--red2);color:var(--white);box-shadow:0 4px 0 #8B0000}
-.uh{background:#E65100;color:var(--white);box-shadow:0 4px 0 #8B2500}
-.uq{background:var(--green);color:var(--white);box-shadow:0 4px 0 #1B5E20}
+.db:disabled{opacity:.25;cursor:not-allowed}/* ══════════════════════════════════
+   DOUBLE UP — アーケード本格仕様
+══════════════════════════════════ */
+#supgame{
+  display:none;flex-direction:column;flex:1;position:relative;z-index:1;
+  background:linear-gradient(180deg,#000800 0%,#001500 60%,#000800 100%);
+}
+#supgame.active{display:flex}
+/* タイトルバー */
+.du-title-bar{
+  background:linear-gradient(90deg,#000,#001a00,#000);
+  border-top:2px solid #00aa00;border-bottom:2px solid #00aa00;
+  padding:5px 16px;text-align:center;flex-shrink:0;
+}
+.du-title{
+  font-family:var(--font-en);font-size:clamp(16px,3.5vw,22px);font-weight:900;
+  color:#00FF41;letter-spacing:.25em;text-shadow:0 0 12px rgba(0,255,65,.8),0 0 24px rgba(0,255,65,.4);
+}
+/* WIN表示 */
+.du-win-bar{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:8px 16px;background:rgba(0,0,0,.5);flex-shrink:0;
+}
+.du-win-lbl{font-family:var(--font-en);font-size:11px;font-weight:900;color:#00FF41;letter-spacing:.2em}
+.du-win-val{font-family:var(--font-en);font-size:38px;font-weight:900;color:#FFD700;
+  text-shadow:0 0 16px rgba(255,215,0,.9);line-height:1}
+.du-win-unit{font-family:var(--font-en);font-size:13px;color:rgba(255,215,0,.7)}
+/* メインカードエリア */
+.du-cards-area{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  gap:0;padding:8px 12px;position:relative;
+}
+/* ディーラーサイド */
+.du-dealer-side{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin-right:20px;
+}
+.du-side-lbl{
+  font-family:var(--font-en);font-size:13px;font-weight:900;
+  letter-spacing:.18em;color:#00aaff;text-shadow:0 0 8px rgba(0,170,255,.6);
+}
+/* プレイヤーサイド */
+.du-player-side{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.du-player-lbl{
+  font-family:var(--font-en);font-size:13px;font-weight:900;
+  letter-spacing:.18em;color:#FFD700;text-shadow:0 0 8px rgba(255,215,0,.6);
+}
+.du-player-cards{display:flex;gap:10px;}
+/* アーケード本格カード */
+.duc{
+  width:80px;height:112px;border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;transition:transform .12s,box-shadow .15s;position:relative;
+  border:2px solid #666;box-shadow:0 5px 16px rgba(0,0,0,.8);
+}
+.duc.up{background:linear-gradient(135deg,#fffff8,#fff9e6)}
+.duc.up.r{color:#C00000}
+.duc.up.b{color:#0D1B8F}
+.duc.dn{
+  background:radial-gradient(ellipse at 50% 40%,#1a3a7a,#0a1848);
+  border-color:#4488ff;
+  box-shadow:0 5px 16px rgba(0,0,0,.8),inset 0 0 18px rgba(80,130,255,.12);
+}
+.duc.dn::before{
+  content:'★ ★ ★';position:absolute;top:5px;font-size:8px;
+  color:rgba(100,160,255,.5);letter-spacing:4px;
+}
+.duc.dn::after{
+  content:'★';font-size:32px;color:rgba(100,160,255,.55);
+  text-shadow:0 0 8px rgba(100,160,255,.7);
+}
+.duc:hover:not(.dn):not([disabled]){transform:translateY(-5px);box-shadow:0 10px 22px rgba(0,0,0,.7)}
+.duc.sel{
+  border-color:#FFD700;
+  box-shadow:0 0 22px rgba(255,215,0,.9),0 5px 16px rgba(0,0,0,.6);
+  transform:translateY(-8px);
+}
+.duc.rwin{
+  border-color:#00FF41;
+  box-shadow:0 0 24px rgba(0,255,65,.9),0 5px 16px rgba(0,0,0,.6);
+  animation:winPulse .5s ease infinite alternate;
+}
+@keyframes winPulse{0%{box-shadow:0 0 14px rgba(0,255,65,.7),0 5px 16px rgba(0,0,0,.6)}100%{box-shadow:0 0 32px rgba(0,255,65,1),0 5px 16px rgba(0,0,0,.6)}}
+.duc.rlose{
+  border-color:#FF4444;
+  box-shadow:0 0 18px rgba(255,68,68,.8),0 5px 16px rgba(0,0,0,.6);
+  opacity:.7;
+}
+.duc.dealer-open{
+  border-color:#00aaff;
+  box-shadow:0 0 18px rgba(0,170,255,.6),0 5px 16px rgba(0,0,0,.6);
+}
+/* カード内の数字 */
+.duc-ct{position:absolute;top:5px;left:7px;font-family:Georgia,serif;font-size:20px;font-weight:900;line-height:1.1}
+.duc-cs{font-size:40px;line-height:1;display:flex;align-items:center;justify-content:center}
+.duc-cb{position:absolute;bottom:5px;right:7px;font-family:Georgia,serif;font-size:20px;font-weight:900;line-height:1.1;transform:rotate(180deg)}
+/* メッセージ */
+.du-msg{
+  text-align:center;min-height:40px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;padding:4px 12px;
+}
+.du-msg-txt{
+  font-family:var(--font-en);font-size:clamp(16px,4vw,24px);font-weight:900;
+  color:#888;letter-spacing:.08em;
+}
+.du-msg-txt.win{color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,1),0 0 40px rgba(255,165,0,.5);animation:pop .3s ease}
+.du-msg-txt.lose{color:#FF4444;text-shadow:0 0 16px rgba(255,68,68,.8);animation:shake .4s ease}
+.du-msg-txt.info{color:#00FF41;text-shadow:0 0 8px rgba(0,255,65,.5)}
+/* ボタンエリア — 筐体風 */
+.du-btn-area{
+  background:linear-gradient(180deg,#000,#0a0a0a);
+  border-top:3px solid #00aa00;
+  padding:10px 12px 14px;flex-shrink:0;
+}
+.du-btn-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
+/* 筐体ボタン風 */
+.du-btn{
+  border:none;border-radius:6px;cursor:pointer;transition:all .08s;
+  font-family:var(--font-en);font-weight:900;letter-spacing:.08em;
+  position:relative;overflow:hidden;
+}
+.du-btn::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:40%;
+  background:rgba(255,255,255,.12);border-radius:6px 6px 0 0;pointer-events:none;
+}
+.du-btn:active{transform:translateY(3px)}
+.du-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+/* DOUBLE UP ボタン — 赤 */
+.du-btn-double{
+  flex:1;background:linear-gradient(180deg,#CC0000,#880000);
+  color:#fff;font-size:clamp(13px,2.5vw,16px);padding:14px 10px;
+  box-shadow:0 5px 0 #440000,0 0 12px rgba(200,0,0,.3);
+  border-top:2px solid #FF4444;
+}
+/* HALF UP ボタン — オレンジ */
+.du-btn-half{
+  flex:1;background:linear-gradient(180deg,#E65100,#993500);
+  color:#fff;font-size:clamp(13px,2.5vw,16px);padding:14px 10px;
+  box-shadow:0 5px 0 #552000,0 0 12px rgba(200,80,0,.3);
+  border-top:2px solid #FF8C00;
+}
+/* COLLECT ボタン — 緑 */
+.du-btn-collect{
+  flex:1;background:linear-gradient(180deg,#1B5E20,#0D3B11);
+  color:#fff;font-size:clamp(13px,2.5vw,16px);padding:14px 10px;
+  box-shadow:0 5px 0 #061A08,0 0 12px rgba(0,150,0,.3);
+  border-top:2px solid #00FF41;
+}
+/* ボタンラベル */
+.du-btn-lbl{display:block;font-size:9px;color:rgba(255,255,255,.6);letter-spacing:.1em;margin-top:3px}
+/* 下部WAGER/CREDITS表示 */
+.du-hud{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:5px 14px 0;
+}
+.du-hud-col{display:flex;flex-direction:column;align-items:center}
+.du-hud-lbl{font-family:var(--font-en);font-size:11px;font-weight:900;letter-spacing:.2em;color:#00FF41}
+.du-hud-val{font-family:var(--font-en);font-size:28px;font-weight:900;color:#FFD700;text-shadow:0 0 8px rgba(255,215,0,.6);line-height:1.1}
 @keyframes flipIn{0%{transform:rotateY(90deg) scale(.8);opacity:0}60%{transform:rotateY(-8deg) scale(1.05)}100%{transform:rotateY(0deg) scale(1);opacity:1}}
-.uc.flip,.card.flip{animation:flipIn .35s ease forwards}
+.duc.flip{animation:flipIn .4s cubic-bezier(.25,1.4,.5,1) forwards}
+@keyframes dealerIn{0%{transform:scale(.3) rotate(-10deg);opacity:0}70%{transform:scale(1.08) rotate(2deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.duc.dealer-anim{animation:dealerIn .45s cubic-bezier(.25,1.4,.5,1) forwards}
 .ctrl{background:linear-gradient(180deg,#000,#001000);border-top:2px solid #333;padding:8px 14px 12px;display:flex;gap:8px;justify-content:center;flex-shrink:0}
 .ctrl.hidden{display:none}
 .cbtn{border:2px solid #555;border-radius:6px;font-family:var(--font-en);font-weight:900;font-size:13px;padding:11px 24px;cursor:pointer;background:linear-gradient(180deg,#333,#222);color:#aaa;box-shadow:0 3px 0 #000;transition:all .1s;letter-spacing:.05em}
@@ -282,28 +413,65 @@ body{background:#111;min-height:100vh;display:flex;font-family:var(--font-jp);ov
 </div>
 </div>
 <div id="supgame" class="gs">
-  <div class="ug-hdr" id="ugh">🎯 アップゲーム！</div>
-  <div class="ug-info">
-    <div class="ug-box"><div class="ug-bl">現在</div><div class="ug-bv" style="color:var(--gold)" id="ugc">0枚</div></div>
-    <div class="ug-box"><div class="ug-bl">ダブル勝ち</div><div class="ug-bv" style="color:var(--green2)" id="ugd">0枚</div></div>
-    <div class="ug-box"><div class="ug-bl">ハーフ勝ち</div><div class="ug-bv" style="color:var(--blue2)" id="ugh2">0枚</div></div>
+  <!-- タイトルバー -->
+  <div class="du-title-bar">
+    <div class="du-title">★ DOUBLE UP ★</div>
   </div>
-  <div class="sg">強さ：2＞A＞K＞Q＞J＞10…＞3（2が最強）</div>
-  <div class="ug-cards">
-    <div class="ug-l"><div class="ug-ll">左がオープン</div><div class="uc dn" id="ulc"></div><div class="ug-ls" id="uls"></div></div>
-    <div style="font-size:20px;color:#555">→</div>
-    <div class="ug-r">
-      <div class="uc dn" id="uc0" onclick="pickUG(0)"></div>
-      <div class="uc dn" id="uc1" onclick="pickUG(1)"></div>
-      <div class="uc dn" id="uc2" onclick="pickUG(2)"></div>
-      <div class="uc dn" id="uc3" onclick="pickUG(3)"></div>
+  <!-- WIN表示 -->
+  <div class="du-win-bar">
+    <div class="du-win-lbl">WIN</div>
+    <div class="du-win-val" id="du-win-val">0</div>
+    <div class="du-win-unit">MEDALS</div>
+  </div>
+  <!-- カードエリア -->
+  <div class="du-cards-area">
+    <!-- DEALER側 -->
+    <div class="du-dealer-side">
+      <div class="du-side-lbl">DEALER</div>
+      <div class="duc dn" id="duc-dealer"></div>
+      <div style="font-family:var(--font-en);font-size:13px;font-weight:900;color:#00aaff;min-height:18px;text-align:center" id="duc-dealer-lbl"></div>
+    </div>
+    <!-- 矢印 -->
+    <div style="font-size:28px;color:#444;margin:0 8px;margin-top:-20px">▶▶</div>
+    <!-- PLAYER側 -->
+    <div class="du-player-side">
+      <div class="du-player-lbl">PLAYER</div>
+      <div class="du-player-cards">
+        <div class="duc dn" id="duc0" onclick="pickDU(0)"></div>
+        <div class="duc dn" id="duc1" onclick="pickDU(1)"></div>
+        <div class="duc dn" id="duc2" onclick="pickDU(2)"></div>
+        <div class="duc dn" id="duc3" onclick="pickDU(3)"></div>
+      </div>
     </div>
   </div>
-  <div class="ug-res" id="ugr">左のカードより強いカードを選べ！</div>
-  <div class="ug-btns">
-    <button class="ub ud" id="ubd" onclick="ugS('d')" disabled>💰 ダブルアップ</button>
-    <button class="ub uh" id="ubh" onclick="ugS('h')" disabled>💸 ハーフアップ</button>
-    <button class="ub uq" id="ubq" onclick="ugQ()" disabled>💵 やめる</button>
+  <!-- メッセージ -->
+  <div class="du-msg"><div class="du-msg-txt info" id="du-msg">DEALER より強いカードを選べ！</div></div>
+  <!-- ボタンエリア -->
+  <div class="du-btn-area">
+    <div class="du-btn-row">
+      <button class="du-btn du-btn-double" id="du-btn-d" onclick="duStart('d')" disabled>
+        DOUBLE UP
+        <span class="du-btn-lbl">2倍 or ゼロ</span>
+      </button>
+      <button class="du-btn du-btn-half" id="du-btn-h" onclick="duStart('h')" disabled>
+        HALF UP
+        <span class="du-btn-lbl">1.5倍 or 半分</span>
+      </button>
+      <button class="du-btn du-btn-collect" id="du-btn-c" onclick="duCollect()" disabled>
+        COLLECT
+        <span class="du-btn-lbl">受け取る</span>
+      </button>
+    </div>
+    <div class="du-hud">
+      <div class="du-hud-col">
+        <div class="du-hud-lbl">CREDITS</div>
+        <div class="du-hud-val" id="du-credits">0</div>
+      </div>
+      <div class="du-hud-col">
+        <div class="du-hud-lbl">WAGER</div>
+        <div class="du-hud-val" id="du-wager">0</div>
+      </div>
+    </div>
   </div>
 </div>
 </div>
@@ -368,22 +536,118 @@ function bgmTick(){
 }
 function bgmPlay(m){if(bgmMode===m)return;bgmStop();bgmMode=m;bgmStep=0;bgmTick();}
 function bgmStop(){bgmMode=null;clearTimeout(bgmTid);bgmTid=null;}
-function seCard(){nz(0.04,0.10);tone('sine',880,0.03,0.07,0.01);}
-function seDeal(){[440,554,659,784,1047].forEach((f,i)=>tone('square',f,0.06,0.22,i*0.04));nz(0.05,0.04);}
-function seHold(){tone('sine',1047,0.05,0.08);tone('sine',1319,0.07,0.10,0.04);tone('sine',1568,0.08,0.14,0.09);}
-function seUnhold(){tone('square',659,0.04,0.14);tone('sine',523,0.03,0.10,0.05);}
-function seDraw(){[523,659,784,1047,1319].forEach((f,i)=>tone('triangle',f,0.12,0.22,i*0.05));nz(0.07,0.05);}
-function seWin(mult){
-  if(mult>=100){[261,329,392,523,659,784,1047,1319,1568,2093].forEach((f,i)=>tone('square',f,0.16,0.35,i*0.05));nz(0.3,0.12,0.6);setTimeout(()=>[523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>tone('triangle',f,0.14,0.3,i*0.07)),1100);}
-  else if(mult>=20){[523,659,784,1047,1319].forEach((f,i)=>tone('square',f,0.14,0.30,i*0.06));nz(0.2,0.10,0.45);}
-  else{[523,659,784,1047].forEach((f,i)=>tone('triangle',f,0.12,0.26,i*0.07));}
+// ═══ アーケード本格SE ═══
+function seCard(){
+  // カードめくり音（紙をめくる感じ）
+  nz(0.025,0.18);
+  tone('sine',1400,0.02,0.06,0.01);
+  tone('square',700,0.015,0.04,0.015);
 }
-function seLose(){tone('triangle',523,0.07,0.14);tone('sawtooth',392,0.07,0.18,0.1,300);tone('sawtooth',261,0.08,0.18,0.22,200);nz(0.10,0.08,0.38);}
-function seBet(){tone('square',880,0.02,0.16);tone('sine',1108,0.015,0.10,0.03);}
-function seLogin(){[523,659,784,1047,1319].forEach((f,i)=>tone('triangle',f,0.10,0.18,i*0.07));tone('sine',1568,0.08,0.14,0.38);}
-function seFlip(){nz(0.035,0.12);tone('sine',1200,0.025,0.07,0.01);tone('square',900,0.02,0.05,0.02);}
-function seUGWin(){tone('square',880,0.07,0.10);tone('square',1108,0.07,0.12,0.08);tone('square',1320,0.08,0.14,0.16);tone('sine',1760,0.08,0.18,0.26);}
-function seUGLose(){tone('sawtooth',330,0.09,0.20);tone('sawtooth',220,0.10,0.20,0.12,100);nz(0.12,0.10,0.22);}
+function seDeal(){
+  // ディール音（シャッ×5枚）
+  for(let i=0;i<5;i++){
+    setTimeout(()=>{nz(0.02,0.14);tone('sine',1100+i*60,0.015,0.04);},i*70);
+  }
+  tone('square',440,0.04,0.08,0.38);
+}
+function seHold(){
+  // HOLD決定音
+  tone('square',1320,0.05,0.06);
+  tone('square',1760,0.06,0.08,0.05);
+  tone('square',2093,0.08,0.12,0.1);
+}
+function seUnhold(){
+  // アンホールド音
+  tone('square',880,0.04,0.06);
+  tone('square',660,0.04,0.08,0.04);
+}
+function seDraw(){
+  // ドロー音
+  [660,880,1100,1320,1760].forEach((f,i)=>tone('square',f,0.08,0.18,i*0.04));
+  nz(0.06,0.06,0.22);
+}
+function seWin(mult){
+  if(mult>=100){
+    // ビッグウィン — コイン大量排出音
+    for(let i=0;i<8;i++){
+      setTimeout(()=>{
+        tone('square',880+i*80,0.10,0.22);
+        nz(0.04,0.12);
+      },i*80);
+    }
+    setTimeout(()=>{
+      [523,659,784,1047,784,1047,1319,1568,1319,2093].forEach((f,i)=>
+        tone('triangle',f,0.14,0.28,i*0.06));
+    },700);
+  } else if(mult>=20){
+    [659,784,1047,1319,1047,1319,1568].forEach((f,i)=>tone('square',f,0.10,0.20,i*0.06));
+    nz(0.15,0.08,0.45);
+  } else {
+    [523,659,784,1047].forEach((f,i)=>tone('square',f,0.09,0.16,i*0.07));
+    nz(0.08,0.06,0.30);
+  }
+}
+function seLose(){
+  // ハズレ音（ブーッ）
+  tone('sawtooth',220,0.10,0.20);
+  tone('sawtooth',180,0.10,0.22,0.08,120);
+  tone('sawtooth',150,0.12,0.24,0.18,100);
+  nz(0.12,0.10,0.40);
+}
+function seBet(){
+  // BET音（カチッ）
+  tone('square',1760,0.015,0.04);
+  nz(0.015,0.08);
+}
+function seLogin(){
+  // ログイン音
+  [523,659,784,1047,1319,1568].forEach((f,i)=>tone('triangle',f,0.10,0.16,i*0.07));
+}
+
+// ダブルアップ専用SE
+function seDuFlip(){
+  // カードめくり（重厚感）
+  nz(0.04,0.20);
+  tone('sine',1600,0.03,0.06,0.01);
+  tone('square',800,0.02,0.05,0.02);
+  tone('sine',400,0.04,0.08,0.03);
+}
+function seDuSelect(){
+  // カード選択音（ピッ）
+  tone('square',1320,0.06,0.05);
+  tone('square',1760,0.07,0.07,0.04);
+}
+function seDuWin(){
+  // ダブルアップ勝ち（ジャラ〜ン）
+  tone('square',880,0.08,0.10);
+  tone('square',1108,0.08,0.12,0.06);
+  tone('square',1320,0.09,0.14,0.12);
+  tone('square',1760,0.10,0.18,0.18);
+  tone('sine',2093,0.08,0.20,0.26);
+  setTimeout(()=>{
+    nz(0.10,0.12);
+    [1047,1319,1568,2093].forEach((f,i)=>tone('triangle',f,0.10,0.16,i*0.06));
+  },380);
+}
+function seDuLose(){
+  // ダブルアップ負け（ドン）
+  tone('sawtooth',330,0.12,0.18);
+  tone('sawtooth',220,0.14,0.22,0.10,150);
+  tone('sawtooth',180,0.15,0.25,0.20,120);
+  nz(0.18,0.14,0.36);
+}
+function seDuCollect(){
+  // コレクト（コイン受取音）
+  for(let i=0;i<5;i++){
+    setTimeout(()=>{
+      nz(0.025,0.15);
+      tone('square',660+i*50,0.06,0.08);
+    },i*60);
+  }
+}
+function seFlip(){seDuFlip();}
+function seUGWin(){seDuWin();}
+function seUGLose(){seDuLose();}
 document.addEventListener('click',wake,{once:true});
 document.addEventListener('touchstart',wake,{once:true});
 let user=null,pinBuf='',lmode='login';
@@ -754,101 +1018,113 @@ function autoH(){
 }
 
 function showUG(m){
-  ugM=m;ugOn=false;ugPk=false;ugIdx=-1;
-  document.getElementById('ugh').textContent='🎯 アップゲーム！';
-  document.getElementById('ugc').textContent=m+'枚';
-  document.getElementById('ugd').textContent=(m*2)+'枚';
-  document.getElementById('ugh2').textContent=(m+Math.floor(m/2))+'枚';
-  document.getElementById('ugr').textContent='どうする？';
-  document.getElementById('ugr').className='ug-res';
-  for(let i=0;i<4;i++){const e=document.getElementById('uc'+i);e.className='uc dn';e.innerHTML='';}
-  document.getElementById('ulc').className='uc dn';document.getElementById('ulc').innerHTML='';
-  document.getElementById('uls').textContent='';
-  ['ubd','ubh','ubq'].forEach(id=>{document.getElementById(id).disabled=false;});
-  document.getElementById('ubq').textContent='💵 やめる';
+  ugM=m;duOn=false;duPicked=false;duLc=null;duRc=[];
+  updDuDisplay();
+  setDuMsg('DOUBLE UP にチャレンジ？','info');
+  const de=document.getElementById('duc-dealer');
+  de.className='duc dn';de.innerHTML='';
+  document.getElementById('duc-dealer-lbl').textContent='';
+  for(let i=0;i<4;i++){const e=document.getElementById('duc'+i);e.className='duc dn';e.innerHTML='';e.onclick=null;}
+  setBtns(true);
   bgmPlay('up');show('supgame');
 }
-function ugStr(n){if(n===2)return 14;if(n===1)return 13;return n;}
-function ugSL(n){if(n===2)return'2 ★最強';if(n===1)return'A';return cl(n);}
-function makeUcHTML(c){
-  return '<div style="position:absolute;top:3px;left:5px;font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:700">'+cl(c.n)+'<br>'+S[c.s]+'</div><div style="font-size:22px">'+S[c.s]+'</div>';
+let duMode='',duOn=false,duPicked=false,duLc=null,duRc=[];
+function duStr(n){if(n===7||n===0)return 15;if(n===1)return 14;return n;}
+function duLabel(c){if(c&&c.joker)return'JOKER ★';if(c&&c.n===7)return'7 ★MAX';if(c&&c.n===1)return'A';return c?cl(c.n):'?';}
+function makeDucHTML(c){
+  if(!c)return'';
+  if(c.joker)return'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0a2e,#2d1b4e);border-radius:6px"><div style="font-size:36px">🃏</div><div style="font-family:Georgia,serif;font-size:12px;font-weight:900;color:#FFD700;letter-spacing:.1em">JOKER</div><div style="position:absolute;top:4px;left:6px;font-size:10px;color:#FFD700">★</div><div style="position:absolute;bottom:4px;right:6px;font-size:10px;color:#FFD700;transform:rotate(180deg)">★</div></div>';
+  const col=SR[c.s]?'#C00000':'#0D1B8F';
+  const w=c.n===7;
+  return '<div class="duc-ct" style="color:'+col+(w?';text-shadow:0 0 6px rgba(255,215,0,.8)':'')+'">'+cl(c.n)+'<br>'+S[c.s]+'</div><div class="duc-cs" style="color:'+col+'">'+S[c.s]+'</div><div class="duc-cb" style="color:'+col+'">'+cl(c.n)+'</div>';
 }
-function ugS(m){
-  ugMode=m;ugOn=true;ugPk=false;ugIdx=-1;wake();
-  ['ubd','ubh','ubq'].forEach(id=>{document.getElementById(id).disabled=true;});
-  const d=mkD();ugLc=d[0];ugRc=[d[1],d[2],d[3],d[4]];
-  for(let i=0;i<4;i++){const e=document.getElementById('uc'+i);e.className='uc dn';e.innerHTML='';}
-  document.getElementById('ulc').className='uc dn';document.getElementById('ulc').innerHTML='';
-  document.getElementById('uls').textContent='';
-  document.getElementById('ugr').textContent='';document.getElementById('ugr').className='ug-res';
+function updDuDisplay(){
+  document.getElementById('du-win-val').textContent=ugM;
+  document.getElementById('du-credits').textContent=user?user.medals:0;
+  document.getElementById('du-wager').textContent=ugM;
+}
+function setDuMsg(txt,cls){const e=document.getElementById('du-msg');e.textContent=txt;e.className='du-msg-txt '+(cls||'');}
+function setBtns(on){['du-btn-d','du-btn-h','du-btn-c'].forEach(id=>{document.getElementById(id).disabled=!on;});}
+
+function duStart(mode){
+  duMode=mode;duOn=false;duPicked=false;wake();
+  setBtns(false);
+  setDuMsg('DEALER のカードをオープン…','info');
+  const d=mkD();
+  const normCards=d.filter(c=>!c.joker);
+  duLc=normCards[Math.floor(Math.random()*normCards.length)];
+  const pool=d.filter(c=>!(c.s===duLc.s&&c.n===duLc.n));
+  duRc=[];
+  for(let i=0;i<4;i++){const idx=Math.floor(Math.random()*(pool.length-i));duRc.push(pool.splice(idx,1)[0]);}
+  for(let i=0;i<4;i++){const e=document.getElementById('duc'+i);e.className='duc dn';e.innerHTML='';e.onclick=null;}
+  const de=document.getElementById('duc-dealer');de.className='duc dn';de.innerHTML='';
   setTimeout(()=>{
-    const e=document.getElementById('ulc');
-    e.className='uc up lopen '+(SR[ugLc.s]?'r':'b');
-    e.innerHTML=makeUcHTML(ugLc);
-    e.classList.add('flip');
-    seFlip();
-    document.getElementById('uls').textContent=ugSL(ugLc.n);
-    document.getElementById('ugr').textContent='右から1枚選んで！左より強い？';
-  },300);
-}
-function pickUG(i){
-  if(!ugOn||ugPk||!ugLc)return;wake();
-  ugPk=true;ugIdx=i;
-  document.getElementById('uc'+i).classList.add('sel');
-  seHold();
-  const others=[0,1,2,3].filter(x=>x!==i);
-  let d=400;
-  others.forEach(x=>{setTimeout(()=>revealUC(x,false),d);d+=380;});
-  setTimeout(()=>revealUC(i,true),d);
-}
-function revealUC(i,last){
-  const c=ugRc[i],e=document.getElementById('uc'+i);
-  e.className='uc up '+(SR[c.s]?'r':'b');
-  e.innerHTML=makeUcHTML(c);
-  void e.offsetWidth;
-  e.classList.add('flip');
-  seFlip();
-  if(last)setTimeout(()=>judgeUG(ugStr(c.n),ugStr(ugLc.n)),380);
-}
-function judgeUG(rs,ls){
-  ugOn=false;const e=document.getElementById('ugr');
-  if(rs===ls){
-    e.textContent='引き分け！もう一度！';e.className='ug-res';
-    setTimeout(()=>ugS(ugMode),1500);return;
-  }
-  if(rs>ls){
-    if(ugMode==='d')ugM=ugM*2;else ugM=ugM+Math.floor(ugM/2);
-    e.textContent='🎉 勝ち！ → '+ugM+'枚！';e.className='ug-res ok';
-    document.getElementById('uc'+ugIdx).classList.add('rwin');
-    seUGWin();
-    document.getElementById('ugc').textContent=ugM+'枚';
-    document.getElementById('ugd').textContent=(ugM*2)+'枚';
-    document.getElementById('ugh2').textContent=(ugM+Math.floor(ugM/2))+'枚';
+    const de2=document.getElementById('duc-dealer');
+    const isJ=duLc.joker;
+    de2.className='duc up dealer-open '+(isJ?'joker-card':(SR[duLc.s]?'r':'b'));
+    de2.innerHTML=makeDucHTML(duLc);
+    void de2.offsetWidth;de2.classList.add('flip');
+    seDuFlip();
+    document.getElementById('duc-dealer-lbl').textContent=duLabel(duLc);
     setTimeout(()=>{
-      e.textContent='続ける？それともやめる？';
-      ['ubd','ubh','ubq'].forEach(id=>{document.getElementById(id).disabled=false;});
-    },1500);
+      setDuMsg('DEALER より強いカードを選べ！','info');
+      for(let i=0;i<4;i++){const ii=i;document.getElementById('duc'+i).onclick=()=>pickDU(ii);}
+      duOn=true;
+    },600);
+  },400);
+}
+
+function pickDU(i){
+  if(!duOn||duPicked)return;wake();
+  duPicked=true;seDuSelect();
+  document.getElementById('duc'+i).classList.add('sel');
+  const others=[0,1,2,3].filter(x=>x!==i);
+  let d=300;
+  others.forEach(x=>{setTimeout(()=>revealDUCard(x,false),d);d+=320;});
+  setTimeout(()=>revealDUCard(i,true),d);
+}
+function revealDUCard(i,isC){
+  const c=duRc[i],e=document.getElementById('duc'+i);
+  const wasSel=e.classList.contains('sel');
+  e.className='duc up '+(c.joker?'joker-card':(SR[c.s]?'r':'b'))+(wasSel?' sel':'');
+  e.innerHTML=makeDucHTML(c);
+  void e.offsetWidth;e.classList.add('flip');
+  seDuFlip();
+  if(isC)setTimeout(()=>judgeDU(i),420);
+}
+function judgeDU(i){
+  const chosen=duRc[i];
+  const ps=duStr(chosen.joker?0:chosen.n);
+  const ds=duStr(duLc.joker?0:duLc.n);
+  const e=document.getElementById('duc'+i);
+  if(ps===ds){setDuMsg('DRAW — もう一度！','info');setTimeout(()=>duStart(duMode),1800);return;}
+  if(ps>ds){
+    e.classList.remove('sel');e.classList.add('rwin');
+    ugM=(duMode==='d')?ugM*2:ugM+Math.floor(ugM/2);
+    updDuDisplay();seDuWin();bgmPlay('win');
+    setDuMsg('WIN!  →  '+ugM+'  MEDALS!','win');
+    setTimeout(()=>{setDuMsg('もう一度チャレンジ？','info');setBtns(true);duOn=false;duPicked=false;},1800);
   } else {
-    document.getElementById('uc'+ugIdx).classList.add('rlose');
-    seUGLose();
-    if(ugMode==='d'){
-      e.textContent='😢 負け…メダルを失った…';e.className='ug-res ng';ugM=0;
+    e.classList.remove('sel');e.classList.add('rlose');
+    seDuLose();bgmStop();
+    if(duMode==='d'){
+      setDuMsg('LOSE — GAME OVER','lose');ugM=0;
       setTimeout(()=>backP(),2500);
     } else {
-      const sv=Math.floor(ugM/2);
-      e.textContent='😢 負け…でも '+sv+'枚は守った！';e.className='ug-res ng';ugM=sv;
-      user.medals+=sv;saveMedals(user.id,user.medals);updLM();
-      setTimeout(()=>{
-        document.getElementById('ubq').disabled=false;
-        document.getElementById('ubq').textContent='💵 やめる ('+sv+'枚)';
-      },1500);
+      const sv=Math.floor(ugM/2);ugM=sv;
+      user.medals+=sv;saveMedals(user.id,user.medals);updLM();updDuDisplay();
+      setDuMsg('LOSE — HALF SAVED: '+sv+' MEDALS','lose');
+      setTimeout(()=>{document.getElementById('du-btn-c').disabled=false;},1800);
     }
   }
 }
-function ugQ(){wake();user.medals+=ugM;saveMedals(user.id,user.medals);updLM();seWin(ugM);backP();}
+function duCollect(){wake();seDuCollect();user.medals+=ugM;saveMedals(user.id,user.medals);updLM();setDuMsg('COLLECT: '+ugM+' MEDALS!','win');setTimeout(()=>backP(),1200);}
+function ugQ(){duCollect();}
+function ugS(m){duStart(m);}
+function pickUG(i){pickDU(i);}
 function backP(){
   phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();
-  document.getElementById('pk-rd').innerHTML='<div class="rz">◆ DEAL を押してスタート！</div>';
+  document.getElementById('pk-rd').innerHTML='<div class="rz">◆ DEAL TO BEGIN ◆</div>';
   document.getElementById('dbn').textContent='DEAL';setBB(true);
   bgmPlay('poker');show('spoker');
 }
