@@ -128,7 +128,7 @@ body{background:#111;min-height:100vh;display:flex;font-family:var(--font-jp);ov
 .card.up{background:linear-gradient(135deg,#fffef8,#fff9e6)}
 .card.up.r{color:#C00000}
 .card.up.b{color:#0D1B8F}
-.card.dn{background:repeating-linear-gradient(45deg,#0d2060,#0d2060 4px,#0a1848 4px,#0a1848 8px);border-color:#1e3a8a;box-shadow:0 6px 18px rgba(0,0,0,.8)}
+.card.dn{background:radial-gradient(ellipse at 50% 50%,#1a3a7a,#0a1848);border-color:#4488ff;box-shadow:0 6px 18px rgba(0,0,0,.8),inset 0 0 20px rgba(100,150,255,.15)}
 .card.hd{transform:translateY(-14px);border-color:#FFD700;box-shadow:0 0 20px rgba(255,215,0,.9),0 8px 20px rgba(0,0,0,.5)}
 .card.wg{animation:wgA .5s ease infinite alternate}
 @keyframes wgA{0%{box-shadow:0 0 12px rgba(255,215,0,.5),0 6px 18px rgba(0,0,0,.7)}100%{box-shadow:0 0 30px rgba(255,215,0,1),0 0 50px rgba(255,215,0,.6),0 6px 18px rgba(0,0,0,.7)}}
@@ -194,6 +194,10 @@ body{background:#111;min-height:100vh;display:flex;font-family:var(--font-jp);ov
 @keyframes bonusPop{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}70%{transform:translate(-50%,-50%) scale(1.06)}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
 @keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+.card.joker-card{background:linear-gradient(135deg,#1a0a2e,#2d1b4e) !important;border-color:#FFD700 !important;box-shadow:0 0 16px rgba(255,215,0,.5),0 6px 18px rgba(0,0,0,.7) !important}
+.card.wild-seven{background:linear-gradient(135deg,#fffef8,#fff9e6)}
+.card.wild-seven::after{content:'★';position:absolute;top:3px;right:3px;font-size:10px;color:#FFD700;pointer-events:none}
 </style>
 </head>
 <body>
@@ -212,10 +216,10 @@ body{background:#111;min-height:100vh;display:flex;font-family:var(--font-jp);ov
   <button class="sb-logout" onclick="logout()">ログアウト</button>
 </div>
 <div class="cab">
-<div class="mq-wrap"><div class="mq"><span>★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを集めて王者を目指せ！ ★ MAX BET ロイヤルフラッシュ ×1000枚！ ★ 1日1回ボーナス100枚！ ★</span><span>★ 百式ゲーム王国 ★ HYAKUSHIKI GAME KINGDOM ★ メダルを集めて王者を目指せ！ ★ MAX BET ロイヤルフラッシュ ×1000枚！ ★ 1日1回ボーナス100枚！ ★</span></div></div>
+<div class="mq-wrap"><div class="mq"><span>★ 百式ゲーム王国 ★ 7'S WILD PLUS — HYAKUSHIKI ★ メダルを集めて王者を目指せ！ ★ MAX BET ロイヤルフラッシュ ×1000枚！ ★ 1日1回ボーナス100枚！ ★</span><span>★ 7'S WILD PLUS ★ NATURAL ROYAL FLUSH ×4000! ★ FOUR 7S+JOKER ×5000! ★ 7とJOKERはワイルドカード ★ ツーペアは役なし ★ BET 1〜10枚 ★</span></div></div>
 <div class="tp">
   <div class="led-row"><div class="led l0"></div><div class="led l1"></div><div class="led l2"></div><div class="led l3"></div><div class="led l4"></div><div class="led l5"></div><div class="led l4"></div><div class="led l3"></div><div class="led l2"></div><div class="led l1"></div><div class="led l0"></div></div>
-  <div class="cab-t">👑 <span>百式</span>ゲーム王国</div>
+  <div class="cab-t">🃏 7's <span>WILD</span> PLUS</div>
   <div class="cab-s">HYAKUSHIKI GAME KINGDOM</div>
 </div>
 <div class="screen"><div class="fl"></div>
@@ -243,21 +247,23 @@ body{background:#111;min-height:100vh;display:flex;font-family:var(--font-jp);ov
   </div>
   <div class="lobby-body">
     <div class="lobby-sec">🎮 GAME SELECT</div>
-    <div class="game-card" onclick="gotoPoker()"><div class="gc-icon">🃏</div><div style="flex:1"><div class="gc-name">メダルポーカー</div><div class="gc-desc">5枚で役を揃えよう！ BET 1～10枚</div><div class="gc-badge">MAX BET ×1000枚</div></div><div class="gc-arr">▶</div></div>
+    <div class="game-card" onclick="gotoPoker()"><div class="gc-icon">🃏</div><div style="flex:1"><div class="gc-name">7's WILD PLUS</div><div class="gc-desc">5枚で役を揃えよう！ BET 1～10枚</div><div class="gc-badge">NATURAL ROYAL ×4000!</div></div><div class="gc-arr">▶</div></div>
     <div class="game-card" onclick="openJanken()"><div class="gc-icon">✊</div><div style="flex:1"><div class="gc-name">GU-CHOKI-PA FEVER</div><div class="gc-desc">じゃんけん→ルーレット→ハイ＆ロー！</div><div class="gc-badge">メダルを倍々に</div></div><div class="gc-arr">▶</div></div>
   </div>
 </div><div id="spoker" class="gs">
 <div class="pt"><div class="pt-inner">
-  <div class="pt-hdr"><div style="flex:1"></div><div class="pt-hb">1</div><div class="pt-hb">2</div><div class="pt-hb">3</div><div class="pt-hb">5</div><div class="pt-hb">7</div><div class="pt-hb" style="color:var(--red3)">10</div></div>
-  <div class="pt-row" id="pt-rf"><div class="pt-n">🎴 ロイヤルフラッシュ</div><div class="pt-odds"><div class="pt-o">100</div><div class="pt-o">200</div><div class="pt-o">300</div><div class="pt-o">500</div><div class="pt-o">700</div><div class="pt-o mx">1000</div></div></div>
-  <div class="pt-row" id="pt-sf"><div class="pt-n">♠ ストレートフラッシュ</div><div class="pt-odds"><div class="pt-o">50</div><div class="pt-o">100</div><div class="pt-o">150</div><div class="pt-o">250</div><div class="pt-o">350</div><div class="pt-o mx">500</div></div></div>
-  <div class="pt-row" id="pt-4k"><div class="pt-n">💎 フォーカード</div><div class="pt-odds"><div class="pt-o">20</div><div class="pt-o">40</div><div class="pt-o">60</div><div class="pt-o">100</div><div class="pt-o">140</div><div class="pt-o mx">200</div></div></div>
-  <div class="pt-row" id="pt-fh"><div class="pt-n">🦁 フルハウス</div><div class="pt-odds"><div class="pt-o">9</div><div class="pt-o">18</div><div class="pt-o">27</div><div class="pt-o">45</div><div class="pt-o">63</div><div class="pt-o mx">90</div></div></div>
-  <div class="pt-row" id="pt-fl"><div class="pt-n">🍀 フラッシュ</div><div class="pt-odds"><div class="pt-o">6</div><div class="pt-o">12</div><div class="pt-o">18</div><div class="pt-o">30</div><div class="pt-o">42</div><div class="pt-o mx">60</div></div></div>
-  <div class="pt-row" id="pt-st"><div class="pt-n">⚡ ストレート</div><div class="pt-odds"><div class="pt-o">4</div><div class="pt-o">8</div><div class="pt-o">12</div><div class="pt-o">20</div><div class="pt-o">28</div><div class="pt-o mx">40</div></div></div>
-  <div class="pt-row" id="pt-3k"><div class="pt-n">🌟 スリーカード</div><div class="pt-odds"><div class="pt-o">3</div><div class="pt-o">6</div><div class="pt-o">9</div><div class="pt-o">15</div><div class="pt-o">21</div><div class="pt-o mx">30</div></div></div>
-  <div class="pt-row" id="pt-2p"><div class="pt-n">👑 ツーペア</div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">4</div><div class="pt-o">6</div><div class="pt-o">10</div><div class="pt-o">14</div><div class="pt-o mx">20</div></div></div>
-  <div class="pt-row" id="pt-1p"><div class="pt-n">🃏 ワンペア(J以上)</div><div class="pt-odds"><div class="pt-o">1</div><div class="pt-o">2</div><div class="pt-o">3</div><div class="pt-o">5</div><div class="pt-o">7</div><div class="pt-o mx">10</div></div></div>
+  <div class="pt-hdr"><div style="flex:1;font-family:var(--font-en);font-size:9px;color:#00FF41;letter-spacing:.05em">HAND</div><div class="pt-hb">1</div><div class="pt-hb">2</div><div class="pt-hb">3</div><div class="pt-hb">4</div><div class="pt-hb">5</div><div class="pt-hb">6</div><div class="pt-hb">7</div><div class="pt-hb">8</div><div class="pt-hb">9</div><div class="pt-hb" style="color:#FFD700">10</div></div>
+  <div class="pt-row" id="pt-nrf"><div class="pt-n">NATURAL ROYAL FLUSH</div><div class="pt-odds"><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o">800</div><div class="pt-o mx">4000</div></div></div>
+  <div class="pt-row" id="pt-fs7"><div class="pt-n">FOUR 7s + JOKER</div><div class="pt-odds"><div class="pt-o">500</div><div class="pt-o">1000</div><div class="pt-o">1500</div><div class="pt-o">2000</div><div class="pt-o">2500</div><div class="pt-o">3000</div><div class="pt-o">3500</div><div class="pt-o">4000</div><div class="pt-o">4500</div><div class="pt-o mx">5000</div></div></div>
+  <div class="pt-row" id="pt-f47"><div class="pt-n">FOUR SEVENS</div><div class="pt-odds"><div class="pt-o">100</div><div class="pt-o">200</div><div class="pt-o">300</div><div class="pt-o">400</div><div class="pt-o">500</div><div class="pt-o">600</div><div class="pt-o">700</div><div class="pt-o">800</div><div class="pt-o">900</div><div class="pt-o mx">1000</div></div></div>
+  <div class="pt-row" id="pt-wrf"><div class="pt-n">ROYAL FLUSH W/ WILD</div><div class="pt-odds"><div class="pt-o">100</div><div class="pt-o">200</div><div class="pt-o">300</div><div class="pt-o">400</div><div class="pt-o">500</div><div class="pt-o">600</div><div class="pt-o">700</div><div class="pt-o">800</div><div class="pt-o">900</div><div class="pt-o mx">1000</div></div></div>
+  <div class="pt-row" id="pt-5ok"><div class="pt-n">FIVE OF A KIND</div><div class="pt-odds"><div class="pt-o">50</div><div class="pt-o">100</div><div class="pt-o">150</div><div class="pt-o">200</div><div class="pt-o">250</div><div class="pt-o">300</div><div class="pt-o">350</div><div class="pt-o">400</div><div class="pt-o">450</div><div class="pt-o mx">500</div></div></div>
+  <div class="pt-row" id="pt-sf"><div class="pt-n">STRAIGHT FLUSH</div><div class="pt-odds"><div class="pt-o">40</div><div class="pt-o">80</div><div class="pt-o">120</div><div class="pt-o">160</div><div class="pt-o">200</div><div class="pt-o">240</div><div class="pt-o">280</div><div class="pt-o">320</div><div class="pt-o">360</div><div class="pt-o mx">400</div></div></div>
+  <div class="pt-row" id="pt-4ok"><div class="pt-n">FOUR OF A KIND</div><div class="pt-odds"><div class="pt-o">20</div><div class="pt-o">40</div><div class="pt-o">60</div><div class="pt-o">80</div><div class="pt-o">100</div><div class="pt-o">120</div><div class="pt-o">140</div><div class="pt-o">160</div><div class="pt-o">180</div><div class="pt-o mx">200</div></div></div>
+  <div class="pt-row" id="pt-fh"><div class="pt-n">FULL HOUSE</div><div class="pt-odds"><div class="pt-o">10</div><div class="pt-o">20</div><div class="pt-o">30</div><div class="pt-o">40</div><div class="pt-o">50</div><div class="pt-o">60</div><div class="pt-o">70</div><div class="pt-o">80</div><div class="pt-o">90</div><div class="pt-o mx">100</div></div></div>
+  <div class="pt-row" id="pt-fl"><div class="pt-n">FLUSH</div><div class="pt-odds"><div class="pt-o">6</div><div class="pt-o">12</div><div class="pt-o">18</div><div class="pt-o">24</div><div class="pt-o">30</div><div class="pt-o">36</div><div class="pt-o">42</div><div class="pt-o">48</div><div class="pt-o">54</div><div class="pt-o mx">60</div></div></div>
+  <div class="pt-row" id="pt-st"><div class="pt-n">STRAIGHT</div><div class="pt-odds"><div class="pt-o">4</div><div class="pt-o">8</div><div class="pt-o">12</div><div class="pt-o">16</div><div class="pt-o">20</div><div class="pt-o">24</div><div class="pt-o">28</div><div class="pt-o">32</div><div class="pt-o">36</div><div class="pt-o mx">40</div></div></div>
+  <div class="pt-row" id="pt-3ok"><div class="pt-n">THREE OF A KIND</div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">4</div><div class="pt-o">6</div><div class="pt-o">8</div><div class="pt-o">10</div><div class="pt-o">12</div><div class="pt-o">14</div><div class="pt-o">16</div><div class="pt-o">18</div><div class="pt-o mx">20</div></div></div>
 </div></div>
 <div class="pk-hud">
   <div class="pk-hud-col m"><div class="pk-lbl">CREDITS</div><div class="pk-val" id="pk-med">0</div></div>
@@ -500,20 +506,28 @@ function openJanken(){
 
 const S=['♠','♥','♦','♣'],SR=[false,true,true,false];
 const PAY=[
-  {id:'rf',n:'🎴 ロイヤルフラッシュ',o:[100,200,300,500,700,1000]},
-  {id:'sf',n:'♠ ストレートフラッシュ',o:[50,100,150,250,350,500]},
-  {id:'4k',n:'💎 フォーカード',o:[20,40,60,100,140,200]},
-  {id:'fh',n:'🦁 フルハウス',o:[9,18,27,45,63,90]},
-  {id:'fl',n:'🍀 フラッシュ',o:[6,12,18,30,42,60]},
-  {id:'st',n:'⚡ ストレート',o:[4,8,12,20,28,40]},
-  {id:'3k',n:'🌟 スリーカード',o:[3,6,9,15,21,30]},
-  {id:'2p',n:'👑 ツーペア',o:[2,4,6,10,14,20]},
-  {id:'1p',n:'🃏 ワンペア(J以上)',o:[1,2,3,5,7,10]}
+  {id:'nrf',n:'NATURAL ROYAL FLUSH',o:[800,800,800,800,800,800,800,800,800,4000]},
+  {id:'fs7',n:'FOUR SEVENS PLUS JOKER',o:[500,1000,1500,2000,2500,3000,3500,4000,4500,5000]},
+  {id:'f47',n:'FOUR SEVENS',o:[100,200,300,400,500,600,700,800,900,1000]},
+  {id:'wrf',n:'ROYAL FLUSH W/ WILD',o:[100,200,300,400,500,600,700,800,900,1000]},
+  {id:'5ok',n:'FIVE OF A KIND',o:[50,100,150,200,250,300,350,400,450,500]},
+  {id:'sf', n:'STRAIGHT FLUSH',o:[40,80,120,160,200,240,280,320,360,400]},
+  {id:'4ok',n:'FOUR OF A KIND',o:[20,40,60,80,100,120,140,160,180,200]},
+  {id:'fh', n:'FULL HOUSE',o:[10,20,30,40,50,60,70,80,90,100]},
+  {id:'fl', n:'FLUSH',o:[6,12,18,24,30,36,42,48,54,60]},
+  {id:'st', n:'STRAIGHT',o:[4,8,12,16,20,24,28,32,36,40]},
+  {id:'3ok',n:'THREE OF A KIND',o:[2,4,6,8,10,12,14,16,18,20]}
 ];
-const BETS=[1,2,3,5,7,10];
+const BETS=[1,2,3,4,5,6,7,8,9,10];
 function betIdx(b){return BETS.indexOf(b);}
 function cl(n){if(n===1)return'A';if(n===11)return'J';if(n===12)return'Q';if(n===13)return'K';return String(n);}
-function mkD(){let d=[];for(let s=0;s<4;s++)for(let n=1;n<=13;n++)d.push({s,n});return d.sort(()=>Math.random()-.5);}
+function mkD(){
+  let d=[];
+  for(let s=0;s<4;s++) for(let n=1;n<=13;n++) d.push({s,n,w:n===7});
+  d.push({s:-1,n:0,w:true,joker:true}); // ジョーカー
+  return d.sort(()=>Math.random()-.5);
+}
+function isWild(c){return c.w===true;}
 
 function startPoker(){
   if(!user)return;wake();
@@ -541,12 +555,31 @@ function updPT(){
   PAY.forEach(p=>{
     const r=document.getElementById('pt-'+p.id);if(!r)return;
     r.classList.remove('hi');
-    r.querySelectorAll('.pt-o').forEach((o,i)=>o.classList.toggle('cur',i===bi));
+    r.querySelectorAll('.pt-o').forEach((o,i)=>{
+      o.classList.toggle('cur',i===bi);
+    });
   });
 }
 function setBB(on){['bn-','bn+','bnM'].forEach(id=>document.getElementById(id).disabled=!on);}
 
 function makeCardHTML(c){
+  if(c.joker){
+    // ジョーカー: 黒×金のスペシャルデザイン
+    return '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0a2e,#2d1b4e);border-radius:6px">'
+      +'<div style="font-size:32px;line-height:1">🃏</div>'
+      +'<div style="font-family:Georgia,serif;font-size:11px;font-weight:900;color:#FFD700;letter-spacing:.1em;margin-top:2px">JOKER</div>'
+      +'<div style="position:absolute;top:3px;left:5px;font-size:9px;color:#FFD700;font-weight:900">★</div>'
+      +'<div style="position:absolute;bottom:3px;right:5px;font-size:9px;color:#FFD700;font-weight:900;transform:rotate(180deg)">★</div>'
+      +'</div>';
+  }
+  if(c.n===7){
+    // 7はワイルド — 赤×金の特別表示
+    const col=SR[c.s]?'#C00000':'#0D1B8F';
+    return '<div class="ct" style="color:'+col+'">7<br>'+S[c.s]+'</div>'
+      +'<div class="cs" style="color:'+col+';position:relative">'+S[c.s]
+      +'<span style="position:absolute;top:-8px;right:-8px;font-size:10px;color:#FFD700;font-weight:900">★</span></div>'
+      +'<div class="cb" style="color:'+col+'">7</div>';
+  }
   return '<div class="ct">'+cl(c.n)+'<br>'+S[c.s]+'</div><div class="cs">'+S[c.s]+'</div><div class="cb">'+cl(c.n)+'</div>';
 }
 function renderFD(){
@@ -563,10 +596,21 @@ function renderC(){
   hand.forEach((c,i)=>{
     const w=document.createElement('div');w.className='cw';
     const cd=document.createElement('div');
-    cd.className='card up '+(SR[c.s]?'r':'b')+(held[i]?' hd':'');
-    if(phase==='draw')cd.onclick=()=>{wake();held[i]?seUnhold():seHold();held[i]=!held[i];renderC();};
+    let cls='card up';
+    if(c.joker) cls+=' joker-card';
+    else if(c.n===7) cls+=' wild-seven '+(SR[c.s]?'r':'b');
+    else cls+=' '+(SR[c.s]?'r':'b');
+    if(held[i]) cls+=' hd';
+    cd.className=cls;
+    if(phase==='draw')cd.onclick=()=>{
+      if(isWild(c))return; // ワイルドはHOLD固定
+      wake();held[i]?seUnhold():seHold();held[i]=!held[i];renderC();
+    };
     cd.innerHTML=makeCardHTML(c);
-    const l=document.createElement('div');l.className='hl-lbl'+(held[i]?'':' hid');l.textContent='HOLD';
+    const l=document.createElement('div');
+    l.className='hl-lbl'+(held[i]?'':' hid');
+    l.textContent=isWild(c)?'WILD★':'HOLD';
+    if(isWild(c))l.style.color='#FFD700';
     w.appendChild(cd);w.appendChild(l);a.appendChild(w);
   });
 }
@@ -605,25 +649,108 @@ function doDraw(){
     setTimeout(()=>bgmPlay('poker'),600);
   }
 }
-function chkR(h){
-  const ns=h.map(c=>c.n).sort((a,b)=>a-b),ss=h.map(c=>c.s);
-  const fl=ss.every(s=>s===ss[0]);
-  const st=(()=>{const u=[...new Set(ns)];if(u.length!==5)return false;if(u[4]-u[0]===4)return true;if(JSON.stringify(u)==='[1,10,11,12,13]')return true;return false;})();
-  const royal=fl&&[1,10,11,12,13].every(n=>ns.includes(n));
-  const cnt={};ns.forEach(n=>cnt[n]=(cnt[n]||0)+1);
+function chkR(hand){
+  const wilds = hand.filter(c=>isWild(c));
+  const norms = hand.filter(c=>!isWild(c));
+  const wc = wilds.length;
+  const jokers = hand.filter(c=>c.joker===true).length;
+
+  // ナチュラルロイヤルフラッシュ（ワイルド無し）
+  if(wc===0){
+    const ns=hand.map(c=>c.n).sort((a,b)=>a-b);
+    const ss=hand.map(c=>c.s);
+    const fl=ss.every(s=>s===ss[0]);
+    if(fl&&[1,10,11,12,13].every(n=>ns.includes(n))) return PAY[0]; // NATURAL ROYAL FLUSH
+  }
+
+  // フォーセブンズ＋ジョーカー（7が4枚＋ジョーカー1枚）
+  const sevens=hand.filter(c=>c.n===7&&!c.joker).length;
+  if(sevens===4&&jokers===1) return PAY[1]; // FOUR SEVENS PLUS JOKER
+
+  // フォーセブンズ（ジョーカー無し、7が4枚）
+  if(sevens===4&&jokers===0) return PAY[2];
+
+  // 以下はワイルドで補完した最強役を判定
+  const ns=norms.map(c=>c.n);
+  const ss=norms.map(c=>c.s);
+
+  // 5カードのランクカウント（ワイルドで補完）
+  const cnt={};
+  ns.forEach(n=>cnt[n]=(cnt[n]||0)+1);
   const vs=Object.values(cnt).sort((a,b)=>b-a);
-  const hp=Object.entries(cnt).filter(([n,c])=>c>=2&&(Number(n)>=11||Number(n)===1));
-  if(royal)return PAY[0];if(st&&fl)return PAY[1];if(vs[0]===4)return PAY[2];
-  if(vs[0]===3&&vs[1]===2)return PAY[3];if(fl)return PAY[4];if(st)return PAY[5];
-  if(vs[0]===3)return PAY[6];if(vs[0]===2&&vs[1]===2)return PAY[7];
-  if(vs[0]===2&&hp.length>0)return PAY[8];return null;
+  const maxR=(vs[0]||0)+wc; // ワイルドで補完した最大同ランク数
+
+  // フラッシュ判定（ノーマルカードが全て同スート、またはワイルドで補完可能）
+  const flushPossible = ss.length===0 || ss.every(s=>s===ss[0]);
+
+  // ストレート判定（ワイルドで穴埋め可能）
+  function hasStraight(nums, wilds){
+    const unique=[...new Set(nums)].sort((a,b)=>a-b);
+    if(unique.length+wilds<5) return false;
+    // A-high: A,10,J,Q,K
+    const sets=[
+      [1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],
+      [5,6,7,8,9],[6,7,8,9,10],[7,8,9,10,11],[8,9,10,11,12],
+      [9,10,11,12,13],[1,10,11,12,13]
+    ];
+    return sets.some(s=>{
+      const needed=s.filter(n=>!unique.includes(n)).length;
+      return needed<=wilds;
+    });
+  }
+
+  const isStr=hasStraight(ns,wc);
+  const isFl=flushPossible&&(ns.length+wc===5);
+
+  // ワイルドロイヤルフラッシュ（ワイルド使用、ロイヤルの5枚が揃う）
+  if(wc>0&&isFl){
+    const royalNums=[1,10,11,12,13];
+    const hasAll=royalNums.every(n=>ns.includes(n)||wc>(royalNums.filter(rn=>!ns.includes(rn)).indexOf(n)));
+    const needed=royalNums.filter(n=>!ns.includes(n)).length;
+    if(needed<=wc) return PAY[3]; // WILD ROYAL FLUSH
+  }
+
+  // 5カード（5枚同ランク、ワイルドで補完）
+  if(maxR>=5) return PAY[4];
+
+  // ストレートフラッシュ
+  if(isStr&&isFl) return PAY[5];
+
+  // フォーカード
+  if(maxR>=4) return PAY[6];
+
+  // フルハウス（ワイルド有りで3+2）
+  if(wc===0&&vs[0]===3&&vs[1]===2) return PAY[7];
+  if(wc===1&&vs[0]===2&&vs[1]===2) return PAY[7];
+  if(wc===2&&vs[0]===2) return PAY[7];
+
+  // フラッシュ
+  if(isFl) return PAY[8];
+
+  // ストレート
+  if(isStr) return PAY[9];
+
+  // スリーカード
+  if(maxR>=3) return PAY[10];
+
+  // ツーペアは役なし！（7's WILD仕様）
+  return null;
 }
 function autoH(){
   held=Array(5).fill(false);
   const r=chkR(hand);
-  if(r&&['rf','sf','4k','fh'].includes(r.id)){held=Array(5).fill(true);return;}
-  for(let s=0;s<4;s++){const idx=hand.map((c,i)=>c.s===s?i:-1).filter(i=>i>=0);if(idx.length>=4){idx.forEach(i=>held[i]=true);return;}}
-  if(r){const cnt={};hand.forEach((c,i)=>{cnt[c.n]=cnt[c.n]||[];cnt[c.n].push(i);});Object.values(cnt).forEach(a=>{if(a.length>=2)a.forEach(i=>held[i]=true);}); }
+  // 確定役はオール保持
+  if(r&&['nrf','fs7','f47','wrf','5ok','sf','4ok','fh'].includes(r.id)){
+    held=Array(5).fill(true);return;
+  }
+  // 7とジョーカーは必ず保持（ワイルドカード）
+  hand.forEach((c,i)=>{if(isWild(c))held[i]=true;});
+  // 残りで役があれば保持
+  if(r){
+    const cnt={};
+    hand.forEach((c,i)=>{if(!isWild(c)){cnt[c.n]=cnt[c.n]||[];cnt[c.n].push(i);}});
+    Object.values(cnt).forEach(a=>{if(a.length>=2)a.forEach(i=>held[i]=true);});
+  }
 }
 
 function showUG(m){
