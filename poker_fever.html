@@ -1864,6 +1864,18 @@ function judgeDU(i){
 function duCollect(){wake();seDuCollect();user.medals+=ugM;saveMedals(user.id,user.medals);updLM();setDuMsg('COLLECT: '+ugM+' MEDALS!','win');setTimeout(()=>backP(),1200);}
 function backP(){phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();document.getElementById('pk-rd').innerHTML='';setStatus('DEAL TO BEGIN','idle');const _wb3=document.getElementById('pk-win-bar');if(_wb3)_wb3.style.display='none';document.getElementById('dbn').textContent='DEAL';setBB(true);bgmPlay('poker');show('spoker');}
 updPT();
+(async function initSession(){
+  const saved=localStorage.getItem('hkg_user');
+  if(!saved)return;
+  try{
+    const su=JSON.parse(saved);
+    const fresh=await getUser(su.name);
+    if(fresh&&fresh.pin===su.pin){user=fresh;}
+    else if(su.id){user=su;}
+    else{return;}
+    seLogin();goLobby();
+  }catch(e){localStorage.removeItem('hkg_user');}
+})();
 </script>
 </body>
 </html>
