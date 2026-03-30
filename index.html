@@ -700,11 +700,16 @@ function openPoker(){
   }
   location.href='poker_fever.html';
 }
+function updateBadge(){
+  const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  const b=document.getElementById('hkg-badge');
+  if(b&&su) b.textContent='👤 '+su.name+'  🪙 '+su.medals;
+}
 function insertCoin(){
   const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
   if(su && su.medals<=0){return;}
   wake(); credits++;
-  if(su){ su.medals=Math.max(0,su.medals-1); localStorage.setItem('hkg_user',JSON.stringify(su)); }
+  if(su){ su.medals=Math.max(0,su.medals-1); localStorage.setItem('hkg_user',JSON.stringify(su)); updateBadge(); }
   document.getElementById('cr-v').textContent=credits;
   document.getElementById('start-btn').disabled=false;
   seCoin(); bgmPlay('attract');
@@ -847,6 +852,7 @@ async function saveMedalsToPoker(gained){
   if(!su||!su.id) return;
   su.medals=(su.medals||0)+gained;
   localStorage.setItem('hkg_user',JSON.stringify(su));
+  updateBadge();
   const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
   const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
   const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
