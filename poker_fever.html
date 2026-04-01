@@ -153,7 +153,21 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 .cbtn{border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:12px;padding:11px 22px;cursor:pointer;transition:all .1s;position:relative;overflow:hidden;background:linear-gradient(160deg,#8844ff,#5511cc);color:#fff;box-shadow:0 4px 0 #330088}
 .cbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #330088}
 </style>
-</head>
+<script>
+(function(){
+var u=null;
+try{u=JSON.parse(localStorage.getItem('hkg_user')||'null');}catch(e){}
+if(!u||!u.name){location.href='index.html';return;}
+if(!u.id){u.id='hkg-'+u.name;localStorage.setItem('hkg_user',JSON.stringify(u));}
+document.addEventListener('DOMContentLoaded',function(){
+var b=document.createElement('button');
+b.textContent='← ロビー';
+b.style='position:fixed;top:8px;left:8px;z-index:9999;background:rgba(0,0,0,.85);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
+b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
+document.body.appendChild(b);
+});
+})()
+</script></head>
 <body>
 <div class="cab">
   <div class="mq"><div class="mq-inner">
@@ -382,7 +396,7 @@ function goLobby(){
   document.getElementById('lobby-name').textContent=user.name;
   document.getElementById('lobby-medals').textContent=user.medals;
   document.getElementById('ctrl').classList.add('hidden');
-  show('slobby');
+  show('spoker');
 }
 function updLM(){if(user)document.getElementById('lobby-medals').textContent=user.medals;}
 function openJanken(){
