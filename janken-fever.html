@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>グーチョキパー FEVER!!</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#CC0000;--red2:#E53935;--red3:#FF5252;
+  --gold:#FFD700;--gold2:#FFA500;
+  --dark:#111;--dark2:#1a1a1a;--dark3:#252525;
+  --green:#00AA44;--green2:#00CC55;
+  --white:#fff;--gray:#888;--light:#F0F0F0;
+  --font-en:'Barlow Condensed','Oswald',sans-serif;
+  --font-jp:'Noto Sans JP',sans-serif;
+}
+*,::before,::after{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;font-family:var(--font-jp);overflow-y:auto;overflow-x:hidden;padding:8px 0 24px;color:var(--white)}
+.cab{width:min(460px,99vw);background:var(--dark);border:2px solid #333;box-shadow:0 0 40px rgba(0,0,0,.8);display:flex;flex-direction:column;border-radius:4px}
+.mq-wrap{background:#0a0a0a;padding:4px 0;overflow:hidden;flex-shrink:0;border-bottom:1px solid #333}
+.mq{display:flex;width:max-content;animation:mqA 16s linear infinite}
+@keyframes mqA{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.mq span{font-family:var(--font-en);font-size:11px;font-weight:700;color:var(--gold);padding:0 24px;letter-spacing:.1em;opacity:.8}
+.tp{background:linear-gradient(180deg,#1a1a1a,#111);padding:12px 16px 10px;text-align:center;border-bottom:3px solid var(--red);flex-shrink:0}
+.led-row{display:flex;justify-content:center;gap:5px;margin-bottom:7px}
+.led{width:8px;height:8px;border-radius:50%;animation:lp 1.2s ease-in-out infinite}
+.l0{background:var(--red2)}.l1{background:var(--gold);animation-delay:.15s}.l2{background:#fff;animation-delay:.3s}.l3{background:#43A047;animation-delay:.45s}.l4{background:#1976D2;animation-delay:.6s}.l5{background:var(--red3);animation-delay:.75s}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.2;transform:scale(.5)}}
+.cab-t{font-family:var(--font-jp);font-weight:900;font-size:clamp(20px,4.5vw,28px);color:var(--white);line-height:1.2}
+.cab-t span{color:var(--gold)}
+.cab-s{font-family:var(--font-en);font-size:11px;color:#888;letter-spacing:.2em;margin-top:2px}
+.screen{background:var(--dark);flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden;min-height:500px}
+.fl{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,.04);animation:scA 7s linear infinite;pointer-events:none;z-index:201}
+@keyframes scA{0%{top:-2px;opacity:0}5%{opacity:.6}95%{opacity:.6}100%{top:110%;opacity:0}}
+.gs{display:none;flex-direction:column;flex:1;position:relative;z-index:1}
+.gs.active{display:flex}
+
+/* ATTRACT */
+#sa{align-items:center;justify-content:flex-start;padding:0;background:var(--dark)}
+.att-logo{font-family:var(--font-jp);font-weight:900;font-size:clamp(28px,7vw,48px);text-align:center;padding:20px 16px 8px;color:var(--white);line-height:1.2;letter-spacing:-.02em}
+.att-logo span,.att-logo br+*{color:var(--gold)}
+.parade{display:flex;justify-content:center;gap:12px;font-size:32px;margin:4px 0 12px;opacity:.8}
+.att-boxes{display:flex;gap:10px;padding:0 16px;margin-bottom:10px;width:100%}
+.att-box{flex:1;background:var(--dark2);border:2px solid #444;border-radius:6px;padding:8px;text-align:center}
+.att-box.blu{border-color:var(--gold)}
+.att-box-lbl{font-family:var(--font-en);font-size:10px;font-weight:900;color:#888;letter-spacing:.15em}
+.att-box-val{font-family:var(--font-en);font-size:30px;font-weight:900;color:var(--gold);line-height:1}
+.att-cr{font-family:var(--font-en);font-size:15px;font-weight:700;color:var(--green2);letter-spacing:.1em;margin-bottom:4px;text-shadow:0 0 8px rgba(0,255,68,.4)}
+.att-ins{font-family:var(--font-en);font-size:12px;font-weight:700;color:var(--red2);letter-spacing:.12em;animation:blink .9s step-end infinite;margin-bottom:10px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.att-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:0 12px 14px;width:100%}
+.abtn{background:linear-gradient(180deg,#333,#222);border:2px solid #555;border-radius:6px;color:var(--light);font-family:var(--font-jp);font-size:13px;font-weight:700;padding:10px 18px;cursor:pointer;transition:all .15s;letter-spacing:.05em}
+.abtn:hover{border-color:var(--red);background:var(--red);color:var(--white)}
+
+/* GAME / JANKEN */
+#sb{align-items:stretch;background:linear-gradient(180deg,#0b1a0b,#0a0e0a)}
+.rov{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:100;pointer-events:none;opacity:0;transition:opacity .2s}
+.rov.show{opacity:1}
+.rov-bg{position:absolute;inset:-30px;border-radius:50%;filter:blur(30px);opacity:.5}
+.rov-main{font-family:var(--font-en);font-size:clamp(36px,10vw,64px);font-weight:900;text-align:center;letter-spacing:.05em;text-shadow:0 0 20px rgba(255,255,255,.6)}
+.rov-main.win{color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.8)}
+.rov-main.lose{color:var(--red3);text-shadow:0 0 20px rgba(255,80,80,.8)}
+.rov-main.draw{color:#aaa}
+.rov-sub{font-family:var(--font-jp);font-size:18px;text-align:center;margin-top:4px;color:var(--white)}
+.hud{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:linear-gradient(180deg,#000,#001200);border-bottom:2px solid #003300;flex-shrink:0;gap:6px}
+.hud-m,.hud-t{display:flex;flex-direction:column;align-items:center}
+.hud-ml,.hud-tl{font-family:var(--font-en);font-size:10px;font-weight:900;letter-spacing:.2em;color:#00FF41;text-shadow:0 0 4px rgba(0,255,65,.5)}
+.hud-mv{font-family:var(--font-en);font-size:32px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 8px rgba(255,215,0,.5)}
+.hud-c{font-family:var(--font-jp);font-size:12px;color:#888;text-align:center}
+.hud-tv{font-family:var(--font-en);font-size:36px;font-weight:900;color:var(--gold);line-height:1}
+.hud-tv.warn{color:var(--gold2);animation:blink .7s step-end infinite}
+.hud-tv.danger{color:var(--red3);text-shadow:0 0 10px rgba(255,80,80,.8);animation:blink .4s step-end infinite}
+.arena{flex:1;display:flex;align-items:center;justify-content:space-around;padding:14px 8px}
+.fbox{display:flex;flex-direction:column;align-items:center;gap:8px}
+.flbl{font-family:var(--font-en);font-size:12px;font-weight:900;letter-spacing:.2em;color:#00FF41}
+.p-hand{font-size:clamp(56px,14vw,80px);filter:drop-shadow(0 4px 12px rgba(0,0,0,.8));transition:all .2s;line-height:1}
+.p-hand.atk{transform:translateX(20px) scale(1.1)}
+.p-hand.win-g{filter:drop-shadow(0 0 18px rgba(255,215,0,.9))}
+.p-hand.lose-g{filter:drop-shadow(0 0 12px rgba(255,50,50,.8));opacity:.7}
+.hpbar{width:64px;height:8px;background:#333;border-radius:4px;overflow:hidden}
+.hpf{height:100%;border-radius:4px;transition:width .3s;background:linear-gradient(90deg,var(--green),var(--green2))}
+.hpf.med{background:linear-gradient(90deg,var(--gold2),var(--gold))}
+.hpf.low{background:linear-gradient(90deg,var(--red),var(--red2))}
+.vs{font-family:var(--font-en);font-size:22px;font-weight:900;color:#444}
+.sign{width:clamp(80px,20vw,110px);height:clamp(80px,20vw,110px);background:var(--dark2);border:3px solid #444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(44px,12vw,68px);transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.6)}
+.sign.win-d{border-color:var(--gold);box-shadow:0 0 20px rgba(255,215,0,.6)}
+.sign.lose-d{border-color:var(--red);opacity:.7}
+.vbox{font-family:var(--font-jp);font-size:16px;font-weight:700;text-align:center;padding:8px 12px;min-height:36px}
+.vbox.fever{color:var(--gold);font-size:18px;text-shadow:0 0 10px rgba(255,215,0,.8)}
+.vbox.call{color:#666}
+.vbox.win{color:var(--gold)}
+.vbox.lose{color:var(--red3)}
+.vbox.draw{color:#888}
+.btns{display:flex;gap:8px;justify-content:center;padding:6px 10px 10px;flex-shrink:0;background:linear-gradient(180deg,#001200,#000)}
+.hbtn{flex:1;background:linear-gradient(180deg,#222,#1a1a1a);border:2px solid #555;border-radius:8px;color:var(--white);font-size:clamp(28px,7vw,42px);padding:10px;cursor:pointer;transition:all .12s;box-shadow:0 3px 0 #000}
+.hbtn:hover:not(:disabled){border-color:var(--gold);background:linear-gradient(180deg,#2a2000,#1a1500);box-shadow:0 0 12px rgba(255,215,0,.3)}
+.hbtn:active:not(:disabled){transform:translateY(3px);box-shadow:0 0 0}
+.hbtn:disabled{opacity:.25;cursor:not-allowed}
+
+/* ROULETTE */
+#sr{align-items:stretch;background:linear-gradient(180deg,#0a0e1a,#111)}
+.rl-hdr{font-family:var(--font-en);font-size:22px;font-weight:900;text-align:center;color:var(--gold);letter-spacing:.2em;padding:12px 16px 6px;text-shadow:0 0 12px rgba(255,215,0,.5);flex-shrink:0}
+.rl-lbl{font-family:var(--font-jp);font-size:13px;color:#666;text-align:center;padding-bottom:8px;flex-shrink:0}
+.rl-svg-wrap{display:flex;align-items:center;justify-content:center;flex:1;padding:8px}
+.rl-btn-area{display:flex;align-items:center;justify-content:center;padding:8px 16px 14px;flex-shrink:0;background:linear-gradient(180deg,#000,#001200)}
+#stop-btn{background:linear-gradient(180deg,#CC0000,#880000);color:#fff;border:none;border-radius:8px;font-family:var(--font-en);font-size:22px;font-weight:900;padding:14px 40px;cursor:pointer;box-shadow:0 5px 0 #440000;transition:all .1s;letter-spacing:.1em}
+#stop-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #440000}
+#stop-btn:disabled{opacity:.3;cursor:not-allowed}
+.rl-num{font-family:var(--font-en);font-size:clamp(48px,12vw,72px);font-weight:900;color:var(--gold);text-align:center;text-shadow:0 0 20px rgba(255,215,0,.8);padding:4px;line-height:1}
+
+/* HI-LO */
+#shl{align-items:stretch;background:linear-gradient(180deg,#000800,#001500)}
+.hl-hdr{font-family:var(--font-en);font-size:20px;font-weight:900;text-align:center;color:var(--gold);letter-spacing:.2em;padding:12px 16px 6px;flex-shrink:0;text-shadow:0 0 10px rgba(255,215,0,.5)}
+.hl-info{display:flex;gap:10px;padding:6px 12px;align-items:stretch;flex-shrink:0}
+.hl-box{flex:1;background:var(--dark2);border:2px solid #333;border-radius:6px;padding:8px;text-align:center}
+.hl-box-lbl{font-family:var(--font-en);font-size:10px;font-weight:900;color:#555;letter-spacing:.15em}
+.hl-box-val{font-family:var(--font-en);font-size:26px;font-weight:900;color:var(--gold);line-height:1.1}
+.hl-stage{flex:1;display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 16px}
+.hl-card{width:clamp(80px,20vw,110px);aspect-ratio:.68;background:linear-gradient(135deg,#fffef8,#fff9e6);border:3px solid #888;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 18px rgba(0,0,0,.7)}
+.hl-card.r{color:#C00000}
+.hl-card.b{color:#0D1B8F}
+.hl-card.dn{background:radial-gradient(ellipse at 50% 50%,#1a3a7a,#0a1848);border-color:#4488ff}
+.hl-card-rank{font-family:Georgia,serif;font-size:clamp(32px,8vw,48px);font-weight:900;line-height:1}
+.hl-card-suit{font-size:clamp(36px,9vw,54px);line-height:1}
+.hl-arrow{font-size:32px;color:#444}
+#prev-card{width:clamp(60px,15vw,80px)}
+.hl-btns{display:flex;gap:10px;padding:8px 12px 14px;justify-content:center;flex-shrink:0;background:linear-gradient(180deg,#000,#001200)}
+.hl-btn{flex:1;max-width:140px;border:none;border-radius:8px;font-family:var(--font-en);font-size:18px;font-weight:900;padding:14px;cursor:pointer;transition:all .1s;letter-spacing:.05em}
+#btn-hi{background:linear-gradient(180deg,#CC0000,#880000);color:#fff;box-shadow:0 5px 0 #440000}
+#btn-lo{background:linear-gradient(180deg,#1565C0,#0D47A1);color:#fff;box-shadow:0 5px 0 #00205A}
+.hl-btn:active{transform:translateY(4px)}
+.hl-btn:disabled{opacity:.3;cursor:not-allowed}
+#hl-res{font-family:var(--font-en);font-size:clamp(20px,5vw,28px);font-weight:900;text-align:center;padding:6px;min-height:40px;flex-shrink:0;letter-spacing:.08em}
+#hl-res.win{color:var(--gold);text-shadow:0 0 16px rgba(255,215,0,.8)}
+#hl-res.lose{color:var(--red3);text-shadow:0 0 12px rgba(255,80,80,.8)}
+.hl-med{font-family:var(--font-en);font-size:14px;font-weight:700;color:#555;text-align:center;padding:2px;flex-shrink:0}
+.hl-quit,.hl-nxt{background:var(--dark2);border:2px solid #555;color:var(--gold);font-family:var(--font-en);font-size:13px;font-weight:700;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all .15s}
+.hl-quit:hover,.hl-nxt:hover{border-color:var(--gold);background:rgba(255,215,0,.1)}
+.hl-qnbtn-row{display:flex;gap:8px;justify-content:center;padding:0 12px 8px;flex-shrink:0}
+
+/* RESULT */
+#sgr{align-items:center;justify-content:center;background:var(--dark);gap:12px;padding:20px}
+.stars{font-size:32px;letter-spacing:4px}
+.gr-t{font-family:var(--font-jp);font-weight:900;font-size:clamp(22px,6vw,32px);color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.8)}
+.gr-stat{font-family:var(--font-jp);font-size:15px;color:#888;text-align:center;line-height:1.8}
+.gr-stat b{color:var(--gold);font-size:22px}
+.gr-nr{font-family:var(--font-en);font-size:13px;font-weight:700;color:var(--red3);letter-spacing:.15em;display:none;text-align:center}
+.name-row{display:flex;flex-direction:column;gap:6px;align-items:center;width:100%;max-width:280px}
+.name-inp{background:var(--dark2);border:2px solid #555;border-radius:6px;color:var(--white);font-family:var(--font-jp);font-size:18px;font-weight:700;padding:10px 14px;width:100%;outline:none;text-align:center}
+.name-inp:focus{border-color:var(--gold)}
+.submit-btn{background:linear-gradient(180deg,var(--green),#007732);color:#fff;border:none;border-radius:6px;font-family:var(--font-jp);font-size:14px;font-weight:700;padding:11px 28px;cursor:pointer;box-shadow:0 4px 0 #003d1a;transition:all .1s;letter-spacing:.05em}
+.submit-btn:active{transform:translateY(3px)}
+.skip-btn{background:transparent;border:2px solid #444;color:#666;font-family:var(--font-jp);font-size:12px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all .1s}
+.skip-btn:hover{border-color:#666;color:#aaa}
+#name-score-disp{font-family:var(--font-jp);font-size:13px;color:#555;text-align:center}
+
+/* CONTROL PANEL */
+#ctrl-panel{background:#000;border-top:2px solid #333;padding:8px 12px 10px;display:flex;gap:6px;justify-content:center;flex-shrink:0}
+.ctrl-btn{border:2px solid #555;border-radius:6px;font-family:var(--font-en);font-weight:900;font-size:13px;padding:10px 20px;cursor:pointer;background:linear-gradient(180deg,#333,#222);color:#aaa;box-shadow:0 3px 0 #000;transition:all .1s;letter-spacing:.05em}
+.ctrl-btn:active{transform:translateY(3px)}
+.btn-lobby{background:linear-gradient(180deg,#333,#222);border-color:#556;color:#aac}
+.btn-lobby:hover{border-color:var(--gold);color:var(--gold)}
+.btn-coin{background:linear-gradient(180deg,#006600,#004400);border-color:#00aa00;color:#00FF41;box-shadow:0 3px 0 #002200}
+.btn-coin:hover{background:linear-gradient(180deg,#007700,#005500)}
+.btn-start{background:linear-gradient(180deg,#FFE000,#FFB300);border-color:#FFD700;color:#000;box-shadow:0 4px 0 #886000}
+.btn-start:hover:not(:disabled){filter:brightness(1.1)}
+.btn-start:disabled{opacity:.25;cursor:not-allowed}
+
+/* RANKING */
+#srank{align-items:stretch;overflow-y:auto;background:var(--dark)}
+.rank-hdr{font-family:var(--font-en);font-weight:900;font-size:20px;text-align:center;color:var(--gold);letter-spacing:.2em;padding:14px 16px 6px;text-shadow:0 0 10px rgba(255,215,0,.4);flex-shrink:0;border-bottom:2px solid var(--red)}
+.rank-status{font-size:11px;text-align:center;padding:4px;flex-shrink:0}
+.rank-list{padding:8px 12px;flex:1}
+.rank-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid #333;font-family:var(--font-jp)}
+.rank-item.gold{border-left:3px solid var(--gold);background:rgba(255,215,0,.05)}
+.rank-item.silver{border-left:3px solid #aaa;background:rgba(200,200,200,.05)}
+.rank-item.bronze{border-left:3px solid #cd7f32;background:rgba(205,127,50,.05)}
+.rank-pos{font-family:var(--font-en);font-size:18px;width:28px;flex-shrink:0;text-align:center}
+.rank-name{flex:1;font-weight:700;font-size:14px}
+.rank-score{font-family:var(--font-en);font-weight:900;font-size:16px;color:var(--gold)}
+.rank-loading,.rank-empty{text-align:center;padding:20px;color:#555;font-family:var(--font-jp);font-size:14px}
+.rank-back-btn,.rank-setup-btn{background:var(--dark2);border:2px solid #444;border-radius:6px;color:#888;font-family:var(--font-jp);font-size:12px;font-weight:700;padding:8px 16px;cursor:pointer;transition:all .15s}
+.rank-back-btn:hover,.rank-setup-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* PATLAMP */
+.patlamp{width:18px;height:18px;border-radius:50%;background:#333;margin:4px auto;transition:all .1s}
+.patlamp.on{background:var(--red2);box-shadow:0 0 12px var(--red),0 0 24px rgba(255,50,50,.5);animation:pl .18s ease}
+@keyframes pl{0%{transform:scale(.8)}100%{transform:scale(1)}}
+
+/* MOBILE */
+@media(max-width:480px){
+  .p-hand{font-size:52px}
+  .sign{width:80px;height:80px;font-size:44px}
+  .hbtn{font-size:28px;padding:8px}
+  .att-box-val{font-size:24px}
+  .rl-num{font-size:48px}
+}
+.abtn.line-btn:hover{background:linear-gradient(160deg,#11dd66,#06b844)}
+</style>
+</head>
+<body>
+<div class="cab">
+  <div class="mq-wrap"><div class="mq">
+    <span>★ グーチョキパー FEVER!! ★ じゃんけんで勝ってルーレット！ ★ ハイ＆ローで倍々ゲーム！ ★ グーチョキパー FEVER!! ★ じゃんけんで勝ってルーレット！ ★ ハイ＆ローで倍々ゲーム！ ★ </span>
+    <span>★ グーチョキパー FEVER!! ★ じゃんけんで勝ってルーレット！ ★ ハイ＆ローで倍々ゲーム！ ★ グーチョキパー FEVER!! ★ じゃんけんで勝ってルーレット！ ★ ハイ＆ローで倍々ゲーム！ ★ </span>
+  </div></div>
+  <div class="tp">
+    <div class="led-row"><div class="led l0"></div><div class="led l1"></div><div class="led l2"></div><div class="led l3"></div><div class="led l4"></div><div class="led l5"></div><div class="led l4"></div><div class="led l3"></div><div class="led l2"></div><div class="led l1"></div><div class="led l0"></div></div>
+    <div class="cab-t">✊✌️🖐️ GU-CHOKI-PA<br>FEVER !!</div>
+    <div class="cab-s">じゃんけん → ルーレット → ハイ＆ロー</div>
+  </div>
+  <div class="screen">
+    <div class="fl"></div>
+    <div class="patlamp" id="patlamp"></div>
+
+    <!-- ATTRACT -->
+    <div id="sa" class="gs active">
+      <div class="att-logo">✊✌️🖐️<br>GU-CHOKI-PA<br>FEVER !!</div>
+      <div class="parade"><span>✊</span><span>✌️</span><span>🖐️</span></div>
+      <div class="att-boxes">
+        <div class="att-box"><div class="att-box-lbl">HI-SCORE</div><div class="att-box-val" id="hi-v">0</div></div>
+        <div class="att-box blu"><div class="att-box-lbl">TOTAL</div><div class="att-box-val" id="tot-v">0</div></div>
+      </div>
+      <div class="att-cr">CREDIT : <span id="cr-v">0</span></div>
+      <div class="att-ins">▶▶ コインをいれてください ◀◀</div>
+      <div class="att-btns">
+        <button class="abtn" onclick="showRanking()" style="font-size:14px;padding:11px 20px">🏆 ランキング</button>
+        <button class="abtn line-btn" onclick="shareToLINE()" style="font-size:14px;padding:11px 20px">📲 LINEで共有</button>
+      </div>
+    </div>
+
+    <!-- RANKING -->
+    <div id="srank" class="gs">
+      <div class="rank-hdr">🏆 オンラインランキング 🏆</div>
+      <div class="rank-status" id="rank-status">⚙️ Supabase未設定 — ローカルのみ</div>
+      <div class="rank-list" id="rank-list"><div class="rank-loading">読み込み中…</div></div>
+      <div style="display:flex;gap:8px;justify-content:center;padding:4px 0 2px">
+        <button class="rank-back-btn" onclick="show('sa')">← もどる</button>
+        <button class="rank-setup-btn" onclick="show('ssetup')">⚙️ オンライン設定</button>
+      </div>
+    </div>
+
+    <!-- SUPABASE SETUP -->
+    <div id="ssetup" class="gs">
+      <div class="setup-inner">
+        <div class="setup-hdr">🌐 オンラインランキング設定</div>
+
+        <div class="setup-step" style="background:rgba(255,150,0,.12);border-color:rgba(255,150,0,.4)">
+          <div class="setup-step-num" style="color:#ffaa44">⚠️ 重要：公開URLが必要です</div>
+          <p>このゲームをLINEで共有してオンラインランキングを使うには、<strong style="color:#ffdd00">GitHub Pages などでウェブ公開</strong>する必要があります。<br><br>
+          Claude.aiのArtifact画面から直接では外部接続がブロックされます。</p>
+        </div>
+
+        <div class="setup-step">
+          <div class="setup-step-num">STEP 1 — GitHubアカウントを作る（無料）</div>
+          <p>① <code>github.com</code> でアカウント作成<br>
+          ② 新しいリポジトリを作成（Public・名前は何でもOK）<br>
+          ③ このHTMLファイルを <code>index.html</code> という名前でアップロード</p>
+        </div>
+
+        <div class="setup-step">
+          <div class="setup-step-num">STEP 2 — GitHub Pagesで公開</div>
+          <p>① リポジトリの <code>Settings → Pages</code> を開く<br>
+          ② Source を <code>main branch</code> に設定<br>
+          ③ <code>https://あなたのID.github.io/リポジトリ名/</code> でアクセス可能になる</p>
+        </div>
+
+        <div class="setup-step">
+          <div class="setup-step-num">STEP 3 — SupabaseのURLとkeyをここに入力して保存</div>
+          <p>公開したHTMLを開いた状態でこの画面から設定すると、そのブラウザに保存されます。<br>
+          友達にも同じURLを開いてもらい、同じURLとkeyを入力してもらえば全員で共有できます。</p>
+          <input class="setup-input" id="setup-url" placeholder="https://xxxxxxxx.supabase.co" />
+          <input class="setup-input" id="setup-key" placeholder="eyJhbGciOiJIUzI1NiIsInR..." style="margin-top:8px"/>
+        </div>
+
+        <div class="setup-step" style="background:rgba(68,255,136,.08);border-color:rgba(68,255,136,.3)">
+          <div class="setup-step-num" style="color:#44ff88">💡 いちばん簡単な方法</div>
+          <p>HTMLファイルの <code>SUPABASE_URL</code> と <code>SUPABASE_KEY</code> の部分を<br>
+          テキストエディタで書き換えてからGitHubにアップすれば、<br>
+          誰でも自動的にオンラインランキングに繋がります。</p>
+          <p style="margin-top:6px;color:#44ff88">下のボタンで設定済みHTMLをダウンロードできます：</p>
+        </div>
+
+        <div class="setup-status" id="setup-status"></div>
+        <button class="setup-save" onclick="saveAndDownload()">💾 保存してHTMLをダウンロード</button>
+        <button class="setup-save" style="background:linear-gradient(160deg,#8844ff,#1e3a6e);box-shadow:0 4px 0 #330088;margin-top:4px" onclick="saveSupabaseConfig()">📡 この端末だけに保存</button>
+        <button class="rank-back-btn" style="align-self:center" onclick="showRanking()">← ランキングに戻る</button>
+      </div>
+    </div>
+
+    <!-- BATTLE -->
+    <div id="sb" class="gs">
+      <div class="rov" id="rov"><div class="rov-bg"></div><div class="rov-main" id="rov-main">WIN</div><div class="rov-sub" id="rov-sub"></div></div>
+      <div class="hud">
+        <div class="hud-m"><div class="hud-ml">MEDALS</div><div class="hud-mv" id="med-v">0</div></div>
+        <div class="hud-c">勝ったらルーレット！</div>
+        <div class="hud-t"><div class="hud-tl">TIME</div><span class="hud-tv" id="tmr">05</span></div>
+      </div>
+      <div class="arena">
+        <div class="fbox"><div class="flbl">YOU</div><div class="p-hand" id="p-hand">🙂</div><div class="hpbar"><div class="hpf" id="p-hp" style="width:100%"></div></div></div>
+        <div class="vs-b">VS</div>
+        <div class="fbox"><div class="flbl">CPU</div><div class="sign" id="sign"><span class="sh" id="sh">❓</span><div class="sl" id="sl">？？？</div></div><div class="hpbar" style="margin-top:5px"><div class="hpf" id="e-hp" style="width:100%"></div></div></div>
+      </div>
+      <div class="vbox call" id="vbox">じゃーん　けーん</div>
+      <div class="rlbl">勝ったらルーレット！</div>
+      <div class="hbtns">
+        <button class="hbtn hbtn-r" id="b-r" onclick="pick('rock')"><span class="ic">✊</span><span class="lb">グー</span></button>
+        <button class="hbtn hbtn-s" id="b-s" onclick="pick('scissors')"><span class="ic">✌️</span><span class="lb">チョキ</span></button>
+        <button class="hbtn hbtn-p" id="b-p" onclick="pick('paper')"><span class="ic">🖐️</span><span class="lb">パー</span></button>
+      </div>
+    </div>
+
+    <!-- ROULETTE -->
+    <div id="sr" class="gs">
+      <div class="rl-hdr" id="rl-hdr">フィーバー！！</div>
+      <div class="rl-wrap">
+        <div class="rl-ring-outer"></div><div class="rl-ring-mask"></div>
+        <div class="rl-svg-wrap"><svg class="rl-svg" id="rl-svg" viewBox="0 0 280 280"></svg></div>
+        <div class="rl-ctr"><div class="rl-cn" id="rl-num">?</div><div class="rl-cl">枚</div></div>
+      </div>
+      <div class="rl-lbl" id="rl-lbl">ボタンを押してストップ！</div>
+      <button class="stop-btn" id="stop-btn" onclick="stopRl()" disabled>STOP！</button>
+    </div>
+
+    <!-- HIGH & LOW -->
+    <div id="shl" class="gs">
+      <div class="hl-hdr">🃏 ハイ＆ロー 🃏</div>
+      <div class="hl-info">
+        <div class="hl-box"><div class="hl-box-lbl">現在</div><div class="hl-box-val" style="font-size:24px;color:#ffdd00;text-shadow:0 0 8px rgba(255,220,0,.6)" id="hl-med">0枚</div></div>
+        <div class="hl-box"><div class="hl-box-lbl">当たれば</div><div class="hl-box-val" style="font-size:24px;color:#44ff88;text-shadow:0 0 8px rgba(68,255,136,.6)" id="hl-nxt">0枚</div></div>
+      </div>
+      <div class="cards-row">
+        <div class="card up" id="prev-card"><div class="c-num" id="prev-num">?</div><div class="c-suit" id="prev-suit"></div></div>
+        <div style="font-size:24px;color:rgba(200,160,255,.5)">→</div>
+        <div class="card dn" id="next-card"><div class="c-num" id="next-num"></div><div class="c-suit" id="next-suit"></div></div>
+      </div>
+      <div class="hl-res" id="hl-res">HIGH か LOW か？</div>
+      <div class="hl-btns">
+        <button class="hl-btn btn-hi" id="btn-hi" onclick="hlGuess('hi')"><span class="bic">⬆️</span><span class="blt">HIGH</span><span class="bls">次が高い</span></button>
+        <button class="hl-btn btn-lo" id="btn-lo" onclick="hlGuess('lo')"><span class="bic">⬇️</span><span class="blt">LOW</span><span class="bls">次が低い</span></button>
+      </div>
+      <button class="hl-quit" id="hl-quit" onclick="hlQuit()">💰 やめてメダルをもらう (0枚)</button>
+    </div>
+
+    <!-- NAME ENTRY -->
+    <div id="sname" class="gs">
+      <div class="stars">🏆</div>
+      <div class="name-hdr">ハイスコア！<br>名前を登録しよう</div>
+      <div class="name-score" id="name-score-disp">0枚</div>
+      <input class="name-input" id="name-input" type="text" maxlength="10" placeholder="なまえをいれてね"/>
+      <button class="name-submit" onclick="submitScore()">登録する！</button>
+      <button class="name-skip" onclick="showResult()">スキップ</button>
+    </div>
+
+    <!-- RESULT -->
+    <div id="sgr" class="gs">
+      <div class="stars">⭐⭐⭐</div>
+      <div class="gr-t" id="gr-t">メダルゲット！</div>
+      <div class="gr-stat">今回：<b id="gr-got">0</b>枚<br>トータル：<b id="gr-tot">0</b>枚</div>
+      <div class="nr" id="gr-nr" style="display:none">★ NEW RECORD! ★</div>
+      <div class="btn-row">
+        <button class="abtn" onclick="startGame()">もう一度！</button>
+        <button class="abtn" onclick="goAttract()">タイトルへ</button><button class="abtn" onclick="location.href='poker_fever.html'" style="background:linear-gradient(160deg,#FFD700,#FF8C00);box-shadow:0 5px 0 #8B4500;color:#0a0e1a;font-weight:bold">🏰 王国へ</button>
+        <button class="abtn" onclick="showRanking()">ランキング</button>
+        <button class="abtn line-btn" onclick="shareToLINE()">📲 LINE</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ctrl" id="ctrl-panel">
+    <button class="ctrl-btn btn-lobby" onclick="openPoker()">🏰 ポーカーへ</button>     <button class="ctrl-btn btn-coin" onclick="insertCoin()">🪙 コイン投入</button>
+    <button class="ctrl-btn btn-start" id="start-btn" onclick="startGame()" disabled>▶ スタート</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ★★★ Supabase オンラインランキング設定（埋め込み済み）★★★
+(function(){
+  try{
+    localStorage.setItem('gcpfever-supabase', JSON.stringify({
+      url: 'https://gtzfcoiowdnyjvwikxku.supabase.co',
+      key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg'
+    }));
+  }catch(e){}
+})();
+
+const AC=new(window.AudioContext||window.webkitAudioContext)();
+function wake(){if(AC.state==='suspended')AC.resume();}
+function tone(type,f,dur,vol,t0,fEnd){
+  vol=vol||0.22;t0=t0||0;
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);o.type=type;
+  const t=AC.currentTime+t0;
+  o.frequency.setValueAtTime(f,t);if(fEnd)o.frequency.linearRampToValueAtTime(fEnd,t+dur);
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.start(t);o.stop(t+dur+0.02);
+}
+function nz(dur,vol,t0){vol=vol||0.10;t0=t0||0;const b=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=AC.createBufferSource(),g=AC.createGain();s.buffer=b;s.connect(g);g.connect(AC.destination);const t=AC.currentTime+t0;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);s.start(t);s.stop(t+dur+0.05);}
+
+// BGM 3種
+let bgmMode=null,bgmTid=null,bgmStep=0;
+const BGMS={
+  attract:{notes:[523,659,784,880,784,659,523,440,523,659,784,1047,880,784,659,523,440,523,659,784,659,523,440,392],tempo:210,vol:0.055},
+  roulette:{notes:[784,880,1047,880,784,659,784,880,1047,1175,1047,880,784,880,1047,784],tempo:155,vol:0.065},
+  hl:{notes:[440,494,523,494,440,415,440,494,523,587,523,494,440,392,440,523],tempo:275,vol:0.050}
+};
+function bgmTick(){const c=BGMS[bgmMode];if(!c)return;const f=c.notes[bgmStep%c.notes.length];tone('triangle',f,0.18,c.vol);tone('square',f/2,0.22,c.vol*0.6);bgmStep++;bgmTid=setTimeout(bgmTick,c.tempo);}
+function bgmPlay(mode){if(bgmMode===mode)return;bgmStop();bgmMode=mode;bgmStep=0;bgmTick();}
+function bgmStop(){bgmMode=null;clearTimeout(bgmTid);bgmTid=null;}
+
+// SE
+function sePon(){tone('square',700,0.04,0.32);tone('square',900,0.04,0.26,0.05);tone('square',1100,0.03,0.2,0.09);}
+function seWin(){[523,659,784,1047,1319].forEach((f,i)=>tone('triangle',f,0.14,0.32,i*0.08));tone('square',2093,0.1,0.2,0.5);tone('square',2637,0.12,0.22,0.62);}
+function seLose(){tone('sawtooth',380,0.07,0.28);tone('sawtooth',300,0.09,0.26,0.09,180);tone('sawtooth',160,0.13,0.26,0.20,90);tone('sawtooth',80,0.22,0.30,0.35,50);nz(0.22,0.16,0.48);}
+function seCoin(){tone('square',880,0.04,0.22);tone('square',1100,0.05,0.22,0.07);tone('square',880,0.04,0.18,0.15);}
+function seTick(){tone('square',680,0.022,0.2);}
+function seMedal(n){for(let i=0;i<Math.min(n,10);i++)tone('sine',700+Math.random()*500,0.07,0.2,i*0.07);}
+function seJP(){[261,329,392,523,659,784,1047,1319].forEach((f,i)=>tone('square',f,0.13,0.38,i*0.06));nz(0.25,0.1,0.7);}
+function seSiren(){tone('sawtooth',1050,0.08,0.14);}
+function seAiko(){tone('triangle',440,0.08,0.22);tone('triangle',520,0.08,0.22,0.22);}
+function seHLwin(){tone('square',880,0.06,0.32);tone('square',1100,0.06,0.32,0.09);tone('square',1320,0.10,0.32,0.18);}
+function seHLlose(){tone('sawtooth',300,0.10,0.26);tone('sawtooth',200,0.12,0.26,0.13,100);nz(0.15,0.13,0.26);}
+
+// TTS
+let ttsVoice=null,ttsReady=false;
+function initVoice(){const all=speechSynthesis.getVoices(),ja=all.filter(v=>v.lang&&v.lang.startsWith('ja'));ttsVoice=ja.find(v=>/Kyoko/i.test(v.name))||ja.find(v=>/Haruka/i.test(v.name))||ja.find(v=>/Google/i.test(v.name))||ja[0]||null;ttsReady=ja.length>0;}
+speechSynthesis.addEventListener('voiceschanged',initVoice);initVoice();
+function speak(text){if(!text||!ttsReady)return;const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.pitch=1.85;u.rate=0.82;u.volume=1.0;if(ttsVoice)u.voice=ttsVoice;speechSynthesis.speak(u);}
+function speakAt(text,ms){setTimeout(()=>speak(text),ms||0);}
+
+// ════════════════════════════════════════
+// RANKING — Supabase REST API + localStorage
+// ════════════════════════════════════════
+const LOCAL_KEY = 'gcpfever-v3';
+const SB_CFG_KEY = 'gcpfever-supabase';
+const MAX_RANK = 20;
+
+// Supabase設定を読み込む
+function getSBConfig(){
+  try{
+    const v = localStorage.getItem(SB_CFG_KEY);
+    if(v) return JSON.parse(v);
+  }catch(e){}
+  return null;
+}
+function setSBConfig(url, key){
+  try{ localStorage.setItem(SB_CFG_KEY, JSON.stringify({url: url.trim().replace(/\/$/, ''), key: key.trim()})); }catch(e){}
+}
+
+// Supabase REST APIヘルパー
+async function sbFetch(path, opts={}){
+  const cfg = getSBConfig();
+  if(!cfg) return null;
+  const url = cfg.url + '/rest/v1/' + path;
+  const headers = {
+    'apikey': cfg.key,
+    'Authorization': 'Bearer ' + cfg.key,
+    'Content-Type': 'application/json',
+    'Prefer': opts.prefer || 'return=minimal',
+    ...( opts.headers || {} )
+  };
+  try{
+    const res = await fetch(url, { method: opts.method||'GET', headers, body: opts.body||undefined });
+    return res;
+  }catch(e){ return null; }
+}
+
+// Supabase から上位20件取得
+async function loadOnlineRanking(){
+  const res = await sbFetch('rankings?select=name,score,created_at&order=score.desc&limit=20', {
+    headers: {'Accept': 'application/json'}
+  });
+  if(!res || !res.ok) return null;
+  try{
+    const data = await res.json();
+    return data.map(r => ({name: r.name, score: r.score, date: r.created_at ? r.created_at.slice(0,10) : ''}));
+  }catch(e){ return null; }
+}
+
+// Supabase にスコアを保存
+async function saveOnlineScore(name, score){
+  const res = await sbFetch('rankings', {
+    method: 'POST',
+    body: JSON.stringify({name, score}),
+    prefer: 'return=minimal'
+  });
+  return res && (res.ok || res.status === 201);
+}
+
+// 接続テスト
+async function testSBConnection(url, key){
+  try{
+    const res = await fetch(url + '/rest/v1/rankings?select=id&limit=1', {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Accept': 'application/json' }
+    });
+    if(res.status === 401) return {ok:false, msg:'APIキーが違います'};
+    if(res.status === 404) return {ok:false, msg:'テーブルが見つかりません\nSTEP 2のSQLを実行しましたか？'};
+    if(res.status === 400) return {ok:false, msg:'URLが正しくありません'};
+    if(res.ok) return {ok:true, msg:'接続成功！'};
+    return {ok:false, msg:'エラー: ' + res.status};
+  }catch(e){ return {ok:false, msg:'URLが正しくありません\n' + e.message}; }
+}
+
+async function saveSupabaseConfig(){
+  const url = document.getElementById('setup-url').value.trim();
+  const key = document.getElementById('setup-key').value.trim();
+  const st  = document.getElementById('setup-status');
+  if(!url || !key){
+    st.className='setup-status err'; st.textContent='URLとAPIキーを両方入力してください';
+    return;
+  }
+  // URLの形式チェックだけ（fetchはCORSでブロックされるので行わない）
+  if(!url.includes('supabase.co')){
+    st.className='setup-status err'; st.textContent='URLは https://xxxx.supabase.co の形式で入力してください';
+    return;
+  }
+  if(!key.startsWith('eyJ')){
+    st.className='setup-status err'; st.textContent='APIキーは eyJ... から始まる文字列を入力してください';
+    return;
+  }
+  setSBConfig(url, key);
+  st.className='setup-status ok';
+  st.textContent='✅ 設定を保存しました！ゲームをプレイしてスコアを登録してみてください。';
+  updateRankStatus();
+}
+
+// 設定を埋め込んだHTMLをダウンロード
+function saveAndDownload(){
+  const url = document.getElementById('setup-url').value.trim();
+  const key = document.getElementById('setup-key').value.trim();
+  const st  = document.getElementById('setup-status');
+  if(!url || !key){
+    st.className='setup-status err'; st.textContent='URLとAPIキーを入力してください';
+    return;
+  }
+  // 現在のHTMLを取得してSUPABASE設定を埋め込む
+  let html = document.documentElement.outerHTML;
+  // 既存のconfig保存をインラインに置き換え
+  const inject = `\n// ★ 埋め込み設定\ntry{localStorage.setItem('gcpfever-supabase',JSON.stringify({url:'${url.replace(/'/g,"\\'")}',key:'${key.replace(/'/g,"\\'")}'}));}catch(e){}\n`;
+  html = html.replace("'use strict';", "'use strict';" + inject);
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gcpfever_online.html';
+  a.click();
+  st.className='setup-status ok';
+  st.textContent='✅ ダウンロードしました！このHTMLをGitHub Pagesにアップしてください。';
+}
+
+function updateRankStatus(){
+  const el = document.getElementById('rank-status');
+  if(!el) return;
+  const cfg = getSBConfig();
+  el.textContent = cfg ? '🌐 オンラインランキング有効' : '⚙️ Supabase未設定 — ローカルのみ';
+  el.style.color = cfg ? '#44ff88' : 'rgba(170,140,255,.5)';
+}
+
+// スコア登録（オンライン + ローカル）
+async function addScore(name, score){
+  // ローカル保存
+  const local = loadLocalRanking();
+  local.push({name: name.trim()||'？？？', score, date: new Date().toLocaleDateString('ja-JP')});
+  local.sort((a,b) => b.score - a.score);
+  const trimmed = local.slice(0, MAX_RANK);
+  try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(trimmed)); }catch(e){}
+  // オンライン保存（失敗しても問題なし）
+  if(getSBConfig()) saveOnlineScore(name.trim()||'？？？', score).catch(()=>{});
+  return trimmed;
+}
+
+// ローカルランキング読み込み（同期）
+function loadLocalRanking(){
+  try{
+    const v = localStorage.getItem(LOCAL_KEY);
+    return v ? JSON.parse(v) : [];
+  }catch(e){ return []; }
+}
+
+// ハイスコア判定（同期・フリーズしない）
+function isHighScoreSync(score){
+  if(score <= 0) return false;
+  const list = loadLocalRanking();
+  if(list.length < MAX_RANK) return true;
+  return score > list[list.length - 1].score;
+}
+
+// ランキング画面表示
+async function showRanking(){
+  show('srank');
+  updateRankStatus();
+  const el = document.getElementById('rank-list');
+
+  // まずローカルを即表示
+  const local = loadLocalRanking();
+  renderRankList(el, local);
+
+  // Supabase設定あればオンラインを取得して上書き
+  const cfg = getSBConfig();
+  if(cfg){
+    el.innerHTML = '<div class="rank-loading">オンラインランキング読み込み中…</div>';
+    const online = await loadOnlineRanking();
+    if(online && online.length > 0){
+      renderRankList(el, online);
+    } else if(online === null){
+      // 取得失敗 → ローカルにフォールバック
+      renderRankList(el, local);
+    } else {
+      el.innerHTML = '<div class="rank-empty">まだ記録がありません！<br>プレイして登録しよう 🏆</div>';
+    }
+  }
+}
+
+function renderRankList(el, list){
+  if(!list || list.length === 0){
+    el.innerHTML = '<div class="rank-empty">まだ記録がありません！<br>プレイして登録しよう 🏆</div>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'], cls = ['gold','silver','bronze'];
+  el.innerHTML = list.map((r,i) => `
+    <div class="rank-item ${cls[i]||''}">
+      <div class="rank-pos">${medals[i]||String(i+1)}</div>
+      <div class="rank-name">${escHtml(r.name)}</div>
+      <div class="rank-score">${r.score}枚</div>
+    </div>`).join('');
+}
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// 設定画面を開いたときに既存値を復元
+function initSetupScreen(){
+  const cfg = getSBConfig();
+  if(cfg){
+    document.getElementById('setup-url').value = cfg.url || '';
+    document.getElementById('setup-key').value = cfg.key || '';
+    document.getElementById('setup-status').textContent = '現在の設定が読み込まれました';
+    document.getElementById('setup-status').className = 'setup-status ok';
+  }
+}
+
+
+
+
+
+// ROULETTE
+const RL_VALS=[2,6,4,10,4,25,4,8,4,50,4,6];
+const SEG_COLS=['#dd2222','#ff6600','#cc8800','#226600','#0055aa','#880088','#cc2233','#ff5500','#aa6600','#116644','#0044aa','#880066'];
+const BEATS={rock:'scissors',scissors:'paper',paper:'rock'};
+const HANDS=[{key:'rock',ic:'✊',nm:'グー'},{key:'scissors',ic:'✌️',nm:'チョキ'},{key:'paper',ic:'🖐️',nm:'パー'}];
+function hByKey(k){return HANDS.find(h=>h.key===k);}
+
+// STATE
+let credits=0,totalMedals=0,hiScore=0,sessionGained=0,php=5;
+let inputOK=false,tmrId=null,tLeft=5;
+let signTid=null,signIdx=0,signRunning=false;
+let rlLitIdx=0,rlLitTid=null,rlStopping=false;
+let patId=null,pfId=null,rovTimer=null;
+let hlMedals=0,hlActive=false,hlBtnOK=false;
+let pendingScore=0;
+
+// UI
+function show(id){
+  document.querySelectorAll('.gs').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='sa') document.getElementById('ctrl-panel').classList.remove('hidden');
+  else           document.getElementById('ctrl-panel').classList.add('hidden');
+  if(id==='ssetup') initSetupScreen();
+}
+function setV(txt,cls){const el=document.getElementById('vbox');el.textContent=txt;el.className='vbox '+(cls||'');}
+function updPHP(){const p=(php/5)*100,f=document.getElementById('p-hp');f.style.width=p+'%';f.className='hpf'+(p<=40?' low':p<=70?' med':'');}
+function updMed(){document.getElementById('med-v').textContent=sessionGained;}
+function showRov(type,main,sub,ms){clearTimeout(rovTimer);document.getElementById('rov-main').textContent=main;document.getElementById('rov-main').className='rov-main '+type;document.getElementById('rov-sub').textContent=sub;document.getElementById('rov').classList.add('show');rovTimer=setTimeout(()=>document.getElementById('rov').classList.remove('show'),ms||1800);}
+function hideRov(){clearTimeout(rovTimer);document.getElementById('rov').classList.remove('show');}
+
+// SIGN
+function signStart(){if(signTid){clearInterval(signTid);signTid=null;}signRunning=true;signIdx=0;document.getElementById('sign').className='sign';signTid=setInterval(()=>{if(!signRunning){clearInterval(signTid);signTid=null;return;}const h=HANDS[signIdx%3];document.getElementById('sh').textContent=h.ic;document.getElementById('sl').textContent=h.nm;signIdx++;},140);}
+function signStop(){signRunning=false;if(signTid){clearInterval(signTid);signTid=null;}}
+function signFreeze(h){signStop();document.getElementById('sh').textContent=h.ic;document.getElementById('sl').textContent=h.nm;}
+
+// TIMER
+function timerStart(){if(tmrId){clearInterval(tmrId);tmrId=null;}tLeft=5;updTmr();tmrId=setInterval(()=>{tLeft--;updTmr();if(tLeft<=0){timerStop();autoPick();}},1000);}
+function timerStop(){if(tmrId){clearInterval(tmrId);tmrId=null;}}
+function updTmr(){const el=document.getElementById('tmr');el.textContent=String(tLeft).padStart(2,'0');el.className='hud-tv'+(tLeft<=2?' danger':tLeft<=3?' warn':'');}
+function stopAll(){timerStop();signStop();if(rlLitTid){clearInterval(rlLitTid);rlLitTid=null;}rlStopping=false;patOff();hideRov();bgmStop();hlActive=false;hlBtnOK=false;}
+
+// ATTRACT
+function openPoker(){
+  const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  if(!su) { location.href='poker_fever.html'; return; }
+  // 今セッションで得たメダルを加算して保存
+  su.medals = (su.medals||0) + totalMedals;
+  localStorage.setItem('hkg_user', JSON.stringify(su));
+  // Supabaseにも保存
+  if(su.id){
+    const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
+    const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+    const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+    fetch(SB+'/rest/v1/game_users?id=eq.'+su.id,{method:'PATCH',headers:H,body:JSON.stringify({medals:su.medals})});
+  }
+  location.href='poker_fever.html';
+}
+function updateBadge(){
+  const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  const b=document.getElementById('hkg-badge');
+  if(b&&su) b.textContent='👤 '+su.name+'  🪙 '+su.medals;
+}
+function insertCoin(){
+  const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  if(su && su.medals<=0){return;}
+  wake(); credits++;
+  if(su){ su.medals=Math.max(0,su.medals-1); localStorage.setItem('hkg_user',JSON.stringify(su)); updateBadge(); }
+  document.getElementById('cr-v').textContent=credits;
+  document.getElementById('start-btn').disabled=false;
+  seCoin(); bgmPlay('attract');
+}
+function goAttract(){stopAll();credits=0;document.getElementById('cr-v').textContent=0;document.getElementById('start-btn').disabled=true;document.getElementById('hi-v').textContent=hiScore;document.getElementById('tot-v').textContent=totalMedals;bgmPlay('attract');show('sa');}
+
+// GAME
+function startGame(){if(!credits)return;wake();credits--;bgmStop();sessionGained=0;php=5;updMed();updPHP();show('sb');startRound();}
+function startRound(){document.getElementById('p-hand').textContent='🙂';document.getElementById('p-hand').className='p-hand';document.getElementById('sign').className='sign';setV('じゃーん　けーん','call');setBtns(true);signStart();timerStart();speakAt('じゃーん、けーん！',200);}
+function setBtns(on){inputOK=on;['b-r','b-s','b-p'].forEach(id=>document.getElementById(id).disabled=!on);}
+function autoPick(){pick(HANDS[Math.floor(Math.random()*3)].key);}
+function pick(pKey){
+  if(!inputOK)return;wake();inputOK=false;setBtns(false);timerStop();
+  const cpuKey=HANDS[Math.floor(Math.random()*3)].key,ph=hByKey(pKey),ch=hByKey(cpuKey);
+  const pEl=document.getElementById('p-hand');pEl.textContent=ph.ic;pEl.classList.add('atk');setTimeout(()=>pEl.classList.remove('atk'),350);
+  sePon();setTimeout(()=>signFreeze(ch),300);setTimeout(()=>judge(pKey,cpuKey,ph,ch),900);
+}
+function judge(pKey,cpuKey,ph,ch){
+  const result=pKey===cpuKey?'draw':BEATS[pKey]===cpuKey?'win':'lose';
+  const pEl=document.getElementById('p-hand');
+  if(result==='win'){
+    document.getElementById('sign').className='sign win-d';pEl.className='p-hand win-g';
+    seWin();showRov('win','WIN！','フィーバー！！',1400);setV('フィーバー！！','fever');speakAt('フィーバー！！',500);
+    setTimeout(()=>{hideRov();showRl();},1700);
+  }else if(result==='lose'){
+    document.getElementById('sign').className='sign lose-d';pEl.className='p-hand lose-g';
+    php=Math.max(0,php-1);updPHP();seLose();showRov('lose','LOSE…','ズコー！',1400);setV('ズコー！','zuko');speakAt('ずっこー！',500);
+    setTimeout(()=>{hideRov();if(php<=0)finishGame(0);else startRound();},1700);
+  }else{
+    document.getElementById('sign').className='sign draw-d';
+    seAiko();showRov('draw','DRAW','あいこでしょ！',1100);setV('あーいこーで　しょ！','draw');speakAt('あーいこで！しょっ！',200);
+    setTimeout(()=>{hideRov();startRound();},1400);
+  }
+}
+
+// ROULETTE
+function buildRlSVG(){
+  const svg=document.getElementById('rl-svg');svg.innerHTML='';
+  const vals=RL_VALS,n=vals.length,cx=140,cy=140,R=128,rIn=42,seg=360/n;
+  for(let i=0;i<n;i++){
+    const v=vals[i],a0=(i*seg-90)*Math.PI/180,a1=((i+1)*seg-90)*Math.PI/180,lf=seg>180?1:0;
+    const x1=cx+R*Math.cos(a0),y1=cy+R*Math.sin(a0),x2=cx+R*Math.cos(a1),y2=cy+R*Math.sin(a1);
+    const xi1=cx+rIn*Math.cos(a0),yi1=cy+rIn*Math.sin(a0),xi2=cx+rIn*Math.cos(a1),yi2=cy+rIn*Math.sin(a1);
+    const isJP=v>=25,p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M${xi1},${yi1} L${x1},${y1} A${R},${R} 0 ${lf} 1 ${x2},${y2} L${xi2},${yi2} A${rIn},${rIn} 0 ${lf} 0 ${xi1},${yi1} Z`);
+    p.setAttribute('fill',isJP?'#cc0033':SEG_COLS[i%SEG_COLS.length]);p.setAttribute('stroke','#220a44');p.setAttribute('stroke-width','2');p.setAttribute('id','seg'+i);p.setAttribute('opacity','0.78');svg.appendChild(p);
+    const midA=((i+0.5)*seg-90)*Math.PI/180,tR=(R+rIn)/2,tx=cx+tR*Math.cos(midA),ty=cy+tR*Math.sin(midA),ang=(i+0.5)*seg;
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',tx);t.setAttribute('y',ty);t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family','Zen Dots,sans-serif');t.setAttribute('font-size',isJP?'15':'20');
+    t.setAttribute('fill','#ffffff');t.setAttribute('font-weight','bold');t.setAttribute('transform',`rotate(${ang},${tx},${ty})`);
+    t.textContent=v+'枚';svg.appendChild(t);
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',xi1);ln.setAttribute('y1',yi1);ln.setAttribute('x2',x1);ln.setAttribute('y2',y1);ln.setAttribute('stroke','rgba(0,0,0,.4)');ln.setAttribute('stroke-width','2');svg.appendChild(ln);
+  }
+}
+function litSeg(i){const n=RL_VALS.length;for(let j=0;j<n;j++){const el=document.getElementById('seg'+j);if(el)el.setAttribute('opacity',j===i?'1':'0.62');}document.getElementById('rl-num').textContent=RL_VALS[i];}
+function showRl(){
+  signStop();buildRlSVG();rlLitIdx=0;rlStopping=false;
+  document.getElementById('rl-hdr').textContent='フィーバー！！';document.getElementById('rl-lbl').textContent='ボタンを押してストップ！';document.getElementById('rl-num').textContent='?';document.getElementById('stop-btn').disabled=true;
+  show('sr');bgmPlay('roulette');patOn();speak('フィーバー！！');
+  if(rlLitTid){clearInterval(rlLitTid);rlLitTid=null;}
+  rlLitTid=setInterval(()=>{litSeg(rlLitIdx%RL_VALS.length);seTick();rlLitIdx++;},80);
+  setTimeout(()=>document.getElementById('stop-btn').disabled=false,1200);
+}
+function stopRl(){
+  if(rlStopping)return;rlStopping=true;wake();document.getElementById('stop-btn').disabled=true;
+  if(rlLitTid){clearInterval(rlLitTid);rlLitTid=null;}
+  const sched=[100,130,170,210,260,320,390,470];let si=0;
+  function step(){litSeg(rlLitIdx%RL_VALS.length);seTick();rlLitIdx++;si++;if(si<sched.length)setTimeout(step,sched[si]);else setTimeout(finishRl,350);}
+  setTimeout(step,sched[0]);
+}
+function finishRl(){
+  if(rlLitTid){clearInterval(rlLitTid);rlLitTid=null;}
+  const fi=(rlLitIdx-1+RL_VALS.length)%RL_VALS.length,won=RL_VALS[fi],isJP=won>=25;
+  litSeg(fi);document.getElementById('rl-num').textContent=won;document.getElementById('rl-hdr').textContent='やっぴー！！';document.getElementById('rl-lbl').textContent='+'+won+'枚 → ハイ＆ローへ！';
+  bgmStop();if(isJP){seJP();speakAt('ジャックポット！やったー！',400);}else{seWin();speakAt('やっっぴー！！',300);}
+  setTimeout(()=>seMedal(won),600);patFlash();hlMedals=won;
+  setTimeout(()=>{patOff();startHL();},3500);
+}
+
+// HIGH & LOW
+const SUITS=['♠','♥','♦','♣'],SUIT_RED=[false,true,true,false];
+function cLabel(n){if(n===1)return 'A';if(n===11)return 'J';if(n===12)return 'Q';if(n===13)return 'K';return String(n);}
+function startHL(){
+  hlActive=true;hlBtnOK=false;dealNewCards();updateHLInfo();
+  document.getElementById('hl-res').textContent='HIGH か LOW か？';document.getElementById('hl-res').className='hl-res';
+  setHLBtns(true);show('shl');bgmPlay('hl');speakAt('ハイかローか！？',400);hlBtnOK=true;
+}
+function dealNewCards(){
+  const ln=Math.floor(Math.random()*13)+1,ls=Math.floor(Math.random()*4);
+  document.getElementById('prev-num').textContent=cLabel(ln);document.getElementById('prev-suit').textContent=SUITS[ls];
+  document.getElementById('prev-card').className='card up '+(SUIT_RED[ls]?'red':'blk');document.getElementById('prev-card').dataset.num=ln;
+  document.getElementById('next-card').className='card dn';document.getElementById('next-num').textContent='';document.getElementById('next-suit').textContent='';
+}
+function updateHLInfo(){document.getElementById('hl-med').textContent=hlMedals+'枚';document.getElementById('hl-nxt').textContent=(hlMedals*2)+'枚';document.getElementById('hl-quit').textContent='💰 やめてメダルをもらう ('+hlMedals+'枚)';}
+function setHLBtns(on){document.getElementById('btn-hi').disabled=!on;document.getElementById('btn-lo').disabled=!on;}
+function hlGuess(guess){
+  if(!hlBtnOK||!hlActive)return;hlBtnOK=false;setHLBtns(false);wake();
+  const ln=parseInt(document.getElementById('prev-card').dataset.num);
+  let rn=Math.floor(Math.random()*13)+1,rs=Math.floor(Math.random()*4),tries=0;
+  while(rn===ln&&tries<20){rn=Math.floor(Math.random()*13)+1;tries++;}
+  document.getElementById('next-card').className='card up '+(SUIT_RED[rs]?'red':'blk');
+  document.getElementById('next-num').textContent=cLabel(rn);document.getElementById('next-suit').textContent=SUITS[rs];
+  const correct=(guess==='hi'&&rn>ln)||(guess==='lo'&&rn<ln);
+  setTimeout(()=>{
+    if(correct){
+      hlMedals=hlMedals*2;seHLwin();document.getElementById('hl-res').textContent='正解！ → '+hlMedals+'枚！';document.getElementById('hl-res').className='hl-res ok';updateHLInfo();speakAt('正解！やったー！',300);
+      setTimeout(()=>{if(!hlActive)return;dealNewCards();document.getElementById('hl-res').textContent='HIGH か LOW か？';document.getElementById('hl-res').className='hl-res';updateHLInfo();setTimeout(()=>{if(hlActive){hlBtnOK=true;setHLBtns(true);}},400);},1800);
+    }else{
+      hlActive=false;seHLlose();bgmStop();document.getElementById('hl-res').textContent='ハズレ！メダルを失った…';document.getElementById('hl-res').className='hl-res ng';speakAt('ずっこー！残念！',400);setTimeout(()=>finishGame(0),2500);
+    }
+  },600);
+}
+function hlQuit(){if(!hlActive)return;hlActive=false;hlBtnOK=false;setHLBtns(false);bgmStop();wake();seWin();speakAt('やったー！メダルゲット！',200);setTimeout(()=>finishGame(hlMedals),1200);}
+
+// FINISH
+function finishGame(gained){
+  stopAll(); sessionGained=gained; totalMedals+=gained;
+  if(gained>hiScore) hiScore=gained;
+  pendingScore=gained;
+  // 同期チェック（フリーズしない）
+  if(gained>0 && isHighScoreSync(gained)){
+    document.getElementById('name-score-disp').textContent=gained+'枚';
+    document.getElementById('name-input').value='';
+    show('sname');
+    seWin(); speakAt('やったー！ハイスコア！',300);
+  } else {
+    showResult();
+  }
+}
+async function submitScore(){
+  const name=document.getElementById('name-input').value.trim()||'？？？';
+  if(pendingScore>0) await addScore(name,pendingScore);
+  showResult();
+}
+async function saveMedalsToPoker(gained){
+  if(!gained||gained<=0) return;
+  const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  if(!su||!su.id) return;
+  su.medals=(su.medals||0)+gained;
+  localStorage.setItem('hkg_user',JSON.stringify(su));
+  updateBadge();
+  const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
+  const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+  const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  await fetch(SB+'/rest/v1/game_users?id=eq.'+su.id,{method:'PATCH',headers:H,body:JSON.stringify({medals:su.medals})});
+}
+function showResult(){
+  if(pendingScore>0) saveMedalsToPoker(pendingScore);
+  const gained=pendingScore;
+  document.getElementById('gr-t').textContent=gained>0?'メダルゲット！':'ゲームオーバー…';
+  document.getElementById('gr-got').textContent=gained;document.getElementById('gr-tot').textContent=totalMedals;
+  document.getElementById('gr-nr').style.display=(gained>0&&gained>=hiScore&&hiScore>0)?'block':'none';
+  document.getElementById('hi-v').textContent=hiScore;document.getElementById('tot-v').textContent=totalMedals;
+  show('sgr');bgmPlay('attract');
+  if(gained>0){seWin();speakAt('やっっぴー！！',400);}else{seLose();speakAt('ずっこー！',400);}
+}
+
+// PAT LAMP
+function patOn(){if(patId)return;let s=true;const el=document.getElementById('patlamp');patId=setInterval(()=>{el.className='patlamp'+(s?' on':'');if(s)seSiren();s=!s;},360);}
+function patOff(){clearInterval(patId);patId=null;clearInterval(pfId);pfId=null;document.getElementById('patlamp').className='patlamp';}
+function patFlash(){clearInterval(patId);patId=null;clearInterval(pfId);pfId=null;let c=0;const el=document.getElementById('patlamp');pfId=setInterval(()=>{el.className='patlamp'+(c%2===0?' on':'');c++;if(c>22){clearInterval(pfId);pfId=null;el.className='patlamp';}},100);}
+
+// LINE SHARE
+function shareToLINE(){
+  const score=pendingScore;
+  const text=score>0?`✊✌️🖐️ グーチョキパーFEVER!! で ${score}枚 獲得！\nあなたも挑戦してみて！`:`✊✌️🖐️ グーチョキパーFEVER!! で遊んでみた！\nじゃんけん→ルーレット→ハイ＆ローで倍々！\nあなたも挑戦して！`;
+  window.open('https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(location.href)+'&text='+encodeURIComponent(text),'_blank');
+}
+
+// hkg_userセッション表示
+(function(){
+  const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  if(su&&su.medals!==undefined){
+    const b=document.createElement('div');
+    b.style='position:fixed;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:#aad;font-size:12px;font-family:monospace;padding:4px 10px;border-radius:12px;border:1px solid #446;z-index:999;pointer-events:none;';
+    b.id='hkg-badge';
+    b.textContent='👤 '+su.name+'  🪙 '+su.medals;
+    document.body.appendChild(b);
+  }
+})();
+document.addEventListener('click',()=>wake(),{once:true});
+document.addEventListener('touchstart',()=>wake(),{once:true});
+</script>
+</body>
+</html>
