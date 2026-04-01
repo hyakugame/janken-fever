@@ -206,14 +206,14 @@ function doLogin(){
   if(pin.length<4){msg('4桁のPINを入力してください','err');return;}
   var db=getDB();
   if(db[name]){
-    if(db[name].pin===pin){user={name:name,medals:db[name].medals||0};msg('ログイン成功！','ok');save();setTimeout(openLobby,400);}
+    if(db[name].pin===pin){user={name:name,medals:db[name].medals||0,id:"hkg-"+name};msg('ログイン成功！','ok');save();setTimeout(openLobby,400);}
     else msg('PINが違います','err');
   }else{
     db[name]={pin:pin,medals:200};saveDB(db);
-    user={name:name,medals:200};msg('新規登録しました！','ok');save();setTimeout(openLobby,400);
+    user={name:name,medals:200,id:"hkg-"+name};msg('新規登録しました！','ok');save();setTimeout(openLobby,400);
   }
 }
-function guest(){user={name:'GUEST',medals:200};save();openLobby();}
+function guest(){user={name:'GUEST',medals:200,id:'hkg-GUEST'};save();openLobby();}
 
 function doLogout(){
   user=null;localStorage.removeItem('hkg_user');
