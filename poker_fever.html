@@ -41,10 +41,10 @@ body{display:block !important}
 .cab{width:100vw !important;max-width:100vw !important;border-left:none !important;display:flex !important;flex-direction:column !important;min-height:100vh !important}
 .screen{min-height:calc(100vh - 90px) !important}
 .ca{gap:3px !important;padding:6px 4px 3px !important}
-.card{width:220px !important;height:308px !important;flex-shrink:0 !important;min-width:220px !important;border-radius:6px !important;border-width:2px !important}
+.card{width:220px !important;height:308px !important;flex-shrink:0 !important;min-width:220px !important;border-radius:10px !important;border-width:2px !important;position:relative !important;overflow:hidden !important;background:#fff !important}
 .ct,.cb{font-size:44px !important;top:10px !important;left:12px !important;bottom:4px !important;right:5px !important}
 .cs{font-size:68px !important}
-.cw{gap:8px !important;flex-shrink:0 !important;min-width:0}
+.cw{gap:8px !important;flex-shrink:0 !important;min-width:220px !important;width:220px !important}
 .hl-lbl{font-size:18px !important}
 .pt{padding:2px 3px !important;overflow-x:auto !important}
 .pt-hb{width:22px !important;font-size:7px !important}
@@ -1629,62 +1629,26 @@ const FACE_SVG={
 };
  
 function makeCardHTML(c){
-  var SUITS=['\u2663','\u2666','\u2665','\u2660']; // ♣♦♥♠
-  var RANKS=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-  var isRed=(c.s===1||c.s===2);
-  var col=isRed?'#CC0000':'#111';
-  
   if(c.joker){
     return '<div style="position:absolute;inset:0;border-radius:6px;overflow:hidden">'+FACE_SVG.JKR+
-      '<div style="position:absolute;top:8px;left:10px;font-family:Georgia,serif;font-size:32px;color:#7700aa;font-weight:900;line-height:1;z-index:3">J<br><span style="font-size:24px">&#9733;</span></div>'+
-      '<div style="position:absolute;bottom:8px;right:10px;font-family:Georgia,serif;font-size:32px;color:#7700aa;font-weight:900;line-height:1;transform:rotate(180deg);z-index:3">J<br><span style="font-size:24px">&#9733;</span></div>'+
+      '<div style="position:absolute;top:6px;left:8px;font-family:Georgia,serif;font-size:30px;color:#7700aa;font-weight:900;line-height:1;z-index:3">J<br>&#9733;</div>'+
+      '<div style="position:absolute;bottom:6px;right:8px;font-family:Georgia,serif;font-size:30px;color:#7700aa;font-weight:900;line-height:1;transform:rotate(180deg);z-index:3">J<br>&#9733;</div>'+
     '</div>';
   }
-  
-  var suit=SUITS[c.s];
-  var rank=RANKS[c.n];
-  // コーナーラベル（左上・右下）
-  var cTop='<div style="position:absolute;top:8px;left:10px;font-family:Georgia,serif;font-size:36px;font-weight:900;color:'+col+';line-height:1;text-align:center;z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
-  var cBot='<div style="position:absolute;bottom:8px;right:10px;font-family:Georgia,serif;font-size:36px;font-weight:900;color:'+col+';line-height:1;text-align:center;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
-  
-  // フェイスカード（J/Q/K）
+  var isRed=SR[c.s];
+  var col=isRed?'#CC0000':'#111111';
+  var suit=S[c.s];
+  var rank=cl(c.n);
+  var cTop='<div style="position:absolute;top:6px;left:8px;font-family:Georgia,serif;font-size:34px;font-weight:900;color:'+col+';line-height:1;text-align:center;z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
+  var cBot='<div style="position:absolute;bottom:6px;right:8px;font-family:Georgia,serif;font-size:34px;font-weight:900;color:'+col+';line-height:1;text-align:center;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
   if(c.n>=11){
     var key=(rank==='K'?'K':rank==='Q'?'Q':'J')+(isRed?'_r':'_b');
     var art=FACE_SVG[key]||'';
     return cTop+'<div style="position:absolute;inset:0;overflow:hidden;border-radius:6px">'+art+'</div>'+cBot;
   }
-  
-  // 数字カード: ピップ配置
-  function p(s){return '<span style="font-size:38px;color:'+col+';line-height:1;display:block">'+s+'</span>';}
-  function pd(s){return '<span style="font-size:38px;color:'+col+';line-height:1;display:block;transform:rotate(180deg)">'+s+'</span>';}
-  var pips='';
-  var n=c.n;
-  var s=suit;
-  // pip配置テーブル（縦3列: 左、中央、右）
-  // 各セルは上/中/下の位置にpipを置く
-  var center='<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;height:75%;width:80%;">';
-  if(n===1){// A
-    pips='<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)"><span style="font-size:90px;color:'+col+';line-height:1">'+s+'</span></div>';
-  }else if(n===2){
-    pips=center+'<div style="text-align:center">'+p(s)+'</div><div style="text-align:center">'+pd(s)+'</div></div>';
-  }else if(n===3){
-    pips=center+'<div>'+p(s)+'</div><div>'+p(s)+'</div><div>'+pd(s)+'</div></div>';
-  }else if(n===4){
-    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
-  }else if(n===5){
-    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
-  }else if(n===6){
-    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
-  }else if(n===7){
-    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
-  }else if(n===8){
-    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div><div>'+pd(s)+'</div></div>';
-  }else if(n===9){
-    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
-  }else if(n===10){
-    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div>'+pd(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
-  }
-  return cTop+pips+cBot;
+  var sz=c.n===1?'88px':'54px';
+  var center='<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:'+sz+';color:'+col+';line-height:1">'+suit+'</div>';
+  return cTop+center+cBot;
 }
 
 function renderFD(){const a=document.getElementById('pk-ca');a.innerHTML='';for(let i=0;i<5;i++){const w=document.createElement('div');w.className='cw';const c=document.createElement('div');c.className='card dn';const l=document.createElement('div');l.className='hl-lbl hid';l.textContent='HOLD';w.appendChild(c);w.appendChild(l);a.appendChild(w);}}
