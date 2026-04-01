@@ -798,6 +798,42 @@ const BGM_PATTERNS={
     });
     kick(0.22,t);if(b===1||b===3)snare(0.16,t);
     hh(0.035,t);hh(0.028,t+B*0.25);hh(0.028,t+B*0.5);hh(0.020,t+B*0.75);
+  }},
+  // WIN: ハッピーな明るいBGM
+  win:{bpm:130,bars:4,fn:function(beat,t,B){
+    const b=beat%4;
+    const bar=Math.floor(bgmBeat/4)%8;
+    const mel=[[523,659,784,1047],[587,698,880,1047],[659,784,880,988],[698,880,1047,1175]];
+    const ch=mel[bar%4];
+    if(b===0){piano(ch[0],B*0.4,0.06,t);piano(ch[1],B*0.4,0.05,t);}
+    if(b===2){piano(ch[1],B*0.4,0.05,t);piano(ch[2],B*0.4,0.04,t);}
+    piano(ch[0]/2,B*0.35,0.08,t);
+    if(b===1||b===3)nzFiltered(0.015,0.04,8000,t);
+  }},
+  // BIGWIN: 興奮系ファンファーレ
+  bigwin:{bpm:145,bars:4,fn:function(beat,t,B){
+    const b=beat%4;
+    const bar=Math.floor(bgmBeat/4)%4;
+    const fanf=[[784,988,1175],[880,1047,1319],[988,1175,1397],[1047,1319,1568]];
+    const ch=fanf[bar%4];
+    if(b===0||b===1){piano(ch[0],B*0.3,0.08,t);piano(ch[1],B*0.3,0.06,t);}
+    if(b===2||b===3){piano(ch[1],B*0.3,0.07,t);piano(ch[2],B*0.3,0.05,t);}
+    piano(ch[0]/2,B*0.4,0.10,t);
+    nzFiltered(0.025,0.05,7000,t);
+    if(b===1||b===3)nzFiltered(0.03,0.06,400,t);
+  }},
+  // UP: ダブルアップ - ハイテンションテクノ
+  up:{bpm:175,bars:4,fn:function(beat,t,B){
+    const b=beat%4;
+    const bar=Math.floor(bgmBeat/4)%4;
+    const seq=[[659,523,392],[698,587,440],[784,659,523],[880,698,587]];
+    const ch=seq[bar%4];
+    if(b===0||b===2){piano(ch[0],B*0.25,0.07,t);piano(ch[1],B*0.25,0.05,t);}
+    if(b===1||b===3){piano(ch[1],B*0.2,0.06,t);piano(ch[2],B*0.2,0.05,t);}
+    piano([196,220,196,261][bar%4],B*0.3,0.10,t);
+    nzFiltered(0.015,0.035,9000,t);
+    nzFiltered(0.012,0.03,9000,t+B*0.5);
+    if(b===1||b===3)nzFiltered(0.035,0.06,300,t);
   }}
 };
  
