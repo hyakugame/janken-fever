@@ -736,5 +736,43 @@ document.addEventListener('DOMContentLoaded',function(){
     b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
     document.body.appendChild(b);
   });
+})()</script><script>(function(){
+var u=null;
+try{u=JSON.parse(localStorage.getItem('hkg_user')||'null');}catch(e){}
+if(!u||!u.name){location.href='index.html';return;}
+if(!u.id){u.id='hkg-'+u.name;localStorage.setItem('hkg_user',JSON.stringify(u));}
+document.addEventListener('DOMContentLoaded',function(){
+  // ロビーボタン追加
+  var b=document.createElement('button');
+  b.textContent='← ロビー';
+  b.style.cssText='position:fixed;top:8px;left:8px;z-index:99999;background:rgba(0,0,0,.9);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
+  b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
+  document.body.appendChild(b);
+  // 自動ログイン: 名前入力→PIN入力→OKクリック
+  setTimeout(function(){
+    var nf=document.getElementById('lname')||document.querySelector('input[type=text]');
+    if(nf){nf.value=u.name;nf.dispatchEvent(new Event('input',{bubbles:true}));}
+    var allBtns=Array.from(document.querySelectorAll('button'));
+    ['1','2','3','4'].forEach(function(n){
+      var btn=allBtns.find(function(x){return x.textContent.trim()===n;});
+      if(btn)btn.click();
+    });
+    setTimeout(function(){
+      var ok=allBtns.find(function(x){return (x.textContent||'').trim().indexOf('OK')===0;});
+      if(ok)ok.click();
+      // slobby表示後にポーカーボタンを自動クリック
+      setTimeout(function(){
+        var sp=document.getElementById('slobby');
+        if(!sp)return;
+        var items=sp.querySelectorAll('*');
+        for(var i=0;i<items.length;i++){
+          if((items[i].textContent||'').trim()==='▶'){
+            items[i].click();break;
+          }
+        }
+      },1200);
+    },300);
+  },400);
+});
 })()</script></body>
 </html>
