@@ -60,11 +60,11 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
 .rov-main{font-family:'Oswald',sans-serif;font-size:64px;font-weight:900;color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.8);text-align:center;position:relative;z-index:1;animation:rov-pulse 0.6s ease-in-out infinite alternate}
 @keyframes rov-pulse{from{transform:scale(1)}to{transform:scale(1.05)}}
 .rov-sub{font-family:'Oswald',sans-serif;font-size:22px;color:var(--green);text-align:center;position:relative;z-index:1}
-.sb-hud{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(0,0,0,.4);border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-hud{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(0,0,0,.4);border-bottom:1px solid var(--border);flex-shrink:0}
 .hud-block{text-align:center}
 .hud-lbl{font-size:10px;color:#888;letter-spacing:.1em}
-.hud-val{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;color:var(--green)}
-.hud-time{color:var(--red)}
+.hud-val{font-family:'Oswald',sans-serif;font-size:42px;font-weight:700;color:var(--green)}
+.hud-time{color:var(--red);font-size:42px}
 .arena{display:flex;flex-direction:column;flex:1;padding:8px 12px;gap:8px;justify-content:center}
 .fighter{display:flex;align-items:center;gap:10px;padding:4px 0}
 .fighter-lbl{font-size:11px;color:#888;letter-spacing:.1em;width:32px;flex-shrink:0}
@@ -76,7 +76,7 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
 .vs-text{font-family:'Oswald',sans-serif;font-size:18px;color:#444;font-weight:700}
 .sign-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 12px;text-align:center;flex:1}
 .vbox{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:var(--gold);text-align:center;padding:4px 0;min-height:36px}
-.jk-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:8px 12px 12px}
+.jk-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:6px 12px 12px}
 .jk-btn{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px 6px;cursor:pointer;text-align:center;transition:.12s;font-size:52px;line-height:1;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .jk-btn:active{transform:scale(.93);background:rgba(0,200,60,.15);border-color:var(--green)}
 .jk-btn-lbl{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--green);margin-top:6px}
@@ -163,6 +163,15 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
 .hidden{display:none!important}
 .patlamp{display:none}
 @keyframes winAnim{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* ハイ&ロー カード色 */
+.card.red #prev-num,.card.red #next-num{color:#CC0000}
+.card.blk #prev-num,.card.blk #next-num{color:#111}
+.card.red #prev-suit,.card.red #next-suit{color:#CC0000}
+.card.blk #prev-suit,.card.blk #next-suit{color:#111}
+.card.hl-red #prev-num,.card.hl-red #next-num{color:#CC0000}
+.card.hl-blk #prev-num,.card.hl-blk #next-num{color:#111}
+.card.red,.card.blk,.card.up{background:#fff}
 </style>
 </head>
 <body>
@@ -195,7 +204,7 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
   </div>
 
   <!-- じゃんけん -->
-  <div id="sb" class="gs">
+  <div id="sb" class="gs" style="justify-content:flex-start">
     <div class="rov" id="rov"><div class="rov-bg"></div><div class="rov-main" id="rov-main">WIN!</div><div class="rov-sub" id="rov-sub"></div></div>
     <div class="sb-hud">
       <div class="hud-block"><div class="hud-lbl">MEDALS</div><div class="hud-val" id="med-v">0</div></div>
@@ -204,7 +213,7 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
     </div>
     <div class="arena">
       <!-- バトルゾーン：YOUとCPUを横並び -->
-      <div style="display:flex;align-items:center;justify-content:space-around;padding:24px 8px;flex:0 0 auto">
+      <div style="display:flex;align-items:center;justify-content:space-around;padding:12px 8px;flex:0 0 auto">
         <!-- YOU -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1">
           <div style="font-size:11px;color:#888;letter-spacing:.1em">YOU</div>
