@@ -1885,7 +1885,7 @@ b.textContent='\u2190 \u30ed\u30d3\u30fc';
 b.style.cssText='position:fixed;top:8px;left:8px;z-index:99999;background:rgba(0,0,0,.9);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
 b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
 document.body.appendChild(b);
-setTimeout(async function(){
+setTimeout(function(){
 var nf=document.getElementById('lname')||document.querySelector('input[type=text]');
 if(nf){nf.value=u.name;nf.dispatchEvent(new Event('input',{bubbles:true}));}
 var bs=Array.from(document.querySelectorAll('button'));
@@ -1916,7 +1916,7 @@ document.addEventListener("DOMContentLoaded",function(){
   document.body.appendChild(b);
   // ゲームを直接起動
   setTimeout(function(){
-    try{user=u;seLogin();await goLobby();gotoPoker();}catch(e){console.log("init err",e);}
+    try{user=u;seLogin();gotoPoker();}catch(e){console.log("init err",e);}
     var side=document.getElementById("sidebar");
     if(side)side.style.display="none";
   },300);
