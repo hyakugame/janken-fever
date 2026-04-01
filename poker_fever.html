@@ -152,7 +152,7 @@ body{background:linear-gradient(160deg,#1a0533,#0a0018 50%,#001030);min-height:1
 .ctrl.hidden{display:none}
 .cbtn{border:none;border-radius:50px;font-family:'Zen Dots',cursive;font-size:12px;padding:11px 22px;cursor:pointer;transition:all .1s;position:relative;overflow:hidden;background:linear-gradient(160deg,#8844ff,#5511cc);color:#fff;box-shadow:0 4px 0 #330088}
 .cbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #330088}
-#slogin{display:none!important;visibility:hidden!important}#sidebar{display:none!important}</style>
+</style>
 <script>
 (function(){
 var u=null;
@@ -455,7 +455,7 @@ async function createUser(n,pin){
 }
 async function saveMedals(id,m){if(!id)return;return sbPatch('game_users?id=eq.'+id,{medals:m});}
 
-let user=(function(){try{var u=JSON.parse(localStorage.getItem('hkg_user')||'null');if(u&&u.name){if(!u.id)u.id='hkg-'+u.name;return u;}return null;}catch(e){return null;}})(),pinBuf='',lmode='login';
+let user=null,pinBuf='',lmode='login';
 let deck=[],hand=[],held=[],bet=1,win=0,phase='deal';
 let ugM=0,ugMode='',ugOn=false,ugPk=false,ugIdx=-1,ugLc=null,ugRc=[];
 
@@ -494,7 +494,7 @@ async function doAuth(){
   }
 }
 
-function logout(){user=null;pinBuf='';updPin();document.getElementById('lname').value='';setMsg('','');document.getElementById('ctrl').classList.add('hidden');show('spoker');}
+function logout(){user=null;pinBuf='';updPin();document.getElementById('lname').value='';setMsg('','');document.getElementById('ctrl').classList.add('hidden');show('slogin');}
 
 function goLobby(){
   if(!user)return;
@@ -502,7 +502,7 @@ function goLobby(){
   document.getElementById('lobby-name').textContent=user.name;
   document.getElementById('lobby-medals').textContent=user.medals;
   document.getElementById('ctrl').classList.add('hidden');
-  show('spoker');
+  show('slogin');
 }
 function updLM(){if(user)document.getElementById('lobby-medals').textContent=user.medals;}
 function openJanken(){
@@ -526,7 +526,7 @@ const PAY=[
 function cl(n){if(n===1)return'A';if(n===11)return'J';if(n===12)return'Q';if(n===13)return'K';return String(n);}
 function mkD(){let d=[];for(let s=0;s<4;s++)for(let n=1;n<=13;n++)d.push({s,n});return d.sort(()=>Math.random()-.5);}
 
-function startPoker(){if(!user)return;bet=1;win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
+function startPoker(){if(!user)return;bet=1;win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('slogin');}
 function updH(){document.getElementById('pk-med').textContent=user?user.medals:0;document.getElementById('pk-bet').textContent=bet;document.getElementById('pk-win').textContent=win;}
 function chgB(d){if(phase!=='deal')return;bet=Math.max(1,Math.min(5,d===99?5:bet+d));updPT();updH();}
 function updPT(){PAY.forEach(p=>{const r=document.getElementById('pt-'+p.id);if(!r)return;r.classList.remove('hi');r.querySelectorAll('.pt-o').forEach((o,i)=>o.classList.toggle('cur',i===bet-1));});}
@@ -673,7 +673,7 @@ function judgeUG(rs,ls){
   }
 }
 function ugQ(){user.medals+=ugM;saveMedals(user.id,user.medals);updLM();backP();}
-function backP(){phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('spoker');}
+function backP(){phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();document.getElementById('pk-rd').innerHTML='<div class="rz">DEAL を押してスタート</div>';document.getElementById('dbn').textContent='DEAL';setBB(true);show('slogin');}
 </script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
@@ -687,5 +687,54 @@ document.addEventListener('DOMContentLoaded',function(){
   };
   document.body.appendChild(b);
 });
-</script></body>
+</script><script>(function(){
+  var u=null;
+  try{u=JSON.parse(localStorage.getItem('hkg_user')||'null');}catch(e){}
+  if(!u||!u.name){location.href='index.html';return;}
+  if(!u.id){u.id='hkg-'+u.name;localStorage.setItem('hkg_user',JSON.stringify(u));}
+  document.addEventListener('DOMContentLoaded',function(){
+    // sloginを強制的に消す（最高優先度）
+    function killSlogin(){
+      var sl=document.getElementById('slogin');
+      if(!sl)return;
+      sl.classList.remove('active');
+      sl.style.setProperty('display','none','important');
+      sl.style.setProperty('visibility','hidden','important');
+    }
+    killSlogin();
+    var killObs=new MutationObserver(killSlogin);
+    killObs.observe(document.documentElement,{attributes:true,childList:true,subtree:true});
+    // slobbyがactiveになったらspokerへ
+    var switched=false;
+    function goPoker(){
+      if(switched)return;
+      var sl2=document.getElementById('slobby');
+      var sp=document.getElementById('spoker');
+      var sb=document.getElementById('sidebar');
+      if(!sl2||!sp||!sl2.classList.contains('active'))return;
+      switched=true;killObs.disconnect();
+      document.querySelectorAll('.gs').forEach(function(e){e.classList.remove('active');});
+      sp.classList.add('active');
+      if(sb)sb.style.setProperty('display','none','important');
+    }
+    var swObs=new MutationObserver(function(ms){ms.forEach(function(m){if(m.target.id==='slobby')goPoker();});});
+    document.querySelectorAll('.gs').forEach(function(el){swObs.observe(el,{attributes:true,attributeFilter:['class']});});
+    setTimeout(goPoker,500);setTimeout(goPoker,1000);setTimeout(goPoker,2000);
+    // 名前とPINを入力してOKをクリック（自動ログイン）
+    setTimeout(function(){
+      var nf=document.getElementById('lname')||document.querySelector('input[type=text]');
+      if(nf)nf.value=u.name;
+      var btns=Array.from(document.querySelectorAll('button'));
+      ['1','2','3','4'].forEach(function(n){var b=btns.find(function(x){return x.textContent.trim()===n;});if(b)b.click();});
+      setTimeout(function(){var ok=btns.find(function(x){return (x.textContent||'').indexOf('OK')>=0;});if(ok)ok.click();},200);
+    },300);
+    // ロビーへ戻るボタン
+    var b=document.createElement('button');
+    b.id='hkg-back';
+    b.textContent='← ロビー';
+    b.style.cssText='position:fixed;top:8px;left:8px;z-index:99999;background:rgba(0,0,0,.9);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
+    b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
+    document.body.appendChild(b);
+  });
+})()</script></body>
 </html>
