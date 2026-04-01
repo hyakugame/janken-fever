@@ -167,7 +167,31 @@ b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}
 document.body.appendChild(b);
 });
 })()
-</script></head>
+</script><script>(function(){
+var u=null;
+try{u=JSON.parse(localStorage.getItem('hkg_user')||'null');}catch(e){}
+if(!u||!u.name){location.href='index.html';return;}
+if(!u.id){u.id='hkg-'+u.name;localStorage.setItem('hkg_user',JSON.stringify(u));}
+document.addEventListener('DOMContentLoaded',function(){
+setTimeout(function(){
+var sb=document.getElementById('slobby');
+if(sb){
+var items=sb.querySelectorAll('li,a,button,[class],[data-game]');
+for(var i=0;i<items.length;i++){
+var t=items[i].textContent||'';
+if(t.indexOf('WILD')>=0||t.indexOf('ポーカー')>=0||t.indexOf('poker')>=0){items[i].click();break;}}
+if(document.getElementById('slobby').classList.contains('active')){
+var all=sb.querySelectorAll('*');
+if(all.length>0)all[0].click();
+}}
+},600);
+var b=document.createElement('button');
+b.textContent='← ロビー';
+b.style='position:fixed;top:8px;left:8px;z-index:9999;background:rgba(0,0,0,.85);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
+b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
+document.body.appendChild(b);
+});
+})()</script></head>
 <body>
 <div class="cab">
   <div class="mq"><div class="mq-inner">
