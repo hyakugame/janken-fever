@@ -1629,31 +1629,64 @@ const FACE_SVG={
 };
  
 function makeCardHTML(c){
+  var SUITS=['\u2663','\u2666','\u2665','\u2660']; // ♣♦♥♠
+  var RANKS=['','A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  var isRed=(c.s===1||c.s===2);
+  var col=isRed?'#CC0000':'#111';
+  
   if(c.joker){
-    return '<div style="position:absolute;inset:0;border-radius:6px;overflow:hidden">'+
-      FACE_SVG.JKR+
-      '<div style="position:absolute;top:3px;left:5px;font-family:Georgia,serif;font-size:15px;color:#7700aa;font-weight:900;line-height:1.2;z-index:3">J<br>★</div>'+
-      '<div style="position:absolute;bottom:3px;right:5px;font-family:Georgia,serif;font-size:15px;color:#7700aa;font-weight:900;line-height:1.2;transform:rotate(180deg);z-index:3">J<br>★</div>'+
+    return '<div style="position:absolute;inset:0;border-radius:6px;overflow:hidden">'+FACE_SVG.JKR+
+      '<div style="position:absolute;top:8px;left:10px;font-family:Georgia,serif;font-size:32px;color:#7700aa;font-weight:900;line-height:1;z-index:3">J<br><span style="font-size:24px">&#9733;</span></div>'+
+      '<div style="position:absolute;bottom:8px;right:10px;font-family:Georgia,serif;font-size:32px;color:#7700aa;font-weight:900;line-height:1;transform:rotate(180deg);z-index:3">J<br><span style="font-size:24px">&#9733;</span></div>'+
     '</div>';
   }
-  const isRed=SR[c.s];
-  const col=isRed?'#C00000':'#0D1B8F';
-  // フェイスカード (K/Q/J): SVGアート
-  if(c.n===13||c.n===12||c.n===11){
-    const rc=isRed?'#C00000':'#1a3a9e';
-    const rank=cl(c.n);
-    const suit=S[c.s];
-    const key=(rank==='K'?'K':(rank==='Q'?'Q':'J'))+(isRed?'_r':'_b');
-    const svgArt=FACE_SVG[key]||'';
-    return '<div style="position:absolute;top:4px;left:5px;font-family:Georgia,serif;font-size:16px;font-weight:900;color:'+rc+';line-height:1.1;z-index:3">'+rank+'<br><span style="font-size:12px">'+suit+'</span></div>'+
-           '<div style="position:absolute;inset:0;overflow:hidden;border-radius:6px">'+svgArt+'</div>'+
-           '<div style="position:absolute;bottom:4px;right:5px;font-family:Georgia,serif;font-size:16px;font-weight:900;color:'+rc+';line-height:1.1;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:12px">'+suit+'</span></div>';
+  
+  var suit=SUITS[c.s];
+  var rank=RANKS[c.n];
+  // コーナーラベル（左上・右下）
+  var cTop='<div style="position:absolute;top:8px;left:10px;font-family:Georgia,serif;font-size:36px;font-weight:900;color:'+col+';line-height:1;text-align:center;z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
+  var cBot='<div style="position:absolute;bottom:8px;right:10px;font-family:Georgia,serif;font-size:36px;font-weight:900;color:'+col+';line-height:1;text-align:center;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
+  
+  // フェイスカード（J/Q/K）
+  if(c.n>=11){
+    var key=(rank==='K'?'K':rank==='Q'?'Q':'J')+(isRed?'_r':'_b');
+    var art=FACE_SVG[key]||'';
+    return cTop+'<div style="position:absolute;inset:0;overflow:hidden;border-radius:6px">'+art+'</div>'+cBot;
   }
-  // 数字カード: 通常表示
-  return '<div class="ct" style="color:'+col+'">'+cl(c.n)+'<br>'+S[c.s]+'</div>'+
-         '<div class="cs" style="color:'+col+'">'+S[c.s]+'</div>'+
-         '<div class="cb" style="color:'+col+'">'+cl(c.n)+'</div>';
+  
+  // 数字カード: ピップ配置
+  function p(s){return '<span style="font-size:38px;color:'+col+';line-height:1;display:block">'+s+'</span>';}
+  function pd(s){return '<span style="font-size:38px;color:'+col+';line-height:1;display:block;transform:rotate(180deg)">'+s+'</span>';}
+  var pips='';
+  var n=c.n;
+  var s=suit;
+  // pip配置テーブル（縦3列: 左、中央、右）
+  // 各セルは上/中/下の位置にpipを置く
+  var center='<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;height:75%;width:80%;">';
+  if(n===1){// A
+    pips='<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)"><span style="font-size:90px;color:'+col+';line-height:1">'+s+'</span></div>';
+  }else if(n===2){
+    pips=center+'<div style="text-align:center">'+p(s)+'</div><div style="text-align:center">'+pd(s)+'</div></div>';
+  }else if(n===3){
+    pips=center+'<div>'+p(s)+'</div><div>'+p(s)+'</div><div>'+pd(s)+'</div></div>';
+  }else if(n===4){
+    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
+  }else if(n===5){
+    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
+  }else if(n===6){
+    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
+  }else if(n===7){
+    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
+  }else if(n===8){
+    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div><div>'+pd(s)+'</div></div>';
+  }else if(n===9){
+    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
+  }else if(n===10){
+    pips=center+'<div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+p(s)+p(s)+'</div><div>'+p(s)+'</div><div>'+pd(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div><div style="display:flex;justify-content:space-between;width:100%">'+pd(s)+pd(s)+'</div></div>';
+  }
+  return cTop+pips+cBot;
 }
+
 function renderFD(){const a=document.getElementById('pk-ca');a.innerHTML='';for(let i=0;i<5;i++){const w=document.createElement('div');w.className='cw';const c=document.createElement('div');c.className='card dn';const l=document.createElement('div');l.className='hl-lbl hid';l.textContent='HOLD';w.appendChild(c);w.appendChild(l);a.appendChild(w);}}
 function renderC(){const a=document.getElementById('pk-ca');a.innerHTML='';hand.forEach((c,i)=>{const w=document.createElement('div');w.className='cw';const cd=document.createElement('div');let cls='card up';if(c.joker)cls+=' joker-card';else{cls+=' '+(SR[c.s]?'r':'b');if(c.n>=11||c.n===13)cls+=' face-card';}if(held[i])cls+=' hd';cd.className=cls;if(phase==='draw')cd.onclick=()=>{wake();held[i]?seUnhold():seHold();held[i]=!held[i];renderC();};cd.innerHTML=makeCardHTML(c);const l=document.createElement('div');l.className='hl-lbl'+(held[i]?'':' hid');l.textContent='HOLD';if(isWild(c))l.style.color='#FFD700';w.appendChild(cd);w.appendChild(l);a.appendChild(w);});}
 function dealDraw(){if(phase==='deal')doDeal();else if(phase==='draw')doDraw();}
