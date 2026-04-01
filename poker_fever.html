@@ -389,7 +389,7 @@ body{display:block !important}
   z-index:0;
 }
 </style>
-<style></style><style>#slogin{display:none!important}</style>
+<style></style><style>#slogin,#slobby{display:none!important}</style>
 <script>
 (function(){
   var u=null;
@@ -1916,7 +1916,7 @@ document.addEventListener("DOMContentLoaded",function(){
   document.body.appendChild(b);
   // ゲームを直接起動
   setTimeout(function(){
-    try{user=u;seLogin();goLobby();}catch(e){console.log("init err",e);}
+    try{user=u;seLogin();goLobby();show("spoker");}catch(e){console.log("init err",e);}
     var side=document.getElementById("sidebar");
     if(side)side.style.display="none";
   },300);
