@@ -44,7 +44,7 @@ body{display:block !important}
 .card{width:220px !important;height:308px !important;flex-shrink:0 !important;min-width:220px !important;border-radius:10px !important;border-width:2px !important;position:relative !important;overflow:hidden !important;background:#fff !important}
 .ct,.cb{font-size:44px !important;top:10px !important;left:12px !important;bottom:4px !important;right:5px !important}
 .cs{font-size:68px !important}
-.cw{gap:8px !important;flex-shrink:0 !important;min-width:220px !important;width:220px !important}
+.cw{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:220px;min-width:220px}
 .hl-lbl{font-size:18px !important}
 .pt{padding:2px 3px !important;overflow-x:auto !important}
 .pt-hb{width:22px !important;font-size:7px !important}
@@ -194,8 +194,8 @@ body{display:block !important}
 }
 /* カード */
 .ca{display:flex;gap:8px;padding:14px 8px 8px;justify-content:center;flex-shrink:0}
-.cw{display:flex;flex-direction:column;align-items:center;gap:6px}
-.card{width:90px;height:128px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:3px solid #888;box-shadow:0 6px 18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15)}
+.cw{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:220px;min-width:220px}
+.card{width:220px;height:308px;border-radius:10px;position:relative;overflow:hidden;cursor:pointer;background:#fff;transition:all .2s;position:relative;border:3px solid #888;box-shadow:0 6px 18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15)}
 .card.up{background:linear-gradient(135deg,#fffef8,#fff9e6)}
 .card.up.r{color:#C00000}
 .card.up.b{color:#0D1B8F}
@@ -416,10 +416,10 @@ body{display:block !important}
   <button class="sb-logout" onclick="logout()">ログアウト</button>
 </div>
 <div class="cab">
-<div class="mq-wrap"><div class="mq"><span>★ JOKER'S WILD PLUS ★ NATURAL ROYAL FLUSH ×4000! ★ FIVE ACES ×3000! ★ JOKERのみワイルドカード ★ ツーペアは役なし ★ BET 1〜10枚 ★</span><span>★ JOKER'S WILD PLUS ★ NATURAL ROYAL FLUSH ×4000! ★ FIVE ACES ×3000! ★ JOKERのみワイルドカード ★ ツーペアは役なし ★ BET 1〜10枚 ★</span></div></div>
+<div class="mq-wrap"><div class="mq"><span>★ ポーカー FEVER ★ NATURAL ROYAL FLUSH ×4000! ★ FIVE ACES ×3000! ★ JOKERのみワイルドカード ★ ツーペアは役なし ★ BET 1〜10枚 ★</span><span>★ ポーカー FEVER ★ NATURAL ROYAL FLUSH ×4000! ★ FIVE ACES ×3000! ★ JOKERのみワイルドカード ★ ツーペアは役なし ★ BET 1〜10枚 ★</span></div></div>
 <div class="tp">
   <div class="led-row"><div class="led l0"></div><div class="led l1"></div><div class="led l2"></div><div class="led l3"></div><div class="led l4"></div><div class="led l5"></div><div class="led l4"></div><div class="led l3"></div><div class="led l2"></div><div class="led l1"></div><div class="led l0"></div></div>
-  <div class="cab-t">🃏 7's <span>WILD</span> PLUS</div>
+  <div class="cab-t">🎴 ポーカー</div>
   <div class="cab-s">HYAKUSHIKI GAME KINGDOM</div>
 </div>
 <div class="screen"><div class="fl"></div>
@@ -447,7 +447,7 @@ body{display:block !important}
   </div>
   <div class="lobby-body">
     <div class="lobby-sec">🎮 GAME SELECT</div>
-    <div class="game-card" onclick="gotoPoker()"><div class="gc-icon">🃏</div><div style="flex:1"><div class="gc-name">7's WILD PLUS</div><div class="gc-desc">7とJOKERがワイルド！ BET 1〜10枚</div><div class="gc-badge">NATURAL ROYAL ×4000!</div></div><div class="gc-arr">▶</div></div>
+    <div class="game-card" onclick="gotoPoker()"><div class="gc-icon">🃏</div><div style="flex:1"><div class="gc-name">ポーカー</div><div class="gc-desc">7とJOKERがワイルド！ BET 1〜10枚</div><div class="gc-badge">NATURAL ROYAL ×4000!</div></div><div class="gc-arr">▶</div></div>
     <div class="game-card" onclick="openJanken()"><div class="gc-icon">✊</div><div style="flex:1"><div class="gc-name">GU-CHOKI-PA FEVER</div><div class="gc-desc">じゃんけん→ルーレット→ハイ＆ロー！</div><div class="gc-badge">メダルを倍々に</div></div><div class="gc-arr">▶</div></div>
   </div>
 </div>
@@ -1630,25 +1630,45 @@ const FACE_SVG={
  
 function makeCardHTML(c){
   if(c.joker){
-    return '<div style="position:absolute;inset:0;border-radius:6px;overflow:hidden">'+FACE_SVG.JKR+
-      '<div style="position:absolute;top:6px;left:8px;font-family:Georgia,serif;font-size:30px;color:#7700aa;font-weight:900;line-height:1;z-index:3">J<br>&#9733;</div>'+
-      '<div style="position:absolute;bottom:6px;right:8px;font-family:Georgia,serif;font-size:30px;color:#7700aa;font-weight:900;line-height:1;transform:rotate(180deg);z-index:3">J<br>&#9733;</div>'+
+    return '<div style="position:absolute;inset:0;border-radius:8px;overflow:hidden">'+FACE_SVG.JKR+
+      '<div style="position:absolute;top:8px;left:10px;font-family:Georgia,serif;font-size:32px;color:#7700aa;font-weight:900;line-height:1;z-index:3">J<br>&#9733;</div>'+
+      '<div style="position:absolute;bottom:8px;right:10px;font-family:Georgia,serif;font-size:32px;color:#7700aa;font-weight:900;line-height:1;transform:rotate(180deg);z-index:3">J<br>&#9733;</div>'+
     '</div>';
   }
   var isRed=SR[c.s];
   var col=isRed?'#CC0000':'#111111';
   var suit=S[c.s];
   var rank=cl(c.n);
-  var cTop='<div style="position:absolute;top:6px;left:8px;font-family:Georgia,serif;font-size:34px;font-weight:900;color:'+col+';line-height:1;text-align:center;z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
-  var cBot='<div style="position:absolute;bottom:6px;right:8px;font-family:Georgia,serif;font-size:34px;font-weight:900;color:'+col+';line-height:1;text-align:center;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:26px">'+suit+'</span></div>';
+  // コーナーラベル（本物のトランプ準拠）
+  var cTop='<div style="position:absolute;top:8px;left:10px;font-family:Georgia,serif;font-size:36px;font-weight:900;color:'+col+';line-height:1;text-align:center;z-index:3">'+rank+'<br><span style="font-size:28px">'+suit+'</span></div>';
+  var cBot='<div style="position:absolute;bottom:8px;right:10px;font-family:Georgia,serif;font-size:36px;font-weight:900;color:'+col+';line-height:1;text-align:center;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:28px">'+suit+'</span></div>';
+  // フェイスカード
   if(c.n>=11){
     var key=(rank==='K'?'K':rank==='Q'?'Q':'J')+(isRed?'_r':'_b');
     var art=FACE_SVG[key]||'';
-    return cTop+'<div style="position:absolute;inset:0;overflow:hidden;border-radius:6px">'+art+'</div>'+cBot;
+    return cTop+'<div style="position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;border-radius:8px">'+art+'</div>'+cBot;
   }
-  var sz=c.n===1?'88px':'54px';
-  var center='<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:'+sz+';color:'+col+';line-height:1">'+suit+'</div>';
-  return cTop+center+cBot;
+  // 数字カード: 本物のトランプのピップ配置
+  // カード: 220x308px コーナー: 上下80px 左右15px
+  // ピップエリア: y=80〜228(中心154), x=15〜205(中心110)
+  var p=function(s,x,y,rot){
+    return '<span style="position:absolute;left:'+x+'px;top:'+y+'px;transform:translate(-50%,-50%)'+(rot?'rotate(180deg)':'')+';font-size:'+
+      (c.n<=2?72:c.n<=4?60:c.n<=6?52:c.n<=8?44:38)+'px;color:'+col+';line-height:1;display:block">'+s+'</span>';
+  };
+  var L=55,R=165,C=110,T=95,B=213,M=154,TM=120,BM=188;
+  var pips={
+    1: p(suit,C,M),
+    2: p(suit,C,T)+p(suit,C,B,true),
+    3: p(suit,C,T)+p(suit,C,M)+p(suit,C,B,true),
+    4: p(suit,L,T)+p(suit,R,T)+p(suit,L,B,true)+p(suit,R,B,true),
+    5: p(suit,L,T)+p(suit,R,T)+p(suit,C,M)+p(suit,L,B,true)+p(suit,R,B,true),
+    6: p(suit,L,T)+p(suit,R,T)+p(suit,L,M)+p(suit,R,M)+p(suit,L,B,true)+p(suit,R,B,true),
+    7: p(suit,L,T)+p(suit,R,T)+p(suit,C,TM)+p(suit,L,M)+p(suit,R,M)+p(suit,L,B,true)+p(suit,R,B,true),
+    8: p(suit,L,T)+p(suit,R,T)+p(suit,C,TM)+p(suit,L,M)+p(suit,R,M)+p(suit,C,BM,true)+p(suit,L,B,true)+p(suit,R,B,true),
+    9: p(suit,L,T)+p(suit,R,T)+p(suit,L,TM)+p(suit,R,TM)+p(suit,C,M)+p(suit,L,BM,true)+p(suit,R,BM,true)+p(suit,L,B,true)+p(suit,R,B,true),
+    10:p(suit,L,T)+p(suit,R,T)+p(suit,C,TM)+p(suit,L,TM)+p(suit,R,TM)+p(suit,L,BM,true)+p(suit,R,BM,true)+p(suit,C,BM,true)+p(suit,L,B,true)+p(suit,R,B,true)
+  };
+  return cTop+(pips[c.n]||p(suit,C,M))+cBot;
 }
 
 function renderFD(){const a=document.getElementById('pk-ca');a.innerHTML='';for(let i=0;i<5;i++){const w=document.createElement('div');w.className='cw';const c=document.createElement('div');c.className='card dn';const l=document.createElement('div');l.className='hl-lbl hid';l.textContent='HOLD';w.appendChild(c);w.appendChild(l);a.appendChild(w);}}
