@@ -191,6 +191,36 @@ b.style='position:fixed;top:8px;left:8px;z-index:9999;background:rgba(0,0,0,.85)
 b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
 document.body.appendChild(b);
 });
+})()</script><script>(function(){
+var u=null;
+try{u=JSON.parse(localStorage.getItem('hkg_user')||'null');}catch(e){}
+if(!u||!u.name){location.href='index.html';return;}
+if(!u.id){u.id='hkg-'+u.name;localStorage.setItem('hkg_user',JSON.stringify(u));}
+document.addEventListener('DOMContentLoaded',function(){
+  var switched=false;
+  function goPoker(){
+    if(switched)return;
+    var sl=document.getElementById('slobby');
+    var sp=document.getElementById('spoker');
+    var sb=document.getElementById('sidebar');
+    if(!sl||!sp||!sl.classList.contains('active'))return;
+    switched=true;
+    document.querySelectorAll('.gs').forEach(function(e){e.classList.remove('active');});
+    sp.classList.add('active');
+    if(sb)sb.style.display='none';
+  }
+  var obs=new MutationObserver(function(ms){
+    ms.forEach(function(m){if(m.target.id==='slobby')goPoker();});
+  });
+  var sl=document.getElementById('slobby');
+  if(sl)obs.observe(sl,{attributes:true,attributeFilter:['class']});
+  setTimeout(goPoker,500);setTimeout(goPoker,1000);setTimeout(goPoker,2000);
+  var b=document.createElement('button');
+  b.textContent='\u2190 \u30ed\u30d3\u30fc';
+  b.style='position:fixed;top:8px;left:8px;z-index:9999;background:rgba(0,0,0,.85);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
+  b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
+  document.body.appendChild(b);
+});
 })()</script></head>
 <body>
 <div class="cab">
