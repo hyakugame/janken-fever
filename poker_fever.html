@@ -1,1 +1,1862 @@
-<!DOCT
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>百式ゲーム王国</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Barlow+Condensed:wght@400;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--red:#D32F2F;--red2:#E53935;--red3:#FF5252;--gold:#F5A623;--gold2:#FFB300;--dark:#1A1A1A;--dark2:#222222;--dark3:#2D2D2D;--gray:#888;--light:#F5F5F5;--white:#FFFFFF;--green:#2E7D32;--green2:#43A047;--blue:#1565C0;--blue2:#1976D2;--win:#F5A623;--lose:#D32F2F;--font-jp:'Noto Sans JP',sans-serif;--font-en:'Barlow Condensed','Oswald',sans-serif;}
+*,::before,::after{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;min-height:100vh;display:flex;font-family:var(--font-jp);overflow-x:hidden;color:var(--white);}
+#sidebar{width:190px;min-width:190px;background:var(--dark2);border-right:3px solid var(--red);min-height:100vh;display:flex;flex-direction:column;padding:14px 10px;gap:10px;position:sticky;top:0;flex-shrink:0;}
+#sidebar.hidden{display:none}
+.sb-logo{text-align:center;padding-bottom:10px;border-bottom:2px solid var(--red)}
+.sb-logo-icon{font-size:32px;line-height:1}
+.sb-logo-title{font-family:var(--font-jp);font-weight:900;font-size:13px;color:var(--gold);margin-top:4px;letter-spacing:.05em}
+.sb-av{width:64px;height:64px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:28px;border:3px solid var(--gold);margin:0 auto 4px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.sb-name{font-family:var(--font-jp);font-weight:700;font-size:14px;color:var(--white);text-align:center;margin-bottom:2px}
+.sb-medals-box{background:var(--dark3);border:2px solid var(--gold);border-radius:8px;padding:8px 6px;text-align:center;}
+.sb-medals-lbl{font-family:var(--font-en);font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.12em}
+.sb-medals-val{font-family:var(--font-en);font-size:32px;font-weight:900;color:var(--gold);line-height:1.1}
+.sb-medals-unit{font-family:var(--font-jp);font-size:11px;color:rgba(245,166,35,.7)}
+.sb-daily{background:var(--dark3);border:2px solid var(--green2);border-radius:6px;padding:6px 8px;text-align:center;font-family:var(--font-jp);font-size:11px;color:var(--green2);font-weight:700}
+.sb-nav{display:flex;flex-direction:column;gap:5px;flex:1}
+.sb-nav-btn{background:var(--dark3);border:2px solid #444;border-radius:6px;padding:9px 8px;cursor:pointer;transition:all .15s;font-family:var(--font-jp);font-size:13px;font-weight:700;color:var(--light);text-align:center;}
+.sb-nav-btn:hover{background:var(--red);border-color:var(--red);color:var(--white)}
+.sb-logout{background:transparent;border:2px solid #555;color:#888;border-radius:6px;font-family:var(--font-jp);font-size:12px;padding:8px;cursor:pointer;transition:all .1s;width:100%}
+.sb-logout:hover{border-color:var(--red3);color:var(--red3)}
+#av-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center;}
+#av-modal.show{display:flex}
+.av-modal-box{background:var(--dark2);border:3px solid var(--red);border-radius:12px;padding:20px;width:300px}
+.av-modal-title{font-family:var(--font-jp);font-weight:900;font-size:16px;text-align:center;margin-bottom:14px;color:var(--gold)}
+.av-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.av-opt{width:44px;height:44px;border-radius:50%;background:var(--dark3);border:2px solid #555;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:all .15s}
+.av-opt:hover,.av-opt.sel{border-color:var(--gold);background:rgba(245,166,35,.15)}
+.av-close{width:100%;background:var(--dark3);border:2px solid #555;color:#aaa;font-family:var(--font-jp);font-size:13px;padding:8px;border-radius:6px;cursor:pointer}
+.cab{flex:1;background:var(--dark);border-left:2px solid #333;display:flex;flex-direction:column;min-height:100vh;}
+@media(max-width:600px){
+body{display:block !important}
+#sidebar{display:none !important}
+.cab{width:100vw !important;max-width:100vw !important;border-left:none !important;display:flex !important;flex-direction:column !important;min-height:100vh !important}
+.screen{min-height:calc(100vh - 90px) !important}
+.ca{gap:3px !important;padding:6px 4px 3px !important}
+.card{width:110px !important;height:154px !important;border-radius:6px !important;border-width:2px !important}
+.ct,.cb{font-size:22px !important;top:6px !important;left:7px !important;bottom:4px !important;right:5px !important}
+.cs{font-size:42px !important}
+.cw{gap:4px !important}
+.hl-lbl{font-size:13px !important}
+.pt{padding:2px 3px !important;overflow-x:auto !important}
+.pt-hb{width:22px !important;font-size:7px !important}
+.pt-o{width:22px !important;font-size:8px !important}
+.pt-n{font-size:14px !important;letter-spacing:0 !important}
+.pk-hud{padding:4px 8px !important}
+.pk-val{font-size:22px !important}
+.pk-lbl{font-size:8px !important}
+.pk-hud-col.b .pk-val{font-size:32px !important}
+.pk-hud-col.b .pk-lbl{font-size:9px !important}
+.pk-hud-col.b{padding:3px 12px !important}
+.pk-btns{padding:4px 6px 6px !important;gap:4px !important}
+.db{font-size:15px !important;padding:11px !important}
+.bb{font-size:14px !important;padding:10px !important}
+.bm{font-size:10px !important;padding:10px 8px !important}
+.rd{min-height:36px !important;padding:3px 6px !important}
+.rn{font-size:16px !important}
+.rz,.rw{font-size:12px !important}
+.du-cards-area{padding:4px 6px !important}
+.du-dealer-side{margin-right:8px !important}
+.duc{width:60px !important;height:86px !important}
+.duc-ct,.duc-cb{font-size:14px !important}
+.duc-cs{font-size:28px !important}
+.du-player-cards{gap:5px !important}
+.du-win-val{font-size:26px !important}
+.du-msg-txt{font-size:13px !important}
+.du-btn-area{padding:6px 8px 10px !important}
+.du-btn-row{gap:5px !important}
+.du-btn-double,.du-btn-half,.du-btn-collect{font-size:12px !important;padding:10px 5px !important}
+.du-btn-lbl{font-size:8px !important}
+.du-hud-val{font-size:20px !important}
+.gc-icon{font-size:36px !important}
+.gc-name{font-size:13px !important}
+.lobby-hdr{padding:10px 12px !important}
+.login-box{max-width:100% !important;padding:14px !important}
+#slogin{padding:14px 12px !important;gap:10px !important}
+.pin-dot{width:46px !important;height:46px !important;font-size:18px !important}
+.numpad{gap:5px !important;max-width:220px !important}
+.nb{padding:11px !important;font-size:18px !important}
+.login-input{font-size:16px !important;padding:9px 12px !important}
+.cab-t{font-size:18px !important}
+.cbtn{font-size:13px !important;padding:11px 20px !important}
+}
+.mq-wrap{background:var(--red);padding:5px 0;overflow:hidden;flex-shrink:0}
+.mq{display:flex;width:max-content;animation:mqA 18s linear infinite}
+@keyframes mqA{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.mq span{font-family:var(--font-en);font-size:12px;font-weight:700;color:var(--white);padding:0 24px;letter-spacing:.08em}
+.tp{background:var(--dark2);padding:10px 16px 8px;text-align:center;border-bottom:3px solid var(--red);flex-shrink:0}
+.led-row{display:flex;justify-content:center;gap:5px;margin-bottom:6px}
+.led{width:8px;height:8px;border-radius:50%;animation:lp 1.2s ease-in-out infinite}
+.l0{background:var(--red2)}.l1{background:var(--gold);animation-delay:.15s}.l2{background:#fff;animation-delay:.3s}
+.l3{background:var(--green2);animation-delay:.45s}.l4{background:var(--blue2);animation-delay:.6s}.l5{background:var(--red3);animation-delay:.75s}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.2;transform:scale(.5)}}
+.cab-t{font-family:var(--font-jp);font-weight:900;font-size:clamp(20px,4.5vw,28px);color:var(--white);line-height:1.2}
+.cab-t span{color:var(--gold)}
+.cab-s{font-family:var(--font-en);font-size:11px;color:#888;letter-spacing:.2em;margin-top:2px}
+.screen{background:var(--dark);flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden;min-height:500px}
+.fl{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,.04);animation:scA 7s linear infinite;pointer-events:none;z-index:201}
+@keyframes scA{0%{top:-2px;opacity:0}5%{opacity:.6}95%{opacity:.6}100%{top:110%;opacity:0}}
+.gs{display:none;flex-direction:column;flex:1;position:relative;z-index:1}
+.gs.active{display:flex}
+#slogin{align-items:center;justify-content:center;gap:14px;padding:20px 16px;background:var(--dark)}
+.login-logo{font-family:var(--font-jp);font-weight:900;font-size:clamp(18px,5vw,24px);text-align:center;line-height:1.5;color:var(--white)}
+.login-logo span{color:var(--gold)}
+.login-box{background:var(--dark2);border:3px solid var(--red);border-radius:10px;padding:18px;width:100%;max-width:320px;}
+.login-tabs{display:flex;margin-bottom:14px;border-radius:6px;overflow:hidden;border:2px solid var(--red)}
+.login-tab{flex:1;padding:11px;text-align:center;font-family:var(--font-jp);font-weight:700;font-size:14px;cursor:pointer;background:var(--dark3);color:#888;transition:all .15s}
+.login-tab.active{background:var(--red);color:var(--white)}
+.login-box-title{font-family:var(--font-jp);font-size:12px;color:#888;margin-bottom:10px;text-align:center}
+.login-input{background:var(--dark3);border:2px solid #555;border-radius:6px;color:var(--white);font-family:var(--font-jp);font-size:20px;font-weight:700;padding:11px 14px;width:100%;outline:none;margin-bottom:12px}
+.login-input:focus{border-color:var(--gold)}
+.login-input::placeholder{color:#555;font-size:14px;font-weight:400}
+.pin-row{display:flex;gap:10px;justify-content:center;margin-bottom:12px}
+.pin-dot{width:54px;height:54px;border-radius:50%;background:var(--dark3);border:2px solid #555;font-size:24px;color:#555;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.pin-dot.filled{background:var(--red);border-color:var(--red3);color:var(--white)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;max-width:240px;margin:0 auto}
+.nb{background:var(--dark3);border:2px solid #444;border-radius:6px;color:var(--white);font-family:var(--font-en);font-size:22px;font-weight:700;padding:14px;cursor:pointer;transition:all .12s}
+.nb:hover{background:#444;border-color:#666}
+.nb:active{transform:scale(.93)}
+.nb:disabled{opacity:.3;cursor:not-allowed}
+.nb-del{font-size:13px;font-family:var(--font-jp)}
+.nb-ok{background:var(--green);border-color:var(--green2);font-size:13px;font-family:var(--font-jp)}
+.login-msg{font-size:14px;text-align:center;min-height:20px;margin-top:8px;font-family:var(--font-jp);font-weight:700}
+.login-msg.ok{color:var(--green2)}
+.login-msg.err{color:var(--red3);animation:shake .35s ease}
+.login-msg.ing{color:var(--gold)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#slobby{align-items:center;justify-content:flex-start;overflow-y:auto;background:var(--dark)}
+.lobby-hdr{background:var(--dark2);padding:12px 16px;width:100%;display:flex;align-items:center;gap:12px;border-bottom:3px solid var(--red);flex-shrink:0}
+.lobby-av{width:50px;height:50px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:24px;border:2px solid var(--gold);flex-shrink:0}
+.lobby-name{font-family:var(--font-jp);font-weight:900;font-size:17px;color:var(--white)}
+.lobby-medals{display:flex;align-items:center;gap:4px}
+.lobby-medals-val{font-family:var(--font-en);font-size:22px;font-weight:900;color:var(--gold)}
+.lobby-medals-lbl{font-family:var(--font-jp);font-size:12px;color:rgba(245,166,35,.7)}
+.lobby-logout{background:transparent;border:2px solid #555;color:#888;border-radius:20px;font-family:var(--font-jp);font-size:12px;font-weight:700;padding:6px 14px;cursor:pointer;margin-left:auto;transition:all .1s}
+.lobby-logout:hover{border-color:var(--red3);color:var(--red3)}
+.lobby-body{display:flex;flex-direction:column;gap:10px;padding:14px;width:100%}
+.lobby-sec{font-family:var(--font-en);font-size:11px;font-weight:700;color:#666;letter-spacing:.2em;margin-bottom:2px}
+.game-card{background:var(--dark2);border:2px solid #333;border-radius:8px;padding:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px}
+.game-card:hover{border-color:var(--red);transform:translateX(4px)}
+.gc-icon{font-size:48px;flex-shrink:0}
+.gc-name{font-family:var(--font-jp);font-weight:900;font-size:16px;color:var(--white);margin-bottom:4px}
+.gc-desc{font-size:13px;color:#aaa;font-family:var(--font-jp);line-height:1.5}
+.gc-arr{font-size:20px;color:#555;margin-left:auto;flex-shrink:0}
+.game-card:hover .gc-arr{color:var(--red)}
+.gc-badge{background:var(--gold);color:var(--dark);font-family:var(--font-en);font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;display:inline-block;margin-top:3px}
+#spoker{align-items:stretch;justify-content:flex-start;overflow:hidden;background:linear-gradient(180deg,#0b2e0b 0%,#082008 100%);padding:0}
+.pt{background:linear-gradient(180deg,#001a00,#002a00);width:100%;border-bottom:2px solid #FFD700;padding:3px 6px 2px;flex-shrink:0}
+.pt-inner{display:flex;flex-direction:column;gap:0}
+.pt-hdr{display:flex;margin-bottom:2px}
+.pt-hb{width:44px;text-align:center;font-family:var(--font-en);font-size:10px;font-weight:900;color:#FFD700;letter-spacing:.02em}
+.pt-row{display:flex;align-items:center;padding:1px 2px;border-bottom:1px solid rgba(0,100,0,.4);transition:all .2s}
+.pt-row.hi{background:rgba(255,215,0,.25);box-shadow:inset 0 0 8px rgba(255,215,0,.3)}
+.pt-n{flex:1;color:#00FF41;font-family:var(--font-en);font-size:14px;font-weight:700;letter-spacing:.03em;text-shadow:0 0 4px rgba(0,255,65,.4)}
+.pt-odds{display:flex;gap:2px}
+.pt-o{width:44px;text-align:center;font-family:var(--font-en);font-size:11px;font-weight:900;color:#aaa;padding:1px 0}
+.pt-o.cur{color:#FFD700;text-shadow:0 0 6px rgba(255,215,0,.8);background:rgba(255,215,0,.12)}
+.pt-o.mx{color:#FF4444;text-shadow:0 0 8px rgba(255,68,68,1);background:rgba(180,0,0,.35);border:1px solid rgba(255,60,60,.5);border-radius:3px;font-size:13px}
+/* ===== HUD ===== */
+.pk-hud{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;background:linear-gradient(180deg,#000,#001200);border-top:2px solid #333;flex-shrink:0;gap:6px}
+.pk-hud-col{display:flex;flex-direction:column;align-items:center;flex:1}
+.pk-lbl{font-family:var(--font-en);font-size:11px;font-weight:900;letter-spacing:.2em;color:#00FF41;text-shadow:0 0 4px rgba(0,255,65,.5)}
+.pk-val{font-family:var(--font-en);font-size:36px;font-weight:900;line-height:1;color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,.6)}
+.pk-hud-col.m .pk-val{color:#FFD700}
+.pk-hud-col.w .pk-val{color:#00FF41;text-shadow:0 0 10px rgba(0,255,65,.6)}
+/* ===== WAGER 目立たせ ===== */
+.pk-hud-col.b{
+  flex:none;
+  background:rgba(0,200,220,.1);
+  border:2px solid rgba(0,220,255,.5);
+  border-radius:10px;
+  padding:4px 20px 6px;
+  position:relative;
+  box-shadow:0 0 12px rgba(0,200,255,.2),inset 0 0 8px rgba(0,150,200,.1);
+}
+.pk-hud-col.b .pk-lbl{
+  color:#00DDFF;
+  font-size:13px;
+  letter-spacing:.3em;
+  text-shadow:0 0 10px rgba(0,220,255,.9);
+}
+.pk-hud-col.b .pk-val{
+  color:#00FFFF;
+  font-size:56px;
+  line-height:1;
+  text-shadow:0 0 20px rgba(0,255,255,1),0 0 40px rgba(0,200,255,.6);
+}
+/* カード */
+.ca{display:flex;gap:8px;padding:14px 8px 8px;justify-content:center;flex-shrink:0}
+.cw{display:flex;flex-direction:column;align-items:center;gap:6px}
+.card{width:90px;height:128px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;border:3px solid #888;box-shadow:0 6px 18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15)}
+.card.up{background:linear-gradient(135deg,#fffef8,#fff9e6)}
+.card.up.r{color:#C00000}
+.card.up.b{color:#0D1B8F}
+.card.dn{background:radial-gradient(ellipse at 50% 50%,#1a3a7a,#0a1848);border-color:#4488ff;box-shadow:0 6px 18px rgba(0,0,0,.8)}
+.card.hd{transform:translateY(-14px);border-color:#FFD700;box-shadow:0 0 20px rgba(255,215,0,.9),0 8px 20px rgba(0,0,0,.5)}
+.card.wg{animation:wgA .5s ease infinite alternate}
+@keyframes wgA{0%{box-shadow:0 0 12px rgba(255,215,0,.5)}100%{box-shadow:0 0 30px rgba(255,215,0,1),0 0 50px rgba(255,215,0,.6)}}
+.ct{position:absolute;top:5px;left:7px;font-family:Georgia,serif;font-size:18px;font-weight:900;line-height:1.1;z-index:2}
+.cs{font-size:44px;line-height:1}
+.cb{position:absolute;bottom:5px;right:7px;font-family:Georgia,serif;font-size:18px;font-weight:900;line-height:1.1;transform:rotate(180deg);z-index:2}
+.hl-lbl{font-family:var(--font-en);font-size:12px;font-weight:900;color:#FFD700;min-height:16px;text-shadow:0 0 8px rgba(255,215,0,.8);letter-spacing:.1em}
+.hl-lbl.hid{visibility:hidden}
+.rd{text-align:center;padding:6px 8px;min-height:50px;display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,20,0,.4))}
+.rn{font-family:var(--font-en);font-weight:900;font-size:clamp(22px,5vw,32px);color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,1),0 0 40px rgba(255,165,0,.7);animation:pop .28s cubic-bezier(.36,2,.5,1);letter-spacing:.05em}
+.rw{font-size:20px;color:#00FF41;font-family:var(--font-en);font-weight:900;letter-spacing:.1em;text-shadow:0 0 10px rgba(0,255,65,.8)}
+.rz{font-size:14px;color:#4a9a4a;font-family:var(--font-en);font-weight:700;letter-spacing:.12em}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.pk-btns{display:flex;gap:7px;padding:6px 10px 8px;flex-shrink:0;background:linear-gradient(180deg,#001200,#000)}
+.bg{display:flex;gap:5px;align-items:center}
+.bb{background:linear-gradient(180deg,#333,#222);border:2px solid #666;border-radius:8px;color:#FFD700;font-family:var(--font-en);font-size:18px;font-weight:900;padding:11px 18px;cursor:pointer;transition:all .1s;box-shadow:0 3px 0 #000}
+.bb:hover{background:linear-gradient(180deg,#444,#333);border-color:#FFD700}
+.bb:active{transform:scale(.94)}
+.bb:disabled{opacity:.25;cursor:not-allowed}
+.bm{background:linear-gradient(180deg,#FF2200,#CC0000);color:#fff;border:none;border-radius:8px;font-family:var(--font-en);font-size:12px;font-weight:900;padding:11px 13px;cursor:pointer;box-shadow:0 4px 0 #660000;transition:all .1s;letter-spacing:.05em}
+.bm:active{transform:translateY(3px)}
+.bm:disabled{opacity:.25;cursor:not-allowed}
+.db{flex:1;background:linear-gradient(180deg,#FFE000,#FFB300);color:#000;border:none;border-radius:8px;font-family:var(--font-en);font-size:22px;font-weight:900;padding:14px;cursor:pointer;box-shadow:0 5px 0 #886000,0 0 20px rgba(255,215,0,.4);letter-spacing:.08em;transition:all .1s}
+.db:active{transform:translateY(4px);box-shadow:0 1px 0 #B37700}
+.db:disabled{opacity:.25;cursor:not-allowed}
+#supgame{display:none;flex-direction:column;flex:1;position:relative;z-index:1;background:linear-gradient(180deg,#000800 0%,#001500 60%,#000800 100%);}
+#supgame.active{display:flex}
+.du-title-bar{background:linear-gradient(90deg,#000,#001a00,#000);border-top:2px solid #00aa00;border-bottom:2px solid #00aa00;padding:5px 16px;text-align:center;flex-shrink:0;}
+.du-title{font-family:var(--font-en);font-size:clamp(16px,3.5vw,22px);font-weight:900;color:#00FF41;letter-spacing:.25em;text-shadow:0 0 12px rgba(0,255,65,.8),0 0 24px rgba(0,255,65,.4);}
+.du-win-bar{display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 16px;background:rgba(0,0,0,.5);flex-shrink:0;}
+.du-win-lbl{font-family:var(--font-en);font-size:11px;font-weight:900;color:#00FF41;letter-spacing:.2em}
+.du-win-val{font-family:var(--font-en);font-size:38px;font-weight:900;color:#FFD700;text-shadow:0 0 16px rgba(255,215,0,.9);line-height:1}
+.du-win-unit{font-family:var(--font-en);font-size:13px;color:rgba(255,215,0,.7)}
+.du-cards-area{flex:1;display:flex;align-items:center;justify-content:center;padding:8px 12px;}
+.du-dealer-side{display:flex;flex-direction:column;align-items:center;gap:6px;margin-right:20px;}
+.du-side-lbl{font-family:var(--font-en);font-size:13px;font-weight:900;letter-spacing:.18em;color:#00aaff;text-shadow:0 0 8px rgba(0,170,255,.6);}
+.du-player-side{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.du-player-lbl{font-family:var(--font-en);font-size:13px;font-weight:900;letter-spacing:.18em;color:#FFD700;text-shadow:0 0 8px rgba(255,215,0,.6);}
+.du-player-cards{display:flex;gap:10px;}
+.duc{width:80px;height:112px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s,box-shadow .15s;position:relative;border:2px solid #666;box-shadow:0 5px 16px rgba(0,0,0,.8);overflow:hidden}
+.duc.up{background:linear-gradient(135deg,#fffff8,#fff9e6)}
+.duc.up.r{color:#C00000}
+.duc.up.b{color:#0D1B8F}
+.duc.dn{background:radial-gradient(ellipse at 50% 40%,#1a3a7a,#0a1848);border-color:#4488ff;}
+.duc.dn::before{content:'★ ★ ★';position:absolute;top:5px;font-size:8px;color:rgba(100,160,255,.5);letter-spacing:4px;}
+.duc.dn::after{content:'★';font-size:32px;color:rgba(100,160,255,.55);text-shadow:0 0 8px rgba(100,160,255,.7);}
+.duc:hover:not(.dn){transform:translateY(-5px)}
+.duc.sel{border-color:#FFD700;box-shadow:0 0 22px rgba(255,215,0,.9);transform:translateY(-8px);}
+.duc.rwin{border-color:#00FF41;box-shadow:0 0 24px rgba(0,255,65,.9);animation:winPulse .5s ease infinite alternate;}
+@keyframes winPulse{0%{box-shadow:0 0 14px rgba(0,255,65,.7)}100%{box-shadow:0 0 32px rgba(0,255,65,1)}}
+.duc.rlose{border-color:#FF4444;box-shadow:0 0 18px rgba(255,68,68,.8);opacity:.7;}
+.duc.dealer-open{border-color:#00aaff;box-shadow:0 0 18px rgba(0,170,255,.6);}
+.duc-ct{position:absolute;top:5px;left:7px;font-family:Georgia,serif;font-size:20px;font-weight:900;line-height:1.1}
+.duc-cs{font-size:40px;line-height:1;display:flex;align-items:center;justify-content:center}
+.duc-cb{position:absolute;bottom:5px;right:7px;font-family:Georgia,serif;font-size:20px;font-weight:900;line-height:1.1;transform:rotate(180deg)}
+.du-msg{text-align:center;min-height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:4px 12px;}
+.du-msg-txt{font-family:var(--font-en);font-size:clamp(16px,4vw,24px);font-weight:900;color:#888;letter-spacing:.08em;}
+.du-msg-txt.win{color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,1);animation:pop .3s ease}
+.du-msg-txt.lose{color:#FF4444;text-shadow:0 0 16px rgba(255,68,68,.8);animation:shake .4s ease}
+.du-msg-txt.info{color:#00FF41;text-shadow:0 0 8px rgba(0,255,65,.5)}
+.du-btn-area{background:linear-gradient(180deg,#000,#0a0a0a);border-top:3px solid #00aa00;padding:10px 12px 14px;flex-shrink:0;}
+.du-btn-row{display:flex;gap:8px;justify-content:center;margin-bottom:8px}
+.du-btn{border:none;border-radius:6px;cursor:pointer;transition:all .08s;font-family:var(--font-en);font-weight:900;letter-spacing:.08em;position:relative;overflow:hidden;}
+.du-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:rgba(255,255,255,.12);pointer-events:none;}
+.du-btn:active{transform:translateY(3px)}
+.du-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.du-btn-double{flex:1;background:linear-gradient(180deg,#CC0000,#880000);color:#fff;font-size:clamp(13px,2.5vw,16px);padding:14px 10px;box-shadow:0 5px 0 #440000;border-top:2px solid #FF4444;}
+.du-btn-half{flex:1;background:linear-gradient(180deg,#E65100,#993500);color:#fff;font-size:clamp(13px,2.5vw,16px);padding:14px 10px;box-shadow:0 5px 0 #552000;border-top:2px solid #FF8C00;}
+.du-btn-collect{flex:1;background:linear-gradient(180deg,#1B5E20,#0D3B11);color:#fff;font-size:clamp(13px,2.5vw,16px);padding:14px 10px;box-shadow:0 5px 0 #061A08;border-top:2px solid #00FF41;}
+.du-btn-lbl{display:block;font-size:9px;color:rgba(255,255,255,.6);letter-spacing:.1em;margin-top:3px}
+.du-hud{display:flex;justify-content:space-between;align-items:center;padding:5px 14px 0;}
+.du-hud-col{display:flex;flex-direction:column;align-items:center}
+.du-hud-lbl{font-family:var(--font-en);font-size:11px;font-weight:900;letter-spacing:.2em;color:#00FF41}
+.du-hud-val{font-family:var(--font-en);font-size:28px;font-weight:900;color:#FFD700;text-shadow:0 0 8px rgba(255,215,0,.6);line-height:1.1}
+@keyframes flipIn{0%{transform:rotateY(90deg) scale(.8);opacity:0}60%{transform:rotateY(-8deg) scale(1.05)}100%{transform:rotateY(0deg) scale(1);opacity:1}}
+.duc.flip{animation:flipIn .4s cubic-bezier(.25,1.4,.5,1) forwards}
+@keyframes dealerIn{0%{transform:scale(.3) rotate(-10deg);opacity:0}70%{transform:scale(1.08) rotate(2deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.duc.dealer-anim{animation:dealerIn .45s cubic-bezier(.25,1.4,.5,1) forwards}
+.ctrl{background:linear-gradient(180deg,#000,#001000);border-top:2px solid #333;padding:8px 14px 12px;display:flex;gap:8px;justify-content:center;flex-shrink:0}
+.ctrl.hidden{display:none}
+.cbtn{border:2px solid #555;border-radius:6px;font-family:var(--font-en);font-weight:900;font-size:13px;padding:11px 24px;cursor:pointer;background:linear-gradient(180deg,#333,#222);color:#aaa;box-shadow:0 3px 0 #000;transition:all .1s;letter-spacing:.05em}
+.cbtn:active{transform:translateY(3px)}
+#daily-bonus-notice{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);background:var(--dark2);border:4px solid var(--gold);border-radius:14px;padding:22px 32px;text-align:center;font-family:var(--font-jp);font-weight:900;color:var(--white);z-index:9999;animation:bonusPop .5s cubic-bezier(.36,2,.5,1) forwards}
+@keyframes bonusPop{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}70%{transform:translate(-50%,-50%) scale(1.06)}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+/* ===== 画面フラッシュオーバーレイ ===== */
+#screen-flash{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:0;transition:opacity .06s}
+/* ===== 当選カード点滅 ===== */
+@keyframes cardBlink{0%,100%{opacity:1;box-shadow:0 0 28px rgba(255,215,0,1),0 0 55px rgba(255,165,0,.7)}50%{opacity:.5;box-shadow:0 0 6px rgba(255,215,0,.3)}}
+.card.blink{animation:cardBlink .32s ease infinite !important}
+/* ===== WINカウントアップ数字ポップ ===== */
+@keyframes numPop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
+.rw-anim{display:inline-block;animation:numPop .25s cubic-bezier(.36,2,.5,1)}
+/* ===== 大役BGフラッシュ ===== */
+@keyframes bigWinBg{0%,100%{background:linear-gradient(180deg,#0a1a0a,#051005)}33%{background:linear-gradient(180deg,#1a0a00,#0a0400)}66%{background:linear-gradient(180deg,#001a08,#000904)}}
+#spoker.bigwin-fx{animation:bigWinBg .55s ease 4}
+/* ===== ダブルアップ選択グロー ===== */
+.duc.sel-glow{box-shadow:0 0 28px rgba(255,215,0,1),0 0 56px rgba(255,200,0,.6) !important;border-color:#FFD700 !important}
+/* ===== 実機風ボトムバー ===== */
+.pk-arcade-bar{
+  display:flex;align-items:stretch;
+  background:#000;
+  border-top:3px solid #004400;
+  border-bottom:2px solid #004400;
+  flex-shrink:0;
+  min-height:54px;
+}
+.pk-bar-left,.pk-bar-right{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:4px 16px;min-width:100px;
+  background:#001a00;
+  border-right:2px solid #004400;
+}
+.pk-bar-right{border-right:none;border-left:2px solid #004400;}
+.pk-bar-lbl{font-family:var(--font-en);font-size:10px;font-weight:900;color:#00AA00;letter-spacing:.2em;}
+.pk-bar-wager{font-family:var(--font-en);font-size:40px;font-weight:900;color:#00FFFF;text-shadow:0 0 14px rgba(0,255,255,.9),0 0 28px rgba(0,200,255,.5);line-height:1}
+.pk-bar-credits{font-family:var(--font-en);font-size:28px;font-weight:900;color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,.7);line-height:1}
+.pk-bar-center{flex:1;display:flex;align-items:center;justify-content:center;}
+.pk-bar-status{
+  font-family:var(--font-en);font-size:clamp(18px,3.5vw,28px);font-weight:900;
+  color:#FF2222;text-shadow:0 0 16px rgba(255,0,0,.9),0 0 32px rgba(200,0,0,.5);
+  letter-spacing:.12em;text-align:center;
+}
+.pk-bar-status.win{color:#FFD700;text-shadow:0 0 16px rgba(255,215,0,1),0 0 32px rgba(255,165,0,.6);animation:pop .3s ease}
+.pk-bar-status.info{color:#00FF41;text-shadow:0 0 10px rgba(0,255,65,.7);}
+.pk-bar-status.idle{color:#FF2222;}
+/* WIN枚数バー */
+.pk-win-bar{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:linear-gradient(180deg,#001a00,#002800);
+  border-bottom:2px solid #004400;
+  padding:4px 0;flex-shrink:0;
+}
+.pk-win-lbl{font-family:var(--font-en);font-size:11px;font-weight:900;color:#00FF41;letter-spacing:.2em;}
+/* スマホ対応 */
+@media(max-width:600px){
+  .pk-bar-wager{font-size:28px !important}
+  .pk-bar-credits{font-size:20px !important}
+  .pk-bar-status{font-size:16px !important}
+  .pk-bar-left,.pk-bar-right{min-width:70px !important;padding:4px 8px !important}
+  .pk-arcade-bar{min-height:44px !important}
+}
+/* JOKERカード */
+.card.joker-card{background:linear-gradient(135deg,#faf0ff,#ecdeff,#ffe0fa) !important;border-color:#aa00dd !important;box-shadow:0 0 18px rgba(170,0,221,.6),0 6px 18px rgba(0,0,0,.7) !important;overflow:hidden}
+.duc.joker-card{background:linear-gradient(135deg,#faf0ff,#ecdeff,#ffe0fa) !important;border-color:#aa00dd !important;box-shadow:0 0 18px rgba(170,0,221,.6) !important}
+/* フェイスカード (K/Q/J) アートワーク */
+/* フェイスカード (K/Q/J) レイアウト */
+.card-face{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  pointer-events:none;
+  z-index:1;
+}
+/* 中央の大文字ランク */
+.cf-rank{
+  font-family:Georgia,'Times New Roman',serif;
+  font-weight:900;
+  font-size:52px;
+  line-height:1;
+  letter-spacing:-.02em;
+  text-shadow:1px 1px 0 rgba(0,0,0,.08);
+}
+/* 中央スート */
+.cf-suit{
+  font-size:24px;
+  line-height:1;
+  margin-top:1px;
+  opacity:.9;
+}
+/* スマホ時のフェイスカードサイズ縮小 */
+@media(max-width:600px){
+  .cf-rank{font-size:30px !important}
+  .cf-suit{font-size:14px !important}
+}
+/* フェイスカード背景 */
+.card.up.r.face-card{background:linear-gradient(160deg,#fffaf8 60%,#fff0ec) !important}
+.card.up.b.face-card{background:linear-gradient(160deg,#f8f9ff 60%,#ecf0ff) !important}
+/* 内側の細い枠線（本物のトランプっぽく） */
+.card.up.face-card::before{
+  content:'';
+  position:absolute;
+  inset:5px;
+  border:1.5px solid currentColor;
+  border-radius:3px;
+  opacity:.20;
+  pointer-events:none;
+  z-index:0;
+}
+</style>
+<style></style><style>#slogin,#slobby{display:none!important}</style>
+<script>
+(function(){
+  var u=null;
+  try{u=JSON.parse(localStorage.getItem("hkg_user")||"null");}catch(e){}
+  if(!u||!u.name){return;}
+  // idを追加（ポーカーのauto-loginに必要）
+  if(!u.id){u.id="hkg-"+u.name;localStorage.setItem("hkg_user",JSON.stringify(u));}
+})();
+</script></head>
+<body>
+<div id="screen-flash"></div>
+<div id="av-modal"><div class="av-modal-box"><div class="av-modal-title">🎭 アイコンを選択</div><div class="av-grid" id="av-grid"></div><button class="av-close" onclick="closeAvModal()">✕ 閉じる</button></div></div>
+<div id="sidebar" class="hidden">
+  <div class="sb-logo"><div class="sb-logo-icon" id="sb-av-icon">👑</div><div class="sb-logo-title">百式ゲーム王国</div></div>
+  <div class="sb-av" id="sb-av" onclick="openAvModal()" title="アイコン変更">👑</div>
+  <div class="sb-name" id="sb-name">---</div>
+  <div class="sb-medals-box"><div class="sb-medals-lbl">🪙 MEDALS</div><div class="sb-medals-val" id="sb-medals">0</div><div class="sb-medals-unit">枚</div></div>
+  <div class="sb-daily" id="sb-daily">📅 ボーナス確認中...</div>
+  <div class="sb-nav">
+    <div class="sb-nav-btn" onclick="goLobby()">🏠 ロビー</div>
+    <div class="sb-nav-btn" onclick="gotoPoker()">🃏 ポーカー</div>
+    <div class="sb-nav-btn" onclick="openJanken()">✊ じゃんけん</div>
+  </div>
+  <button class="sb-logout" onclick="logout()">ログアウト</button>
+</div>
+<div class="cab">
+<div class="mq-wrap"><div class="mq"><span>★ JOKER'S WILD PLUS ★ NATURAL ROYAL FLUSH ×4000! ★ FIVE ACES ×3000! ★ JOKERのみワイルドカード ★ ツーペアは役なし ★ BET 1〜10枚 ★</span><span>★ JOKER'S WILD PLUS ★ NATURAL ROYAL FLUSH ×4000! ★ FIVE ACES ×3000! ★ JOKERのみワイルドカード ★ ツーペアは役なし ★ BET 1〜10枚 ★</span></div></div>
+<div class="tp">
+  <div class="led-row"><div class="led l0"></div><div class="led l1"></div><div class="led l2"></div><div class="led l3"></div><div class="led l4"></div><div class="led l5"></div><div class="led l4"></div><div class="led l3"></div><div class="led l2"></div><div class="led l1"></div><div class="led l0"></div></div>
+  <div class="cab-t">🃏 7's <span>WILD</span> PLUS</div>
+  <div class="cab-s">HYAKUSHIKI GAME KINGDOM</div>
+</div>
+<div class="screen"><div class="fl"></div>
+<div id="slogin" class="gs active">
+  <div class="login-logo">👑 百式ゲーム王国へ<br><span>ようこそ！</span></div>
+  <div class="login-box">
+    <div class="login-tabs"><div class="login-tab active" id="tab-l" onclick="switchTab('login')">ログイン</div><div class="login-tab" id="tab-s" onclick="switchTab('signup')">新規登録</div></div>
+    <div class="login-box-title" id="lbt">名前とPINで入場</div>
+    <input class="login-input" id="lname" placeholder="なまえ（10文字以内）" maxlength="10"/>
+    <div class="pin-row"><div class="pin-dot" id="p0">○</div><div class="pin-dot" id="p1">○</div><div class="pin-dot" id="p2">○</div><div class="pin-dot" id="p3">○</div></div>
+    <div class="numpad">
+      <button class="nb" onclick="pin('1')">1</button><button class="nb" onclick="pin('2')">2</button><button class="nb" onclick="pin('3')">3</button>
+      <button class="nb" onclick="pin('4')">4</button><button class="nb" onclick="pin('5')">5</button><button class="nb" onclick="pin('6')">6</button>
+      <button class="nb" onclick="pin('7')">7</button><button class="nb" onclick="pin('8')">8</button><button class="nb" onclick="pin('9')">9</button>
+      <button class="nb nb-del" onclick="pin('del')">←消す</button><button class="nb" onclick="pin('0')">0</button><button class="nb nb-ok" onclick="pin('ok')">OK✓</button>
+    </div>
+    <div class="login-msg" id="lmsg"></div>
+  </div>
+</div>
+<div id="slobby" class="gs">
+  <div class="lobby-hdr">
+    <div class="lobby-av" id="lav">?</div>
+    <div style="flex:1"><div class="lobby-name" id="lbn">---</div><div class="lobby-medals"><span>🪙</span><div class="lobby-medals-val" id="lbm">0</div><div class="lobby-medals-lbl">枚</div></div></div>
+    <button class="lobby-logout" onclick="logout()">ログアウト</button>
+  </div>
+  <div class="lobby-body">
+    <div class="lobby-sec">🎮 GAME SELECT</div>
+    <div class="game-card" onclick="gotoPoker()"><div class="gc-icon">🃏</div><div style="flex:1"><div class="gc-name">7's WILD PLUS</div><div class="gc-desc">7とJOKERがワイルド！ BET 1〜10枚</div><div class="gc-badge">NATURAL ROYAL ×4000!</div></div><div class="gc-arr">▶</div></div>
+    <div class="game-card" onclick="openJanken()"><div class="gc-icon">✊</div><div style="flex:1"><div class="gc-name">GU-CHOKI-PA FEVER</div><div class="gc-desc">じゃんけん→ルーレット→ハイ＆ロー！</div><div class="gc-badge">メダルを倍々に</div></div><div class="gc-arr">▶</div></div>
+  </div>
+</div>
+<div id="spoker" class="gs">
+<div class="pt"><div class="pt-inner">
+  <div class="pt-hdr">
+    <div style="flex:1;font-family:var(--font-en);font-size:9px;color:#00FF41;letter-spacing:.05em">HAND</div>
+    <div class="pt-hb" style="color:#aaa">1BET</div>
+    <div class="pt-hb" style="color:#aaa">5BET</div>
+    <div class="pt-hb" style="color:#FF4444;font-size:11px">MAX</div>
+  </div>
+  <div class="pt-row" id="pt-nrf"><div class="pt-n">NATURAL ROYAL FLUSH ★</div><div class="pt-odds"><div class="pt-o">800</div><div class="pt-o">4000</div><div class="pt-o mx">4000</div></div></div>
+  <div class="pt-row" id="pt-fa5"><div class="pt-n">FIVE ACES ★</div><div class="pt-odds"><div class="pt-o">300</div><div class="pt-o">1500</div><div class="pt-o mx">3000</div></div></div>
+  <div class="pt-row" id="pt-wrf"><div class="pt-n">ROYAL FLUSH W/ WILD</div><div class="pt-odds"><div class="pt-o">100</div><div class="pt-o">500</div><div class="pt-o mx">1000</div></div></div>
+  <div class="pt-row" id="pt-5ok"><div class="pt-n">FIVE OF A KIND</div><div class="pt-odds"><div class="pt-o">50</div><div class="pt-o">250</div><div class="pt-o mx">500</div></div></div>
+  <div class="pt-row" id="pt-sf"><div class="pt-n">STRAIGHT FLUSH</div><div class="pt-odds"><div class="pt-o">40</div><div class="pt-o">200</div><div class="pt-o mx">400</div></div></div>
+  <div class="pt-row" id="pt-4ok"><div class="pt-n">FOUR OF A KIND</div><div class="pt-odds"><div class="pt-o">20</div><div class="pt-o">100</div><div class="pt-o mx">200</div></div></div>
+  <div class="pt-row" id="pt-fh"><div class="pt-n">FULL HOUSE</div><div class="pt-odds"><div class="pt-o">10</div><div class="pt-o">50</div><div class="pt-o mx">100</div></div></div>
+  <div class="pt-row" id="pt-fl"><div class="pt-n">FLUSH</div><div class="pt-odds"><div class="pt-o">6</div><div class="pt-o">30</div><div class="pt-o mx">60</div></div></div>
+  <div class="pt-row" id="pt-st"><div class="pt-n">STRAIGHT</div><div class="pt-odds"><div class="pt-o">4</div><div class="pt-o">20</div><div class="pt-o mx">40</div></div></div>
+  <div class="pt-row" id="pt-3ok"><div class="pt-n">THREE OF A KIND</div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">10</div><div class="pt-o mx">20</div></div></div>
+</div></div>
+<!-- カードエリア（中央） -->
+<div class="ca" id="pk-ca"></div>
+<!-- 役名表示 -->
+<div class="rd" id="pk-rd"><div class="rz">◆ INSERT COIN ◆</div></div>
+<!-- 実機風ボトムバー -->
+<div class="pk-arcade-bar">
+  <div class="pk-bar-left">
+    <div class="pk-bar-lbl">WAGER</div>
+    <div class="pk-bar-wager" id="pk-bet">1</div>
+  </div>
+  <div class="pk-bar-center">
+    <div class="pk-bar-status" id="pk-status-txt">DEAL TO BEGIN</div>
+  </div>
+  <div class="pk-bar-right">
+    <div class="pk-bar-lbl">CREDITS</div>
+    <div class="pk-bar-credits" id="pk-med">0</div>
+  </div>
+</div>
+<!-- WIN表示バー -->
+<div class="pk-win-bar" id="pk-win-bar" style="display:none">
+  <span class="pk-win-lbl">WIN</span>
+  <span class="pk-val" id="pk-win" style="color:#00FF41;text-shadow:0 0 10px rgba(0,255,65,.8)">0</span>
+  <span class="pk-win-lbl">MEDALS</span>
+</div>
+<!-- ボタンエリア -->
+<div class="pk-btns">
+  <div class="bg">
+    <button class="bb" id="bn-" onclick="chgB(-1)">－</button>
+    <button class="bb" id="bn+" onclick="chgB(1)">＋</button>
+    <button class="bm" id="bnM" onclick="chgB(99)">MAX</button>
+  </div>
+  <button class="db" id="dbn" onclick="dealDraw()">DEAL</button>
+</div>
+</div>
+<div id="supgame" class="gs">
+  <div class="du-title-bar"><div class="du-title">★ DOUBLE UP ★</div></div>
+  <div class="du-win-bar">
+    <div class="du-win-lbl">WIN</div>
+    <div class="du-win-val" id="du-win-val">0</div>
+    <div class="du-win-unit">MEDALS</div>
+  </div>
+  <div class="du-cards-area">
+    <div class="du-dealer-side">
+      <div class="du-side-lbl">DEALER</div>
+      <div class="duc dn" id="duc-dealer"></div>
+      <div style="font-family:var(--font-en);font-size:13px;font-weight:900;color:#00aaff;min-height:18px;text-align:center" id="duc-dealer-lbl"></div>
+    </div>
+    <div style="font-size:28px;color:#444;margin:0 8px;margin-top:-20px">▶▶</div>
+    <div class="du-player-side">
+      <div class="du-player-lbl">PLAYER</div>
+      <div class="du-player-cards">
+        <div class="duc dn" id="duc0" onclick="pickDU(0)"></div>
+        <div class="duc dn" id="duc1" onclick="pickDU(1)"></div>
+        <div class="duc dn" id="duc2" onclick="pickDU(2)"></div>
+        <div class="duc dn" id="duc3" onclick="pickDU(3)"></div>
+      </div>
+    </div>
+  </div>
+  <div class="du-msg"><div class="du-msg-txt info" id="du-msg">DEALER より強いカードを選べ！</div></div>
+  <div class="du-btn-area">
+    <div class="du-btn-row">
+      <button class="du-btn du-btn-double" id="du-btn-d" onclick="duStart('d')" disabled>DOUBLE UP<span class="du-btn-lbl">2倍 or ゼロ</span></button>
+      <button class="du-btn du-btn-half" id="du-btn-h" onclick="duStart('h')" disabled>HALF UP<span class="du-btn-lbl">1.5倍 or 半分</span></button>
+      <button class="du-btn du-btn-collect" id="du-btn-c" onclick="duCollect()" disabled>COLLECT<span class="du-btn-lbl">受け取る</span></button>
+    </div>
+    <div class="du-hud">
+      <div class="du-hud-col"><div class="du-hud-lbl">CREDITS</div><div class="du-hud-val" id="du-credits">0</div></div>
+      <div class="du-hud-col"><div class="du-hud-lbl">WAGER</div><div class="du-hud-val" id="du-wager">0</div></div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="ctrl hidden" id="ctrl">
+  <button class="cbtn" onclick="goLobby()">🏠 ロビーへ戻る</button>
+</div>
+</div>
+</div>
+<script>
+'use strict';
+const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
+const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+const H={'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Accept':'application/json'};
+async function sbGet(p){try{const r=await fetch(SB+'/rest/v1/'+p,{headers:H});if(!r.ok)return null;return await r.json();}catch(e){return null;}}
+async function sbPost(p,b){try{const r=await fetch(SB+'/rest/v1/'+p,{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(b)});return r.ok;}catch(e){return false;}}
+async function sbPatch(p,b){try{const r=await fetch(SB+'/rest/v1/'+p,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(b)});return r.ok;}catch(e){return false;}}
+async function getUser(n){const r=await sbGet('game_users?select=*&name=eq.'+encodeURIComponent(n));return r&&r.length>0?r[0]:null;}
+async function createUser(n,pin){const ok=await sbPost('game_users',{name:n,pin:pin,medals:100,avatar:'👑'});if(!ok)return null;for(let i=0;i<8;i++){await new Promise(r=>setTimeout(r,500));const u=await getUser(n);if(u)return u;}return{id:null,name:n,pin:pin,medals:100,avatar:'👑'};}
+async function saveMedals(id,m){if(!id)return;return sbPatch('game_users?id=eq.'+id,{medals:m});}
+async function saveAvatar(id,av){if(!id)return;return sbPatch('game_users?id=eq.'+id,{avatar:av});}
+const AC=new(window.AudioContext||window.webkitAudioContext)();
+function wake(){if(AC.state==='suspended')AC.resume();}
+/* ============================================================
+   日本アーケードビデオポーカー風 サウンドエンジン
+   (90年代〜2000年代 チップチューン + SE 完全再現)
+   ============================================================ */
+ 
+/* --- 低レベル音源プリミティブ --- */
+function tone(type,f,dur,vol,t0,fEnd){
+  vol=vol||0.18;t0=t0||0;
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);
+  o.type=type;
+  const t=AC.currentTime+t0;
+  o.frequency.setValueAtTime(f,t);
+  if(fEnd)o.frequency.linearRampToValueAtTime(fEnd,t+dur);
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.start(t);o.stop(t+dur+0.02);
+}
+function nz(dur,vol,t0){
+  vol=vol||0.08;t0=t0||0;
+  const b=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate),d=b.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  const s=AC.createBufferSource(),g=AC.createGain();
+  s.buffer=b;s.connect(g);g.connect(AC.destination);
+  const t=AC.currentTime+t0;
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  s.start(t);s.stop(t+dur+0.05);
+}
+// フィルター付きノイズ（カード音用）
+function nzFiltered(dur,vol,cutoff,t0){
+  t0=t0||0;vol=vol||0.1;
+  const b=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate),d=b.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  const s=AC.createBufferSource();
+  s.buffer=b;
+  const f=AC.createBiquadFilter();
+  f.type='bandpass';f.frequency.value=cutoff||2000;f.Q.value=2;
+  const g=AC.createGain();
+  s.connect(f);f.connect(g);g.connect(AC.destination);
+  const t=AC.currentTime+t0;
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  s.start(t);s.stop(t+dur+0.05);
+}
+ 
+/* --- BGMシーケンサー（チップチューン） ---
+   構成: メロディ(square) + ベース(triangle) + 和音(sawtooth muted)
+   BPM: 約130 → 1拍≒461ms, 8分音符≒230ms
+*/
+/* ============================================================
+   BGMエンジン v3 — Piano+Bass+Chord ルックアヘッドスケジューラー
+   ============================================================ */
+ 
+let bgmMode=null,bgmTid=null;
+let bgmNextTime=0,bgmBeat=0,bgmPattern=null;
+ 
+// ---- ピアノ音色: 加算合成(倍音 × ADSR) ----
+function piano(freq,dur,vol,t){
+  const harms=[1,2,3,4,6];
+  const amps=[0.55,0.22,0.10,0.06,0.03];
+  harms.forEach((h,i)=>{
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.connect(g);g.connect(AC.destination);
+    o.type='sine';o.frequency.value=freq*h;
+    const v=vol*amps[i];
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(v,t+0.010);  // アタック
+    g.gain.exponentialRampToValueAtTime(v*0.45,t+0.12); // ディケイ
+    g.gain.setValueAtTime(v*0.35,t+dur-0.06);   // サステイン
+    g.gain.linearRampToValueAtTime(0,t+dur);     // リリース
+    o.start(t);o.stop(t+dur+0.05);
+  });
+}
+// ---- ベース: 深いサイン波 ----
+function bass(freq,dur,vol,t){
+  const o=AC.createOscillator(),g=AC.createGain();
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=350;
+  o.connect(lp);lp.connect(g);g.connect(AC.destination);
+  o.type='sine';o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol,t+0.018);
+  g.gain.exponentialRampToValueAtTime(vol*0.5,t+0.15);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur*0.88);
+  o.start(t);o.stop(t+dur+0.05);
+}
+// ---- コードパッド: 複数ピアノ音を同時に ----
+function chord(notes,dur,vol,t){
+  notes.forEach(f=>piano(f,dur,vol/notes.length*1.4,t));
+}
+// ---- ハイハット ----
+function hh(vol,t,open){
+  const buf=AC.createBuffer(1,AC.sampleRate*(open?0.08:0.022),AC.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  const s=AC.createBufferSource(),g=AC.createGain();
+  const hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=8000;
+  s.buffer=buf;s.connect(hp);hp.connect(g);g.connect(AC.destination);
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+(open?0.08:0.022));
+  s.start(t);
+}
+// ---- キック ----
+function kick(vol,t){
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);
+  o.type='sine';
+  o.frequency.setValueAtTime(150,t);
+  o.frequency.exponentialRampToValueAtTime(35,t+0.12);
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+0.18);
+  o.start(t);o.stop(t+0.22);
+}
+// ---- スネア ----
+function snare(vol,t){
+  nz(0.055,vol*0.7,t-AC.currentTime>0?t-AC.currentTime:0);
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.connect(g);g.connect(AC.destination);
+  o.type='triangle';o.frequency.value=200;
+  g.gain.setValueAtTime(vol*0.3,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+0.08);
+  o.start(t);o.stop(t+0.1);
+}
+ 
+/* ============================================================
+   BGMパターン定義
+   各パターン: { bpm, bars, fn(beat,t,B) }
+     beat: 小節内の拍番号(0始まり)
+     t: スケジュール時刻(AC.currentTime)
+     B: 四分音符の長さ(秒)
+   
+   コード表記 (Hz):
+   C4=262 D4=294 E4=330 F4=349 G4=392 A4=440 B4=494
+   C5=523 D5=587 E5=659 F5=698 G5=784 A5=880 B5=988 C6=1047
+   ============================================================ */
+ 
+const BGM_PATTERNS={
+  // ────────────────────────────────────────────
+  // LOBBY: おしゃれなラウンジジャズ Cメジャー
+  // コード進行: | Cmaj7 | Am7 | Dm7 | G7 | × ループ
+  // BPM=106, 4/4拍子
+  // ────────────────────────────────────────────
+  lobby:{bpm:106,bars:4,fn:function(beat,t,B){
+    const bar=Math.floor(bgmBeat/4)%4;
+    const b=beat%4; // 小節内拍
+    const sw=B*0.04; // スイング offset (偶数8分を少し遅く)
+ 
+    // == コード (2拍ごとに更新) ==
+    const chords=[
+      [[262,330,392,494],[440,523,659,784]],  // Cmaj7 / Am7
+      [[294,349,440,523],[392,494,784,988]],  // Dm7 / G7
+    ][bar%2];
+    if(b===0)chord(chords[0],B*2.2,0.038,t);
+    if(b===2)chord(chords[1],B*2.2,0.038,t);
+ 
+    // == ベース (毎拍) ==
+    const bassNotes=[[131,110,147,196],[196,175,220,247]]; // C/Am, Dm/G
+    const bn=bassNotes[bar%2][b];
+    bass(bn,B*0.75,0.22,t);
+ 
+    // == メロディ (ロビーのメインテーマ) ==
+    const mel=[
+      // Cmaj7小節
+      [[659,0],[784,0.5],[1047,1],[880,1.5],[784,2],[659,2.5],[523,3],[659,3.5]],
+      // Am7小節
+      [[880,0],[784,0.5],[659,1],[523,1.5],[440,2],[523,2.5],[659,3],[784,3.5]],
+      // Dm7小節
+      [[587,0],[698,0.5],[880,1],[698,1.5],[587,2],[523,2.5],[440,3],[494,3.5]],
+      // G7小節
+      [[784,0],[988,0.5],[1047,1],[988,1.5],[784,2],[659,2.5],[523,3],[392,3.5]],
+    ][bar%4];
+    mel.forEach(([f,off])=>{
+      if(Math.abs(off-b)<0.01||Math.abs(off-b-0.5)<0.01){
+        const isSwing=(off%1>0.4);
+        piano(f,B*0.42,0.065,t+(isSwing?sw:0));
+      }
+    });
+ 
+    // == ドラム ==
+    if(b===0)kick(0.16,t);
+    if(b===2)snare(0.10,t);
+    hh(0.028,t);
+    hh(0.018,t+B*0.5);
+  }},
+ 
+  // ────────────────────────────────────────────
+  // POKER: 軽快なスウィングジャズ Gメジャー
+  // コード進行: | G7 | C7 | G7 | D7-G7 |
+  // BPM=126, スウィング
+  // ────────────────────────────────────────────
+  poker:{bpm:155,bars:4,fn:function(beat,t,B){
+    const bar=Math.floor(bgmBeat/4)%8;
+    const b=beat%4;
+    // ラテンジャズ風 明るいコード進行 Fメジャー
+    const chords=[
+      [349,440,523,698],[294,392,494,587],[330,415,523,659],[349,440,523,698],
+      [261,349,440,523],[294,370,440,587],[349,440,523,659],[261,330,392,523]
+    ];
+    const ch=chords[bar%8];
+    // コードを強め
+    if(b===0){piano(ch[0],B*0.4,0.06,t);piano(ch[1],B*0.4,0.05,t);piano(ch[2],B*0.4,0.05,t);}
+    if(b===2){piano(ch[1],B*0.4,0.05,t);piano(ch[2],B*0.4,0.05,t);piano(ch[3],B*0.4,0.04,t);}
+    // ベースライン
+    const bassNotes=[174,146,165,174,130,147,174,130];
+    piano(bassNotes[bar%8],B*0.35,0.09,t);
+    // ハイハット的リズム
+    if(b===1||b===3){nzFiltered(0.018,0.04,8000,t);}
+    // メロディ
+    const mel=[523,494,523,587,659,587,523,494,440,494,523,494,440,392,440,494];
+    const mi=(bar*4+b)%16;
+    if(b%2===0)piano(mel[mi],B*0.45,0.035,t+B*0.1);
+  }},
+
+  jackpot:{bpm:150,bars:4,fn:function(beat,t,B){
+    const bar=Math.floor(bgmBeat/4)%4;
+    const b=beat%4;
+    const cSeq=[
+      [523,784,1047,1319],[523,659,880,1047],
+      [523,698,1047,1398],[392,784,1175,1568],
+    ];
+    const bSeq=[[262,392,523,392],[262,330,523,330],[175,349,523,349],[196,392,588,392]];
+    if(b===0)chord(cSeq[bar%4],B*1.8,0.045,t);
+    if(b===2)chord(cSeq[(bar+1)%4],B*1.8,0.042,t);
+    bass(bSeq[bar%4][b],B*0.60,0.24,t);
+    const mSeq=[
+      [[523,0],[523,0.25],[523,0.5],[659,0.75],[784,1],[784,1.25],[784,1.5],[880,1.75],[1047,2],[1047,2.5],[1047,3],[1047,3.5]],
+      [[2093,0],[1760,0.5],[1568,1],[1319,1.5],[1568,2],[1319,2.5],[1047,3],[880,3.5]],
+      [[1047,0],[1175,0.5],[1319,1],[1047,1.5],[1319,2],[1568,2.5],[1760,3],[1568,3.5]],
+      [[2093,0],[1568,0.5],[1319,1],[1047,1.5],[784,2],[1047,2.5],[1319,3],[1047,3.5]],
+    ];
+    mSeq[bar%4].forEach(([f,off])=>{
+      if(Math.abs(off-b)<0.01||Math.abs(off-b-0.25)<0.01||Math.abs(off-b-0.5)<0.01||Math.abs(off-b-0.75)<0.01){
+        piano(f,B*0.30,0.080,t);
+      }
+    });
+    kick(0.22,t);if(b===1||b===3)snare(0.16,t);
+    hh(0.035,t);hh(0.028,t+B*0.25);hh(0.028,t+B*0.5);hh(0.020,t+B*0.75);
+  }}
+};
+ 
+// ────────────────────────────────────────────
+// ルックアヘッドスケジューラー
+// ────────────────────────────────────────────
+const LOOK_AHEAD = 0.3; // 300ms先まで予約
+const SCHED_INT  = 100;  // 100msごとにチェック
+ 
+function bgmSchedule(){
+  if(!bgmMode||!BGM_PATTERNS[bgmMode])return;
+  const pat=BGM_PATTERNS[bgmMode];
+  const B=60/pat.bpm;
+  while(bgmNextTime < AC.currentTime + LOOK_AHEAD){
+    const beatInBar=bgmBeat%4;
+    try{ pat.fn(beatInBar, bgmNextTime, B); }catch(e){}
+    bgmNextTime+=B;
+    bgmBeat++;
+  }
+  bgmTid=setTimeout(bgmSchedule, SCHED_INT);
+}
+function bgmPlay(m){
+  if(bgmMode===m)return;
+  bgmStop();
+  bgmMode=m;bgmBeat=0;
+  bgmNextTime=AC.currentTime+0.05;
+  bgmSchedule();
+}
+function bgmStop(){bgmMode=null;clearTimeout(bgmTid);bgmTid=null;}
+ 
+/* ============================================================
+   SE (Sound Effects)
+   ============================================================ */
+ 
+// カード1枚配布音 — プラスチックカードを机に置く音
+function seCardOne(i){
+  // カジノ風カードクリック音
+  const t = AC.currentTime + i * 0.10;
+  const buf = AC.createBuffer(1, AC.sampleRate * 0.08, AC.sampleRate);
+  const data = buf.getChannelData(0);
+  for(let k=0;k<data.length;k++){
+    const env = Math.exp(-k/(AC.sampleRate*0.012));
+    data[k] = (Math.random()*2-1) * env * 0.6;
+    data[k] += Math.sin(k * 800 / AC.sampleRate * Math.PI * 2) * env * 0.3;
+  }
+  const src2 = AC.createBufferSource();
+  const flt = AC.createBiquadFilter();
+  flt.type = 'bandpass'; flt.frequency.value = 1800; flt.Q.value = 2;
+  const g = AC.createGain();
+  g.gain.setValueAtTime(0.7, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t+0.07);
+  src2.buffer = buf;
+  src2.connect(flt); flt.connect(g); g.connect(AC.destination);
+  src2.start(t);
+}
+
+function seDeal(){for(let i=0;i<5;i++)seCardOne(i);}
+ 
+// DRAW: カードめくり音 × 最大5枚 + 完了チャイム
+function seDraw(){
+  for(let i=0;i<5;i++){
+    const t=i*0.07;
+    nzFiltered(0.03,0.25,2500,t);
+    tone('sine',600+i*40,0.02,0.05,t+0.008,300);
+  }
+  // 完了チャイム (ドレミ)
+  [[1047,0.38],[1319,0.44],[1568,0.50]].forEach(([f,t])=>{
+    tone('triangle',f,0.09,0.10,t);
+    tone('square',f,0.07,0.05,t+0.01);
+  });
+}
+ 
+// HOLD確定音 — 短いクリック＋ピン
+function seHold(){
+  nz(0.008,0.20);
+  tone('square',2093,0.025,0.07);
+  tone('sine',3136,0.04,0.05,0.012);
+}
+function seUnhold(){
+  nz(0.008,0.15);
+  tone('square',880,0.025,0.06);
+  tone('sine',660,0.04,0.04,0.01);
+}
+ 
+// BET変更 — コイン投入っぽい短音
+function seBet(){
+  tone('square',1760,0.015,0.05);
+  tone('sine',2200,0.02,0.04,0.008);
+  nz(0.01,0.08,0.005);
+}
+ 
+// ログイン
+function seLogin(){
+  [[523,0],[659,0.07],[784,0.14],[1047,0.21],[1319,0.28],[1568,0.35],[2093,0.44]]
+    .forEach(([f,t])=>{tone('triangle',f,0.10,0.16,t);tone('square',f,0.08,0.07,t+0.01);});
+}
+ 
+// コインカウント音 — 金属コイン感
+function seCoins(){
+  nzFiltered(0.025,0.30,4000);
+  tone('sine',2000,0.02,0.07,0.003,1500);
+}
+ 
+/* ======== WIN ジングル ========
+   日本アーケードポーカー機の典型的ジングル3段階
+*/
+// 小役 (THREE OF A KIND) — 実機風: 短い上昇音3音+チャイム
+function seWinSmall(){
+  // 「ピロリン」系3音上昇
+  [[784,0],[1047,0.09],[1319,0.18]].forEach(([f,t])=>{
+    tone('square',f,0.08,0.20,t);
+    tone('triangle',f/2,0.06,0.07,t+0.01);
+  });
+  // 締め: 短い和音
+  setTimeout(()=>{
+    tone('square',1047,0.18,0.16);
+    tone('square',1319,0.18,0.13,0.01);
+    tone('triangle',523,0.18,0.14,0.02);
+  },310);
+}
+ 
+// 中役 (STRAIGHT〜FOUR OF A KIND) — 実機風ジングル: タラランタン↑系
+function seWinMid(){
+  // 「タ・ラ・ラ・ン」上昇メロディ
+  const mel=[[659,0],[784,0.08],[880,0.16],[1047,0.24],[1319,0.32],[1568,0.42]];
+  mel.forEach(([f,t])=>{
+    tone('square',f,0.10,0.20,t);
+    tone('triangle',f/2,0.08,0.09,t+0.008);
+  });
+  // コーダ
+  setTimeout(()=>{
+    [1047,1319,1568].forEach((f,i)=>{
+      tone('square',f,0.12,0.18,i*0.06);
+      tone('triangle',f/2,0.10,0.12,i*0.06+0.01);
+    });
+    setTimeout(()=>{
+      [523,659,784,1047,1319,1568].forEach(f=>tone('square',f,0.32,0.14));
+      tone('triangle',261,0.35,0.15);
+    },220);
+  },620);
+}
+ 
+// 大役ファンファーレ (FIVE OF A KIND以上) — 日本アーケードポーカー機実機風
+// 「タータ・タタタタタ・ターーン」パターン
+function seWinBig(){
+  // ★ドラムロール (8分音符×10)
+  for(let i=0;i<10;i++){
+    setTimeout(()=>{
+      nz(0.028,0.20+i*0.012);
+      tone('sawtooth',80+i*5,0.03,0.08);
+    },i*55);
+  }
+  // ★ファンファーレ本体 (実機らしいC-G-C-E-G-C上昇パターン)
+  const ff=[
+    // タ  タ  タ  ター    タ  タ  タ  ターーーン
+    [523,0.62,0.09],[523,0.73,0.09],[659,0.84,0.09],
+    [784,0.95,0.18],[784,1.13,0.09],[880,1.22,0.09],[1047,1.31,0.09],
+    [1319,1.40,0.28],[1568,1.68,0.09],[1760,1.77,0.09],[2093,1.86,0.55],
+  ];
+  ff.forEach(([f,t,d])=>{
+    tone('square',f,d*0.88,0.22,t);
+    tone('triangle',f/2,d*0.85,0.14,t+0.008);
+    if(d>0.15)tone('sawtooth',f*0.75,d*0.6,0.07,t+0.015); // 和音
+  });
+  // ★コイン音連打
+  for(let i=0;i<12;i++)setTimeout(()=>seCoins(),1900+i*70);
+  // ★締め大和音
+  setTimeout(()=>{
+    [523,659,784,1047,1319,1568,2093].forEach(f=>{
+      tone('square',f,0.55,0.15);
+      tone('triangle',f/2,0.50,0.10,0.01);
+    });
+  },2650);
+}
+ 
+// 役なし — 落胆の下降音
+function seLose(){
+  [[440,0],[349,0.12],[294,0.26],[247,0.42],[220,0.60]].forEach(([f,t])=>{
+    tone('sawtooth',f,0.14,0.18,t,f*0.75);
+  });
+  nz(0.15,0.12,0.55);
+}
+ 
+// seWin: 配当額で自動振り分け
+
+// マイルストーン祝福音
+function playMilestone(medals){
+  if(!AC) return;
+  const t = AC.currentTime + 0.1;
+  const fanfare = medals >= 500 ? [784,988,1175,1568] :
+                  medals >= 300 ? [659,784,988,1175] :
+                  medals >= 100 ? [523,659,784,988] : null;
+  if(!fanfare) return;
+  fanfare.forEach((f,i)=>{
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    o.type='triangle'; o.frequency.value=f;
+    g.gain.setValueAtTime(0,t+i*0.1);
+    g.gain.linearRampToValueAtTime(0.18,t+i*0.1+0.05);
+    g.gain.exponentialRampToValueAtTime(0.001,t+i*0.1+0.35);
+    o.start(t+i*0.1); o.stop(t+i*0.1+0.4);
+  });
+}
+function seWin(m){
+  if(m>=500)seWinBig();
+  else if(m>=30)seWinMid();
+  else seWinSmall();
+}
+ 
+/* ======== ダブルアップ SE ======== */
+ 
+// カードめくり — 重みある1枚
+function seDuFlip(){
+  nzFiltered(0.05,0.32,2200);
+  nzFiltered(0.03,0.18,800,0.015);
+  tone('sine',600,0.04,0.08,0.005,300);
+  tone('square',400,0.025,0.05,0.02,200);
+}
+ 
+// 引き分け
+function seDuDraw(){
+  tone('square',880,0.06,0.12);
+  tone('square',880,0.06,0.12,0.22);
+  tone('sine',660,0.08,0.16,0.44,440);
+  nz(0.10,0.08,0.50);
+}
+ 
+// カード選択クリック
+function seDuSelect(){
+  nz(0.01,0.25);
+  tone('square',2200,0.02,0.08);
+  tone('sine',3520,0.025,0.06,0.01);
+}
+ 
+// 公開前の緊張ビープ (3連)
+function seDuTension(step){
+  const f=[392,440,523][step]||523;
+  tone('square',f,0.05,0.08);
+  tone('triangle',f*2,0.03,0.04,0.02);
+}
+ 
+// ダブルアップ勝利
+function seDuWin(){
+  [[880,0],[1047,0.09],[1319,0.18],[1568,0.27],[2093,0.38]].forEach(([f,t])=>{
+    tone('square',f,0.10,0.18,t);
+    tone('triangle',f/2,0.08,0.10,t+0.01);
+  });
+  setTimeout(()=>{
+    [1047,1319,1568,2093].forEach(f=>tone('square',f,0.30,0.16));
+    for(let i=0;i<5;i++)setTimeout(()=>seCoins(),i*60);
+  },500);
+}
+ 
+// ダブルアップ敗北
+function seDuLose(){
+  [[440,0],[330,0.14],[247,0.30],[196,0.48],[165,0.68]].forEach(([f,t])=>{
+    tone('sawtooth',f,0.18,0.20,t,f*0.7);
+  });
+  nz(0.25,0.18,0.65);
+}
+ 
+// コレクト
+function seDuCollect(){
+  for(let i=0;i<10;i++)setTimeout(()=>seCoins(),i*50);
+  setTimeout(()=>{
+    [[523,0],[659,0.08],[784,0.16],[1047,0.24]].forEach(([f,t])=>{
+      tone('triangle',f,0.09,0.12,t);
+      tone('square',f,0.07,0.07,t+0.01);
+    });
+  },600);
+}
+ 
+function seCard(){seCardOne(0);}
+function seFlip(){seDuFlip();}
+document.addEventListener('click',wake,{once:true});
+document.addEventListener('touchstart',wake,{once:true});
+/* ====== 演出ユーティリティ ====== */
+// 画面フラッシュ
+function screenFlash(color,times,interval){
+  const el=document.getElementById('screen-flash');
+  if(!el)return;
+  el.style.background=color||'rgba(255,255,255,.55)';
+  let n=0;
+  const go=()=>{el.style.opacity='1';setTimeout(()=>{el.style.opacity='0';n++;if(n<(times||2))setTimeout(go,(interval||120));},80);};
+  go();
+}
+// WINメダルカウントアップアニメーション
+function countUp(el,from,to,ms,cb){
+  const total=to-from;if(total<=0){el.textContent=to;if(cb)cb();return;}
+  const steps=Math.min(total,60);
+  const stepVal=total/steps;
+  const stepMs=Math.max(16,ms/steps);
+  let cur=from,count=0;
+  const tick=()=>{
+    count++;cur=Math.round(from+stepVal*count);
+    if(cur>=to)cur=to;
+    el.textContent=cur;
+    seCoins();
+    if(cur<to)setTimeout(tick,stepMs);
+    else if(cb)setTimeout(cb,80);
+  };
+  setTimeout(tick,stepMs);
+}
+// 当選カード点滅
+function blinkWinCards(durationMs){
+  document.querySelectorAll('.card.up').forEach(c=>{c.classList.add('blink');});
+  setTimeout(()=>document.querySelectorAll('.card.blink').forEach(c=>c.classList.remove('blink')),durationMs||1800);
+}
+let user=null,pinBuf='',lmode='login';
+let deck=[],hand=[],held=[],bet=1,win=0,phase='deal';
+let ugM=0;
+const AVATARS=['👑','🎰','🎲','🃏','⭐','🏆','💎','🔥','🌟','🎭','🦁','🐯','🦊','🐺','🦅','🎯','⚔️','🗡️','🌈','❤️'];
+function initAvGrid(){const g=document.getElementById('av-grid');g.innerHTML='';AVATARS.forEach(av=>{const d=document.createElement('div');d.className='av-opt';d.textContent=av;d.onclick=()=>selectAv(av);g.appendChild(d);});}
+function openAvModal(){if(!user)return;wake();initAvGrid();document.getElementById('av-modal').classList.add('show');}
+function closeAvModal(){document.getElementById('av-modal').classList.remove('show');}
+async function selectAv(av){closeAvModal();if(user){user.avatar=av;saveAvatar(user.id,av);updSidebar();}}
+function updSidebar(){if(!user){document.getElementById('sidebar').classList.add('hidden');return;}document.getElementById('sidebar').classList.remove('hidden');const av=user.avatar||'👑';document.getElementById('sb-av').textContent=av;document.getElementById('sb-av-icon').textContent=av;document.getElementById('sb-name').textContent=user.name;document.getElementById('sb-medals').textContent=user.medals;document.getElementById('lav').textContent=av;document.getElementById('lbn').textContent=user.name;document.getElementById('lbm').textContent=user.medals;const TODAY=new Date().toISOString().slice(0,10);const got=localStorage.getItem('daily_'+user.id)===TODAY;const el=document.getElementById('sb-daily');if(got){el.textContent='✅ ボーナスもらい済み';el.style.borderColor='var(--green2)';el.style.color='var(--green2)';}else{el.textContent='🎁 今日のボーナス待機中';el.style.borderColor='var(--gold)';el.style.color='var(--gold)';}}
+function updLM(){if(user){document.getElementById('lbm').textContent=user.medals;document.getElementById('sb-medals').textContent=user.medals;}}
+async function checkDailyBonus(userId,currentMedals){const TODAY=new Date().toISOString().slice(0,10);const KEY='daily_'+userId;if(localStorage.getItem(KEY)===TODAY)return currentMedals;const newM=currentMedals+100;await sbPatch('game_users?id=eq.'+userId,{medals:newM});localStorage.setItem(KEY,TODAY);showBonusNotice();return newM;}
+function showBonusNotice(){const el=document.createElement('div');el.id='daily-bonus-notice';el.innerHTML='🎁 デイリーボーナス<br><span style="font-size:28px;font-family:Barlow Condensed,sans-serif;font-weight:900;color:var(--gold)">＋100枚！</span><br><span style="font-size:12px;color:#aaa">明日またもらえます</span>';document.body.appendChild(el);setTimeout(()=>el.remove(),2800);}
+function show(id){document.querySelectorAll('.gs').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('ctrl').classList.toggle('hidden',!['spoker','supgame'].includes(id));}
+function setMsg(t,c){const e=document.getElementById('lmsg');e.textContent=t;e.className='login-msg'+(c?' '+c:'');}
+function updPin(){for(let i=0;i<4;i++){const e=document.getElementById('p'+i);if(i<pinBuf.length){e.textContent='●';e.classList.add('filled');}else{e.textContent='○';e.classList.remove('filled');}}}
+function disableNP(v){document.querySelectorAll('.nb').forEach(b=>b.disabled=v);}
+function switchTab(m){lmode=m;document.getElementById('tab-l').classList.toggle('active',m==='login');document.getElementById('tab-s').classList.toggle('active',m==='signup');document.getElementById('lbt').textContent=m==='login'?'名前とPINで入場':'名前(10文字)とPIN(4桁)を決めて登録';setMsg('','');pinBuf='';updPin();}
+function pin(v){if(v==='del'){pinBuf=pinBuf.slice(0,-1);}else if(v==='ok'){doAuth();}else{if(pinBuf.length>=4)return;pinBuf+=v;if(pinBuf.length===4&&lmode==='login')doAuth();}updPin();}
+async function doAuth(){const name=document.getElementById('lname').value.trim();if(!name){setMsg('名前を入力してください','err');return;}if(pinBuf.length<4){setMsg('4桁のPINを入力してください','err');return;}setMsg('確認中…','ing');disableNP(true);wake();if(lmode==='login'){const u=await getUser(name);disableNP(false);if(!u){setMsg('ユーザーが見つかりません','err');pinBuf='';updPin();return;}if(u.pin!==pinBuf){setMsg('PINが違います','err');pinBuf='';updPin();return;}user=u;seLogin();setMsg('ログイン成功！','ok');setTimeout(goLobby,600);}else{const ex=await getUser(name);if(ex){disableNP(false);setMsg('その名前はすでに使われています','err');return;}const u=await createUser(name,pinBuf);disableNP(false);if(!u){setMsg('登録に失敗しました。もう一度お試しください','err');return;}user=u;seLogin();setMsg('登録完了！ようこそ '+name+'さん！','ok');setTimeout(goLobby,700);}}
+function logout(){bgmStop();user=null;pinBuf='';updPin();document.getElementById('lname').value='';setMsg('','');document.getElementById('ctrl').classList.add('hidden');document.getElementById('sidebar').classList.add('hidden');show('slogin');}
+async function goLobby(){if(!user)return;updSidebar();document.getElementById('ctrl').classList.add('hidden');if(user.id){const newM=await checkDailyBonus(user.id,user.medals);if(newM!==user.medals){user.medals=newM;updSidebar();}}bgmPlay('lobby');show('slobby');}
+function gotoPoker(){if(!user)return;wake();startPoker();}
+function openJanken(){if(user)localStorage.setItem('hkg_user',JSON.stringify({id:user.id,name:user.name,medals:user.medals,avatar:user.avatar||'👑'}));location.href='index.html';}
+const S=['♠','♥','♦','♣'],SR=[false,true,true,false];
+// PAYテーブル: base=BET1配当, jack=MAX BET(10)特大配当
+// NATURAL ROYAL FLUSH: BET1-9は固定800、BET10=4000ジャックポット
+// FIVE ACES (4枚A+JOKER): BET×300スケール、BET10=3000
+// その他: BET×base スケール
+const PAY=[
+  {id:'nrf',n:'NATURAL ROYAL FLUSH', base:800,jack:4000,flat:true},
+  {id:'fa5',n:'FIVE ACES',            base:300,jack:3000,flat:false},
+  {id:'wrf',n:'ROYAL FLUSH W/ WILD',  base:100,jack:1000,flat:false},
+  {id:'5ok',n:'FIVE OF A KIND',        base:50, jack:500, flat:false},
+  {id:'sf', n:'STRAIGHT FLUSH',        base:40, jack:400, flat:false},
+  {id:'4ok',n:'FOUR OF A KIND',        base:20, jack:200, flat:false},
+  {id:'fh', n:'FULL HOUSE',            base:10, jack:100, flat:false},
+  {id:'fl', n:'FLUSH',                 base:6,  jack:60,  flat:false},
+  {id:'st', n:'STRAIGHT',              base:4,  jack:40,  flat:false},
+  {id:'3ok',n:'THREE OF A KIND',       base:2,  jack:20,  flat:false},
+];
+// BETに応じた配当を取得
+function getPayout(p,b){
+  if(b>=10)return p.jack; // MAX BET → 特大ジャックポット
+  if(p.flat)return p.base; // NATURAL ROYAL FLUSHはBET1-9固定800
+  return p.base*b;          // その他はBET×base
+}
+const BETS=[1,2,3,4,5,6,7,8,9,10];
+function betIdx(b){return BETS.indexOf(b);}
+function cl(n){if(n===1)return'A';if(n===11)return'J';if(n===12)return'Q';if(n===13)return'K';return String(n);}
+function mkD(){let d=[];for(let s=0;s<4;s++)for(let n=1;n<=13;n++)d.push({s,n,w:false});d.push({s:-1,n:0,w:true,joker:true});return d.sort(()=>Math.random()-.5);}
+function isWild(c){return c.w===true;}
+function startPoker(){if(!user)return;wake();bet=BETS[0];win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='';setStatus('DEAL TO BEGIN','idle');const _wb2=document.getElementById('pk-win-bar');if(_wb2)_wb2.style.display='none';document.getElementById('dbn').textContent='DEAL';setBB(true);bgmPlay('poker');show('spoker');}
+function updH(){
+  document.getElementById('pk-med').textContent=user?user.medals:0;
+  document.getElementById('pk-bet').textContent=bet;
+  const we=document.getElementById('pk-win');if(we)we.textContent=win;
+  // WIN枚数バー表示制御
+  const wb=document.getElementById('pk-win-bar');
+  if(wb)wb.style.display=(win>0)?'flex':'none';
+}
+function setStatus(txt,cls){
+  const e=document.getElementById('pk-status-txt');if(!e)return;
+  e.textContent=txt;
+  e.className='pk-bar-status '+(cls||'idle');
+}
+function chgB(d){if(phase!=='deal')return;wake();seBet();const cur=betIdx(bet);if(d===99)bet=BETS[BETS.length-1];else if(d>0)bet=BETS[Math.min(BETS.length-1,cur+1)];else bet=BETS[Math.max(0,cur-1)];updPT();updH();}
+function updPT(){
+  // 3列表示: [BET1, BET5, MAX(BET10)]
+  // 強調: BET1→index0, BET5→index1, BET10→index2
+  const hiIdx=(bet>=10)?2:(bet>=5)?1:0;
+  PAY.forEach(p=>{
+    const r=document.getElementById('pt-'+p.id);if(!r)return;
+    r.classList.remove('hi');
+    r.querySelectorAll('.pt-o').forEach((o,i)=>{o.classList.toggle('cur',i===hiIdx);});
+  });
+}
+function setBB(on){['bn-','bn+','bnM'].forEach(id=>document.getElementById(id).disabled=!on);}
+/* カードHTML生成 — K/Q/J/JOKERはアートワーク付き */
+const ROYAL_SYM={13:'♚',12:'♛',11:'♞'};
+const ROYAL_COL={13:'#8B0000',12:'#6B006B',11:'#003399'}; // K=ダークレッド,Q=パープル,J=ネイビー
+const ROYAL_COL_B={13:'#1a1a7a',12:'#2a006a',11:'#003399'};
+ 
+/* ============================================================
+   フェイスカード SVG アート
+   ============================================================ */
+const FACE_SVG={
+  /* =====================================================
+     KING (赤): 王冠・横顔・剣・本格トランプ風
+     伝統的なヨーロッパのトランプ絵柄を意識
+  ===================================================== */
+  K_r: `<svg viewBox="0 0 58 78" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="kg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff0f0"/>
+      <stop offset="100%" stop-color="#ffe0e0"/>
+    </linearGradient>
+  </defs>
+  <rect width="58" height="78" fill="url(#kg1)"/>
+  <!-- 上半分: キング正面 -->
+  <g>
+    <!-- 王冠 -->
+    <polygon points="9,22 14,10 20,18 29,7 38,18 44,10 49,22" fill="#D4AF37" stroke="#996600" stroke-width="1"/>
+    <rect x="9" y="21" width="40" height="5" fill="#D4AF37" stroke="#996600" stroke-width="0.8"/>
+    <circle cx="29" cy="8" r="3.5" fill="#E53935"/>
+    <circle cx="14" cy="11" r="2.5" fill="#1565C0"/>
+    <circle cx="44" cy="11" r="2.5" fill="#1565C0"/>
+    <circle cx="20.5" cy="19" r="2" fill="#E53935"/>
+    <circle cx="37.5" cy="19" r="2" fill="#E53935"/>
+    <!-- 顔 -->
+    <ellipse cx="29" cy="35" rx="11" ry="10" fill="#FCCBA0"/>
+    <!-- 髪 (赤茶) -->
+    <path d="M18,30 Q19,22 29,22 Q39,22 40,30" fill="#8B4513"/>
+    <path d="M18,30 Q17,36 19,38" fill="#8B4513"/>
+    <path d="M40,30 Q41,36 39,38" fill="#8B4513"/>
+    <!-- 目 -->
+    <ellipse cx="24.5" cy="33" rx="2.2" ry="1.8" fill="white"/>
+    <circle cx="24.5" cy="33" r="1.1" fill="#2C1810"/>
+    <circle cx="25" cy="32.4" r="0.5" fill="white"/>
+    <ellipse cx="33.5" cy="33" rx="2.2" ry="1.8" fill="white"/>
+    <circle cx="33.5" cy="33" r="1.1" fill="#2C1810"/>
+    <circle cx="34" cy="32.4" r="0.5" fill="white"/>
+    <!-- 眉 -->
+    <path d="M22,30.5 Q24.5,29.2 27,30.5" stroke="#6B3010" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M31,30.5 Q33.5,29.2 36,30.5" stroke="#6B3010" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <!-- 鼻 -->
+    <path d="M27.5,36 Q29,37.5 30.5,36" stroke="#D4956A" stroke-width="1" fill="none"/>
+    <!-- 口・ひげ -->
+    <path d="M24,39.5 Q29,42.5 34,39.5" stroke="#C0392B" stroke-width="1.5" fill="none"/>
+    <path d="M21,40 Q23,38.5 25,39.5" stroke="#8B4513" stroke-width="1.8" fill="none"/>
+    <path d="M33,39.5 Q35,38.5 37,40" stroke="#8B4513" stroke-width="1.8" fill="none"/>
+    <path d="M23,42 Q29,45.5 35,42" stroke="#8B4513" stroke-width="2" fill="none"/>
+    <!-- 体・衣装 -->
+    <rect x="15" y="47" width="28" height="28" rx="2" fill="#C0392B"/>
+    <rect x="18" y="47" width="5" height="28" fill="#E8C840" opacity="0.7"/>
+    <rect x="35" y="47" width="5" height="28" fill="#E8C840" opacity="0.7"/>
+    <path d="M15,52 L43,52" stroke="#E8C840" stroke-width="1.5"/>
+    <!-- 剣 (右手) -->
+    <line x1="46" y1="24" x2="46" y2="68" stroke="#C0C0C0" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="46" cy="44" rx="5" ry="2" fill="#D4AF37" stroke="#996600" stroke-width="0.8"/>
+    <ellipse cx="46" cy="24" rx="3" ry="3" fill="#D4AF37"/>
+    <!-- 球状装飾 -->
+    <circle cx="9" cy="75" r="4" fill="#C0392B" opacity="0.6"/>
+    <circle cx="49" cy="75" r="4" fill="#C0392B" opacity="0.6"/>
+  </g>
+  </svg>`,
+ 
+  K_b: `<svg viewBox="0 0 58 78" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="kb1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0f0ff"/>
+      <stop offset="100%" stop-color="#e0e0ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="58" height="78" fill="url(#kb1)"/>
+  <g>
+    <polygon points="9,22 14,10 20,18 29,7 38,18 44,10 49,22" fill="#D4AF37" stroke="#996600" stroke-width="1"/>
+    <rect x="9" y="21" width="40" height="5" fill="#D4AF37" stroke="#996600" stroke-width="0.8"/>
+    <circle cx="29" cy="8" r="3.5" fill="#1565C0"/>
+    <circle cx="14" cy="11" r="2.5" fill="#E53935"/>
+    <circle cx="44" cy="11" r="2.5" fill="#E53935"/>
+    <circle cx="20.5" cy="19" r="2" fill="#1565C0"/>
+    <circle cx="37.5" cy="19" r="2" fill="#1565C0"/>
+    <ellipse cx="29" cy="35" rx="11" ry="10" fill="#FCCBA0"/>
+    <path d="M18,30 Q19,22 29,22 Q39,22 40,30" fill="#333"/>
+    <path d="M18,30 Q17,36 19,38" fill="#333"/>
+    <path d="M40,30 Q41,36 39,38" fill="#333"/>
+    <ellipse cx="24.5" cy="33" rx="2.2" ry="1.8" fill="white"/>
+    <circle cx="24.5" cy="33" r="1.1" fill="#1a1a3a"/>
+    <circle cx="25" cy="32.4" r="0.5" fill="white"/>
+    <ellipse cx="33.5" cy="33" rx="2.2" ry="1.8" fill="white"/>
+    <circle cx="33.5" cy="33" r="1.1" fill="#1a1a3a"/>
+    <circle cx="34" cy="32.4" r="0.5" fill="white"/>
+    <path d="M22,30.5 Q24.5,29.2 27,30.5" stroke="#333" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M31,30.5 Q33.5,29.2 36,30.5" stroke="#333" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path d="M27.5,36 Q29,37.5 30.5,36" stroke="#D4956A" stroke-width="1" fill="none"/>
+    <path d="M24,39.5 Q29,42.5 34,39.5" stroke="#555" stroke-width="1.5" fill="none"/>
+    <path d="M21,40 Q23,38.5 25,39.5" stroke="#444" stroke-width="1.8" fill="none"/>
+    <path d="M33,39.5 Q35,38.5 37,40" stroke="#444" stroke-width="1.8" fill="none"/>
+    <path d="M23,42 Q29,45.5 35,42" stroke="#444" stroke-width="2" fill="none"/>
+    <rect x="15" y="47" width="28" height="28" rx="2" fill="#1a3a9e"/>
+    <rect x="18" y="47" width="5" height="28" fill="#E8C840" opacity="0.7"/>
+    <rect x="35" y="47" width="5" height="28" fill="#E8C840" opacity="0.7"/>
+    <path d="M15,52 L43,52" stroke="#E8C840" stroke-width="1.5"/>
+    <line x1="46" y1="24" x2="46" y2="68" stroke="#C0C0C0" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="46" cy="44" rx="5" ry="2" fill="#D4AF37" stroke="#996600" stroke-width="0.8"/>
+    <ellipse cx="46" cy="24" rx="3" ry="3" fill="#D4AF37"/>
+    <circle cx="9" cy="75" r="4" fill="#1a3a9e" opacity="0.6"/>
+    <circle cx="49" cy="75" r="4" fill="#1a3a9e" opacity="0.6"/>
+  </g>
+  </svg>`,
+ 
+  /* =====================================================
+     QUEEN: 王冠・豊かな髪・花・女王
+  ===================================================== */
+  Q_r: `<svg viewBox="0 0 58 78" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="qr1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff5f5"/>
+      <stop offset="100%" stop-color="#ffecec"/>
+    </linearGradient>
+  </defs>
+  <rect width="58" height="78" fill="url(#qr1)"/>
+  <!-- 王冠 (より繊細で女性的) -->
+  <path d="M10,24 L14,11 L22,20 L29,8 L36,20 L44,11 L48,24 Z" fill="#D4AF37" stroke="#996600" stroke-width="0.8"/>
+  <rect x="10" y="22" width="38" height="4" fill="#D4AF37" stroke="#996600" stroke-width="0.5"/>
+  <!-- 王冠の宝石 -->
+  <ellipse cx="29" cy="9" rx="3.5" ry="3" fill="#E53935"/>
+  <ellipse cx="14.5" cy="12" rx="2.5" ry="2" fill="#9C27B0"/>
+  <ellipse cx="43.5" cy="12" rx="2.5" ry="2" fill="#9C27B0"/>
+  <ellipse cx="22" cy="20" rx="2" ry="1.8" fill="#E53935"/>
+  <ellipse cx="36" cy="20" rx="2" ry="1.8" fill="#E53935"/>
+  <!-- 豊かな髪 (明るい茶/金) -->
+  <path d="M17,31 Q14,24 18,20 Q29,16 40,20 Q44,24 41,31" fill="#C8961E"/>
+  <path d="M17,31 Q13,40 15,48" fill="#C8961E"/>
+  <path d="M41,31 Q45,40 43,48" fill="#C8961E"/>
+  <path d="M15,44 Q12,52 16,58" fill="#C8961E" stroke="#C8961E" stroke-width="1"/>
+  <path d="M43,44 Q46,52 42,58" fill="#C8961E" stroke="#C8961E" stroke-width="1"/>
+  <!-- 顔 -->
+  <ellipse cx="29" cy="37" rx="11.5" ry="12" fill="#FDCBA0"/>
+  <!-- 目 (大きく、まつ毛) -->
+  <ellipse cx="24" cy="35" rx="2.8" ry="2.2" fill="white"/>
+  <ellipse cx="24" cy="35.3" rx="2" ry="1.6" fill="#2C1810"/>
+  <circle cx="24.8" cy="34.5" r="0.7" fill="white"/>
+  <!-- まつ毛 -->
+  <path d="M21.5,33 L21,31.5 M23,32.5 L22.5,31 M24.5,32.5 L24.5,31 M26,33 L26.5,31.5" stroke="#333" stroke-width="0.8" fill="none"/>
+  <ellipse cx="34" cy="35" rx="2.8" ry="2.2" fill="white"/>
+  <ellipse cx="34" cy="35.3" rx="2" ry="1.6" fill="#2C1810"/>
+  <circle cx="34.8" cy="34.5" r="0.7" fill="white"/>
+  <path d="M31.5,33 L31,31.5 M33,32.5 L32.5,31 M34.5,32.5 L34.5,31 M36,33 L36.5,31.5" stroke="#333" stroke-width="0.8" fill="none"/>
+  <!-- 眉 (細く優雅) -->
+  <path d="M21,32 Q24,30.5 27,32" stroke="#8B5010" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <path d="M31,32 Q34,30.5 37,32" stroke="#8B5010" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <!-- 鼻 (小さく) -->
+  <path d="M27.5,38 Q29,39.5 30.5,38" stroke="#E0956A" stroke-width="0.9" fill="none"/>
+  <!-- 口 (ふっくらした赤い唇) -->
+  <path d="M24.5,42.5 Q29,40.5 33.5,42.5" fill="#E53935" stroke="#C62828" stroke-width="0.5"/>
+  <path d="M24.5,42.5 Q29,45.5 33.5,42.5" fill="#E53935" stroke="#C62828" stroke-width="0.5"/>
+  <!-- チーク -->
+  <circle cx="21" cy="40" r="4" fill="#FF8A80" opacity="0.3"/>
+  <circle cx="37" cy="40" r="4" fill="#FF8A80" opacity="0.3"/>
+  <!-- 体・ドレス -->
+  <rect x="13" y="51" width="32" height="26" rx="3" fill="#C0392B"/>
+  <!-- ドレスの飾り -->
+  <path d="M13,55 Q29,60 45,55" stroke="#E8C840" stroke-width="1.5" fill="none"/>
+  <circle cx="29" cy="58" r="4" fill="#E8C840" opacity="0.8"/>
+  <path d="M13,62 Q29,67 45,62" stroke="#E8C840" stroke-width="1" fill="none" opacity="0.6"/>
+  <!-- 首飾り -->
+  <path d="M21,52 Q29,56 37,52" stroke="#E8C840" stroke-width="2" fill="none"/>
+  <!-- 花 (左手) -->
+  <g transform="translate(6,48)">
+    <circle cx="7" cy="7" r="5.5" fill="#FF6B9D" opacity="0.9"/>
+    <circle cx="7" cy="2" r="3.5" fill="#FF6B9D" opacity="0.8"/>
+    <circle cx="3" cy="5" r="3.5" fill="#FF91B4" opacity="0.8"/>
+    <circle cx="11" cy="5" r="3.5" fill="#FF91B4" opacity="0.8"/>
+    <circle cx="4" cy="10" r="3.5" fill="#FF6B9D" opacity="0.8"/>
+    <circle cx="10" cy="10" r="3.5" fill="#FF6B9D" opacity="0.8"/>
+    <circle cx="7" cy="7" r="2.2" fill="#FFD700"/>
+  </g>
+  </svg>`,
+ 
+  Q_b: `<svg viewBox="0 0 58 78" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="qb1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f5ff"/>
+      <stop offset="100%" stop-color="#ebebff"/>
+    </linearGradient>
+  </defs>
+  <rect width="58" height="78" fill="url(#qb1)"/>
+  <path d="M10,24 L14,11 L22,20 L29,8 L36,20 L44,11 L48,24 Z" fill="#D4AF37" stroke="#996600" stroke-width="0.8"/>
+  <rect x="10" y="22" width="38" height="4" fill="#D4AF37" stroke="#996600" stroke-width="0.5"/>
+  <ellipse cx="29" cy="9" rx="3.5" ry="3" fill="#1565C0"/>
+  <ellipse cx="14.5" cy="12" rx="2.5" ry="2" fill="#7B1FA2"/>
+  <ellipse cx="43.5" cy="12" rx="2.5" ry="2" fill="#7B1FA2"/>
+  <ellipse cx="22" cy="20" rx="2" ry="1.8" fill="#1565C0"/>
+  <ellipse cx="36" cy="20" rx="2" ry="1.8" fill="#1565C0"/>
+  <path d="M17,31 Q14,24 18,20 Q29,16 40,20 Q44,24 41,31" fill="#333"/>
+  <path d="M17,31 Q13,40 15,48" fill="#333"/>
+  <path d="M41,31 Q45,40 43,48" fill="#333"/>
+  <path d="M15,44 Q12,52 16,58" fill="#333"/>
+  <path d="M43,44 Q46,52 42,58" fill="#333"/>
+  <ellipse cx="29" cy="37" rx="11.5" ry="12" fill="#FDCBA0"/>
+  <ellipse cx="24" cy="35" rx="2.8" ry="2.2" fill="white"/>
+  <ellipse cx="24" cy="35.3" rx="2" ry="1.6" fill="#1a1a3a"/>
+  <circle cx="24.8" cy="34.5" r="0.7" fill="white"/>
+  <path d="M21.5,33 L21,31.5 M23,32.5 L22.5,31 M24.5,32.5 L24.5,31 M26,33 L26.5,31.5" stroke="#333" stroke-width="0.8" fill="none"/>
+  <ellipse cx="34" cy="35" rx="2.8" ry="2.2" fill="white"/>
+  <ellipse cx="34" cy="35.3" rx="2" ry="1.6" fill="#1a1a3a"/>
+  <circle cx="34.8" cy="34.5" r="0.7" fill="white"/>
+  <path d="M31.5,33 L31,31.5 M33,32.5 L32.5,31 M34.5,32.5 L34.5,31 M36,33 L36.5,31.5" stroke="#333" stroke-width="0.8" fill="none"/>
+  <path d="M21,32 Q24,30.5 27,32" stroke="#555" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <path d="M31,32 Q34,30.5 37,32" stroke="#555" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+  <path d="M27.5,38 Q29,39.5 30.5,38" stroke="#E0956A" stroke-width="0.9" fill="none"/>
+  <path d="M24.5,42.5 Q29,40.5 33.5,42.5" fill="#555" stroke="#333" stroke-width="0.5"/>
+  <path d="M24.5,42.5 Q29,45.5 33.5,42.5" fill="#555" stroke="#333" stroke-width="0.5"/>
+  <circle cx="21" cy="40" r="4" fill="#7B9FFF" opacity="0.3"/>
+  <circle cx="37" cy="40" r="4" fill="#7B9FFF" opacity="0.3"/>
+  <rect x="13" y="51" width="32" height="26" rx="3" fill="#1a3a9e"/>
+  <path d="M13,55 Q29,60 45,55" stroke="#E8C840" stroke-width="1.5" fill="none"/>
+  <circle cx="29" cy="58" r="4" fill="#E8C840" opacity="0.8"/>
+  <path d="M13,62 Q29,67 45,62" stroke="#E8C840" stroke-width="1" fill="none" opacity="0.6"/>
+  <path d="M21,52 Q29,56 37,52" stroke="#E8C840" stroke-width="2" fill="none"/>
+  <g transform="translate(6,48)">
+    <circle cx="7" cy="7" r="5.5" fill="#5B8FFF" opacity="0.9"/>
+    <circle cx="7" cy="2" r="3.5" fill="#5B8FFF" opacity="0.8"/>
+    <circle cx="3" cy="5" r="3.5" fill="#7BA4FF" opacity="0.8"/>
+    <circle cx="11" cy="5" r="3.5" fill="#7BA4FF" opacity="0.8"/>
+    <circle cx="4" cy="10" r="3.5" fill="#5B8FFF" opacity="0.8"/>
+    <circle cx="10" cy="10" r="3.5" fill="#5B8FFF" opacity="0.8"/>
+    <circle cx="7" cy="7" r="2.2" fill="#FFD700"/>
+  </g>
+  </svg>`,
+ 
+  /* =====================================================
+     JACK: 若い騎士・羽根帽・槍
+  ===================================================== */
+  J_r: `<svg viewBox="0 0 58 78" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="jr1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff8f0"/>
+      <stop offset="100%" stop-color="#fff0e0"/>
+    </linearGradient>
+  </defs>
+  <rect width="58" height="78" fill="url(#jr1)"/>
+  <!-- 帽子のつば -->
+  <ellipse cx="29" cy="25" rx="18" ry="5.5" fill="#8B1A1A"/>
+  <!-- 帽子本体 -->
+  <path d="M13,26 Q13,14 29,14 Q45,14 45,26" fill="#C0392B" stroke="#8B1A1A" stroke-width="1"/>
+  <!-- 帽子バンド -->
+  <rect x="13" y="22" width="32" height="4" fill="#1a3a9e"/>
+  <!-- 羽根飾り (大きく華やか) -->
+  <path d="M42,22 Q54,6 56,0 Q52,10 48,20 Q50,12 46,22" fill="#D4AF37"/>
+  <path d="M42,22 Q52,4 55,0 Q50,8 47,18 Q49,10 45,21" fill="#F0C040" opacity="0.8"/>
+  <path d="M42,22 Q48,2 50,0 Q46,8 44,18" fill="#E8D060" opacity="0.6"/>
+  <path d="M42,22 Q46,8 44,3 Q43,10 42,20" fill="#FFE080" opacity="0.5"/>
+  <!-- 顔 -->
+  <ellipse cx="28" cy="38" rx="12" ry="13" fill="#FCCBA0"/>
+  <!-- 若々しい短髪 -->
+  <path d="M16,33 Q18,22 28,21 Q38,22 40,33" fill="#8B4513"/>
+  <path d="M16,33 Q15,39 17,41" fill="#8B4513"/>
+  <path d="M40,33 Q41,39 39,41" fill="#8B4513"/>
+  <!-- 目 (若い、生き生き) -->
+  <ellipse cx="23.5" cy="36" rx="2.5" ry="2" fill="white"/>
+  <ellipse cx="23.5" cy="36.2" rx="1.6" ry="1.5" fill="#2C1810"/>
+  <circle cx="24.2" cy="35.5" r="0.6" fill="white"/>
+  <ellipse cx="32.5" cy="36" rx="2.5" ry="2" fill="white"/>
+  <ellipse cx="32.5" cy="36.2" rx="1.6" ry="1.5" fill="#2C1810"/>
+  <circle cx="33.2" cy="35.5" r="0.6" fill="white"/>
+  <!-- 眉 (若い、太め) -->
+  <path d="M21,33.5 Q23.5,32 26,33.5" stroke="#6B3010" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <path d="M30,33.5 Q32.5,32 35,33.5" stroke="#6B3010" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <!-- 鼻 -->
+  <path d="M26.5,39.5 Q28,41 29.5,39.5" stroke="#D4956A" stroke-width="1" fill="none"/>
+  <!-- 口 (明るい笑顔) -->
+  <path d="M23.5,43.5 Q28,47.5 32.5,43.5" stroke="#CC3333" stroke-width="1.8" fill="none"/>
+  <!-- えくぼ -->
+  <circle cx="21.5" cy="44" r="1.2" fill="#E09070" opacity="0.5"/>
+  <circle cx="34.5" cy="44" r="1.2" fill="#E09070" opacity="0.5"/>
+  <!-- 体・衣装 -->
+  <rect x="15" y="53" width="26" height="24" rx="2" fill="#C0392B"/>
+  <!-- 胸部の装飾 -->
+  <path d="M21,53 L28,61 L35,53" fill="#fff" opacity="0.7"/>
+  <circle cx="28" cy="59" r="2.5" fill="#D4AF37"/>
+  <!-- 袖 -->
+  <rect x="9" y="53" width="8" height="15" rx="3" fill="#8B1A1A"/>
+  <rect x="41" y="53" width="8" height="15" rx="3" fill="#8B1A1A"/>
+  <!-- 槍 (持っている) -->
+  <line x1="48" y1="16" x2="44" y2="72" stroke="#8B6914" stroke-width="2.5"/>
+  <polygon points="48,16 45,22 51,22" fill="#C0C0C0"/>
+  <rect x="44" y="42" width="8" height="3" rx="1" fill="#D4AF37"/>
+  </svg>`,
+ 
+  J_b: `<svg viewBox="0 0 58 78" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="jb1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0f5ff"/>
+      <stop offset="100%" stop-color="#e8eeff"/>
+    </linearGradient>
+  </defs>
+  <rect width="58" height="78" fill="url(#jb1)"/>
+  <ellipse cx="29" cy="25" rx="18" ry="5.5" fill="#0D2A6E"/>
+  <path d="M13,26 Q13,14 29,14 Q45,14 45,26" fill="#1a3a9e" stroke="#0D2A6E" stroke-width="1"/>
+  <rect x="13" y="22" width="32" height="4" fill="#C0392B"/>
+  <path d="M42,22 Q54,6 56,0 Q52,10 48,20 Q50,12 46,22" fill="#D4AF37"/>
+  <path d="M42,22 Q52,4 55,0 Q50,8 47,18 Q49,10 45,21" fill="#F0C040" opacity="0.8"/>
+  <path d="M42,22 Q48,2 50,0 Q46,8 44,18" fill="#E8D060" opacity="0.6"/>
+  <path d="M42,22 Q46,8 44,3 Q43,10 42,20" fill="#FFE080" opacity="0.5"/>
+  <ellipse cx="28" cy="38" rx="12" ry="13" fill="#FCCBA0"/>
+  <path d="M16,33 Q18,22 28,21 Q38,22 40,33" fill="#333"/>
+  <path d="M16,33 Q15,39 17,41" fill="#333"/>
+  <path d="M40,33 Q41,39 39,41" fill="#333"/>
+  <ellipse cx="23.5" cy="36" rx="2.5" ry="2" fill="white"/>
+  <ellipse cx="23.5" cy="36.2" rx="1.6" ry="1.5" fill="#1a1a3a"/>
+  <circle cx="24.2" cy="35.5" r="0.6" fill="white"/>
+  <ellipse cx="32.5" cy="36" rx="2.5" ry="2" fill="white"/>
+  <ellipse cx="32.5" cy="36.2" rx="1.6" ry="1.5" fill="#1a1a3a"/>
+  <circle cx="33.2" cy="35.5" r="0.6" fill="white"/>
+  <path d="M21,33.5 Q23.5,32 26,33.5" stroke="#444" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <path d="M30,33.5 Q32.5,32 35,33.5" stroke="#444" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  <path d="M26.5,39.5 Q28,41 29.5,39.5" stroke="#D4956A" stroke-width="1" fill="none"/>
+  <path d="M23.5,43.5 Q28,47.5 32.5,43.5" stroke="#666" stroke-width="1.8" fill="none"/>
+  <circle cx="21.5" cy="44" r="1.2" fill="#aaa" opacity="0.5"/>
+  <circle cx="34.5" cy="44" r="1.2" fill="#aaa" opacity="0.5"/>
+  <rect x="15" y="53" width="26" height="24" rx="2" fill="#1a3a9e"/>
+  <path d="M21,53 L28,61 L35,53" fill="#fff" opacity="0.7"/>
+  <circle cx="28" cy="59" r="2.5" fill="#D4AF37"/>
+  <rect x="9" y="53" width="8" height="15" rx="3" fill="#0D2A6E"/>
+  <rect x="41" y="53" width="8" height="15" rx="3" fill="#0D2A6E"/>
+  <line x1="48" y1="16" x2="44" y2="72" stroke="#8B6914" stroke-width="2.5"/>
+  <polygon points="48,16 45,22 51,22" fill="#C0C0C0"/>
+  <rect x="44" y="42" width="8" height="3" rx="1" fill="#D4AF37"/>
+  </svg>`,
+ 
+  /* =====================================================
+     JOKER: プロ仕様のジェスター・道化師
+  ===================================================== */
+  JKR: `<svg viewBox="0 0 58 78" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="jkbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F3E5F5"/>
+      <stop offset="50%" stop-color="#EDE7F6"/>
+      <stop offset="100%" stop-color="#FCE4EC"/>
+    </linearGradient>
+    <linearGradient id="jkhat" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9C27B0"/>
+      <stop offset="100%" stop-color="#E91E63"/>
+    </linearGradient>
+  </defs>
+  <rect width="58" height="78" rx="2" fill="url(#jkbg)"/>
+  <!-- ひし形模様の背景 -->
+  <g opacity="0.15">
+    <polygon points="29,2 40,12 29,22 18,12" fill="#9C27B0"/>
+    <polygon points="0,20 10,30 0,40 -10,30" fill="#E91E63"/>
+    <polygon points="58,20 68,30 58,40 48,30" fill="#9C27B0"/>
+    <polygon points="29,56 40,66 29,76 18,66" fill="#E91E63"/>
+  </g>
+  <!-- ジェスターハット (2本の角) -->
+  <!-- 左の角 -->
+  <path d="M14,28 Q3,12 8,3 Q16,18 20,26" fill="url(#jkhat)" stroke="#6A0080" stroke-width="0.8"/>
+  <circle cx="8" cy="4" r="4.5" fill="#FFD700" stroke="#E65100" stroke-width="0.8"/>
+  <!-- 右の角 -->
+  <path d="M44,28 Q55,12 50,3 Q42,18 38,26" fill="#E91E63" stroke="#880E4F" stroke-width="0.8"/>
+  <circle cx="50" cy="4" r="4.5" fill="#FFD700" stroke="#E65100" stroke-width="0.8"/>
+  <!-- 帽子ベース -->
+  <ellipse cx="29" cy="28" rx="17" ry="6" fill="#7B1FA2"/>
+  <path d="M12,28 Q16,18 29,16 Q42,18 46,28" fill="#9C27B0"/>
+  <rect x="13" y="25" width="32" height="5" fill="#7B1FA2"/>
+  <!-- 鈴 -->
+  <circle cx="8" cy="4" r="3" fill="#FFD700" stroke="#E65100" stroke-width="0.8"/>
+  <line x1="8" y1="7" x2="8" y2="9" stroke="#E65100" stroke-width="1"/>
+  <circle cx="8" cy="9.5" r="1" fill="#E65100"/>
+  <circle cx="50" cy="4" r="3" fill="#FFD700" stroke="#E65100" stroke-width="0.8"/>
+  <line x1="50" y1="7" x2="50" y2="9" stroke="#E65100" stroke-width="1"/>
+  <circle cx="50" cy="9.5" r="1" fill="#E65100"/>
+  <!-- 顔 (丸くコミカル) -->
+  <ellipse cx="29" cy="42" rx="13" ry="13" fill="#FFFDE7"/>
+  <!-- 化粧 (星型の目の周り) -->
+  <path d="M19,38 L22,36 L21,33 L24,35 L26,32 L27,35 L30,34 L28,37" fill="#FF4081" opacity="0.4"/>
+  <!-- 目 (星型にきらきら) -->
+  <circle cx="23" cy="39" r="4" fill="white" stroke="#9C27B0" stroke-width="1.2"/>
+  <circle cx="23" cy="39" r="2.2" fill="#311B92"/>
+  <circle cx="24" cy="37.8" r="1" fill="white"/>
+  <path d="M20,36 L21,34 M23,35.5 L23,33.5 M26,36 L27,34" stroke="#9C27B0" stroke-width="1" fill="none"/>
+  <circle cx="35" cy="39" r="4" fill="white" stroke="#E91E63" stroke-width="1.2"/>
+  <circle cx="35" cy="39" r="2.2" fill="#311B92"/>
+  <circle cx="36" cy="37.8" r="1" fill="white"/>
+  <path d="M32,36 L31,34 M35,35.5 L35,33.5 M38,36 L39,34" stroke="#E91E63" stroke-width="1" fill="none"/>
+  <!-- 鼻 (大きな赤い玉) -->
+  <circle cx="29" cy="45" r="4" fill="#FF1744"/>
+  <circle cx="27.5" cy="43.5" r="1.2" fill="#FF8A80" opacity="0.7"/>
+  <!-- 口 (大きな笑顔) -->
+  <path d="M19,50 Q29,58 39,50" stroke="#7B1FA2" stroke-width="2" fill="none"/>
+  <path d="M19,50 Q29,56 39,50" fill="#FF8A80" opacity="0.6"/>
+  <!-- 白い歯 -->
+  <rect x="24" y="51.5" width="10" height="4" rx="1" fill="white" opacity="0.8"/>
+  <!-- 体 (ひし形柄のジェスター衣装) -->
+  <rect x="14" y="57" width="30" height="20" rx="3" fill="#7B1FA2"/>
+  <polygon points="14,57 29,65 44,57" fill="#E91E63"/>
+  <polygon points="14,77 29,69 44,77" fill="#E91E63"/>
+  <!-- 首の飾り (ラフ) -->
+  <path d="M18,57 Q22,54 26,57 Q29,54 32,57 Q36,54 40,57" stroke="#FFD700" stroke-width="1.5" fill="none"/>
+  <!-- 星の装飾 -->
+  <text x="22" y="74" font-size="10" fill="#FFD700" opacity="0.9">★</text>
+  <text x="32" y="74" font-size="10" fill="#FFD700" opacity="0.9">★</text>
+  </svg>`
+};
+ 
+function makeCardHTML(c){
+  if(c.joker){
+    return '<div style="position:absolute;inset:0;border-radius:6px;overflow:hidden">'+
+      FACE_SVG.JKR+
+      '<div style="position:absolute;top:3px;left:5px;font-family:Georgia,serif;font-size:15px;color:#7700aa;font-weight:900;line-height:1.2;z-index:3">J<br>★</div>'+
+      '<div style="position:absolute;bottom:3px;right:5px;font-family:Georgia,serif;font-size:15px;color:#7700aa;font-weight:900;line-height:1.2;transform:rotate(180deg);z-index:3">J<br>★</div>'+
+    '</div>';
+  }
+  const isRed=SR[c.s];
+  const col=isRed?'#C00000':'#0D1B8F';
+  // フェイスカード (K/Q/J): SVGアート
+  if(c.n===13||c.n===12||c.n===11){
+    const rc=isRed?'#C00000':'#1a3a9e';
+    const rank=cl(c.n);
+    const suit=S[c.s];
+    const key=(rank==='K'?'K':(rank==='Q'?'Q':'J'))+(isRed?'_r':'_b');
+    const svgArt=FACE_SVG[key]||'';
+    return '<div style="position:absolute;top:4px;left:5px;font-family:Georgia,serif;font-size:16px;font-weight:900;color:'+rc+';line-height:1.1;z-index:3">'+rank+'<br><span style="font-size:12px">'+suit+'</span></div>'+
+           '<div style="position:absolute;inset:0;overflow:hidden;border-radius:6px">'+svgArt+'</div>'+
+           '<div style="position:absolute;bottom:4px;right:5px;font-family:Georgia,serif;font-size:16px;font-weight:900;color:'+rc+';line-height:1.1;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:12px">'+suit+'</span></div>';
+  }
+  // 数字カード: 通常表示
+  return '<div class="ct" style="color:'+col+'">'+cl(c.n)+'<br>'+S[c.s]+'</div>'+
+         '<div class="cs" style="color:'+col+'">'+S[c.s]+'</div>'+
+         '<div class="cb" style="color:'+col+'">'+cl(c.n)+'</div>';
+}
+function renderFD(){const a=document.getElementById('pk-ca');a.innerHTML='';for(let i=0;i<5;i++){const w=document.createElement('div');w.className='cw';const c=document.createElement('div');c.className='card dn';const l=document.createElement('div');l.className='hl-lbl hid';l.textContent='HOLD';w.appendChild(c);w.appendChild(l);a.appendChild(w);}}
+function renderC(){const a=document.getElementById('pk-ca');a.innerHTML='';hand.forEach((c,i)=>{const w=document.createElement('div');w.className='cw';const cd=document.createElement('div');let cls='card up';if(c.joker)cls+=' joker-card';else{cls+=' '+(SR[c.s]?'r':'b');if(c.n>=11||c.n===13)cls+=' face-card';}if(held[i])cls+=' hd';cd.className=cls;if(phase==='draw')cd.onclick=()=>{wake();held[i]?seUnhold():seHold();held[i]=!held[i];renderC();};cd.innerHTML=makeCardHTML(c);const l=document.createElement('div');l.className='hl-lbl'+(held[i]?'':' hid');l.textContent='HOLD';if(isWild(c))l.style.color='#FFD700';w.appendChild(cd);w.appendChild(l);a.appendChild(w);});}
+function dealDraw(){if(phase==='deal')doDeal();else if(phase==='draw')doDraw();}
+function doDeal(){if(!user||user.medals<bet){document.getElementById('pk-rd').innerHTML='<div class="rz">メダルが足りません！</div>';return;}wake();user.medals-=bet;win=0;updH();updLM();deck=mkD();hand=deck.splice(0,5);held=Array(5).fill(false);seDeal();phase='draw';renderC();document.getElementById('dbn').textContent='DRAW';setBB(false);const r=chkR(hand);document.getElementById('pk-rd').innerHTML='';setStatus(r?r.n:'HOLD CARDS, THEN DRAW','info');renderC();}
+function doDraw(){
+  wake();seDraw();
+  for(let i=0;i<5;i++)if(!held[i])hand[i]=deck.shift();
+  phase='result';renderC();
+  document.querySelectorAll('[id^=pt-]').forEach(e=>e.classList.remove('hi'));
+  const r=chkR(hand);
+  if(r){
+    const m=getPayout(r,bet);
+    // カード点滅開始
+    setTimeout(()=>{
+      document.querySelectorAll('.card.up').forEach(c=>c.classList.add('blink'));
+      document.querySelectorAll('.card.up').forEach(c=>c.classList.add('wg'));
+    },120);
+    // 役名表示
+    document.getElementById('pt-'+r.id).classList.add('hi');
+    document.getElementById('pk-rd').innerHTML='<div class="rn">'+r.n+'</div>';setStatus('WIN!','win');const __wb=document.getElementById('pk-win-bar');if(__wb){__wb.style.display='flex';const __wc=document.createElement('span');__wc.id='win-count';__wc.className='rw-anim pk-val';__wc.style.cssText='color:#00FF41;font-size:28px;text-shadow:0 0 10px rgba(0,255,65,.8)';__wc.textContent='0';__wb.innerHTML='<span class="pk-win-lbl">WIN</span>';__wb.appendChild(__wc);__wb.insertAdjacentHTML('beforeend','<span class="pk-win-lbl">MEDALS</span>');}else{document.getElementById('pk-rd').innerHTML+='<div class="rw">🪙 ＋<span id="win-count" class="rw-anim">0</span>枚！</div>';}
+    if(m>=500)bgmPlay('jackpot');else if(m>=100)bgmPlay('bigwin');else bgmPlay('win');
+    seWin(m);
+    playMilestone(win);
+    // 大役は画面フラッシュ
+    if(m>=500){screenFlash('rgba(255,215,0,.4)',4,100);document.getElementById('spoker').classList.add('bigwin-fx');setTimeout(()=>document.getElementById('spoker').classList.remove('bigwin-fx'),2400);}
+    else if(m>=100){screenFlash('rgba(255,255,255,.3)',2,120);}
+    // WIN枚数カウントアップ
+    setTimeout(()=>{
+      const el=document.getElementById('win-count');
+      if(el)countUp(el,0,m,Math.min(1200,m*18),()=>{
+        win=m;user.medals+=m;
+        updH();updLM();
+        saveMedals(user.id,user.medals);
+        phase='deal';document.getElementById('dbn').textContent='DEAL';setBB(true);
+        setTimeout(()=>{
+          document.querySelectorAll('.card.blink').forEach(c=>c.classList.remove('blink'));
+          showUG(m);
+        },600);
+      });
+    },300);
+  }else{
+    seLose();
+    document.getElementById('pk-rd').innerHTML='';setStatus('NO WIN','idle');
+    phase='deal';document.getElementById('dbn').textContent='DEAL';setBB(true);
+    updH();saveMedals(user.id,user.medals);
+    setTimeout(()=>bgmPlay('poker'),600);
+  }
+}
+function chkR(hand){
+  const wilds=hand.filter(c=>isWild(c));
+  const norms=hand.filter(c=>!isWild(c));
+  const wc=wilds.length;
+  const jokers=hand.filter(c=>c.joker===true).length;
+  // NATURAL ROYAL FLUSH (ワイルドなし)
+  if(wc===0){
+    const ns=hand.map(c=>c.n).sort((a,b)=>a-b);
+    const ss=hand.map(c=>c.s);
+    const fl=ss.every(s=>s===ss[0]);
+    if(fl&&[1,10,11,12,13].every(n=>ns.includes(n)))return PAY[0];
+  }
+  // FIVE ACES: 4枚のA + JOKER
+  const aces=norms.filter(c=>c.n===1).length;
+  if(aces===4&&jokers===1)return PAY[1];
+  // 以下、通常の役判定
+  const ns=norms.map(c=>c.n);
+  const ss=norms.map(c=>c.s);
+  const cnt={};ns.forEach(n=>cnt[n]=(cnt[n]||0)+1);
+  const vs=Object.values(cnt).sort((a,b)=>b-a);
+  const maxR=(vs[0]||0)+wc;
+  const flushPossible=ss.length===0||ss.every(s=>s===ss[0]);
+  function hasStraight(nums,wilds){
+    const unique=[...new Set(nums)].sort((a,b)=>a-b);
+    if(unique.length+wilds<5)return false;
+    const sets=[[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9],[6,7,8,9,10],[7,8,9,10,11],[8,9,10,11,12],[9,10,11,12,13],[1,10,11,12,13]];
+    return sets.some(s=>{const needed=s.filter(n=>!unique.includes(n)).length;return needed<=wilds;});
+  }
+  const isStr=hasStraight(ns,wc);
+  const isFl=flushPossible&&(ns.length+wc===5);
+  // ROYAL FLUSH W/ WILD
+  if(wc>0&&isFl){const royalNums=[1,10,11,12,13];const needed=royalNums.filter(n=>!ns.includes(n)).length;if(needed<=wc)return PAY[2];}
+  if(maxR>=5)return PAY[3];  // FIVE OF A KIND
+  if(isStr&&isFl)return PAY[4]; // STRAIGHT FLUSH
+  if(maxR>=4)return PAY[5];  // FOUR OF A KIND
+  if(wc===0&&vs[0]===3&&vs[1]===2)return PAY[6]; // FULL HOUSE
+  if(wc===1&&vs[0]===2&&vs[1]===2)return PAY[6];
+  if(wc===2&&vs[0]===2)return PAY[6];
+  if(isFl)return PAY[7];     // FLUSH
+  if(isStr)return PAY[8];    // STRAIGHT
+  if(maxR>=3)return PAY[9];  // THREE OF A KIND
+  return null;
+}
+function autoH(){
+  held=Array(5).fill(false);
+  const r=chkR(hand);
+  if(r&&['nrf','fa5','wrf','5ok','sf','4ok','fh'].includes(r.id)){held=Array(5).fill(true);return;}
+  hand.forEach((c,i)=>{if(isWild(c))held[i]=true;});
+  if(r){
+    const cnt={};
+    hand.forEach((c,i)=>{if(!isWild(c)){cnt[c.n]=cnt[c.n]||[];cnt[c.n].push(i);}});
+    Object.values(cnt).forEach(a=>{if(a.length>=2)a.forEach(i=>held[i]=true);});
+  }
+}
+function showUG(m){ugM=m;duOn=false;duPicked=false;duLc=null;duRc=[];updDuDisplay();setDuMsg('DOUBLE UP にチャレンジ？','info');const de=document.getElementById('duc-dealer');de.className='duc dn';de.innerHTML='';document.getElementById('duc-dealer-lbl').textContent='';for(let i=0;i<4;i++){const e=document.getElementById('duc'+i);e.className='duc dn';e.innerHTML='';e.onclick=null;}setBtns(true);bgmPlay('up');show('supgame');}
+let duMode='',duOn=false,duPicked=false,duLc=null,duRc=[];
+function duStr(n){if(n===0)return 16;if(n===2)return 15;if(n===1)return 14;return n;}
+function duLabel(c){if(c&&c.joker)return'JOKER ★最強';if(c&&c.n===2)return'2 ★強';if(c&&c.n===1)return'A';return c?cl(c.n):'?';}
+/* ダブルアップカードHTML — K/Q/J/JOKER対応 */
+function makeDucHTML(c){
+  if(!c)return'';
+  if(c.joker)return(
+    '<div style="position:absolute;inset:0;border-radius:7px;overflow:hidden">'+
+    FACE_SVG.JKR+
+    '<div style="position:absolute;top:4px;left:5px;font-family:Georgia,serif;font-size:9px;color:#7700aa;font-weight:900;line-height:1.2;z-index:3">J<br>★</div>'+
+    '<div style="position:absolute;bottom:4px;right:5px;font-family:Georgia,serif;font-size:9px;color:#7700aa;font-weight:900;line-height:1.2;transform:rotate(180deg);z-index:3">J<br>★</div>'+
+    '</div>'
+  );
+  const col=SR[c.s]?'#C00000':'#0D1B8F';
+  // フェイスカード (K/Q/J): SVGアート (ダブルアップ用)
+  if(c.n===13||c.n===12||c.n===11){
+    const rank=cl(c.n);
+    const suit=S[c.s];
+    const key=(rank==='K'?'K':(rank==='Q'?'Q':'J'))+(SR[c.s]?'_r':'_b');
+    const svgArt=FACE_SVG[key]||'';
+    return '<div style="position:absolute;top:4px;left:5px;font-family:Georgia,serif;font-size:13px;font-weight:900;color:'+col+';line-height:1.1;z-index:3">'+rank+'<br><span style="font-size:10px">'+suit+'</span></div>'+
+           '<div style="position:absolute;inset:0;overflow:hidden;border-radius:7px">'+svgArt+'</div>'+
+           '<div style="position:absolute;bottom:4px;right:5px;font-family:Georgia,serif;font-size:13px;font-weight:900;color:'+col+';line-height:1.1;transform:rotate(180deg);z-index:3">'+rank+'<br><span style="font-size:10px">'+suit+'</span></div>';
+  }
+  // 数字カード
+  return '<div class="duc-ct" style="color:'+col+'">'+cl(c.n)+'<br>'+S[c.s]+'</div>'+
+         '<div class="duc-cs" style="color:'+col+'">'+S[c.s]+'</div>'+
+         '<div class="duc-cb" style="color:'+col+'">'+cl(c.n)+'</div>';
+}
+function updDuDisplay(){document.getElementById('du-win-val').textContent=ugM;document.getElementById('du-credits').textContent=user?user.medals:0;document.getElementById('du-wager').textContent=ugM;}
+function setDuMsg(txt,cls){const e=document.getElementById('du-msg');e.textContent=txt;e.className='du-msg-txt '+(cls||'');}
+function setBtns(on){['du-btn-d','du-btn-h','du-btn-c'].forEach(id=>{document.getElementById(id).disabled=!on;});}
+function duStart(mode){duMode=mode;duOn=false;duPicked=false;wake();setBtns(false);setDuMsg('DEALER のカードをオープン…','info');const d=mkD();const normCards=d.filter(c=>!c.joker);duLc=normCards[Math.floor(Math.random()*normCards.length)];const pool=d.filter(c=>!(c.s===duLc.s&&c.n===duLc.n));duRc=[];for(let i=0;i<4;i++){const idx=Math.floor(Math.random()*(pool.length-i));duRc.push(pool.splice(idx,1)[0]);}for(let i=0;i<4;i++){const e=document.getElementById('duc'+i);e.className='duc dn';e.innerHTML='';e.onclick=null;}const de=document.getElementById('duc-dealer');de.className='duc dn';de.innerHTML='';setTimeout(()=>{const de2=document.getElementById('duc-dealer');const isJ=duLc.joker;de2.className='duc up dealer-open '+(isJ?'joker-card':(SR[duLc.s]?'r':'b'));de2.innerHTML=makeDucHTML(duLc);void de2.offsetWidth;de2.classList.add('flip');seDuFlip();document.getElementById('duc-dealer-lbl').textContent=duLabel(duLc);setTimeout(()=>{
+            // 緊張ビープ3回
+            for(let t=0;t<3;t++)setTimeout(()=>seDuTension(t),t*180);
+            setTimeout(()=>{
+              setDuMsg('DEALER より強いカードを選べ！','info');
+              for(let i=0;i<4;i++){const ii=i;document.getElementById('duc'+i).onclick=()=>pickDU(ii);}
+              duOn=true;
+            },600);
+          },400);},400);}
+function pickDU(i){if(!duOn||duPicked)return;wake();duPicked=true;seDuSelect();document.getElementById('duc'+i).classList.add('sel');const others=[0,1,2,3].filter(x=>x!==i);let d=300;others.forEach(x=>{setTimeout(()=>revealDUCard(x,false),d);d+=320;});setTimeout(()=>revealDUCard(i,true),d);}
+function revealDUCard(i,isC){const c=duRc[i],e=document.getElementById('duc'+i);const wasSel=e.classList.contains('sel');e.className='duc up '+(c.joker?'joker-card':(SR[c.s]?'r':'b'))+(wasSel?' sel':'');e.innerHTML=makeDucHTML(c);void e.offsetWidth;e.classList.add('flip');seDuFlip();if(isC)setTimeout(()=>judgeDU(i),420);}
+function judgeDU(i){
+  const chosen=duRc[i];
+  const ps=duStr(chosen.joker?0:chosen.n);
+  const ds=duStr(duLc.joker?0:duLc.n);
+  const e=document.getElementById('duc'+i);
+  if(ps===ds){seDuDraw();setDuMsg('DRAW — もう一度！','info');setTimeout(()=>duStart(duMode),1800);return;}
+  if(ps>ds){
+    e.classList.remove('sel');e.classList.add('rwin');
+    screenFlash('rgba(255,215,0,.45)',3,90);
+    const prev=ugM;
+    if(duMode==='d'){ugM=ugM*2;}else{const half=Math.floor(ugM/2);ugM=half+half*2;}
+    seDuWin();
+    if(ugM>=100)bgmPlay('win');
+    setDuMsg('WIN!','win');
+    // WINカウントアップ
+    setTimeout(()=>{
+      const wv=document.getElementById('du-win-val');
+      countUp(wv,prev,ugM,800,()=>{
+        document.getElementById('du-wager').textContent=ugM;
+        setDuMsg('WIN! → '+ugM+' MEDALS!','win');
+        setTimeout(()=>{setDuMsg('もう一度チャレンジ？','info');setBtns(true);duOn=false;duPicked=false;},1400);
+      });
+    },200);
+  }else{
+    e.classList.remove('sel');e.classList.add('rlose');
+    seDuLose();bgmStop();
+    screenFlash('rgba(255,0,0,.3)',2,120);
+    if(duMode==='d'){
+      setDuMsg('LOSE — GAME OVER','lose');ugM=0;
+      document.getElementById('du-win-val').textContent=0;
+      setTimeout(()=>backP(),2500);
+    }else{
+      const sv=Math.floor(ugM/2);ugM=sv;
+      user.medals+=sv;saveMedals(user.id,user.medals);updLM();
+      const wv=document.getElementById('du-win-val');
+      countUp(wv,ugM*2,sv,600,()=>{
+        document.getElementById('du-wager').textContent=sv;
+        setDuMsg('LOSE — でも '+sv+' MEDALS は守れた！','lose');
+        setTimeout(()=>{document.getElementById('du-btn-c').disabled=false;},1600);
+      });
+    }
+  }
+}
+function duCollect(){wake();seDuCollect();user.medals+=ugM;saveMedals(user.id,user.medals);updLM();setDuMsg('COLLECT: '+ugM+' MEDALS!','win');setTimeout(()=>backP(),1200);}
+function backP(){phase='deal';win=0;hand=[];held=Array(5).fill(false);updH();renderFD();document.getElementById('pk-rd').innerHTML='';setStatus('DEAL TO BEGIN','idle');const _wb3=document.getElementById('pk-win-bar');if(_wb3)_wb3.style.display='none';document.getElementById('dbn').textContent='DEAL';setBB(true);bgmPlay('poker');show('spoker');}
+updPT();
+</script>
+<script>(function(){
+var u=null;
+try{u=JSON.parse(localStorage.getItem('hkg_user')||'null');}catch(e){}
+if(!u||!u.name){location.href='index.html';return;}
+if(!u.id){u.id='hkg-'+u.name;localStorage.setItem('hkg_user',JSON.stringify(u));}
+document.addEventListener('DOMContentLoaded',function(){
+var b=document.createElement('button');
+b.textContent='\u2190 \u30ed\u30d3\u30fc';
+b.style.cssText='position:fixed;top:8px;left:8px;z-index:99999;background:rgba(0,0,0,.9);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
+b.onclick=function(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}location.href='index.html';};
+document.body.appendChild(b);
+setTimeout(function(){
+var nf=document.getElementById('lname')||document.querySelector('input[type=text]');
+if(nf){nf.value=u.name;nf.dispatchEvent(new Event('input',{bubbles:true}));}
+var bs=Array.from(document.querySelectorAll('button'));
+['1','2','3','4'].forEach(function(n){var btn=bs.find(function(x){return x.textContent.trim()===n;});if(btn)btn.click();});
+setTimeout(function(){
+var ok=bs.find(function(x){return (x.textContent||'').trim().indexOf('OK')===0;});
+if(ok)ok.click();
+setTimeout(function(){
+var sb=document.getElementById('slobby');
+if(sb&&sb.classList.contains('active')){
+var els=Array.from(sb.querySelectorAll('*'));
+var tri=els.find(function(x){return (x.textContent||'').trim()==='\u25b6';});
+if(tri)tri.click();}
+var side=document.getElementById('sidebar');
+if(side)side.style.display='none';
+},1000);},300);},300);});
+})()</script><script>
+document.addEventListener("DOMContentLoaded",function(){
+  var u=null;
+  try{u=JSON.parse(localStorage.getItem("hkg_user")||"null");}catch(e){}
+  if(!u||!u.name){location.href="index.html";return;}
+  if(!u.id){u.id="hkg-"+u.name;localStorage.setItem("hkg_user",JSON.stringify(u));}
+  // ロビーボタン
+  var b=document.createElement("button");
+  b.textContent="\u2190 \u30ed\u30d3\u30fc";
+  b.style.cssText="position:fixed;top:8px;left:8px;z-index:99999;background:rgba(0,0,0,.9);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;";
+  b.onclick=function(){try{localStorage.setItem("hkg_user",JSON.stringify(user));}catch(e){}location.href="index.html";};
+  document.body.appendChild(b);
+  // ゲームを直接起動
+  setTimeout(function(){
+    try{user=u;seLogin();gotoPoker();}catch(e){console.log("init err",e);}
+    var side=document.getElementById("sidebar");
+    if(side)side.style.display="none";
+  },300);
+});
+</script></body>
+</html>
