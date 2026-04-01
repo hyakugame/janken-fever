@@ -398,7 +398,7 @@ body{display:block !important}
   // idを追加（ポーカーのauto-loginに必要）
   if(!u.id){u.id="hkg-"+u.name;localStorage.setItem("hkg_user",JSON.stringify(u));}
 })();
-<\/script></head>
+</script></head>
 <body>
 <div id="screen-flash"></div>
 <div id="av-modal"><div class="av-modal-box"><div class="av-modal-title">🎭 アイコンを選択</div><div class="av-grid" id="av-grid"></div><button class="av-close" onclick="closeAvModal()">✕ 閉じる</button></div></div>
@@ -1902,7 +1902,7 @@ if(tri)tri.click();}
 var side=document.getElementById('sidebar');
 if(side)side.style.display='none';
 },1000);},300);},300);});
-})()<\/script><script>
+})()</script><script>
 document.addEventListener("DOMContentLoaded",function(){
   var u=null;
   try{u=JSON.parse(localStorage.getItem("hkg_user")||"null");}catch(e){}
@@ -1931,5 +1931,5 @@ document.addEventListener("DOMContentLoaded",function(){
   b.onclick=function(){try{localStorage.setItem("hkg_user",JSON.stringify(user));}catch(e){}location.href="index.html";};
   document.body.appendChild(b);
 });
-<\/script></body>
+</script></body>
 </html>
