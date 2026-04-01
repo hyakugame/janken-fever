@@ -463,7 +463,7 @@ body{display:block !important}
   <div class="pt-row" id="pt-fh"><div class="pt-n">FULL HOUSE</div><div class="pt-odds"><div class="pt-o">10</div><div class="pt-o">20</div><div class="pt-o">30</div><div class="pt-o">40</div><div class="pt-o">50</div><div class="pt-o">60</div><div class="pt-o">70</div><div class="pt-o">80</div><div class="pt-o">90</div><div class="pt-o mx">100</div></div></div>
   <div class="pt-row" id="pt-fl"><div class="pt-n">FLUSH</div><div class="pt-odds"><div class="pt-o">6</div><div class="pt-o">12</div><div class="pt-o">18</div><div class="pt-o">24</div><div class="pt-o">30</div><div class="pt-o">36</div><div class="pt-o">42</div><div class="pt-o">48</div><div class="pt-o">54</div><div class="pt-o mx">60</div></div></div>
   <div class="pt-row" id="pt-st"><div class="pt-n">STRAIGHT</div><div class="pt-odds"><div class="pt-o">4</div><div class="pt-o">8</div><div class="pt-o">12</div><div class="pt-o">16</div><div class="pt-o">20</div><div class="pt-o">24</div><div class="pt-o">28</div><div class="pt-o">32</div><div class="pt-o">36</div><div class="pt-o mx">40</div></div></div>
-  <div class="pt-row" id="pt-3ok"><div class="pt-n">THREE OF A KIND</div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">4</div><div class="pt-o">6</div><div class="pt-o">8</div><div class="pt-o">10</div><div class="pt-o">12</div><div class="pt-o">14</div><div class="pt-o">16</div><div class="pt-o">18</div><div class="pt-o mx">20</div></div></div><div class="pt-odds"><div class="pt-o">2</div><div class="pt-o">10</div><div class="pt-o mx">20</div></div></div>
+  
 </div></div>
 <!-- カードエリア（中央） -->
 <div class="ca" id="pk-ca"></div>
@@ -1188,7 +1188,7 @@ function betIdx(b){return BETS.indexOf(b);}
 function cl(n){if(n===1)return'A';if(n===11)return'J';if(n===12)return'Q';if(n===13)return'K';return String(n);}
 function mkD(){let d=[];for(let s=0;s<4;s++)for(let n=1;n<=13;n++)d.push({s,n,w:false});d.push({s:-1,n:0,w:true,joker:true});return d.sort(()=>Math.random()-.5);}
 function isWild(c){return c.w===true;}
-function startPoker(){if(!user)return;wake();bet=BETS[0];win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='';setStatus('DEAL TO BEGIN','idle');const _wb2=document.getElementById('pk-win-bar');if(_wb2)_wb2.style.display='none';document.getElementById('dbn').textContent='DEAL';setBB(true);bgmPlay('poker');show('spoker');}
+function startPoker(){if(!user)return;wake();bet=BETS[0];win=0;phase='deal';hand=[];held=Array(5).fill(false);updH();updPT();renderFD();document.getElementById('pk-rd').innerHTML='';setStatus('DEAL TO BEGIN','idle');const _wb2=document.getElementById('pk-win-bar');if(_wb2)_wb2.style.display='none';document.getElementById('dbn').textContent='DEAL';setBB(true);bgmPlay('poker');document.querySelector('.pt').style.display='';show('spoker');}
 function updH(){
   document.getElementById('pk-med').textContent=user?user.medals:0;
   document.getElementById('pk-bet').textContent=bet;
@@ -1764,7 +1764,7 @@ function autoH(){
     Object.values(cnt).forEach(a=>{if(a.length>=2)a.forEach(i=>held[i]=true);});
   }
 }
-function showUG(m){ugM=m;duOn=false;duPicked=false;duLc=null;duRc=[];updDuDisplay();setDuMsg('DOUBLE UP にチャレンジ？','info');const de=document.getElementById('duc-dealer');de.className='duc dn';de.innerHTML='';document.getElementById('duc-dealer-lbl').textContent='';for(let i=0;i<4;i++){const e=document.getElementById('duc'+i);e.className='duc dn';e.innerHTML='';e.onclick=null;}setBtns(true);PAY.forEach(p=>{var r=document.getElementById('pt-'+p.id);if(r)r.classList.remove('hi');});document.getElementById('pk-ca').innerHTML='';bgmPlay('up');show('supgame');}
+function showUG(m){ugM=m;duOn=false;duPicked=false;duLc=null;duRc=[];updDuDisplay();setDuMsg('DOUBLE UP にチャレンジ？','info');const de=document.getElementById('duc-dealer');de.className='duc dn';de.innerHTML='';document.getElementById('duc-dealer-lbl').textContent='';for(let i=0;i<4;i++){const e=document.getElementById('duc'+i);e.className='duc dn';e.innerHTML='';e.onclick=null;}setBtns(true);PAY.forEach(p=>{var r=document.getElementById('pt-'+p.id);if(r)r.classList.remove('hi');});document.getElementById('pk-ca').innerHTML='';document.querySelector('.pt').style.display='none';bgmPlay('up');show('supgame');}
 let duMode='',duOn=false,duPicked=false,duLc=null,duRc=[];
 function duStr(n){if(n===0)return 16;if(n===2)return 15;if(n===1)return 14;return n;}
 function duLabel(c){if(c&&c.joker)return'JOKER ★最強';if(c&&c.n===2)return'2 ★強';if(c&&c.n===1)return'A';return c?cl(c.n):'?';}
