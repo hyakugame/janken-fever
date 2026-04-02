@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>沖ドキ HIBISCUS FEVER</title>
-<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Barlow+Condensed:wght@700;900&family=Noto+Sans+JP:wght@700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Russo+One&family=Barlow+Condensed:wght@700;900&family=Noto+Sans+JP:wght@700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
    BASE
@@ -24,7 +24,7 @@ html,body{min-height:100vh;overflow-x:hidden;
       #006655 100%
     );
 }
-body{font-family:'Noto Sans JP',sans-serif}
+body{font-family:'Noto Sans JP',sans-serif;font-weight:500;-webkit-font-smoothing:antialiased}
 
 /* ═══════════════════════════════════════════
    HEADER BAR
@@ -38,7 +38,7 @@ body{font-family:'Noto Sans JP',sans-serif}
   backdrop-filter:blur(8px);
 }
 .hdr-back{
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
   border-radius:8px;color:rgba(255,255,255,.55);font-size:11px;font-weight:700;
   padding:4px 10px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
   transition:.2s;flex-shrink:0;
@@ -69,15 +69,15 @@ body{font-family:'Noto Sans JP',sans-serif}
    SCORE BAR (LEDディスプレイ)
 ═══════════════════════════════════════════ */
 .score-bar{
-  background:linear-gradient(180deg,#0a1520 0%,#060e18 100%);
+  background:linear-gradient(180deg,#0e1e2e 0%,#091420 100%);
   padding:6px 12px;
   display:flex;justify-content:space-between;align-items:center;
   border-bottom:1px solid rgba(0,200,255,.2);
   border-top:1px solid rgba(0,200,255,.12);
 }
 .sb-grp{text-align:center;padding:0 2px}
-.sb-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;color:rgba(0,220,255,.5);letter-spacing:.15em;text-transform:uppercase}
-.sb-val{font-family:'Press Start 2P',monospace;font-size:13px;color:#00ff55;text-shadow:0 0 6px #00ff55,0 0 12px rgba(0,255,85,.3)}
+.sb-lbl{font-family:'Noto Sans JP',sans-serif;font-size:11px;color:rgba(120,220,255,.85);letter-spacing:.08em;font-weight:500}
+.sb-val{font-family:'Zen Dots',monospace;font-size:14px;font-weight:700;color:#00ff55;text-shadow:0 0 6px #00ff55,0 0 12px rgba(0,255,85,.3)}
 .sb-val.amber{color:#ffaa00;text-shadow:0 0 6px #ffaa00;font-size:13px}
 .sb-val.red{color:#ff4422;text-shadow:0 0 6px #ff4422;font-size:13px}
 .sb-val.cyan{color:#00eeff;text-shadow:0 0 6px #00eeff;font-size:13px}
