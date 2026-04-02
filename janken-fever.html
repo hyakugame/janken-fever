@@ -325,7 +325,7 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
       </div>
       <div class="nr-badge" id="gr-nr" style="display:none">★ NEW RECORD! ★</div>
       <div class="gr-btns">
-        <button class="btn btn-gold" onclick="show('sa')">🔄 もう一度プレイ</button>
+        <button class="btn btn-gold" onclick="showBetScreen()">🔄 もう一度プレイ</button>
         <button class="btn btn-gray btn-sm" onclick="show('srank')">🏆 ランキングを見る</button>
       </div>
     </div>
@@ -807,7 +807,7 @@ function showBetScreen(){
     // ラベル
     var multi = n;
     var lbl=document.createElement('div');
-    lbl.textContent=disabled?'×':'×'+multi;
+    lbl.textContent=disabled?'-':(Math.min(...RL_VALS)*n)+'〜'+(Math.max(...RL_VALS)*n)+'枚';
     lbl.style.cssText='font-size:11px;color:#aaa;text-align:center;margin-top:4px';
     var wrap=document.createElement('div');
     wrap.style.cssText='display:flex;flex-direction:column;align-items:center';
@@ -878,7 +878,7 @@ function pick(pKey){
   if(!inputOK)return;wake();if(window._waitFirstPick){window._waitFirstPick=false;signStart();}inputOK=false;setBtns(false);timerStop();
   const cpuKey=HANDS[Math.floor(Math.random()*3)].key,ph=hByKey(pKey),ch=hByKey(cpuKey);
   const pEl=document.getElementById('p-hand');pEl.textContent=ph.ic;pEl.classList.add('atk');setTimeout(()=>pEl.classList.remove('atk'),350);
-  sePon();setTimeout(()=>signFreeze(ch),300);setTimeout(()=>judge(pKey,cpuKey,ph,ch),900);
+  speakAt('じゃんけーん！',0);sePon();setTimeout(()=>signFreeze(ch),300);setTimeout(()=>judge(pKey,cpuKey,ph,ch),900);
 }
 function judge(pKey,cpuKey,ph,ch){
   const result=pKey===cpuKey?'draw':BEATS[pKey]===cpuKey?'win':'lose';
@@ -923,7 +923,7 @@ function litSeg(i){const n=RL_VALS.length;for(let j=0;j<n;j++){const el=document
 function showRl(){
   signStop();buildRlSVG();rlLitIdx=0;rlStopping=false;
   document.getElementById('rl-hdr').textContent='フィーバー！！';document.getElementById('rl-lbl').textContent='ボタンを押してストップ！';document.getElementById('rl-num').textContent='?';document.getElementById('stop-btn').disabled=true;
-  show('sr');bgmPlay('roulette');patOn();speak('フィーバー！！');
+  show('sr');bgmPlay('roulette');patOn();(function(){var mi=Math.min(...RL_VALS)*betAmount,ma=Math.max(...RL_VALS)*betAmount;var el=document.getElementById('rl-lbl');if(el)el.innerHTML='ボタンを押してストップ！<br><span style="color:#FFD700;font-family:Oswald,sans-serif;font-size:13px">🎰 '+mi+'〜'+ma+'枚 のチャンス！</span>';})();speak('フィーバー！！');
   if(rlLitTid){clearInterval(rlLitTid);rlLitTid=null;}
   rlLitTid=setInterval(()=>{litSeg(rlLitIdx%RL_VALS.length);seTick();rlLitIdx++;},80);
   setTimeout(()=>document.getElementById('stop-btn').disabled=false,1200);
