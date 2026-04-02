@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>クイズ魔道学院 FEVER</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<!-- Supabase: USE_SB=trueの時のみ動的ロード -->
+<style>
+:root {
+  --bg-page:#0d0028; --bg-card:#1a1040; --bg-inset:#0a001e; --bg-lift:#241850;
+  --tx-primary:#ffffff; --tx-heading:#f0e8ff; --tx-body:#d8cef0; --tx-muted:#aaa0cc;
+  --gold:#ffd040; --gold-dark:#1a0e00;
+  --green-tx:#60ffa0; --green-bg:#0c5c28;
+  --red-tx:#ff8090;   --red-bg:#6b0018;
+  --purple-tx:#c0a8ff; --cyan-tx:#70e8ff;
+  --bd-default:#3a2870; --bd-focus:#a080ff; --bd-gold:#7a5800;
+  /* プレイヤーカラー */
+  --p1:#00e5ff; --p2:#ffd040; --p3:#69ff99; --p4:#ff7eb3;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg-page);color:var(--tx-body);font-family:'Noto Sans JP',sans-serif;font-size:16px;min-height:100vh;overflow-x:hidden}
+#bgLayer{position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(120,60,255,.18)0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(60,20,180,.20)0%,transparent 60%);pointer-events:none;z-index:0}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twink var(--d,4s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes twink{0%,100%{opacity:.06}50%{opacity:.7}}
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:flex;flex-direction:column;align-items:center;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── ボタン ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 28px;border:none;border-radius:10px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-weight:900;font-size:17px;letter-spacing:.04em;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.btn:focus-visible{outline:3px solid var(--bd-focus);outline-offset:3px}
+.btn:active{transform:scale(.95)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-gold{background:linear-gradient(160deg,#c99000,#ffcc00,#c99000);color:#1a0e00;font-size:19px;min-height:58px;box-shadow:0 4px 20px rgba(200,150,0,.45);border:2px solid #e0a800}
+.btn-gold:hover:not(:disabled){box-shadow:0 6px 30px rgba(200,150,0,.7)}
+.btn-purple{background:linear-gradient(160deg,#4422aa,#6633dd,#4422aa);color:#fff;box-shadow:0 4px 16px rgba(100,50,220,.4);border:2px solid #8844ff}
+.btn-purple:hover:not(:disabled){box-shadow:0 6px 24px rgba(100,50,220,.7)}
+.btn-cyan{background:linear-gradient(160deg,#006688,#00ccee,#006688);color:#fff;box-shadow:0 4px 16px rgba(0,180,220,.4);border:2px solid #00aacc}
+.btn-cyan:hover:not(:disabled){box-shadow:0 6px 24px rgba(0,180,220,.7)}
+.btn-outline{background:var(--bg-card);color:var(--tx-body);font-size:16px;border:2px solid var(--bd-default)}
+.btn-outline:hover:not(:disabled){border-color:var(--bd-focus);color:var(--tx-heading);background:var(--bg-lift)}
+.btn-block{width:100%;max-width:380px;margin:5px auto;display:flex}
+.btn-lg{font-size:21px;min-height:64px;padding:14px 40px}
+.btn-sm{font-size:14px;min-height:40px;padding:8px 18px}
+
+/* ── カード・仕切り ── */
+.card{background:var(--bg-card);border:1px solid var(--bd-default);border-radius:14px;padding:20px}
+.divider{width:280px;height:3px;margin:10px auto;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* ════════ タイトル ════════ */
+#screen-title{justify-content:center;text-align:center;padding:28px 20px;gap:4px}
+.castle{font-size:90px;filter:drop-shadow(0 0 22px rgba(180,120,255,.6));animation:castF 3.5s ease-in-out infinite}
+@keyframes castF{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.logo-sub{font-family:'Zen Dots',sans-serif;font-size:clamp(22px,5.5vw,44px);color:var(--tx-heading);letter-spacing:.06em}
+.logo-fever{font-family:'Zen Dots',sans-serif;font-size:clamp(52px,13vw,100px);color:var(--gold);letter-spacing:.12em;line-height:1;animation:fvG 2.5s ease-in-out infinite}
+@keyframes fvG{0%,100%{color:#ffd040}50%{color:#ffe880}}
+.title-welcome{font-size:19px;font-weight:900;color:var(--tx-heading);margin:4px 0}
+.title-tag{font-size:13px;color:var(--tx-muted);letter-spacing:.1em;margin-bottom:24px}
+
+/* ════════ モード選択 ════════ */
+#screen-mode{padding:70px 16px 24px;gap:16px;align-items:center}
+.mode-tabs{display:flex;gap:0;background:var(--bg-inset);border-radius:10px;padding:4px;width:100%;max-width:420px}
+.mode-tab{flex:1;text-align:center;padding:12px 8px;border-radius:8px;cursor:pointer;font-size:17px;font-weight:700;color:var(--tx-muted);transition:all .2s;-webkit-tap-highlight-color:transparent}
+.mode-tab.active{background:var(--bg-lift);color:var(--tx-heading);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.mode-panel{width:100%;max-width:420px;display:none}
+.mode-panel.active{display:block}
+
+/* 先取ポイント選択 */
+.pts-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.pts-btn{background:var(--bg-card);border:2px solid var(--bd-default);border-radius:10px;padding:10px 0;min-width:64px;min-height:56px;font-family:'Zen Dots',sans-serif;font-size:20px;color:var(--tx-muted);cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.pts-btn small{font-family:'Noto Sans JP',sans-serif;font-size:10px;color:var(--tx-muted)}
+.pts-btn.sel{border-color:var(--gold);color:var(--gold);background:rgba(255,208,64,.1);box-shadow:0 0 0 2px var(--gold)}
+.pts-btn:active{transform:scale(.95)}
+
+/* 難易度 */
+.diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:420px}
+.diff-card{background:var(--bg-card);border:2px solid var(--bd-default);border-radius:12px;padding:18px 10px 14px;cursor:pointer;transition:border-color .2s,background .2s;text-align:center;-webkit-tap-highlight-color:transparent}
+.diff-card:hover{background:var(--bg-lift)}
+.diff-card[data-d=easy]:hover{border-color:#44cc77}
+.diff-card[data-d=normal]:hover{border-color:var(--gold)}
+.diff-card[data-d=hard]:hover{border-color:#ff6688}
+.diff-icon{font-size:44px;display:block;margin-bottom:8px}
+.diff-name{font-size:14px;font-weight:900;color:var(--tx-heading);margin-bottom:6px;line-height:1.3}
+.diff-desc{font-size:11px;color:var(--tx-muted);line-height:1.8}
+.badge-easy{display:inline-block;background:#0c4020;color:#60d880;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:5px}
+.badge-normal{display:inline-block;background:#3d2c00;color:#ffd040;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:5px}
+.badge-hard{display:inline-block;background:#4a0012;color:#ff8090;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:5px}
+
+/* オンライン設定 */
+.room-action-btns{display:flex;gap:10px;width:100%;max-width:420px}
+.room-action-btns .btn{flex:1}
+.room-input{width:100%;background:var(--bg-inset);border:2px solid var(--bd-default);border-radius:8px;padding:12px 14px;color:var(--tx-primary);font-family:'Noto Sans JP',sans-serif;font-size:18px;font-weight:700;outline:none;transition:border-color .2s;letter-spacing:.2em;text-align:center}
+.room-input:focus{border-color:var(--bd-focus)}
+
+/* ════════ AI問題生成画面 ════════ */
+#screen-ai-quiz{padding:70px 16px 24px;gap:14px;align-items:center}
+#screen-manage{padding:70px 12px 32px;gap:10px;align-items:center}
+.ai-area{width:100%;max-width:480px}
+.ai-label{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.ai-input{width:100%;background:var(--bg-inset);border:2px solid var(--bd-default);border-radius:8px;padding:13px 16px;color:var(--tx-primary);font-family:'Noto Sans JP',sans-serif;font-size:18px;font-weight:700;outline:none;transition:border-color .2s}
+.ai-input:focus{border-color:var(--bd-focus)}
+.ai-input::placeholder{color:var(--tx-muted)}
+.genre-chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:var(--bg-card);border:1px solid var(--bd-default);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:700;color:var(--tx-body);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.chip.sel{background:rgba(192,168,255,.15);border-color:var(--purple-tx);color:var(--purple-tx)}
+.chip:active{transform:scale(.95)}
+.cnt-row{display:flex;gap:8px}
+.cnt-btn{background:var(--bg-card);border:2px solid var(--bd-default);border-radius:8px;padding:8px 18px;min-height:44px;font-family:'Zen Dots',sans-serif;font-size:18px;color:var(--tx-muted);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.cnt-btn.sel{border-color:var(--gold);color:var(--gold);background:rgba(255,208,64,.1)}
+.ai-status{font-size:16px;font-weight:700;text-align:center;min-height:28px;border-radius:8px;padding:6px 14px;color:var(--tx-muted)}
+.ai-status.ok{background:#0c3820;color:#60ffa0}
+.ai-status.err{background:#3c0010;color:#ff8090}
+.ai-status.loading{background:#2c2000;color:#ffd040}
+.ai-preview{width:100%;max-width:480px;max-height:220px;overflow-y:auto;background:var(--bg-inset);border:1px solid var(--bd-default);border-radius:10px;padding:12px}
+.preview-q{font-size:13px;color:var(--tx-body);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.preview-q:last-child{border-bottom:none}
+.preview-q strong{color:var(--tx-heading)}
+
+/* ════════ 待機ロビー ════════ */
+#screen-waiting{padding:70px 16px 24px;gap:16px;align-items:center}
+.room-code-display{font-family:'Zen Dots',sans-serif;font-size:clamp(48px,12vw,80px);color:var(--gold);letter-spacing:.2em;text-align:center;line-height:1}
+.room-code-hint{font-size:13px;color:var(--tx-muted);text-align:center;margin-top:4px}
+.player-slots{width:100%;max-width:420px;display:flex;flex-direction:column;gap:8px}
+.player-slot{background:var(--bg-card);border:2px solid var(--bd-default);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;min-height:64px}
+.slot-num{font-family:'Zen Dots',sans-serif;font-size:18px;width:32px;text-align:center}
+.slot-av{font-size:28px}
+.slot-name{font-size:16px;font-weight:700;color:var(--tx-heading);flex:1}
+.slot-badge{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:700}
+.slot-you{background:rgba(0,229,255,.15);color:var(--p1)}
+.slot-cpu{background:rgba(255,208,64,.1);color:var(--gold)}
+.slot-other{background:rgba(105,255,153,.15);color:var(--p3)}
+.slot-empty{border-style:dashed;opacity:.45}
+
+/* ════════ バトル（4人対応）════════ */
+#screen-battle{padding:10px 12px;gap:8px;justify-content:flex-start;align-items:center}
+
+.scoreboard{width:100%;max-width:620px;background:var(--bg-card);border:1px solid var(--bd-gold);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px}
+.score-row{display:flex;align-items:center;gap:10px;padding:4px 0}
+.score-rank{font-family:'Zen Dots',sans-serif;font-size:14px;width:22px;text-align:center;color:var(--tx-muted)}
+.score-av{font-size:22px;width:28px;text-align:center}
+.score-name{flex:1;font-size:15px;font-weight:700;color:var(--tx-heading)}
+.score-pips{display:flex;gap:4px}
+.sc-pip{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.15);background:var(--bg-inset);font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .35s}
+.sc-pip.lit{animation:pipPop .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pipPop{from{transform:scale(0)}to{transform:scale(1)}}
+
+.q-area{width:100%;max-width:620px;background:var(--bg-inset);border:2px solid var(--bd-default);border-radius:14px;padding:18px 20px 26px;position:relative;min-height:130px}
+.q-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-genre{font-size:13px;font-weight:700;letter-spacing:.1em;background:var(--bg-lift);color:var(--purple-tx);display:inline-block;padding:3px 10px;border-radius:20px}
+.q-counter{font-family:'Zen Dots',sans-serif;font-size:14px;color:var(--tx-muted)}
+.q-text{font-size:clamp(19px,4vw,26px);font-weight:900;line-height:1.7;color:var(--tx-primary);min-height:68px}
+.timer-track{position:absolute;bottom:0;left:0;right:0;height:6px;background:var(--bg-lift);border-radius:0 0 12px 12px;overflow:hidden}
+.timer-fill{height:100%;background:var(--gold);transition:width .1s linear}
+
+.b-msg{width:100%;max-width:620px;text-align:center;font-size:17px;font-weight:900;min-height:28px;border-radius:8px;padding:2px 12px;color:var(--tx-muted);transition:all .2s}
+.b-msg.good{background:#0c3820;color:#60ffa0}
+.b-msg.bad{background:#3c0010;color:#ff8090}
+.b-msg.info{background:#2c2000;color:#ffd040}
+
+.choices{width:100%;max-width:620px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{background:var(--bg-card);border:2px solid var(--bd-default);border-radius:12px;padding:16px 14px;min-height:72px;color:var(--tx-heading);font-family:'Noto Sans JP',sans-serif;font-size:clamp(16px,3vw,19px);font-weight:700;cursor:pointer;transition:border-color .15s,background .15s;text-align:left;display:flex;align-items:center;gap:12px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+.choice:focus-visible{outline:3px solid var(--bd-focus);outline-offset:2px}
+.choice:hover:not(:disabled){background:var(--bg-lift);border-color:var(--bd-focus)}
+.choice:disabled{cursor:not-allowed}
+.choice.correct{background:var(--green-bg)!important;border-color:#44cc77!important;color:#a0ffcc!important;box-shadow:0 0 20px rgba(60,200,100,.35)!important}
+.choice.wrong{background:var(--red-bg)!important;border-color:#cc3355!important;color:#ffaabb!important}
+.choice.cpu-pick{background:#1e0850!important;border-color:#8844ff!important;color:var(--purple-tx)!important}
+.c-label{background:#3d2c00;color:var(--gold);font-family:'Zen Dots',sans-serif;font-size:16px;font-weight:900;min-width:36px;height:36px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+/* ════════ スペルFX ════════ */
+#spellFX{position:fixed;inset:0;pointer-events:none;z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+#spellFX.on{opacity:1}
+#spellWord{font-family:'Zen Dots',sans-serif;font-size:clamp(50px,12vw,100px);text-align:center;animation:spellA 1.4s ease forwards}
+#spellWord.player{color:var(--cyan-tx);text-shadow:0 0 24px rgba(80,200,255,.5)}
+#spellWord.cpu{color:#ff88cc;text-shadow:0 0 24px rgba(255,80,160,.5)}
+#spellWord.miss{color:var(--red-tx);text-shadow:0 0 20px rgba(255,80,100,.4)}
+@keyframes spellA{0%{transform:scale(.15)rotate(-8deg);opacity:0}25%{transform:scale(1.3)rotate(2deg);opacity:1}65%{transform:scale(1);opacity:1}100%{transform:scale(.75)translateY(-50px);opacity:0}}
+#flash{position:fixed;inset:0;pointer-events:none;z-index:400;opacity:0}
+#flash.fg{animation:fG .45s ease}#flash.fb{animation:fB .45s ease}
+@keyframes fG{0%{background:rgba(40,180,80,.35);opacity:1}100%{background:transparent;opacity:0}}
+@keyframes fB{0%{background:rgba(200,40,60,.35);opacity:1}100%{background:transparent;opacity:0}}
+.ptcl{position:fixed;pointer-events:none;z-index:450;border-radius:50%;animation:pF var(--dur,.9s) ease forwards}
+@keyframes pF{0%{transform:translate(0,0)scale(1);opacity:1}100%{transform:translate(var(--tx,0),var(--ty,-100px))scale(0);opacity:0}}
+
+/* ════════ リザルト ════════ */
+#screen-result{justify-content:center;gap:14px;text-align:center;padding:28px 16px}
+.result-icon{font-size:96px;animation:popIn .6s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{from{transform:scale(0)rotate(-30deg)}to{transform:scale(1)rotate(0)}}
+.result-title{font-family:'Zen Dots',sans-serif;font-size:clamp(36px,9vw,72px);letter-spacing:.1em}
+.result-title.win{color:var(--gold)}.result-title.lose{color:#ff8090}.result-title.draw{color:var(--cyan-tx)}
+.result-sub{font-size:16px;color:var(--tx-body)}
+.r-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:440px}
+.rs{background:var(--bg-card);border:1px solid var(--bd-gold);border-radius:10px;padding:16px 8px}
+.rs-val{font-family:'Zen Dots',sans-serif;font-size:36px;color:var(--gold);display:block;margin-bottom:3px}
+.rs-lbl{font-size:12px;color:var(--tx-muted)}
+.save-card{width:100%;max-width:440px;background:var(--bg-card);border:2px solid var(--bd-default);border-radius:12px;padding:18px}
+.save-card p{font-size:14px;color:var(--tx-body);margin-bottom:12px}
+
+/* ════════ ランキング ════════ */
+#screen-ranking{padding:70px 16px 32px;gap:14px;align-items:center}
+.rank-head{font-family:'Zen Dots',sans-serif;font-size:clamp(20px,5vw,30px);color:var(--gold);text-align:center}
+.rank-sub{font-size:14px;color:var(--tx-muted);text-align:center}
+.rank-list{width:100%;max-width:460px}
+.rank-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--bd-default)}
+.rk-pos{font-family:'Zen Dots',sans-serif;font-size:20px;width:34px;text-align:center;border-radius:6px;padding:2px}
+.rk-pos.g{background:#3d2c00;color:#ffd040}.rk-pos.s{background:#252525;color:#d0d0d0}.rk-pos.b{background:#2a1800;color:#d08040}
+.rk-name{flex:1;font-size:16px;font-weight:700;color:var(--tx-heading)}.rk-acc{font-size:13px;color:var(--tx-muted)}
+.rk-score{font-family:'Zen Dots',sans-serif;font-size:20px;color:var(--gold)}
+
+/* ════════ ダイアログ ════════ */
+.dlg-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:600;opacity:0;pointer-events:none;transition:opacity .25s}
+.dlg-bg.on{opacity:1;pointer-events:auto}
+.dlg{background:var(--bg-card);border:2px solid var(--bd-focus);border-radius:16px;padding:32px 24px;width:90%;max-width:380px;text-align:center}
+.dlg h3{font-family:'Zen Dots',sans-serif;font-size:20px;color:var(--gold);margin-bottom:8px}
+.dlg p{font-size:14px;color:var(--tx-body);margin-bottom:18px}
+.txtin{width:100%;background:var(--bg-inset);border:2px solid var(--bd-default);border-radius:8px;padding:13px 14px;color:var(--tx-primary);font-family:'Noto Sans JP',sans-serif;font-size:19px;font-weight:700;margin-bottom:14px;outline:none;transition:border-color .2s}
+.txtin:focus{border-color:var(--bd-focus)}
+.txtin::placeholder{color:var(--tx-muted)}
+
+.back-btn{position:fixed;top:12px;left:12px;z-index:50;background:var(--bg-card);border:2px solid var(--bd-default);border-radius:8px;padding:9px 16px;min-height:42px;color:var(--tx-body);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.back-btn:hover{border-color:var(--bd-focus);color:var(--tx-heading)}
+.spin{width:44px;height:44px;border-radius:50%;border:3px solid var(--bd-default);border-top-color:var(--gold);animation:sp .8s linear infinite;margin:28px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sh{font-family:'Zen Dots',sans-serif;font-size:clamp(18px,4.5vw,28px);color:var(--gold);text-align:center;letter-spacing:.08em}
+.sh-hint{font-size:14px;color:var(--tx-muted);text-align:center}
+.footer-txt{position:fixed;bottom:12px;font-size:12px;color:var(--tx-muted)}
+
+@media(max-width:500px){
+  .diff-grid{grid-template-columns:1fr}
+  .choices{grid-template-columns:1fr}
+  .room-action-btns{flex-direction:column}
+}
+/* ── ジャンルライブラリ ── */
+.genre-lib{width:100%;max-width:420px;display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.genre-card{background:var(--bg-card);border:2px solid var(--bd-default);border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color .2s,background .2s;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:12px}
+.genre-card:hover{background:var(--bg-lift);border-color:var(--gold)}
+.genre-info{flex:1;min-width:0}
+.genre-name{font-size:16px;font-weight:900;color:var(--tx-heading);margin-bottom:4px}
+.genre-counts{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
+.glv{font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px}
+.glv1{background:#0c4020;color:#60d880}
+.glv2{background:#3d2c00;color:#ffd040}
+.glv3{background:#4a0012;color:#ff8090}
+.genre-total{font-family:'Zen Dots',sans-serif;font-size:20px;color:var(--gold);flex-shrink:0}
+/* ── レベル選択モーダル ── */
+.lv-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:flex-end;justify-content:center;z-index:700;opacity:0;pointer-events:none;transition:opacity .25s}
+.lv-modal.on{opacity:1;pointer-events:auto}
+.lv-box{background:var(--bg-card);border:2px solid var(--bd-focus);border-radius:18px 18px 0 0;width:100%;max-width:480px;padding:24px 20px 40px}
+.lv-title{font-family:'Zen Dots',sans-serif;font-size:18px;color:var(--gold);margin-bottom:4px}
+.lv-sub{font-size:13px;color:var(--tx-muted);margin-bottom:16px}
+.lv-btns{display:flex;flex-direction:column;gap:10px}
+.lv-btn{display:flex;align-items:center;gap:12px;background:var(--bg-inset);border:2px solid var(--bd-default);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;width:100%;text-align:left}
+.lv-btn:hover{background:var(--bg-lift);border-color:var(--bd-focus)}
+.lv-btn-icon{font-size:26px;flex-shrink:0}
+.lv-btn-info{flex:1}
+.lv-btn-name{font-size:16px;font-weight:900;color:var(--tx-heading)}
+.lv-btn-desc{font-size:12px;color:var(--tx-muted);margin-top:2px}
+.lv-btn-cnt{font-family:'Zen Dots',sans-serif;font-size:20px;color:var(--gold);flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="bgLayer"></div><div id="stars"></div>
+<div id="spellFX"><div id="spellWord"></div></div>
+<div id="flash"></div>
+
+<!-- 名前ダイアログ -->
+<div class="dlg-bg" id="nameWrap">
+  <div class="dlg">
+    <div style="font-size:50px;margin-bottom:10px">🧙‍♂️</div>
+    <h3>魔道師の名を刻め</h3>
+    <p>ランキングに残る汝の名を入力せよ</p>
+    <input class="txtin" id="nameIn" type="text" placeholder="魔道師の名前" maxlength="12">
+    <button class="btn btn-gold" style="width:100%" onclick="saveName()">✨ 刻む</button>
+  </div>
+</div>
+
+<!-- ══════ タイトル ══════ -->
+<div class="screen active" id="screen-title">
+  <span class="castle">🏰</span>
+  <div class="logo-sub">クイズ魔道学院</div>
+  <div class="logo-fever">FEVER</div>
+  <div class="divider"></div>
+  <div class="title-welcome" id="welcomeTxt">ようこそ、魔道師よ！</div>
+  <div class="title-tag">知識の魔法で頂点を目指せ！</div>
+  <button class="btn btn-gold btn-lg btn-block" onclick="go('mode')">⚔️ ゲームを始める</button>
+  <div style="height:4px"></div>
+  <button class="btn btn-outline btn-block" onclick="goRanking()">🏆 ランキング</button>
+  <button class="btn btn-outline btn-block" onclick="openDlg()">✏️ 名前を変える</button>
+  <p class="footer-txt">百式ゲーム王国 © HYAKUSHIKI</p>
+</div>
+
+<!-- ══════ モード選択 ══════ -->
+<div class="screen" id="screen-mode">
+  <button class="back-btn" onclick="go('title')">← 戻る</button>
+  <div style="height:64px"></div>
+
+  <!-- 先取ポイント選択 -->
+  <div class="sh">✨ 先取ポイントを選べ</div>
+  <div class="pts-row" id="ptsRow">
+    <button class="pts-btn" data-pts="1" onclick="selPts(1)">1<small>先取</small></button>
+    <button class="pts-btn sel" data-pts="3" onclick="selPts(3)">3<small>先取</small></button>
+    <button class="pts-btn" data-pts="5" onclick="selPts(5)">5<small>先取</small></button>
+    <button class="pts-btn" data-pts="7" onclick="selPts(7)">7<small>先取</small></button>
+    <button class="pts-btn" data-pts="10" onclick="selPts(10)">10<small>先取</small></button>
+  </div>
+
+  <!-- CPU / オンライン タブ -->
+  <div class="mode-tabs" style="margin-top:8px">
+    <div class="mode-tab active" id="tab-cpu" onclick="switchTab('cpu')">🤖 CPU対戦</div>
+    <div class="mode-tab" id="tab-online" onclick="switchTab('online')">🌐 オンライン</div>
+  </div>
+
+  <!-- CPU パネル -->
+  <div class="mode-panel active" id="panel-cpu">
+    <div class="sh-hint" style="margin:10px 0 8px">対戦相手の強さを選べ</div>
+    <div class="diff-grid">
+      <div class="diff-card" data-d="easy" onclick="startCPU('easy')">
+        <span class="diff-icon">🐣</span>
+        <div class="diff-name">見習い<br>ゴーレム</div>
+        <div class="diff-desc">反応 2〜4秒<br>正答率 50%</div>
+        <span class="badge-easy">🟢 初心者</span>
+      </div>
+      <div class="diff-card" data-d="normal" onclick="startCPU('normal')">
+        <span class="diff-icon">📖</span>
+        <div class="diff-name">呪文書の<br>守護者</div>
+        <div class="diff-desc">反応 1〜2.5秒<br>正答率 70%</div>
+        <span class="badge-normal">🟡 中級</span>
+      </div>
+      <div class="diff-card" data-d="hard" onclick="startCPU('hard')">
+        <span class="diff-icon">💀</span>
+        <div class="diff-name">黒魔導師<br>アルカン</div>
+        <div class="diff-desc">反応 0.3〜1秒<br>正答率 90%</div>
+        <span class="badge-hard">🔴 上級</span>
+      </div>
+    </div>
+
+    <!-- ジャンル問題バンク -->
+    <div style="width:100%;max-width:420px;margin-top:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.1em">📚 ジャンル問題バンク</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm btn-outline" onclick="go('manage');renderManage()" style="min-height:36px;font-size:13px">📝 管理</button>
+          <button class="btn btn-sm btn-purple" onclick="go('ai-quiz')" style="min-height:36px;font-size:13px">＋ 追加</button>
+        </div>
+      </div>
+      <div class="genre-lib" id="genreLib">
+        <div style="text-align:center;font-size:14px;color:var(--tx-muted);padding:16px">読み込み中...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- オンライン パネル -->
+  <div class="mode-panel" id="panel-online">
+    <div class="sh-hint" style="margin:10px 0 12px">最大4人でリアルタイム対戦！空きはCPUが参加</div>
+    <div id="onlineStatus" style="font-size:13px;color:var(--red-tx);text-align:center;min-height:20px;margin-bottom:8px"></div>
+    <div class="room-action-btns">
+      <button class="btn btn-gold" onclick="createRoom()">🏠 部屋を作る</button>
+      <button class="btn btn-cyan" onclick="showJoinInput()">🚪 部屋に入る</button>
+    </div>
+    <div id="joinBox" style="display:none;width:100%;max-width:420px;margin-top:12px">
+      <input class="room-input" id="joinCode" type="text" placeholder="XXXX" maxlength="4" inputmode="numeric"
+        oninput="this.value=this.value.toUpperCase().replace(/[^0-9A-Z]/g,'')">
+      <button class="btn btn-cyan" style="width:100%;margin-top:8px" onclick="joinRoom()">入室する</button>
+    </div>
+    <div style="margin-top:16px;padding:14px;background:var(--bg-inset);border-radius:10px;width:100%;max-width:420px">
+      <div style="font-size:12px;color:var(--tx-muted);line-height:2">
+        ⚠️ Supabase URL・Keyの設定が必要です<br>
+        設定ファイル先頭の SB_URL / SB_KEY に入力してください
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ AI問題生成 ══════ -->
+<div class="screen" id="screen-ai-quiz">
+  <button class="back-btn" onclick="go('mode');renderGenreLib()">← 戻る</button>
+  <div style="height:64px"></div>
+  <div class="sh">🔍 問題を検索・追加</div>
+
+  <div style="width:100%;max-width:480px;background:#1a0830;border:2px solid #5533aa;border-radius:12px;padding:14px 16px;margin-bottom:8px">
+    <div style="font-size:13px;font-weight:700;color:var(--cyan-tx);margin-bottom:6px">🌐 Web検索での自動生成</div>
+    <div style="font-size:12px;color:var(--tx-body);line-height:1.9">
+      キーワードを入力→Wikipedia検索→問題を自動生成<br>
+      <span style="color:#ff9955">⚠️ GitHub Pagesにデプロイ後に動作</span>（プレビュー内はネットワーク遮断のため不可）<br>
+      <span style="color:var(--green-tx)">✅ 手動追加は今すぐ使えます →</span>
+      <button class="btn btn-sm btn-cyan" onclick="go('manage');renderManage()" style="min-height:28px;font-size:12px;padding:4px 12px;margin-top:4px">📝 問題管理画面を開く</button>
+    </div>
+  </div>
+
+  <div class="ai-area">
+    <div class="ai-label">🔑 キーワード</div>
+    <input class="ai-input" id="aiKeyword" placeholder="例: 江戸時代・英単語・恐竜・宇宙..."
+      maxlength="40" onkeydown="if(event.key==='Enter')document.getElementById('aiCategory').focus()">
+  </div>
+
+  <div class="ai-area">
+    <div class="ai-label">📂 カテゴリ</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px" id="catChips"></div>
+    <input class="ai-input" id="aiCategory" placeholder="カテゴリ名（例: 歴史・理科・趣味・勉強）"
+      maxlength="20" onkeydown="if(event.key==='Enter')generateAI()" style="font-size:15px">
+  </div>
+
+  <div class="ai-area">
+    <div class="ai-label">📝 1回で追加する問題数</div>
+    <div class="cnt-row" style="flex-wrap:wrap">
+      <button class="cnt-btn sel" data-n="10" onclick="selCnt(10)">10問</button>
+      <button class="cnt-btn" data-n="20" onclick="selCnt(20)">20問</button>
+      <button class="cnt-btn" data-n="30" onclick="selCnt(30)">30問</button>
+      <button class="cnt-btn" data-n="50" onclick="selCnt(50)">50問</button>
+    </div>
+  </div>
+
+  <button class="btn btn-gold btn-lg" id="genBtn" onclick="generateAI()" style="width:100%;max-width:480px">
+    🔍 検索して追加！
+  </button>
+  <div class="ai-status" id="aiStatus"></div>
+
+  <div style="width:100%;max-width:480px;margin-top:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:13px;color:var(--gold);font-weight:700">📊 現在のバンク</div>
+      <button class="btn btn-sm btn-outline" onclick="if(confirm('バンクを全消去しますか？'))clearBank()" style="font-size:12px;min-height:32px">🗑 全消去</button>
+    </div>
+    <div class="genre-lib" id="aiGenreLib">
+      <div style="text-align:center;font-size:13px;color:var(--tx-muted);padding:12px">まだ問題がありません</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ 問題管理 ══════ -->
+<div class="screen" id="screen-manage">
+  <button class="back-btn" onclick="go('mode');renderGenreLib()">← 戻る</button>
+  <div style="height:64px"></div>
+  <div class="sh" style="font-size:22px">📝 問題管理</div>
+
+  <!-- ジャンルタブ -->
+  <div style="width:100%;max-width:600px;overflow-x:auto;padding-bottom:4px">
+    <div style="display:flex;gap:8px;min-width:max-content;padding:0 4px" id="manageGenreTabs"></div>
+  </div>
+
+  <!-- 選択中ジャンルの情報 -->
+  <div style="width:100%;max-width:600px;background:var(--bg-card);border:1px solid var(--bd-default);border-radius:10px;padding:12px 14px" id="manageGenreInfo">
+    <div style="font-size:14px;color:var(--tx-muted)">ジャンルを選択してください</div>
+  </div>
+
+  <!-- 問題追加ボタン -->
+  <div style="width:100%;max-width:600px;display:flex;gap:8px">
+    <button class="btn btn-gold" style="flex:1" onclick="showAddQForm()">＋ 手動で問題を追加</button>
+    <button class="btn btn-outline" style="flex:1" onclick="go('ai-quiz')">🔍 Web検索で追加</button>
+  </div>
+
+  <!-- 問題追加フォーム -->
+  <div id="addQFormWrap" style="display:none;width:100%;max-width:600px;background:var(--bg-card);border:2px solid var(--bd-focus);border-radius:14px;padding:18px">
+    <div style="font-size:15px;font-weight:900;color:var(--gold);margin-bottom:12px">＋ 問題を追加</div>
+    <div style="font-size:12px;color:var(--gold);margin-bottom:4px">問題文</div>
+    <textarea id="newQ" placeholder="例: ゴン=フリークスの父親の名前は？" rows="2"
+      style="width:100%;background:var(--bg-inset);border:2px solid var(--bd-default);border-radius:8px;padding:10px;color:var(--tx-primary);font-size:15px;resize:vertical;font-family:inherit;outline:none;margin-bottom:10px"></textarea>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div>
+        <div style="font-size:12px;color:var(--gold);margin-bottom:3px">Ａ</div>
+        <input id="newC0" class="ai-input" placeholder="選択肢A" style="font-size:14px">
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--gold);margin-bottom:3px">Ｂ</div>
+        <input id="newC1" class="ai-input" placeholder="選択肢B" style="font-size:14px">
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--gold);margin-bottom:3px">Ｃ</div>
+        <input id="newC2" class="ai-input" placeholder="選択肢C" style="font-size:14px">
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--gold);margin-bottom:3px">Ｄ</div>
+        <input id="newC3" class="ai-input" placeholder="選択肢D" style="font-size:14px">
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--gold);margin-bottom:6px">正解</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px" id="answerBtns">
+      <button class="btn btn-outline sel-ans" data-a="0" onclick="selAns(0)" style="flex:1;min-height:40px;font-size:15px;font-family:'Zen Dots',sans-serif">Ａ</button>
+      <button class="btn btn-outline sel-ans" data-a="1" onclick="selAns(1)" style="flex:1;min-height:40px;font-size:15px;font-family:'Zen Dots',sans-serif">Ｂ</button>
+      <button class="btn btn-outline sel-ans" data-a="2" onclick="selAns(2)" style="flex:1;min-height:40px;font-size:15px;font-family:'Zen Dots',sans-serif">Ｃ</button>
+      <button class="btn btn-outline sel-ans" data-a="3" onclick="selAns(3)" style="flex:1;min-height:40px;font-size:15px;font-family:'Zen Dots',sans-serif">Ｄ</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center">
+      <div style="font-size:12px;color:var(--gold)">難易度</div>
+      <button class="cnt-btn sel" data-lv="1" onclick="selLv(1)" style="font-size:12px;min-height:36px;padding:4px 12px">🟢初級</button>
+      <button class="cnt-btn" data-lv="2" onclick="selLv(2)" style="font-size:12px;min-height:36px;padding:4px 12px">🟡中級</button>
+      <button class="cnt-btn" data-lv="3" onclick="selLv(3)" style="font-size:12px;min-height:36px;padding:4px 12px">🔴マニアック</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" style="flex:1" onclick="hideAddQForm()">キャンセル</button>
+      <button class="btn btn-gold" style="flex:1" onclick="saveNewQ()">✅ 保存</button>
+    </div>
+  </div>
+
+  <!-- 問題一覧 -->
+  <div style="width:100%;max-width:600px" id="manageQList">
+    <div style="text-align:center;font-size:14px;color:var(--tx-muted);padding:24px">
+      ジャンルを選んでください
+    </div>
+  </div>
+</div>
+
+<!-- レベル選択モーダル -->
+<div class="lv-modal" id="lvModal" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="lv-box">
+    <div class="lv-title" id="lvModalTitle">ワンピース</div>
+    <div class="lv-sub">レベルを選んで対戦！ 問題が増えるほどマニアックに</div>
+    <div class="lv-btns" id="lvBtns"></div>
+    <button class="btn btn-outline" style="width:100%;margin-top:12px" onclick="document.getElementById('lvModal').classList.remove('on')">キャンセル</button>
+  </div>
+</div>
+
+<!-- ══════ 待機ロビー ══════ -->
+<div class="screen" id="screen-waiting">
+  <button class="back-btn" onclick="leaveRoom()">← 退室</button>
+  <div style="height:64px"></div>
+  <div style="font-size:14px;color:var(--tx-muted);text-align:center">ルームコード</div>
+  <div class="room-code-display" id="displayCode">----</div>
+  <div class="room-code-hint">このコードを仲間に伝えよう！</div>
+  <div class="player-slots" id="playerSlots"></div>
+  <div id="hostStartArea" style="display:none;width:100%;max-width:420px;text-align:center;margin-top:8px">
+    <div style="font-size:13px;color:var(--tx-muted);margin-bottom:10px">あなたはホストです</div>
+    <button class="btn btn-gold" style="width:100%" onclick="hostStartGame()">⚔️ ゲームスタート！</button>
+  </div>
+  <div id="guestWaitArea" style="display:none;text-align:center">
+    <div style="font-size:15px;color:var(--tx-muted)">ホストの開始を待っています...</div>
+    <div class="spin"></div>
+  </div>
+</div>
+
+<!-- ══════ バトル ══════ -->
+<div class="screen" id="screen-battle">
+  <button class="back-btn" style="z-index:60" onclick="if(confirm('対戦を中断しますか？'))exitBattle()">← 離脱</button>
+  <div class="scoreboard" id="scoreboard"></div>
+  <div class="b-msg" id="bMsg">　</div>
+  <div class="q-area">
+    <div class="q-top">
+      <div class="q-genre" id="qG">ジャンル</div>
+      <div class="q-counter" id="qN">Q.1</div>
+    </div>
+    <div class="q-text" id="qT">　</div>
+    <div class="timer-track"><div class="timer-fill" id="tFill" style="width:100%"></div></div>
+  </div>
+  <div class="choices" id="choices"></div>
+</div>
+
+<!-- ══════ リザルト ══════ -->
+<div class="screen" id="screen-result">
+  <div class="result-icon" id="rI">🏆</div>
+  <div class="result-title" id="rT">VICTORY</div>
+  <div class="result-sub" id="rS"></div>
+  <div class="r-stats">
+    <div class="rs"><span class="rs-val" id="rC">0</span><div class="rs-lbl">正解数</div></div>
+    <div class="rs"><span class="rs-val" id="rA">0%</span><div class="rs-lbl">正答率</div></div>
+    <div class="rs"><span class="rs-val" id="rSc">0</span><div class="rs-lbl">スコア</div></div>
+  </div>
+  <div class="save-card">
+    <p>スコアを記録してランキングへ挑戦！</p>
+    <button class="btn btn-gold" style="width:100%" id="saveBtn" onclick="saveScore()">✨ 登録</button>
+  </div>
+  <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center">
+    <button class="btn btn-purple" onclick="go('mode')">⚔️ もう一度</button>
+    <button class="btn btn-outline" onclick="go('title')">🏠 ホーム</button>
+    <button class="btn btn-outline" onclick="goRanking()">🏆 ランキング</button>
+  </div>
+</div>
+
+<!-- ══════ ランキング ══════ -->
+<div class="screen" id="screen-ranking">
+  <button class="back-btn" onclick="go('title')">← 戻る</button>
+  <div style="height:64px"></div>
+  <div style="font-size:50px">🏆</div>
+  <div class="rank-head">魔道師ランキング</div>
+
+  <!-- カテゴリタブ -->
+  <div style="width:100%;max-width:480px;overflow-x:auto;padding-bottom:4px">
+    <div style="display:flex;gap:8px;min-width:max-content" id="rankCatTabs"></div>
+  </div>
+
+  <!-- ランキングリスト -->
+  <div class="rank-list" id="rankList"><div class="spin"></div></div>
+  <button class="btn btn-gold" style="margin-top:18px;width:100%;max-width:480px" onclick="go('mode')">⚔️ 対戦する</button>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  設定
+// ══════════════════════════════════════
+const SB_URL = '';     // 例: 'https://xxxx.supabase.co'
+const SB_KEY = '';     // 例: 'eyJhbGc...'
+const USE_SB = !!(SB_URL && SB_KEY);
+const QT = 8000; // タイマー ms
+
+// ══════════════════════════════════════
+//  Supabase初期化
+// ══════════════════════════════════════
+// Supabaseが必要な時だけ動的ロード（USE_SB=trueの設定時のみ）
+let sbClient = null;
+let sbChannel = null;
+if(USE_SB) {
+  const _s = document.createElement('script');
+  _s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+  _s.onload = () => { try { sbClient = supabase.createClient(SB_URL, SB_KEY); } catch(e){} };
+  document.head.appendChild(_s);
+}
+
+// ══════════════════════════════════════
+//  CPU設定
+// ══════════════════════════════════════
+const CPU_CFG = {
+  easy:   {name:'見習いゴーレム',   av:'🐣', min:2000, max:4000, acc:.50},
+  normal: {name:'呪文書の守護者',   av:'📖', min:1000, max:2500, acc:.70},
+  hard:   {name:'黒魔導師アルカン', av:'💀', min:300,  max:1000, acc:.90},
+};
+const P_SPELLS = ['⚡ THUNDER!','❄️ BLIZZARD!','🔥 FIREBALL!','🌊 AQUA!','✨ HOLY!','🌪️ CYCLONE!'];
+const C_SPELLS = ['💜 DARK BOLT!','🌑 SHADOW!','☠️ DEATH RAY!','🔮 VOID!','👁️ EVIL EYE!'];
+// プレイヤーカラー4色
+const P_COLORS = ['#00e5ff','#ffd040','#69ff99','#ff7eb3'];
+const P_AVATARS = ['🧙','🧝','🧚','🧜'];
+
+// ══════════════════════════════════════
+//  グローバル状態
+// ══════════════════════════════════════
+let pName = localStorage.getItem('qf_name') || '魔道師';
+let winPts = 3;
+let aiQuestions = null; // AI生成問題
+let aiMerge = false;
+
+// バトル状態
+let gs = {};
+// プレイヤー配列 [{id,name,av,score,isCPU,diff,color}]
+let players = [];
+let myPIdx = 0; // 自分のインデックス
+
+// オンライン状態
+let roomCode = null;
+let isHost = false;
+let myOnlineId = Math.random().toString(36).slice(2,8);
+
+// ══════════════════════════════════════
+//  問題バンク
+// ══════════════════════════════════════
+const QB_BASE=[
+  {g:'🌏 一般常識',q:'日本で最も高い山は？',c:['富士山','北岳','槍ヶ岳','奥穂高岳'],a:0},
+  {g:'🌏 一般常識',q:'世界で最も面積が大きい国は？',c:['中国','アメリカ','カナダ','ロシア'],a:3},
+  {g:'🌏 一般常識',q:'円周率πの値として最も近いものは？',c:['3.14','3.16','3.12','3.18'],a:0},
+  {g:'🌏 一般常識',q:'オリンピックの輪は何色あるか？',c:['4色','5色','6色','7色'],a:1},
+  {g:'🌏 一般常識',q:'1年は通常何日か？',c:['354日','365日','360日','366日'],a:1},
+  {g:'🌏 一般常識',q:'水の化学式は？',c:['CO2','H2O','O2','NaCl'],a:1},
+  {g:'🌏 一般常識',q:'太陽系で最大の惑星は？',c:['土星','火星','木星','天王星'],a:2},
+  {g:'🌏 一般常識',q:'ピアノの鍵盤の数（標準）は？',c:['76鍵','88鍵','80鍵','84鍵'],a:1},
+  {g:'🌏 一般常識',q:'富士山が最後に噴火した年は？',c:['1607年','1707年','1807年','1507年'],a:1},
+  {g:'🌏 一般常識',q:'日本の総人口はおよそ何人？',c:['9000万人','1億人','1億2000万人','1億5000万人'],a:2},
+  {g:'🌏 一般常識',q:'太陽系の惑星の数は？',c:['7個','8個','9個','10個'],a:1},
+  {g:'🌏 一般常識',q:'人間の骨の数は約何本？（成人）',c:['100本','206本','300本','400本'],a:1},
+  {g:'🌏 一般常識',q:'1週間は何時間？',c:['148時間','168時間','188時間','128時間'],a:1},
+  {g:'🌏 一般常識',q:'地球から月までの距離は約何km？',c:['3万8000km','38万km','380万km','3800km'],a:1},
+  {g:'🎮 ゲーム',q:'マリオの職業は？',c:['大工','医者','配管工','料理人'],a:2},
+  {g:'🎮 ゲーム',q:'ポケモンの最初の御三家でないのは？',c:['フシギダネ','ヒトカゲ','ゼニガメ','ピカチュウ'],a:3},
+  {g:'🎮 ゲーム',q:'テトリスを発明した国は？',c:['アメリカ','日本','ソ連','ドイツ'],a:2},
+  {g:'🎮 ゲーム',q:'マインクラフトを開発した会社は？',c:['Mojang','Valve','EA','Ubisoft'],a:0},
+  {g:'🎮 ゲーム',q:'ゼルダの伝説の主人公の名前は？',c:['ゼルダ','リンク','ガノン','ネス'],a:1},
+  {g:'🎮 ゲーム',q:'ドラゴンクエストの生みの親は？',c:['宮本茂','堀井雄二','小島秀夫','坂口博信'],a:1},
+  {g:'🎮 ゲーム',q:'スーパーマリオブラザーズの発売年は？',c:['1983年','1984年','1985年','1986年'],a:2},
+  {g:'🎮 ゲーム',q:'パックマンの開発元はどこ？',c:['コナミ','ナムコ','カプコン','セガ'],a:1},
+  {g:'🎮 ゲーム',q:'ストリートファイターシリーズを開発したのは？',c:['SNK','コナミ','カプコン','バンダイ'],a:2},
+  {g:'🎮 ゲーム',q:'任天堂の本社がある都市は？',c:['東京','大阪','京都','名古屋'],a:2},
+  {g:'🏅 スポーツ',q:'サッカーのゴールの幅は？',c:['6m','7.32m','8m','6.5m'],a:1},
+  {g:'🏅 スポーツ',q:'ラグビーのトライは何点？',c:['3点','4点','5点','6点'],a:2},
+  {g:'🏅 スポーツ',q:'ラグビーのコンバージョンキックは何点？',c:['1点','2点','3点','4点'],a:1},
+  {g:'🏅 スポーツ',q:'バレーボールのコート内人数（1チーム）は？',c:['5人','6人','7人','8人'],a:1},
+  {g:'🏅 スポーツ',q:'野球の塁間距離は何フィート？',c:['80','90','100','110'],a:1},
+  {g:'🏅 スポーツ',q:'マラソンの距離は？',c:['40km','41.195km','42.195km','43km'],a:2},
+  {g:'🏅 スポーツ',q:'卓球で先に何点取ると1ゲーム勝利？',c:['10点','11点','15点','21点'],a:1},
+  {g:'🏅 スポーツ',q:'ゴルフでコースの基準打数を何という？',c:['ボギー','バーディ','イーグル','パー'],a:3},
+  {g:'🏅 スポーツ',q:'バスケットボールで1チームのコート内人数は？',c:['4人','5人','6人','7人'],a:1},
+  {g:'🎌 日本文化',q:'「五・七・五・七・七」の形式の詩は？',c:['俳句','短歌','都々逸','狂歌'],a:1},
+  {g:'🎌 日本文化',q:'節分に豆をまく理由は？',c:['豊作祈願','魔除け','恋愛成就','健康祈願'],a:1},
+  {g:'🎌 日本文化',q:'日本最古の物語は？',c:['源氏物語','竹取物語','伊勢物語','枕草子'],a:1},
+  {g:'🎌 日本文化',q:'日本の国花は？',c:['菊と桜','梅と桜','桜のみ','菊のみ'],a:0},
+  {g:'🎌 日本文化',q:'七五三のお参りをする年齢は？',c:['3・5・7歳','3・4・7歳','5・6・7歳','3・6・9歳'],a:0},
+  {g:'🎌 日本文化',q:'お盆は一般的に何月？',c:['7月','8月','9月','10月'],a:1},
+  {g:'🔬 理科・科学',q:'光の速さは約何km/秒？',c:['10万km','20万km','30万km','40万km'],a:2},
+  {g:'🔬 理科・科学',q:'DNAの「D」は何の略？',c:['Dual','Digital','Deoxy','Dynamic'],a:2},
+  {g:'🔬 理科・科学',q:'ヒトの細胞の数は約何個？',c:['37億個','37兆個','370億個','3700兆個'],a:1},
+  {g:'🔬 理科・科学',q:'電気の単位「ボルト」の略記号は？',c:['Va','A','V','W'],a:2},
+  {g:'🔬 理科・科学',q:'コウモリが使う位置確認の仕組みは？',c:['赤外線','磁気','超音波','紫外線'],a:2},
+  {g:'🔬 理科・科学',q:'地球の自転周期は正確には約何時間？',c:['22時間','23時間56分','24時間30分','25時間'],a:1},
+  {g:'🔬 理科・科学',q:'原子番号1番の元素は？',c:['ヘリウム','炭素','水素','酸素'],a:2},
+  {g:'🔬 理科・科学',q:'人間の体で最も大きい臓器は？',c:['心臓','肝臓','肺','皮膚'],a:3},
+  {g:'🔬 理科・科学',q:'元素記号「Fe」は何？',c:['フッ素','鉄','金','銀'],a:1},
+  {g:'🔬 理科・科学',q:'水が沸騰する温度は1気圧で？',c:['80℃','90℃','100℃','110℃'],a:2},
+  {g:'🔬 理科・科学',q:'恐竜が絶滅したのは約何年前？',c:['6600万年前','660万年前','6600年前','6.6億年前'],a:0},
+  {g:'🎨 芸術・エンタメ',q:'モナリザを描いたのは誰？',c:['ミケランジェロ','ラファエロ','ダ・ヴィンチ','ボッティチェリ'],a:2},
+  {g:'🎨 芸術・エンタメ',q:'ビートルズの出身地は？',c:['ロンドン','マンチェスター','リバプール','バーミンガム'],a:2},
+  {g:'🎨 芸術・エンタメ',q:'「第九」を作曲したのは？',c:['モーツァルト','ベートーヴェン','バッハ','ショパン'],a:1},
+  {g:'🌐 世界地理',q:'エッフェル塔がある都市は？',c:['ロンドン','パリ','ローマ','ベルリン'],a:1},
+  {g:'🌐 世界地理',q:'世界一長い川は？',c:['アマゾン川','ミシシッピ川','ナイル川','長江'],a:2},
+  {g:'🌐 世界地理',q:'オーストラリアの首都は？',c:['シドニー','メルボルン','キャンベラ','ブリスベン'],a:2},
+  {g:'🌐 世界地理',q:'赤道が通らない大陸は？',c:['アフリカ','南米','オーストラリア','ヨーロッパ'],a:3},
+  {g:'🌐 世界地理',q:'世界で最も高い山は？',c:['K2','マカルー','エベレスト','ローツェ'],a:2},
+  {g:'🌐 世界地理',q:'ブラジルの公用語は？',c:['スペイン語','ポルトガル語','英語','フランス語'],a:1},
+  {g:'🌐 世界地理',q:'世界で最も人口が多い国は？',c:['インド','中国','アメリカ','インドネシア'],a:0},
+  {g:'🌐 世界地理',q:'カナダの首都は？',c:['トロント','バンクーバー','モントリオール','オタワ'],a:3},
+  {g:'🍜 食文化',q:'チョコレートの原料カカオの原産地は？',c:['アフリカ','中南米','東南アジア','地中海'],a:1},
+  {g:'🍜 食文化',q:'カルボナーラの発祥の地は？',c:['ナポリ','ミラノ','ローマ','フィレンツェ'],a:2},
+  {g:'🍜 食文化',q:'ウスターソースの発祥地は？',c:['フランス','アメリカ','日本','イギリス'],a:3},
+  {g:'🍜 食文化',q:'コーヒーの原産地は？',c:['コロンビア','ブラジル','エチオピア','インドネシア'],a:2},
+  {g:'🍜 食文化',q:'豆腐を作るのに使う凝固剤は？',c:['酢','塩','にがり','砂糖'],a:2},
+  {g:'💡 雑学',q:'シャープペンシルを発明した日本の会社は？',c:['パナソニック','ソニー','シャープ','三菱'],a:2},
+  {g:'💡 雑学',q:'「1ダース」は何個？',c:['10個','12個','15個','20個'],a:1},
+  {g:'💡 雑学',q:'日本一長い川は？',c:['利根川','信濃川','阿賀野川','木曽川'],a:1},
+  {g:'💡 雑学',q:'エレベーターを発明したのは？',c:['ライト兄弟','エジソン','オーティス','テスラ'],a:2},
+  {g:'💡 雑学',q:'1光年はおよそ何km？',c:['1億km','1000億km','9.5兆km','1000兆km'],a:2},
+  {g:'💡 雑学',q:'「五十音」は実際に何音ある？',c:['50音','46音','48音','52音'],a:1},
+  {g:'💡 雑学',q:'血液の赤い色の原因物質は？',c:['ミオグロビン','ヘモグロビン','コラーゲン','メラニン'],a:1},
+  {g:'📺 アニメ・マンガ',q:'「ドラゴンボール」の作者は？',c:['尾田栄一郎','鳥山明','岸本斉史','荒木飛呂彦'],a:1},
+  {g:'📺 アニメ・マンガ',q:'「ワンピース」の主人公の夢は？',c:['最強の剣士','海賊王','最速の男','世界征服'],a:1},
+  {g:'📺 アニメ・マンガ',q:'「名探偵コナン」の本名は？',c:['江戸川乱歩','工藤新一','毛利小五郎','阿笠博士'],a:1},
+  {g:'📺 アニメ・マンガ',q:'「鬼滅の刃」の主人公の妹の名前は？',c:['カナヲ','アオイ','ねずこ','まこも'],a:2},
+  {g:'📺 アニメ・マンガ',q:'「進撃の巨人」の作者は？',c:['諫山創','富樫義博','久保帯人','冨樫義博'],a:0},
+  {g:'📺 アニメ・マンガ',q:'「千と千尋の神隠し」の監督は？',c:['高畑勲','細田守','新海誠','宮崎駿'],a:3},
+  {g:'📺 アニメ・マンガ',q:'「呪術廻戦」の主人公の名前は？',c:['伏黒恵','虎杖悠仁','五条悟','釘崎野薔薇'],a:1},
+  {g:'📺 アニメ・マンガ',q:'「ポケモン」のサトシの相棒ポケモンは？',c:['イーブイ','フシギダネ','ピカチュウ','リザードン'],a:2},
+  {g:'📺 アニメ・マンガ',q:'「ジョジョの奇妙な冒険」の作者は？',c:['荒木飛呂彦','冨樫義博','三浦建太郎','武論尊'],a:0},
+  {g:'📜 歴史',q:'日本で最初の元号は？',c:['大化','昭和','明治','天平'],a:0},
+  {g:'📜 歴史',q:'ピラミッドを建設した文明は？',c:['メソポタミア文明','インダス文明','古代エジプト文明','黄河文明'],a:2},
+  {g:'📜 歴史',q:'関ヶ原の戦いが起きた年は？',c:['1598年','1600年','1603年','1615年'],a:1},
+  {g:'📜 歴史',q:'第一次世界大戦が始まった年は？',c:['1910年','1912年','1914年','1918年'],a:2},
+  {g:'📜 歴史',q:'江戸幕府を開いたのは誰？',c:['豊臣秀吉','織田信長','徳川家康','徳川秀忠'],a:2},
+  {g:'📜 歴史',q:'フランス革命が起きたのは何年？',c:['1759年','1769年','1779年','1789年'],a:3},
+  {g:'📜 歴史',q:'明治維新が始まった年は？',c:['1858年','1868年','1878年','1888年'],a:1},
+  {g:'📜 歴史',q:'コロンブスがアメリカ大陸に到達した年は？',c:['1392年','1492年','1592年','1692年'],a:1},
+  {g:'📜 歴史',q:'「我思う、ゆえに我あり」と言ったのは誰？',c:['カント','デカルト','ヘーゲル','スピノザ'],a:1},
+  {g:'🎵 音楽',q:'4分音符を1拍とすると「全音符」は何拍？',c:['2拍','3拍','4拍','8拍'],a:2},
+  {g:'🎵 音楽',q:'「♯（シャープ）」は音程をどう変える？',c:['半音下げる','半音上げる','1音上げる','変えない'],a:1},
+  {g:'🎵 音楽',q:'「マイケル・ジャクソン」のニックネームは？',c:['キング・オブ・ロック','キング・オブ・ポップ','プリンス・オブ・ソウル','デューク・オブ・ダンス'],a:1},
+  {g:'🎵 音楽',q:'「交響曲第5番」（運命）を作ったのは？',c:['モーツァルト','ベートーヴェン','ブラームス','シューベルト'],a:1},
+  {g:'🎵 音楽',q:'ジャズが生まれたとされるアメリカの都市は？',c:['シカゴ','ニューヨーク','ニューオーリンズ','ロサンゼルス'],a:2},
+  {g:'🐾 動物・自然',q:'チーターの最高速度はおよそ何km/h？',c:['80km/h','100km/h','120km/h','140km/h'],a:2},
+  {g:'🐾 動物・自然',q:'世界最大の魚は？',c:['シロナガスクジラ','ジンベエザメ','マンタ','ミンククジラ'],a:1},
+  {g:'🐾 動物・自然',q:'クモは何本足？',c:['6本','8本','10本','12本'],a:1},
+  {g:'🐾 動物・自然',q:'タコには心臓がいくつある？',c:['1つ','2つ','3つ','4つ'],a:2},
+  {g:'🐾 動物・自然',q:'サメはどんな骨格を持つ？',c:['骨格なし','軟骨','硬骨','外骨格'],a:1},
+  {g:'🐾 動物・自然',q:'地球上で最も速く走る陸上動物は？',c:['チーター','プロングホーン','ライオン','ウサギ'],a:0},
+  {g:'🧮 数学・算数',q:'2の10乗は？',c:['512','1024','2048','256'],a:1},
+  {g:'🧮 数学・算数',q:'三角形の内角の和は？',c:['90°','180°','270°','360°'],a:1},
+  {g:'🧮 数学・算数',q:'素数でないものは？',c:['2','3','9','11'],a:2},
+  {g:'🧮 数学・算数',q:'1から100までの整数の和は？',c:['4950','5000','5050','5100'],a:2},
+  {g:'🧮 数学・算数',q:'円の面積を求める公式は？',c:['2πr','πr²','πd','2πr²'],a:1},
+  {g:'🧮 数学・算数',q:'フィボナッチ数列「1,1,2,3,5,8」の次は？',c:['11','12','13','14'],a:2},
+  {g:'🚗 テクノロジー',q:'世界で初めて飛行機を飛ばしたのは？',c:['エジソン','ライト兄弟','リンドバーグ','アームストロング'],a:1},
+  {g:'🚗 テクノロジー',q:'WWWを発明したのは誰？',c:['スティーブ・ジョブズ','ビル・ゲイツ','ティム・バーナーズ＝リー','アラン・チューリング'],a:2},
+  {g:'🚗 テクノロジー',q:'新幹線が初めて開業したのは何年？',c:['1960年','1962年','1964年','1966年'],a:2},
+  {g:'🚗 テクノロジー',q:'世界初のスマートフォンiPhoneが発売されたのは？',c:['2005年','2006年','2007年','2008年'],a:2},
+  {g:'🚗 テクノロジー',q:'「CPU」のCは何の略？',c:['Core','Central','Circuit','Computer'],a:1},
+  {g:'🚗 テクノロジー',q:'マッハ1はおよそ何km/h？',c:['約340km/h','約1225km/h','約3000km/h','約500km/h'],a:1},
+];
+
+// ══════════════════════════════════════
+//  初期化
+// ══════════════════════════════════════
+onload = () => { makeStars(); refreshW(); initBank(); renderGenreLib(); refreshCatChips(); };
+function makeStars() {
+  const c = document.getElementById('stars');
+  for(let i=0;i<180;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*2.5+.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${3+Math.random()*5}s;--dl:${Math.random()*6}s`;
+    c.appendChild(s);
+  }
+}
+function refreshW() { document.getElementById('welcomeTxt').textContent=`ようこそ、${pName} 殿！`; }
+function go(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+id).classList.add('active'); }
+function goRanking() { goRankScreen(); }
+function openDlg() { document.getElementById('nameIn').value=pName; document.getElementById('nameWrap').classList.add('on'); setTimeout(()=>document.getElementById('nameIn').focus(),100); }
+function saveName() { const v=document.getElementById('nameIn').value.trim()||'魔道師'; pName=v; localStorage.setItem('qf_name',v); document.getElementById('nameWrap').classList.remove('on'); refreshW(); }
+document.getElementById('nameIn').onkeydown=e=>{if(e.key==='Enter')saveName();if(e.key==='Escape')document.getElementById('nameWrap').classList.remove('on');};
+document.getElementById('nameWrap').onclick=e=>{if(e.target===document.getElementById('nameWrap'))document.getElementById('nameWrap').classList.remove('on');};
+
+// ══════════════════════════════════════
+//  先取ポイント選択
+// ══════════════════════════════════════
+function selPts(n) {
+  winPts = n;
+  document.querySelectorAll('.pts-btn').forEach(b=>{
+    b.classList.toggle('sel', parseInt(b.dataset.pts)===n);
+  });
+}
+
+// ══════════════════════════════════════
+//  モードタブ切替
+// ══════════════════════════════════════
+function switchTab(mode) {
+  ['cpu','online'].forEach(m=>{
+    document.getElementById('tab-'+m).classList.toggle('active',m===mode);
+    document.getElementById('panel-'+m).classList.toggle('active',m===mode);
+  });
+  if(mode==='online' && !USE_SB) {
+    document.getElementById('onlineStatus').textContent='⚠️ Supabase未設定 — ファイル先頭のSB_URL/SB_KEYを入力してください';
+  } else {
+    document.getElementById('onlineStatus').textContent='';
+  }
+}
+
+// ══════════════════════════════════════
+//  問題バンク管理（localStorage永続）
+// ══════════════════════════════════════
+const BKEY = 'qf_bank_v4';
+let _bank = null;
+
+function loadBank() {
+  if(_bank) return _bank;
+  try { _bank = JSON.parse(localStorage.getItem(BKEY)||'{}'); } catch{ _bank={}; }
+  return _bank;
+}
+let _storageOK=null;
+function saveBank() {
+  if(_storageOK===false) return;
+  try {
+    const json=JSON.stringify(_bank||{});
+    localStorage.setItem(BKEY,json);
+    _storageOK=true;
+  } catch(e) { _storageOK=false; /* sandboxではメモリのみ使用 */ }
+}
+
+function initBank() {
+  if(!_bank) loadBank();
+}
+
+// ── ジャンルライブラリ描画 ──
+function getAllBankGenres() {
+  const bank = loadBank();
+  return Object.entries(bank)
+    .filter(([,g])=>g.questions&&g.questions.length>0)
+    .map(([key,g])=>({...g,_key:key}))
+    .sort((a,b)=>b.questions.length-a.questions.length);
+}
+
+function renderGenreLib(containerId) {
+  const ids = containerId ? [containerId] : ['genreLib','aiGenreLib'];
+  const genres = getAllBankGenres();
+  // カテゴリ別にまとめる
+  const catMap = {};
+  genres.forEach(g=>{
+    const cat = g.category||'その他';
+    if(!catMap[cat]) catMap[cat]=[];
+    catMap[cat].push(g);
+  });
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    if(!genres.length){
+      el.innerHTML='<div style="text-align:center;font-size:13px;color:var(--tx-muted);padding:16px">まだ問題がありません。キーワードを追加してください</div>';
+      return;
+    }
+    let html='';
+    // カテゴリ行（複数キーワードが入っている場合のみ）
+    for(const [cat, gs] of Object.entries(catMap)){
+      if(gs.length>1){
+        const total=gs.reduce((s,g)=>s+g.questions.length,0);
+        const l1=gs.reduce((s,g)=>s+g.questions.filter(q=>q.level===1).length,0);
+        const l2=gs.reduce((s,g)=>s+g.questions.filter(q=>q.level===2).length,0);
+        const l3=gs.reduce((s,g)=>s+g.questions.filter(q=>q.level===3).length,0);
+        const isMainLib = id==='genreLib';
+        html+=`<div class="genre-card" ${isMainLib?`onclick="openLvModalCat('${esc(cat)}')"`:''} style="${isMainLib?'':'cursor:default'}">
+          <div class="genre-info">
+            <div class="genre-name" style="color:var(--cyan-tx)">📂 ${esc(cat)}</div>
+            <div class="genre-counts">
+              ${l1?`<span class="glv glv1">🟢 初級 ${l1}問</span>`:''}
+              ${l2?`<span class="glv glv2">🟡 中級 ${l2}問</span>`:''}
+              ${l3?`<span class="glv glv3">🔴 マニアック ${l3}問</span>`:''}
+            </div>
+          </div>
+          <div class="genre-total">${total}問</div>
+        </div>`;
+      }
+    }
+    // 個別キーワード行
+    genres.forEach(g=>{
+      const l1=g.questions.filter(q=>q.level===1).length;
+      const l2=g.questions.filter(q=>q.level===2).length;
+      const l3=g.questions.filter(q=>q.level===3).length;
+      const isMainLib = id==='genreLib';
+      html+=`<div class="genre-card" ${isMainLib?`onclick="openLvModal('${(g._key||'').replace(/'/g,"\\'")}')"`:''} style="${isMainLib?'':'cursor:default'}">
+        <div class="genre-info">
+          <div class="genre-name">${esc(g.name)}</div>
+          <div class="genre-counts">
+            ${l1?`<span class="glv glv1">🟢 初級 ${l1}問</span>`:''}
+            ${l2?`<span class="glv glv2">🟡 中級 ${l2}問</span>`:''}
+            ${l3?`<span class="glv glv3">🔴 マニアック ${l3}問</span>`:''}
+          </div>
+        </div>
+        <div class="genre-total">${g.questions.length}問</div>
+      </div>`;
+    });
+    el.innerHTML=html;
+  });
+}
+
+// ── レベル選択モーダル（個別キーワード）──
+let _selGenre=null;
+function openLvModal(bankKey){
+  const bank=loadBank();
+  const g=bank[bankKey]; if(!g||!g.questions.length){console.warn('openLvModal: key not found:',bankKey);return;}
+  _selGenre={type:'keyword',bankKey};
+  _showLvModal(g.name, g.questions);
+}
+// カテゴリ全体
+function openLvModalCat(cat){
+  const bank=loadBank();
+  const qs=[];
+  getAllBankGenres().filter(g=>g.category===cat).forEach(g=>qs.push(...g.questions));
+  if(!qs.length)return;
+  _selGenre={type:'category',name:cat,questions:qs};
+  _showLvModal('📂 '+cat, qs);
+}
+function _showLvModal(title, qs){
+  document.getElementById('lvModalTitle').textContent=title;
+  const l1=qs.filter(q=>q.level===1).length;
+  const l2=qs.filter(q=>q.level===2).length;
+  const l3=qs.filter(q=>q.level===3).length;
+  const rows=[
+    {icon:'🟢',name:'初級',desc:'基本的な問題のみ',maxLv:1,cnt:l1},
+    {icon:'🟡',name:'初級＋中級',desc:'ちょっと難しい問題も',maxLv:2,cnt:l1+l2},
+    {icon:'🔴',name:'マニアック',desc:'全問題！上級者向け',maxLv:3,cnt:l1+l2+l3},
+  ].filter(r=>r.cnt>0);
+  document.getElementById('lvBtns').innerHTML=rows.map(r=>`
+    <button class="lv-btn" onclick="startGenreBattle(${r.maxLv})">
+      <span class="lv-btn-icon">${r.icon}</span>
+      <span class="lv-btn-info">
+        <div class="lv-btn-name">${r.name}</div>
+        <div class="lv-btn-desc">${r.desc}</div>
+      </span>
+      <span class="lv-btn-cnt">${r.cnt}問</span>
+    </button>`).join('');
+  document.getElementById('lvModal').classList.add('on');
+}
+
+function startGenreBattle(maxLv){
+  document.getElementById('lvModal').classList.remove('on');
+  if(!_selGenre) return;
+  let qs;
+  if(_selGenre.type==='category'){
+    qs=_selGenre.questions;
+  } else {
+    const bank=loadBank();
+    const g=bank[_selGenre.bankKey||_selGenre.name];
+    if(!g) return;
+    qs=g.questions;
+  }
+  const pool=shuf(qs.filter(q=>(q.level||1)<=maxLv));
+  if(!pool.length) return;
+  players=[
+    {id:'player',name:pName,av:'🧙',score:0,isCPU:false,color:P_COLORS[0]},
+    {id:'cpu1',name:CPU_CFG.normal.name,av:CPU_CFG.normal.av,score:0,isCPU:true,diff:'normal',color:P_COLORS[1]},
+  ];
+  myPIdx=0;
+  initBattle(pool);
+}
+
+// ══════════════════════════════════════
+//  バンク管理（レベル制）
+// ══════════════════════════════════════
+// 追加：cntに達するまで複数レベルをまとめて追加
+function addToBank(kwId, cnt, category) {
+  const entry = QB_KEYWORD[kwId];
+  if(!entry) return {added:0,total:0,level:0,done:false};
+  const bank = loadBank();
+  if(!bank[kwId]) bank[kwId]={name:entry.display,category:category||entry.category,questions:[],nextLevel:1};
+  const b = bank[kwId];
+  if(category) b.category = category;
+
+  let added=0, lastLevel=0;
+  // nextLevelに縛られず、Lv1→Lv2→Lv3の順で未追加の問題を探す
+  for(let lv=1; lv<=3 && added<cnt; lv++) {
+    const existing = new Set(b.questions.map(q=>q.q));
+    const pool = entry.questions.filter(q=>q.level===lv && !existing.has(q.q));
+    if(pool.length===0) continue;
+    const toAdd = shuf(pool).slice(0, cnt-added);
+    toAdd.forEach(q=>{b.questions.push({...q,g:`🔍 ${entry.display}`});added++;});
+    lastLevel=lv;
+    if(added>=cnt) break;
+  }
+  // まだ追加できる問題があるかチェック
+  const remaining = entry.questions.filter(q=>!new Set(b.questions.map(x=>x.q)).has(q.q));
+  const done = remaining.length===0;
+  _bank=bank; saveBank();
+  return {added, total:b.questions.length, level:lastLevel, done};
+}
+
+function selCnt(n) {
+  const ns = String(n);
+  document.querySelectorAll('.cnt-btn').forEach(b => {
+    if(b.dataset.n === ns) b.classList.add('sel');
+    else b.classList.remove('sel');
+  });
+}
+function getSelCnt() { return parseInt(document.querySelector('.cnt-btn.sel')?.dataset.n) || 10; }
+
+// ══════════════════════════════════════
+//  Wikipedia検索 → 問題自動生成（自由キーワード対応）
+// ══════════════════════════════════════
+
+// Wikipedia fetch（CORSヘッダあり、GitHub Pages上で動作）
+async function wikiGet(params) {
+  const qs = Object.entries({...params, format:'json', origin:'*'})
+    .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),10000);
+  let r;
+  try { r=await fetch('https://ja.wikipedia.org/w/api.php?'+qs,{signal:ctrl.signal}); }
+  finally { clearTimeout(timer); }
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+// 間違い選択肢の生成
+function makeWrong(sentence) {
+  const yearM = sentence.match(/(\d{4})年/);
+  if(yearM) {
+    const y = parseInt(yearM[1]);
+    const deltas = [3,5,7,10,15,20,-3,-5,-7,-10,-15,-20];
+    const d = deltas[Math.floor(Math.random()*deltas.length)];
+    return sentence.replace(yearM[0], (y+d)+'年');
+  }
+  const numM = sentence.match(/(\d+)/);
+  if(numM) {
+    const n = parseInt(numM[1]);
+    if(n>1 && n<100000) {
+      const ws = [n+1,n-1,n*2,Math.round(n/2)].filter(x=>x>0&&x!==n);
+      if(ws.length) return sentence.replace(numM[0], ws[Math.floor(Math.random()*ws.length)].toString());
+    }
+  }
+  const swaps = [
+    ['男性','女性'],['女性','男性'],['東京','大阪'],['日本','中国'],
+    ['アメリカ','イギリス'],['金','銀'],['1位','2位'],['最大','最小'],
+    ['初','最後'],['開始','終了'],['誕生','廃止'],['発売','廃盤'],
+    ['北','南'],['東','西'],['古い','新しい'],['大きい','小さい'],
+  ];
+  for(const [a,b] of swaps) {
+    if(sentence.includes(a)) return sentence.replace(a,b);
+    if(sentence.includes(b)) return sentence.replace(b,a);
+  }
+  return null;
+}
+
+// Wikipedia記事から問題を生成
+// Wikipedia記事から問題を生成（existingQで重複除外）
+function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
+  const qs = [];
+  existingQ = existingQ || new Set();
+  const sentences = text
+    .replace(/={2,}[^=]+=+/g,'')
+    .replace(/\[\[|\]\]/g,'')
+    .replace(/\n+/g,' ')
+    .split(/(?<=[。！？])/)
+    .map(s=>s.trim())
+    .filter(s=>s.length>=15 && s.length<=80 && !/^[（\(「『【\|・]/.test(s));
+  if(sentences.length < 3) return qs;
+  const usedQ = new Set(existingQ);
+
+  // ① 年号問題
+  for(const s of sentences) {
+    if(qs.length >= Math.ceil(cnt*0.4)) break;
+    const yearM = s.match(/([^\s。]{2,10})(?:は|が|の)?(\d{4})年/);
+    if(!yearM) continue;
+    const subject = yearM[1].replace(/[はがをにでのも]$/,'');
+    const year = parseInt(yearM[2]);
+    if(year<1600||year>2030) continue;
+    const q = `「${title}」関連：${subject}は何年？`;
+    if(usedQ.has(q)) continue;
+    const deltas = shuf([1,2,3,5,7,10,15,20,25,-1,-2,-3,-5,-7,-10,-15,-20]);
+    const wrongs=[];
+    for(const d of deltas){const wy=year+d;if(wy>1600&&wy<2031&&!wrongs.includes(wy+'年'))wrongs.push(wy+'年');if(wrongs.length>=3)break;}
+    if(wrongs.length<3) continue;
+    const all=shuf([year+'年',...wrongs]);
+    qs.push({q,c:all,a:all.indexOf(year+'年'),g:`🔍 ${keyword}`});
+    usedQ.add(q);
+  }
+
+  // ② 数字問題
+  for(const s of sentences) {
+    if(qs.length >= Math.ceil(cnt*0.6)) break;
+    const numM = s.match(/(\d{1,6})(人|個|本|枚|冊|匹|種|回|票|点|万|億|km|cm|m(?!a))/);
+    if(!numM) continue;
+    const n=parseInt(numM[1]); if(n<2||n>99999) continue;
+    const unit=numM[2];
+    const ctx=s.replace(numM[0],'___').slice(0,35);
+    const q=`「${title}」関連：${ctx}の___は？`;
+    if(usedQ.has(q)) continue;
+    const ws=[n+1,n-1,Math.round(n*1.5),Math.round(n*2)].filter(x=>x>0&&x!==n);
+    if(ws.length<3) continue;
+    const all=shuf([n+unit,...ws.slice(0,3).map(x=>x+unit)]);
+    qs.push({q,c:all,a:all.indexOf(n+unit),g:`🔍 ${keyword}`});
+    usedQ.add(q);
+  }
+
+  // ③ 正誤問題
+  const pool=shuf([...sentences]);
+  for(const correct of pool) {
+    if(qs.length>=cnt) break;
+    const sh=s=>s.length>38?s.slice(0,38)+'…':s;
+    const correctS=sh(correct);
+    const q=`「${title}」について正しいのはどれ？`;
+    const qKey=q+'|'+correctS;
+    if(usedQ.has(qKey)) continue;
+    const wrongs=[];
+    for(let t=0;t<20&&wrongs.length<3;t++){const w=makeWrong(correct);if(w&&w!==correct&&!wrongs.includes(sh(w)))wrongs.push(sh(w));}
+    const others=shuf(pool.filter(s=>s!==correct&&s.length>=15));
+    while(wrongs.length<3&&others.length){const o=others.splice(0,1)[0];if(o&&sh(o)!==correctS)wrongs.push(sh(o));}
+    if(wrongs.length<3) continue;
+    const all=shuf([correctS,...wrongs]);
+    if(all.indexOf(correctS)<0) continue;
+    qs.push({q,c:all,a:all.indexOf(correctS),g:`🔍 ${keyword}`});
+    usedQ.add(qKey);
+  }
+  return qs.slice(0,cnt);
+}
+
+// バンクに追加（bankIdを指定すると既存エントリに追記）
+function addFreestyleToBank(keyword, wikiTitle, category, questions, bankId) {
+  const bank=loadBank();
+  const id=bankId||('free_'+keyword.toLowerCase().replace(/[^\w\u3040-\u9fff]/g,'_').replace(/_+/g,'_'));
+  if(!bank[id]) bank[id]={name:wikiTitle||keyword,category:category||keyword,questions:[],usedArticles:[],totalGen:0};
+  const b=bank[id];
+  if(wikiTitle&&!b.usedArticles.includes(wikiTitle)) b.usedArticles.push(wikiTitle);
+  if(category) b.category=category;
+  const existing=new Set(b.questions.map(q=>q.q));
+  let added=0;
+  questions.forEach(q=>{
+    if(!existing.has(q.q)){
+      const total=b.questions.length;
+      const level=total<10?1:total<30?2:3;
+      b.questions.push({...q,level,g:`🔍 ${keyword}`});
+      existing.add(q.q); added++;
+    }
+  });
+  b.totalGen=(b.totalGen||0)+added;
+  _bank=bank; saveBank();
+  return {added,total:b.questions.length,id};
+}
+
+async function generateAI() {
+  const keyword=document.getElementById('aiKeyword').value.trim();
+  const categoryInput=document.getElementById('aiCategory').value.trim();
+  const status=document.getElementById('aiStatus');
+  const setS=(msg,cls)=>{status.textContent=msg;status.className='ai-status '+(cls||'');};
+  if(!keyword){setS('⚠️ キーワードを入力してください','err');return;}
+  const category=categoryInput||keyword;
+  const cnt=getSelCnt();
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true; btn.textContent='🔍 検索中...';
+
+  // ① 内蔵バンクに残りがあればまず追加（なければそのまま②へ）
+  const kwId=findKwId(keyword);
+  if(kwId&&QB_KEYWORD[kwId]){
+    const {added,total}=addToBank(kwId,cnt,category);
+    if(added>0){
+      setS(`✅ ${added}問追加！「${QB_KEYWORD[kwId].display}」計${total}問`,'ok');
+      refreshCatChips(); renderGenreLib();
+      btn.disabled=false; btn.textContent='🔍 検索して追加！'; return;
+    }
+    // 内蔵終了 → Wikipedia続行
+  }
+
+  // ② Wikipedia検索（関連記事も含めて無制限追加）
+  try {
+    const bank=loadBank();
+    const freeId='free_'+keyword.toLowerCase().replace(/[^\w\u3040-\u9fff]/g,'_').replace(/_+/g,'_');
+    const targetId=kwId||freeId;
+    const usedArticles=new Set((bank[targetId]?.usedArticles)||[]);
+    const existingQ=new Set((bank[targetId]?.questions||[]).map(q=>q.q));
+
+    setS('🔍 Wikipediaを検索中...','loading');
+    const searchData=await wikiGet({action:'opensearch',search:keyword,limit:10,namespace:0});
+    const allTitles=(searchData[1]||[]).filter(t=>!usedArticles.has(t));
+    if(!allTitles.length){
+      setS('ℹ️ 使用可能な記事がなくなりました。別のキーワードで追加してください','');
+      btn.disabled=false; btn.textContent='🔍 検索して追加！'; return;
+    }
+
+    let allNewQs=[]; const processedArticles=[];
+    for(const articleTitle of allTitles){
+      if(allNewQs.length>=cnt) break;
+      try{
+        setS(`📖 「${articleTitle}」を読み込み中... (${allNewQs.length}/${cnt}問)`,'loading');
+        const pageData=await wikiGet({action:'query',titles:articleTitle,prop:'extracts',explaintext:1,exsectionformat:'plain'});
+        const page=Object.values(pageData.query.pages)[0];
+        const rawText=(page.extract||'').trim();
+        if(rawText.length<80) continue;
+        const qs=buildQuestionsFromText(keyword,articleTitle,rawText,cnt-allNewQs.length,existingQ);
+        qs.forEach(q=>existingQ.add(q.q));
+        allNewQs.push(...qs); processedArticles.push(articleTitle);
+      }catch(e){continue;}
+    }
+
+    // 関連記事リンクからさらに取得
+    if(allNewQs.length<cnt&&processedArticles.length>0){
+      try{
+        setS('🔗 関連記事を検索中...','loading');
+        const linksData=await wikiGet({action:'query',titles:processedArticles[0],prop:'links',pllimit:50,plnamespace:0});
+        const linkTitles=(Object.values(linksData.query.pages)[0]?.links||[]).map(l=>l.title).filter(t=>!usedArticles.has(t)&&!processedArticles.includes(t));
+        for(const lt of linkTitles.slice(0,8)){
+          if(allNewQs.length>=cnt) break;
+          try{
+            const pd=await wikiGet({action:'query',titles:lt,prop:'extracts',exintro:1,explaintext:1,exsectionformat:'plain'});
+            const pg=Object.values(pd.query.pages)[0];
+            const txt=(pg.extract||'').trim();
+            if(txt.length<60) continue;
+            const qs=buildQuestionsFromText(keyword,lt,txt,cnt-allNewQs.length,existingQ);
+            qs.forEach(q=>existingQ.add(q.q));
+            allNewQs.push(...qs); processedArticles.push(lt);
+          }catch(e){continue;}
+        }
+      }catch(e){}
+    }
+
+    if(!allNewQs.length){
+      setS('ℹ️ 新しい問題を生成できませんでした','');
+      btn.disabled=false; btn.textContent='🔍 検索して追加！'; return;
+    }
+
+    const {added,total}=addFreestyleToBank(keyword,processedArticles[0]||keyword,category,allNewQs,kwId);
+    // 使用済み記事を記録
+    const b2=(loadBank())[targetId];
+    if(b2){processedArticles.forEach(t=>{if(!b2.usedArticles.includes(t))b2.usedArticles.push(t);});saveBank();}
+
+    setS(`✅ ${added}問追加！計${total}問（${processedArticles.length}記事から生成）`,'ok');
+    refreshCatChips(); renderGenreLib();
+
+  }catch(e){
+    console.error(e);
+    if(e.name==='TimeoutError'||e.message?.includes('fetch')||e.message?.includes('Load')||e.message?.includes('Failed')||e.message?.includes('network'))
+      setS('⚠️ ネットワークに接続できません\n→ GitHub Pagesにデプロイ後に動作します','err');
+    else setS(`❌ ${e.message}`,'err');
+  }
+  btn.disabled=false; btn.textContent='🔍 検索して追加！';
+}
+
+
+// ══════════════════════════════════════
+//  問題管理画面
+// ══════════════════════════════════════
+let _manageKey = null;
+let _newAns = 0;
+
+// タブだけ再描画（無限ループ防止のため情報エリアには触れない）
+function _renderTabs() {
+  const genres = getAllBankGenres();
+  const tabs = document.getElementById('manageGenreTabs');
+  if(!tabs) return;
+  if(!genres.length) {
+    tabs.innerHTML = '<span style="font-size:13px;color:var(--tx-muted);padding:8px 4px">まだジャンルがありません</span>';
+    return;
+  }
+  tabs.innerHTML = genres.map(g => {
+    const active = _manageKey === g._key;
+    const key64 = btoa(encodeURIComponent(g._key)); // URLsafe key for onclick
+    return `<button data-mkey="${g._key}"
+      onclick="selectManageGenre(this.dataset.mkey)"
+      style="padding:10px 16px;border-radius:20px;min-height:42px;
+        border:2px solid ${active?'var(--gold)':'var(--bd-default)'};
+        background:${active?'rgba(255,208,64,.12)':'var(--bg-card)'};
+        color:${active?'var(--gold)':'var(--tx-body)'};
+        font-size:14px;font-weight:700;white-space:nowrap;cursor:pointer;
+        -webkit-tap-highlight-color:transparent">
+      ${esc(g.name)} <small style="opacity:.6">${g.questions.length}問</small>
+    </button>`;
+  }).join('') + `<button onclick="showNewGenreForm()"
+    style="padding:10px 16px;border-radius:20px;min-height:42px;
+      border:2px dashed var(--bd-default);background:transparent;
+      color:var(--tx-muted);font-size:14px;white-space:nowrap;cursor:pointer;
+      -webkit-tap-highlight-color:transparent">＋ 新規ジャンル</button>`;
+}
+
+function renderManage() {
+  _renderTabs();
+  if(_manageKey) {
+    _renderGenreInfo(_manageKey);
+    renderQList(_manageKey);
+  } else {
+    const bank = loadBank();
+    const genres = getAllBankGenres();
+    // バンクに何かあれば最初のジャンルを自動選択
+    if(genres.length) selectManageGenre(genres[0]._key);
+  }
+}
+
+function selectManageGenre(key) {
+  _manageKey = key;
+  _renderTabs();          // タブのハイライト更新
+  _renderGenreInfo(key);  // 情報エリア更新
+  renderQList(key);       // 問題一覧更新
+  document.getElementById('addQFormWrap').style.display = 'none';
+}
+
+function _renderGenreInfo(key) {
+  const bank = loadBank();
+  const g = bank[key];
+  const el = document.getElementById('manageGenreInfo');
+  if(!g || !el) return;
+  const cats = [...new Set(getAllBankGenres().map(x=>x.category).filter(Boolean))];
+  const catOpts = ['<option value="">-- カテゴリを選択 --</option>',
+    ...cats.map(c=>`<option value="${esc(c)}" ${c===g.category?'selected':''}>${esc(c)}</option>`)
+  ].join('');
+  el.innerHTML = `
+    <div style="margin-bottom:10px">
+      <div style="font-size:18px;font-weight:900;color:var(--tx-heading)">${esc(g.name)}</div>
+      <div style="font-size:13px;color:var(--tx-muted);margin-top:2px">
+        📂 ${esc(g.category||'カテゴリなし')} ・ ${g.questions.length}問
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+      <div style="font-size:12px;color:var(--gold)">カテゴリを変更:</div>
+      <select id="catSelectInline"
+        style="background:var(--bg-inset);border:1px solid var(--bd-default);border-radius:6px;
+        color:var(--tx-body);padding:6px 8px;font-size:13px;flex:1;min-width:0">
+        ${catOpts}
+      </select>
+      <input id="catNewInline" placeholder="または新規入力"
+        style="background:var(--bg-inset);border:1px solid var(--bd-default);border-radius:6px;
+        color:var(--tx-body);padding:6px 8px;font-size:13px;width:120px;outline:none;
+        -webkit-tap-highlight-color:transparent">
+      <button class="btn btn-sm btn-outline" onclick="applyCatChange()" style="min-height:36px;font-size:13px">変更</button>
+      <button class="btn btn-sm" onclick="confirmDeleteGenre()"
+        style="min-height:36px;font-size:13px;background:#3c0010;border:1px solid var(--red-tx);color:var(--red-tx)">
+        🗑 ジャンル削除
+      </button>
+    </div>`;
+}
+
+function applyCatChange() {
+  if(!_manageKey) return;
+  const sel = document.getElementById('catSelectInline');
+  const inp = document.getElementById('catNewInline');
+  const newCat = (inp?.value.trim()) || (sel?.value) || '';
+  if(!newCat) return;
+  const bank = loadBank();
+  if(!bank[_manageKey]) return;
+  bank[_manageKey].category = newCat;
+  _bank = bank; saveBank();
+  _renderGenreInfo(_manageKey);
+  refreshCatChips(); renderGenreLib();
+}
+
+function confirmDeleteGenre() {
+  if(!_manageKey) return;
+  const bank = loadBank();
+  const name = bank[_manageKey]?.name || _manageKey;
+  if(!confirm('「'+name+'」を全削除しますか？この操作は元に戻せません。')) return;
+  delete bank[_manageKey];
+  _bank = bank; saveBank();
+  _manageKey = null;
+  renderManage(); renderGenreLib();
+}
+
+function renderQList(key) {
+  const bank = loadBank();
+  const g = bank[key];
+  const el = document.getElementById('manageQList');
+  if(!g || !el) return;
+  if(!g.questions.length) {
+    el.innerHTML='<div style="text-align:center;font-size:14px;color:var(--tx-muted);padding:24px">まだ問題がありません。「＋ 手動で問題を追加」から追加してください</div>';
+    return;
+  }
+  const lvIcon={1:'🟢',2:'🟡',3:'🔴'};
+  const lbls=['Ａ','Ｂ','Ｃ','Ｄ'];
+  el.innerHTML = `
+    <div style="font-size:13px;color:var(--tx-muted);margin-bottom:8px">${g.questions.length}問 収録</div>
+    ${g.questions.map((q,i) => `
+    <div style="background:var(--bg-card);border:1px solid var(--bd-default);border-radius:10px;
+      padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <div style="font-size:16px;flex-shrink:0;padding-top:2px">${lvIcon[q.level||1]}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:700;color:var(--tx-heading);line-height:1.5;margin-bottom:6px">
+            Q${i+1}. ${esc(q.q)}
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            ${(q.c||[]).map((c,ci)=>`
+              <span style="font-size:12px;padding:3px 8px;border-radius:12px;
+                background:${ci===q.a?'#0c4020':'var(--bg-inset)'};
+                color:${ci===q.a?'#60ffa0':'var(--tx-muted)'}">
+                ${lbls[ci]}: ${esc(c)}${ci===q.a?' ✅':''}
+              </span>`).join('')}
+          </div>
+        </div>
+        <button data-dkey="${key}" data-didx="${i}" onclick="deleteQ(this.dataset.dkey, parseInt(this.dataset.didx))"
+          style="background:#3c0010;border:1px solid var(--red-tx);color:var(--red-tx);
+          border-radius:6px;padding:4px 10px;font-size:14px;cursor:pointer;flex-shrink:0;
+          min-height:34px;-webkit-tap-highlight-color:transparent">🗑</button>
+      </div>
+    </div>`).join('')}`;
+}
+
+function deleteQ(key, idx) {
+  if(!confirm('この問題を削除しますか？')) return;
+  const bank = loadBank();
+  if(!bank[key]) return;
+  bank[key].questions.splice(idx, 1);
+  _bank = bank; saveBank();
+  renderQList(key);
+  _renderGenreInfo(key);
+  renderGenreLib();
+}
+
+function showNewGenreForm() {
+  const name = prompt('ジャンル名を入力してください（例: 英単語・数学・趣味）');
+  if(!name?.trim()) return;
+  const cat = prompt('カテゴリを入力（空でもOK）') || '';
+  const key = 'free_' + name.trim().replace(/[^\w぀-鿿]/g,'_').slice(0,20) + '_' + Date.now();
+  const bank = loadBank();
+  bank[key] = {name:name.trim(), category:cat.trim()||name.trim(), questions:[], usedArticles:[], totalGen:0};
+  _bank = bank; saveBank();
+  _manageKey = key;
+  renderManage(); renderGenreLib(); refreshCatChips();
+}
+
+// 問題追加フォーム
+function showAddQForm() {
+  if(!_manageKey) { alert('上のタブでジャンルを先に選んでください'); return; }
+  const f = document.getElementById('addQFormWrap');
+  f.style.display = 'block';
+  f.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('newQ').value = '';
+  [0,1,2,3].forEach(i => { const el=document.getElementById('newC'+i); if(el) el.value=''; });
+  _newAns = 0;
+  _updateAnsButtons();
+  document.querySelectorAll('[data-lv]').forEach(b=>b.classList.toggle('sel', b.dataset.lv==='1'));
+}
+function hideAddQForm() { document.getElementById('addQFormWrap').style.display='none'; }
+
+function selAns(idx) {
+  _newAns = idx;
+  _updateAnsButtons();
+}
+function _updateAnsButtons() {
+  document.querySelectorAll('.sel-ans').forEach(b => {
+    const active = parseInt(b.dataset.a) === _newAns;
+    b.style.background = active ? 'rgba(255,208,64,.2)' : '';
+    b.style.borderColor = active ? 'var(--gold)' : 'var(--bd-default)';
+    b.style.color = active ? 'var(--gold)' : '';
+  });
+}
+function selLv(lv) {
+  document.querySelectorAll('[data-lv]').forEach(b=>b.classList.toggle('sel', parseInt(b.dataset.lv)===lv));
+}
+
+function saveNewQ() {
+  if(!_manageKey) return;
+  const qText = document.getElementById('newQ').value.trim();
+  const choices = [0,1,2,3].map(i => (document.getElementById('newC'+i)?.value||'').trim());
+  if(!qText) { alert('問題文を入力してください'); return; }
+  if(choices.some(c=>!c)) { alert('選択肢A〜Dを全て入力してください'); return; }
+  const lv = parseInt(document.querySelector('[data-lv].sel')?.dataset.lv)||1;
+  const bank = loadBank();
+  if(!bank[_manageKey]) return;
+  bank[_manageKey].questions.push({q:qText, c:choices, a:_newAns, level:lv, g:`🔍 ${bank[_manageKey].name}`});
+  _bank = bank; saveBank();
+  hideAddQForm();
+  renderQList(_manageKey);
+  _renderGenreInfo(_manageKey);
+  renderGenreLib();
+  alert('✅ 問題を保存しました！');
+}
+
+// カテゴリチップ表示
+
+function refreshCatChips() {
+  const el = document.getElementById('catChips');
+  if(!el) return;
+  const bank = loadBank();
+  const cats = [...new Set(Object.values(bank).map(g=>g.category).filter(Boolean))];
+  el.innerHTML = cats.slice(0,8).map(c=>`
+    <span class="chip" style="font-size:12px;padding:5px 10px" onclick="document.getElementById('aiCategory').value='${esc(c)}'">
+      ${esc(c)}
+    </span>`).join('');
+}
+
+// バンク全消去
+function clearBank() {
+  _bank={};
+  localStorage.removeItem(BKEY);
+  renderGenreLib();
+  refreshCatChips();
+  document.getElementById('aiStatus').textContent='';
+  document.getElementById('aiStatus').className='ai-status';
+}
+
+
+// ══════════════════════════════════════
+//  カテゴリ定義
+// ══════════════════════════════════════
+const QB_CATEGORIES = {
+  'アニメ・漫画': ['hunterxhunter','onepiece','dragonball','naruto','kimetsunoyaiba','attackontitan','jujutsukaisen'],
+  'ゲーム':       ['pokemon','mario','zelda','dragonquest','finalfantasy','minecraft'],
+  'スポーツ':     ['soccer','baseball'],
+  '歴史・文化':   ['sengoku'],
+};
+
+// ══════════════════════════════════════
+//  キーワード問題バンク（Lv1/2/3の3段階）
+//  初回追加→初級、2回目→中級、3回目→マニアック
+// ══════════════════════════════════════
+const QB_KEYWORD = {
+  'hunterxhunter':{display:'HUNTER×HUNTER',keys:['hunter×hunter','ハンターハンター','hunterxhunter','hxh'],category:'アニメ・漫画',questions:[
+    {q:'ゴン=フリークスの父親の名前は？',c:['キルア','ジン','ヒソカ','レオリオ'],a:1,level:1},
+    {q:'ハンター試験の第一次試験は？',c:['筆記試験','体力測定','長距離走','料理対決'],a:2,level:1},
+    {q:'ゾルディック家の職業は？',c:['魔法使い','料理人','暗殺者','商人'],a:2,level:1},
+    {q:'ヒソカの念系統は？',c:['放出系','具現化系','変化系','操作系'],a:2,level:1},
+    {q:'HUNTER×HUNTERの作者は？',c:['鳥山明','尾田栄一郎','冨樫義博','岸本斉史'],a:2,level:1},
+    {q:'幻影旅団のリーダーは？',c:['クロロ','ヒソカ','フェイタン','マチ'],a:0,level:1},
+    {q:'HUNTER×HUNTERの連載誌は？',c:['少年マガジン','少年サンデー','週刊少年ジャンプ','月刊ジャンプ'],a:2,level:1},
+    {q:'天空闘技場は何階建て？',c:['100階','200階','251階','300階'],a:2,level:1},
+    {q:'クラピカの一族の目の特徴は？',c:['青い瞳','緋の眼（赤）','金の瞳','漆黒の目'],a:1,level:1},
+    {q:'念の「四大行」に含まれないのは？',c:['纏','練','発','周'],a:3,level:1},
+    {q:'キメラアント編のキングの名前は？',c:['ピトー','メルエム','ノヴ','モラウ'],a:1,level:2},
+    {q:'ヒソカのバンジーガムは何系？',c:['具現化系','強化系','変化系','放出系'],a:2,level:2},
+    {q:'幻影旅団でのヒソカの番号は？',c:['2番','4番','6番','8番'],a:1,level:2},
+    {q:'ゴンの「ジャジャン拳・グー」の属性は？',c:['放出系','具現化系','強化系','変化系'],a:2,level:2},
+    {q:'ネオン=ノストラードの念系統は？',c:['操作系','放出系','具現化系','変化系'],a:2,level:2},
+    {q:'ゾルディック家の執事頭は？',c:['ゼノ','カナリア','ゴトー','アマン'],a:2,level:2},
+    {q:'「グリードアイランド」のカードは全何種？',c:['50種','100種','150種','200種'],a:1,level:2},
+    {q:'ゲンスルーの通り名は？',c:['爆弾魔（ボマー）','殺し屋','死神','鉄拳'],a:0,level:2},
+    {q:'ウイングがゴンに最初に教えた念の修行は？',c:['練','纏','周','発'],a:1,level:2},
+    {q:'キルアが幻影旅団侵入時に殺されかけた旅団員は？',c:['マチ','シャルナーク','フランクリン','コルトピ'],a:1,level:2},
+    {q:'ネテロの「感謝の正拳突き」は1日何回？',c:['1000回','5000回','1万回','10万回'],a:2,level:3},
+    {q:'ゾルディック家の屋敷がある山の名前は？',c:['クック山','マルチノ山','ゼノ山','カルス山'],a:0,level:3},
+    {q:'カイトの「気狂いピエロ」が出せる武器は何種？',c:['7種','9種','13種','21種'],a:2,level:3},
+    {q:'十二支んの「亥（いのしし）」は誰？',c:['ミザイストム','パリストン','チードル','ジン'],a:1,level:3},
+    {q:'イルミ=ゾルディックの念系統は？',c:['変化系','操作系','具現化系','放出系'],a:1,level:3},
+    {q:'ゾルディック家の試練の扉「門」は全部で何枚？',c:['5枚','7枚','8枚','10枚'],a:1,level:3},
+    {q:'ビスケ=クルーガーの本当の年齢は？',c:['27歳','57歳','36歳','44歳'],a:1,level:3},
+    {q:'ゴンの父ジン=フリークスの称号は？',c:['1ツ星','2ツ星','複数ツ星ハンター','通常ハンター'],a:1,level:3},
+    {q:'HUNTER×HUNTERの連載開始は何年？',c:['1995年','1996年','1997年','1998年'],a:3,level:1},
+    {q:'ゴンの誕生日は？',c:['3月3日','4月4日','5月5日','6月6日'],a:2,level:1},
+    {q:'ゴンの出身の島の名前は？',c:['ドーレ島','カキン島','クジラ島','ファンファン島'],a:2,level:1},
+    {q:'ゴンを育てた保護者の名前は？',c:['キキョウ','カナリア','ゼノ','ミトさん'],a:3,level:1},
+    {q:'キルアの兄の名前は？',c:['ゼノ','ミルキ','マハ','イルミ'],a:3,level:1},
+    {q:'レオリオの夢は？',c:['世界一の剣士','最強の暗殺者','医者になること','大金持ち'],a:2,level:1},
+    {q:'ゴン・キルア・クラピカ・レオリオの中で「強化系」は？',c:['クラピカ','キルア','レオリオ','ゴン'],a:3,level:1},
+    {q:'ハンター試験を主催する機関は？',c:['念力協会','世界政府','ゾルディック家','ハンター協会'],a:3,level:1},
+    {q:'幻影旅団の別名は？',c:['ブラックリスト','スパイダー（蜘蛛）','レッドクロス','シャドウ'],a:1,level:1},
+    {q:'念能力の6つの系統に含まれないのは？',c:['強化系','変化系','放出系','爆発系'],a:3,level:1},
+    {q:'「ジャジャン拳」の3つの型の読み方は？',c:['グー・チョキ・パー','グー・チー・パー','岩・はさみ・紙','打・突・払'],a:1,level:1},
+    {q:'ゴンの血液型は？',c:['A型','B型','O型','AB型'],a:1,level:1},
+    {q:'キルアの好きな食べ物は？',c:['せんべい','グミ','チョコレート（チョコロボ）','ケーキ'],a:2,level:1},
+    {q:'HUNTER×HUNTERのタイトルの由来は誰の言葉から？',c:['冨樫義博の一人言','ダウンタウン浜田の「何で2回言うねん」','担当編集者','読者アンケート'],a:1,level:1},
+    {q:'2022年7月時点の累計発行部数は？',c:['5000万部','6000万部','7500万部','8400万部'],a:3,level:1},
+    {q:'念能力「具現化系」の特徴は？',c:['体を強化する','オーラを遠くに飛ばす','他者を操る','オーラを物質化する'],a:3,level:1},
+    {q:'ゴンの身長は？',c:['148cm','150cm','154cm','160cm'],a:2,level:1},
+    {q:'クラピカが属することになった組織は？',c:['ハンター協会','幻影旅団','ゾルディック家','ノストラード組'],a:3,level:1},
+    {q:'四大行の「纏（まとい）」とは？',c:['オーラを外に飛ばす','オーラを体に纏う','オーラで攻撃する','オーラを極限まで高める'],a:1,level:1},
+    {q:'ゴンの体重は？',c:['41kg','45kg','49kg','55kg'],a:2,level:1},
+    {q:'キルアの誕生日は？',c:['5月5日','6月6日','7月7日','8月8日'],a:2,level:1},
+    {q:'ゴン最初のハンター試験は何回目の受験？',c:['1回目','2回目','3回目','初めてではない'],a:0,level:1},
+    {q:'幻影旅団の最大人数は何人？',c:['10人','12人','13人','15人'],a:2,level:1},
+    {q:'「天空闘技場」での200階以上のクラスに贈られる称号は？',c:['天空の勇士','ヘブンズアリーナファイター','フロアマスター','天下無双'],a:1,level:1},
+    {q:'キルアの念系統は？',c:['強化系','放出系','変化系','操作系'],a:2,level:1},
+    // Lv2追加
+    {q:'ゴンの「ジャジャン拳・グー」の念系統は？',c:['放出系','変化系','操作系','強化系'],a:3,level:2},
+    {q:'ゴンの「ジャジャン拳・チー」の念系統は？',c:['強化系','具現化系','変化系','特質系'],a:1,level:2},
+    {q:'ゴンの「ジャジャン拳・パー」の念系統は？',c:['変化系','強化系','放出系','操作系'],a:2,level:2},
+    {q:'クロロの「盗賊の極意」で能力を盗む条件2つのうち「手に触れること」以外は？',c:['相手を倒すこと','相手の能力を目で見ること','相手の名前を知ること','能力を受けること'],a:1,level:2},
+    {q:'キルアの「神速（カンムル）」の別名は？',c:['電光石火','雷光拳','ゴッドスピード','神速の業'],a:2,level:2},
+    {q:'クラピカの「鎖」のうち「癒しの鎖」の効果は？',c:['相手を束縛','傷を癒す','能力封印','精神を操る'],a:1,level:2},
+    {q:'ネフェルピトーの念能力の系統は？',c:['強化系','変化系','具現化系','特質系'],a:2,level:2},
+    {q:'キメラアントの「王直属護衛隊」の3人は誰？',c:['ピトー・プフ・ユピー','メルエム・ピトー・プフ','ピトー・ノヴ・モラウ','プフ・ユピー・キルア'],a:0,level:2},
+    {q:'幻影旅団・シャルナークの念系統は？',c:['強化系','放出系','操作系','具現化系'],a:2,level:2},
+    {q:'ゲンスルーの通り名「爆弾魔（ボマー）」の技を発動する言葉は？',c:['「ボマー」と言う','「爆弾魔」と言う','「カウントダウン」と言う','合言葉を言う'],a:1,level:2},
+    {q:'ゴンの大人化（極限状態）を回復させた人物は？',c:['ウイング','キルア','ゼノ','ナニカ（アルカ）'],a:3,level:2},
+    {q:'ハンター試験の第三次試験の舞台は？',c:['天空闘技場','グリードアイランド','トリック・タワー','ジャングル'],a:2,level:2},
+    {q:'クラピカの「緋の眼」が現れる条件は？',c:['戦闘時','常に','強い感情（特に怒り）が高まった時','念を使う時'],a:2,level:2},
+    {q:'ヒソカが好むのは「強い相手と戦うこと」。その理由として示されるのは？',c:['名誉のため','純粋な戦闘の悦び（戦闘狂）','幻影旅団を倒すため','お金のため'],a:1,level:2},
+    {q:'キルアが体内に埋め込まれた暗示（恐怖の制約）を解除したのは誰から？',c:['ゼノ','ゴトー','イルミ（自分で取り出した）','ミルキ'],a:2,level:2},
+    {q:'グリードアイランドで集めるカードは全部で何種類？',c:['50種','100種','150種','200種'],a:1,level:2},
+    {q:'ヒソカが付けたゴンの「ポテンシャル評価点」は何点？',c:['6点','7点','8点','10点'],a:1,level:2},
+    {q:'ゾルディック家の試験の門「試練の扉」は全部で何枚？',c:['5枚','7枚','8枚','10枚'],a:1,level:2},
+    {q:'幻影旅団・フェイタンの念系統は？',c:['強化系','変化系','放出系','具現化系'],a:1,level:2},
+    {q:'キルアの妹の名前は？',c:['カルア','アルカ','ナニカ','ミルカ'],a:1,level:2},
+    {q:'クロロの念能力の名前は？',c:['盗賊の極意（スキルハンター）','能力コレクター','スティールチェーン','ブックマスター'],a:0,level:2},
+    {q:'ゴンの父ジン=フリークスはどんなハンター？',c:['通常のハンター','星(ツ星)付きハンター','ダブルスター','トリプルスター'],a:1,level:2},
+    {q:'ゴンとキルアが「グリードアイランド」に入るのに使ったのは？',c:['ハンターライセンス','念のカード','特別な装置','ゲームを買った'],a:3,level:2},
+    // Lv3追加
+    {q:'ネテロ会長がメルエムに使った最後の切り札は？',c:['最強の念攻撃','核爆弾','貧者の薔薇（生物兵器）','自爆'],a:2,level:3},
+    {q:'ゴンの極限状態（大人化）時に失ったものは？',c:['記憶','視力','念と引き換えに寿命を使い果たした','腕'],a:2,level:3},
+    {q:'ゼノ=ゾルディックの念系統は？',c:['強化系','変化系','操作系','放出系'],a:2,level:3},
+    {q:'幻影旅団が結成されたとされる場所は？',c:['ヨークシン','ドーレ','メテオールシティ','パドキア共和国'],a:2,level:3},
+    {q:'クラピカの「鎖」のうち「束縛する中指の鎖（チェーンジェイル）」の特徴は？',c:['誰でも束縛できる','強化系能力者専用に効果が高い','幻影旅団員専用・使うと死ぬ誓約','毒を注入する'],a:2,level:3},
+    {q:'ゴンが天空闘技場でヒソカに勝つためにひらめいた戦法は？',c:['スピードで圧倒','念を込めた釣り竿のしなりを使う','バンジーガムを利用','正面突破'],a:1,level:3},
+    {q:'十二支ん（じゅうにしん）の「亥（いのしし）」は誰？',c:['ミザイストム','チードル','パリストン','ジン'],a:2,level:3},
+    {q:'「ネテロvsメルエム」戦でネテロが最後に使用した技の正式名は？',c:['百式観音・最終奥義','零の手','零式：孔・黒心臓','小指の守り'],a:1,level:3},
+    {q:'ゴンが生き返った（大人化から回復した）際、キルアが妹に言った「1つだけお願い」は？',c:['ゴンを元に戻すこと','ゴンの念を戻すこと','ゴンを健康に回復させること','ゴンの記憶を戻すこと'],a:2,level:3},
+    {q:'ヒソカとクロロが戦った「ヒソカvsクロロ」の場所は？',c:['メテオールシティ','ヨークシンシティ','天空闘技場','グリードアイランド'],a:2,level:3},
+    {q:'幻影旅団でヒソカが取った戦略（クロロとの戦い前）は？',c:['正面から戦いを挑んだ','死体を使ったトリック','コロシアムを会場に選んだ','仲間を集めた'],a:2,level:3},
+    {q:'ナックルの念能力「A・P・R（アポル）」の本来の意味は？',c:['敵の体力を奪う','貸したオーラを複利で返済させる能力','相手を吹き飛ばす','オーラを奪う'],a:1,level:3},
+    {q:'ゾルディック家の「第4の扉」の重さは？',c:['16t','50t','64t','100t'],a:2,level:3},
+    {q:'ハンター協会の「双璧」と呼ばれる2人は？',c:['ゼノとネテロ','モラウとノヴ','ネテロとパリストン','ジンとパリストン'],a:2,level:3},
+    {q:'キルアが「カルトを連れ戻す」ために戦ったのは誰？',c:['イルミ','ミルキ','ゴトー','マハ'],a:1,level:3},
+  ]},
+  'onepiece':{display:'ワンピース',keys:['ワンピース','one piece','onepiece','ワンピ'],category:'アニメ・漫画',questions:[
+    {q:'ルフィが食べた悪魔の実は？',c:['メラメラの実','ゴムゴムの実','ピカピカの実','グラグラの実'],a:1,level:1},
+    {q:'連載開始年は？',c:['1995年','1996年','1997年','1998年'],a:2,level:1},
+    {q:'「麦わらの一味」の剣士は？',c:['ゾロ','サンジ','ウソップ','ナミ'],a:0,level:1},
+    {q:'ワンピースの作者は？',c:['鳥山明','尾田栄一郎','冨樫義博','岸本斉史'],a:1,level:1},
+    {q:'ゾロの夢は？',c:['海賊王','世界一の剣士','最強の料理人','航海士'],a:1,level:1},
+    {q:'ルフィの兄の名前は？',c:['エース','サボ','コビー','ゾロ'],a:0,level:1},
+    {q:'サンジが働いていた海上レストランは？',c:['バラ亭','バラティエ','マリンフォード','シャボンディ'],a:1,level:1},
+    {q:'四皇に含まれないのは？',c:['ビッグ・マム','カイドウ','シャンクス','スモーカー'],a:3,level:1},
+    {q:'ナミの故郷の村は？',c:['フーシャ村','コノハ村','コーカス村','ローグタウン'],a:0,level:1},
+    {q:'「偉大なる航路」への入口は？',c:['東の海','双子岬','赤い土の大陸','楽園'],a:1,level:1},
+    {q:'ロビンが食べた悪魔の実の名前は？',c:['ハナハナの実','パラパラの実','ウシウシの実','ニキュニキュの実'],a:0,level:2},
+    {q:'頂上戦争で命を落としたのは？',c:['サボ','エース','ナミ','チョッパー'],a:1,level:2},
+    {q:'白ひげの悪魔の実は？',c:['グラグラの実','ヤミヤミの実','マグマグの実','ピカピカの実'],a:0,level:2},
+    {q:'ロジャー海賊団の副船長（右腕）の名前は？',c:['クロッカス','シルバーズ・レイリー','バギー','スコッパー'],a:1,level:2},
+    {q:'シャンクスの懸賞金（作中判明）は？',c:['15億','20億','40億以上','55億1100万ベリー'],a:3,level:2},
+    {q:'ルフィの「ギア2」の加速メカニズムは？',c:['骨格を硬化','血液を加速・体温上昇','内臓を圧縮','筋肉を膨張'],a:1,level:3},
+    {q:'ルフィの「ギア5」の異名は？',c:['太陽神ニカ','月の神','嵐の神','海の王'],a:0,level:3},
+    {q:'エニエス・ロビーで世界政府の旗を燃やしたのは？',c:['ルフィ','ロビン','ウソップ','ゾロ'],a:0,level:3},
+    {q:'シャンクスが失った腕はどちら？',c:['右腕','左腕','両腕','失っていない'],a:0,level:3},
+    {q:'黒ひげ（ティーチ）が持つ2つの悪魔の実は？',c:['グラグラとメラメラ','ヤミヤミとグラグラ','マグマグとヤミヤミ','グラグラとピカピカ'],a:1,level:3},
+  ]},
+  'pokemon':{display:'ポケモン',keys:['ポケモン','pokemon','ポケットモンスター'],category:'ゲーム',questions:[
+    {q:'最初のポケモン作品の発売年は？',c:['1994年','1995年','1996年','1997年'],a:2,level:1},
+    {q:'御三家で「みずタイプ」は？',c:['フシギダネ','ヒトカゲ','ゼニガメ','ピカチュウ'],a:2,level:1},
+    {q:'開発会社は？',c:['任天堂','ゲームフリーク','ハル研究所','モノリスソフト'],a:1,level:1},
+    {q:'サトシの最初のパートナーは？',c:['フシギダネ','イーブイ','ピカチュウ','リザードン'],a:2,level:1},
+    {q:'タイプは現在何種類？',c:['16','17','18','19'],a:2,level:1},
+    {q:'ニビシティのジムリーダーは？',c:['タケシ','カスミ','マチス','エリカ'],a:0,level:1},
+    {q:'ミュウツーの分類は？',c:['化石ポケモン','伝説のポケモン','幻のポケモン','ひでんのポケモン'],a:1,level:1},
+    {q:'初代全国図鑑のポケモン数は？',c:['149匹','150匹','151匹','152匹'],a:2,level:1},
+    {q:'「ふしぎなまもり」を持つのは？',c:['ヌケニン','バシャーモ','ピジョン','ガーディ'],a:0,level:1},
+    {q:'最大個体値は？',c:['30','31','32','63'],a:1,level:1},
+    {q:'XY（第6世代）で追加されたメカニズムは？',c:['Zワザ','ダイマックス','メガシンカ','テラスタル'],a:2,level:2},
+    {q:'「イーブイ」が「エーフィ」に進化する条件は？',c:['みずのいし','なかよし度UP+昼','なかよし度UP+夜','ほのおのいし'],a:1,level:2},
+    {q:'ホウエン地方の主な伝説（ルビー側）は？',c:['レジアイス','グラードン','カイオーガ','ラティオス'],a:1,level:2},
+    {q:'「はがねタイプ」が弱点を持たない属性は？',c:['どく','くさ','でんき','いわ'],a:0,level:2},
+    {q:'「テラスタル」が追加された世代は？',c:['第7世代','第8世代','第9世代','第10世代'],a:2,level:2},
+    {q:'「ピカチュウ」が「ライチュウ」に進化するには？',c:['レベルアップ','かみなりのいし','電気のいし','ひかりのいし'],a:2,level:3},
+    {q:'「メタモン」の特技は？',c:['どんな技でも使える','変身して相手の姿になる','全能力が最高値','眠らせる'],a:1,level:3},
+    {q:'「ポケモンGO」を開発した会社は？',c:['ゲームフリーク','任天堂','Niantic','DeNA'],a:2,level:3},
+    {q:'努力値（EV）の1ステータス上限は？',c:['252','255','510','508'],a:0,level:3},
+    {q:'第9世代（スカーレット/バイオレット）の舞台は？',c:['カントー地方','ホウエン地方','パルデア地方','キタカミの里'],a:2,level:3},
+  ]},
+  'mario':{display:'マリオ',keys:['マリオ','スーパーマリオ','super mario'],category:'ゲーム',questions:[
+    {q:'マリオの職業は？',c:['大工','医者','配管工','農家'],a:2,level:1},
+    {q:'マリオの弟は？',c:['ワリオ','ウェイジー','ルイージ','テレサ'],a:2,level:1},
+    {q:'ピーチ姫をさらう敵は？',c:['クッパ','ワリオ','ルイージ','ヨッシー'],a:0,level:1},
+    {q:'スーパーマリオブラザーズの発売年は？',c:['1983年','1985年','1987年','1989年'],a:1,level:1},
+    {q:'赤いキノコを取るとどうなる？',c:['大きくなる','無敵になる','ファイアが使える','空を飛べる'],a:0,level:1},
+    {q:'「スター」を取ると？',c:['大きくなる','無敵になる','スピードUP','飛べる'],a:1,level:1},
+    {q:'マリオの帽子の文字は？',c:['M','N','A','☆'],a:0,level:1},
+    {q:'「マリオカート」の「青甲羅」の特徴は？',c:['ランダムな相手を攻撃','1位を直接追尾','全員に当たる','自分を守る'],a:1,level:1},
+    {q:'ヨッシーの出身は？',c:['キノコ王国','ヨッシーアイランド','ドンキーコング島','クッパ城'],a:1,level:1},
+    {q:'ワリオの帽子の文字は？',c:['W','X','Z','V'],a:0,level:1},
+    {q:'スーパーマリオ64のスター総数は？',c:['70','80','105','120'],a:3,level:2},
+    {q:'マリオが初めて登場したゲームは？',c:['スーパーマリオブラザーズ','ドンキーコング','マリオブラザーズ','マリオランド'],a:1,level:2},
+    {q:'「マリオオデッセイ」でキャッピーが行う行動は？',c:['帽子を投げて飛ぶ','敵に帽子を被せてキャプチャー','帽子で攻撃のみ','帽子で防御'],a:1,level:2},
+    {q:'「マリオカート8」で登場した新機能は？',c:['コイン','重力走行（反重力）','スタント','スリップストリーム'],a:1,level:2},
+    {q:'「マリオパーティ」は最大何人まで？',c:['2人','3人','4人','5人'],a:2,level:2},
+    {q:'マリオの日本語版フルネームは？',c:['マリオ・マリオ','マリオ・ジャンプマン','宮本茂','ジャンプマン'],a:0,level:3},
+    {q:'スーパーマリオブラザーズの「無限1UP」バグができる面は？',c:['1-1','3-1','5-2','8-3'],a:1,level:3},
+    {q:'マリオが「ジャンプマン」と呼ばれていたゲームは？',c:['マリオブラザーズ','ドンキーコング','スーパーマリオ','アーバン'],a:1,level:3},
+    {q:'マリオシリーズの初代プロデューサーは？',c:['岩田聡','宮本茂','横井軍平','山内溥'],a:1,level:3},
+    {q:'「ペーパーマリオ」シリーズ第1作の発売ハードは？',c:['スーファミ','NINTENDO64','ゲームキューブ','GBA'],a:1,level:3},
+  ]},
+  'soccer':{display:'サッカー',keys:['サッカー','サッカー日本代表','football'],category:'スポーツ',questions:[
+    {q:'1試合のプレー時間は？',c:['80分','90分','100分','120分'],a:1,level:1},
+    {q:'ゴールの幅は？',c:['6m','7.32m','8m','7m'],a:1,level:1},
+    {q:'1チームの選手数は？',c:['10人','11人','12人','13人'],a:1,level:1},
+    {q:'イエローカード2枚で？',c:['退場','ペナルティ','交代','警告のみ'],a:0,level:1},
+    {q:'PKの距離は？',c:['10m','11m','12m','13m'],a:1,level:1},
+    {q:'フリーキックで壁の距離は最低何m？',c:['7m','8m','9.15m','10m'],a:2,level:1},
+    {q:'日本代表が初めてW杯に出場した年は？',c:['1994年','1998年','2002年','2006年'],a:1,level:1},
+    {q:'FIFAワールドカップの開催周期は？',c:['2年','3年','4年','5年'],a:2,level:1},
+    {q:'最も多くW杯を制覇した国は？',c:['ドイツ','アルゼンチン','ブラジル（5回）','イタリア'],a:2,level:1},
+    {q:'延長戦でも決まらない場合は？',c:['引き分け','コイントス','PK戦','もう1試合'],a:2,level:1},
+    {q:'GKだけに許される行為は？',c:['手でボールを持つ（自陣ペナルティエリア内）','タックル','コーナーキック','ヘディング'],a:0,level:2},
+    {q:'「トータルフットボール」で有名なチームは？',c:['リバプール','バルセロナ（70年代）','アヤックス（70年代）','レアルマドリード'],a:2,level:2},
+    {q:'「バナナシュート」はどんなシュート？',c:['上を曲がる','弧を描くように曲がる','水平に飛ぶ','下に落ちる'],a:1,level:2},
+    {q:'交代できる選手数（現行規則）は？',c:['2人','3人（従来）','4人','5人（改正後）'],a:3,level:2},
+    {q:'コーナーキックで相手は何m以上離れる？',c:['8m','9.15m','10m','11m'],a:1,level:2},
+    {q:'「ティキ・タカ」はどのチームの代名詞？',c:['レアルマドリード','バルセロナ','マンチェスターU','バイエルン'],a:1,level:3},
+    {q:'「ロスタイム」の正式名称は？',c:['アディショナルタイム','オーバータイム','インジュリータイム','エクストラタイム'],a:0,level:3},
+    {q:'2022年W杯の優勝国は？',c:['フランス','ブラジル','アルゼンチン','クロアチア'],a:2,level:3},
+    {q:'FIFA公認の試合球のパネル数は？（旧仕様）',c:['12枚','20枚','32枚','16枚'],a:2,level:3},
+    {q:'「ゴールデンゴール」ルールとは？',c:['延長で先に点を取ったら勝ち（廃止）','最高のゴールの賞','PK戦の呼び方','特別ゴールで2点'],a:0,level:3},
+  ]},
+  'baseball':{display:'野球',keys:['野球','プロ野球','baseball'],category:'スポーツ',questions:[
+    {q:'ストライク3つで？',c:['ボール','アウト','ファウル','ホームラン'],a:1,level:1},
+    {q:'塁間の距離は何フィート？',c:['80','90','100','110'],a:1,level:1},
+    {q:'1チームの打順は何人？',c:['8人','9人','10人','11人'],a:1,level:1},
+    {q:'フォアボールで1塁に出るには何球？',c:['3球','4球','5球','6球'],a:1,level:1},
+    {q:'通常のイニング数は？',c:['7回','8回','9回','10回'],a:2,level:1},
+    {q:'「完全試合」とは？',c:['全員三振','無安打・無四球・無失点で27アウト','全試合勝利','無失点で勝利'],a:1,level:1},
+    {q:'NPBの1シーズンの試合数は？',c:['120試合','130試合','143試合','162試合'],a:2,level:1},
+    {q:'「振り逃げ」が成立する条件は？',c:['なし','三振でキャッチャーがボールを捕れない状況','第3アウト','常に出られる'],a:1,level:1},
+    {q:'打率3割とはどのくらい？',c:['打席の3割でホームラン','打席の3割でヒット','打席の3割で出塁','打席の3割で得点'],a:1,level:1},
+    {q:'「サヨナラ」とは？',c:['9回裏に逆転','最終回に試合を決める勝利得点を入れること','ホームラン限定','延長での勝利'],a:1,level:1},
+    {q:'「バント」の主な目的は？',c:['ホームランを打つ','ランナーを進める','投手を疲れさせる','時間稼ぎ'],a:1,level:2},
+    {q:'「ダブルプレー（ゲッツー）」とは？',c:['1プレーで2アウト','1打席で2本ヒット','ホームランが連続','2人同時出塁'],a:0,level:2},
+    {q:'「スクイズ」とは？',c:['バントで三塁走者を本塁に迎える作戦','盗塁の一種','守備陣形','特殊球'],a:0,level:2},
+    {q:'「タイブレーク」は何回から？（NPB）',c:['延長8回から','延長10回から','延長12回から','プレーオフのみ'],a:1,level:2},
+    {q:'「OPS」とは？',c:['守備率','出塁率+長打率','防御率の別称','奪三振率'],a:1,level:2},
+    {q:'「ナックルボール」の特徴は？',c:['回転が少なく不規則に変化','高速直球','落ちる変化球','横に曲がる'],a:0,level:3},
+    {q:'「甲子園」は何県にある？',c:['大阪府','兵庫県','京都府','奈良県'],a:1,level:3},
+    {q:'プロ野球「日本シリーズ」は通常何試合制？',c:['5試合制','7試合制（4勝先取）','9試合制','3試合制'],a:1,level:3},
+    {q:'「野茂英雄」が有名にした変化球は？',c:['スライダー','フォーク（トルネード投法）','カーブ','シュート'],a:1,level:3},
+    {q:'「大谷翔平」が二刀流として活躍するポジションは？',c:['投手のみ','野手のみ','投手と野手の両方','監督'],a:2,level:3},
+  ]},
+  'sengoku':{display:'戦国時代',keys:['戦国時代','織田信長','豊臣秀吉','徳川家康','sengoku'],category:'歴史・文化',questions:[
+    {q:'本能寺の変は何年？',c:['1573年','1582年','1590年','1600年'],a:1,level:1},
+    {q:'徳川家康が江戸幕府を開いた年は？',c:['1600年','1603年','1615年','1620年'],a:1,level:1},
+    {q:'「風林火山」の旗印を使ったのは？',c:['織田信長','徳川家康','武田信玄','上杉謙信'],a:2,level:1},
+    {q:'関ヶ原の戦いはいつ？',c:['1598年','1600年','1603年','1615年'],a:1,level:1},
+    {q:'桶狭間で今川義元を討ったのは？',c:['武田信玄','徳川家康','織田信長','羽柴秀吉'],a:2,level:1},
+    {q:'豊臣秀吉の出身地は？',c:['尾張','甲斐','越後','薩摩'],a:0,level:1},
+    {q:'「楽市楽座」を行ったのは誰？',c:['豊臣秀吉','徳川家康','織田信長','武田信玄'],a:2,level:1},
+    {q:'「太閤検地」の目的は？',c:['軍備増強','土地・収穫量の把握','宗教弾圧','外国との貿易'],a:1,level:1},
+    {q:'徳川家康の出身城は？',c:['岐阜城','安土城','岡崎城','駿府城'],a:2,level:1},
+    {q:'関ヶ原で西軍の総大将は？',c:['上杉景勝','石田三成','宇喜多秀家','毛利輝元'],a:3,level:1},
+    {q:'長篠の戦いで使った新戦術は？',c:['騎兵突撃','鉄砲の三段撃ち','水攻め','夜襲'],a:1,level:2},
+    {q:'本能寺の変を起こしたのは誰？',c:['羽柴秀吉','柴田勝家','明智光秀','前田利家'],a:2,level:2},
+    {q:'大阪夏の陣の年は？',c:['1600年','1603年','1610年','1615年'],a:3,level:2},
+    {q:'「三英傑」として数えられない武将は？',c:['織田信長','豊臣秀吉','武田信玄','徳川家康'],a:2,level:2},
+    {q:'「鳴かぬなら…」で「殺してしまえ」は誰？',c:['豊臣秀吉','織田信長','徳川家康','武田信玄'],a:1,level:2},
+    {q:'安土城の所在地（現在の都道府県）は？',c:['愛知県','岐阜県','滋賀県','京都府'],a:2,level:3},
+    {q:'伊達政宗の別名「独眼竜」の由来は？',c:['龍神信仰','片目を患い失明した','武勇を称えて','竜のような家紋'],a:1,level:3},
+    {q:'豊臣秀吉が「サル」と呼ばれた理由は？',c:['機敏だから','顔立ちが猿に似ていたとされるから','身軽だから','木登りが得意だから'],a:1,level:3},
+    {q:'「本能寺の変」後、羽柴秀吉が明智光秀を討った戦いは？',c:['長篠の戦い','山崎の戦い','賤ヶ岳の戦い','小田原征伐'],a:1,level:3},
+    {q:'豊臣秀吉が行った2度の朝鮮出兵を総称して？',c:['文禄・慶長の役','壬辰倭乱のみ','慶長の役のみ','日明戦争'],a:0,level:3},
+  ]},
+  'dragonball':{display:'ドラゴンボール',keys:['ドラゴンボール','dragon ball','dragonball','DB','dbz'],category:'アニメ・漫画',questions:[
+    {q:'ドラゴンボールの作者は？',c:['尾田栄一郎','岸本斉史','冨樫義博','鳥山明'],a:3,level:1},
+    {q:'ドラゴンボールの連載開始は何年？',c:['1982年','1983年','1984年','1985年'],a:2,level:1},
+    {q:'ドラゴンボールは全部で何個？',c:['5個','6個','7個','8個'],a:2,level:1},
+    {q:'ドラゴンボールを集めると現れる龍の名前は？',c:['ポルンガ','神龍（シェンロン）','龍神','エターナルドラゴン'],a:1,level:1},
+    {q:'主人公・孫悟空のサイヤ人名は？',c:['バーダック','ラディッツ','カカロット','ターブル'],a:2,level:1},
+    {q:'悟空の妻の名前は？',c:['ブルマ','ビーデル','ランチ','チチ'],a:3,level:1},
+    {q:'悟空の長男の名前は？',c:['悟天','トランクス','悟飯','バーダック'],a:2,level:1},
+    {q:'かめはめ波を最初に教えたのは誰？',c:['神様','天津飯','界王様','亀仙人（武天老師）'],a:3,level:1},
+    {q:'ドラゴンボールの連載誌は？',c:['少年マガジン','少年サンデー','週刊少年ジャンプ','コロコロコミック'],a:2,level:1},
+    {q:'フリーザは全部で何形態に変身できる？',c:['2形態','3形態','4形態（最終形態含む）','5形態'],a:2,level:1},
+    {q:'悟空が最初に乗った雲の名前は？',c:['キンドウ雲','筋斗雲','飛行雲','仙人雲'],a:1,level:1},
+    {q:'ブルマが発明したドラゴンボールを探す道具は？',c:['スカウター','ドラゴンレーダー','神龍探知機','気探知機'],a:1,level:1},
+    {q:'クリリンが後に結婚した相手は？',c:['ランチ','ブルマ','ビーデル','18号'],a:3,level:1},
+    {q:'ピッコロはどの星の出身？',c:['地球','サイヤ人の星','ナメック星','界王星'],a:2,level:1},
+    {q:'悟空の師匠・亀仙人の代表的な技は？',c:['元気玉','ギャリック砲','かめはめ波','太陽拳'],a:2,level:1},
+    {q:'セルの完全体に必要な吸収対象は？',c:['ベジータと悟空','17号と18号','16号と17号','18号と悟空'],a:1,level:1},
+    {q:'超サイヤ人に最初に変身した人物は？',c:['ベジータ','バーダック','トランクス','孫悟空'],a:3,level:1},
+    {q:'人造人間を作ったのは誰？',c:['フリーザ','バビディ','レッドリボン軍・ドクター・ゲロ','ガーリックJr.'],a:2,level:1},
+    {q:'悟空の次男の名前は？',c:['悟飯','トランクス','バーダック','悟天'],a:3,level:1},
+    {q:'魔人ブウを最終的に倒した技は？',c:['かめはめ波','超サイヤ人3の一撃','元気玉（地球・ナメック星・あの世の気）','フュージョン'],a:2,level:1},
+    {q:'界王拳を悟空に教えたのは誰？',c:['亀仙人','ピッコロ','老界王神','北の界王（カイオウ様）'],a:3,level:2},
+    {q:'精神と時の部屋で外界の1年は何日に相当する？',c:['1日','2日','3日','7日'],a:0,level:2},
+    {q:'フュージョンの2つの方法は？',c:['合体ダンスとポタラ','合体ポーズとポタラ','フュージョンダンスとポタラ','イヤリングとダンス'],a:2,level:2},
+    {q:'ベジットはどちらの合体方法で生まれた？',c:['フュージョンダンス','ポタラ合体','分裂合体','精神合体'],a:1,level:2},
+    {q:'ゴジータはどちらの合体方法で生まれた？',c:['フュージョンダンス','ポタラ合体','分裂合体','精神合体'],a:0,level:2},
+    {q:'悟空が超サイヤ人に初変身したきっかけは？',c:['修行の成果','クリリンが殺されたことへの怒り','ベジータへの挑発','フリーザへの決意'],a:1,level:2},
+    {q:'ナメック星のポルンガが叶える願いの数は？',c:['1つ','2つ','3つ','無制限'],a:2,level:2},
+    {q:'天津飯の「禁断の秘技」の名前は？',c:['太陽拳','気功砲','分身拳','新太陽拳'],a:1,level:2},
+    {q:'悟飯が超サイヤ人2に覚醒した際のとどめの技は？',c:['かめはめ波','父子かめはめ波（セルゲーム）','ソニックブレード','超かめはめ波'],a:1,level:2},
+    {q:'ベジータの技「ファイナルフラッシュ」を最初にぶつけた相手は？',c:['フリーザ','悟空','セル（完全体）','ナッパ'],a:2,level:2},
+    {q:'「ドラゴンボールZ」のアニメ開始年は？',c:['1987年','1988年','1989年','1990年'],a:2,level:2},
+    {q:'悟空が瞬間移動を習得した星は？',c:['ナメック星','ヤードラット星','カイオウ星','地球'],a:1,level:2},
+    {q:'フリーザの部下「ギニュー特戦隊」のリーダーは？',c:['リクーム','バータ','ジース','キャプテン・ギニュー'],a:3,level:2},
+    {q:'超サイヤ人2として最初に変身したのは誰？',c:['悟空','ベジータ','孫悟飯','トランクス'],a:2,level:2},
+    {q:'「天下一武道会」で悟空が最初に優勝した第何回大会？',c:['第21回','第22回','第23回','第25回'],a:2,level:2},
+    {q:'悟空の父バーダックはどんな立場のサイヤ人？',c:['戦闘力の高いエリート','低位の戦闘員（下級戦士）','王族','サイヤ人の長老'],a:1,level:2},
+    {q:'魔人ブウを復活させた魔導士の名前は？',c:['フリーザ','バーダック','バビディ','ガーリック'],a:2,level:2},
+    {q:'セルが吸収したのは人造人間何号と何号？',c:['16号と17号','17号と18号','18号と19号','16号と18号'],a:1,level:2},
+    {q:'「ドラゴンボールZ」のアニメ話数は全何話？',c:['200話','241話','291話','315話'],a:2,level:2},
+    {q:'天下一武道会の最初の決勝でジャッキー・チュンと戦ったのは？',c:['クリリン','天津飯','ヤムチャ','孫悟空'],a:3,level:2},
+    {q:'超サイヤ人ゴッドになるために必要な純粋サイヤ人の数は？',c:['4人','5人','6人','7人'],a:2,level:3},
+    {q:'悟空の「10倍界王拳かめはめ波」を使った相手は？',c:['フリーザ第1形態','フリーザ最終形態','セル','ベジータ'],a:1,level:3},
+    {q:'バーダックが最後にフリーザに立ち向かったのはなぜ？',c:['悟空の未来を夢で見て','悟空を守るため','名誉のため','サイヤ人王の命令'],a:0,level:3},
+    {q:'「精神と時の部屋」でフュージョン維持時間が短くなる理由は？',c:['ルールが変わる','外の時間より内部の時間が濃縮されるため','体力が消耗するから','修行の弊害'],a:1,level:3},
+    {q:'ドラゴンボールGTで悟空が進化した最強形態は？',c:['超サイヤ人4','超サイヤ人ゴッド','超サイヤ人ブルー','超サイヤ人ロゼ'],a:0,level:3},
+    {q:'「ドラゴンボール超」でブロリーとの戦いでゴジータが使った技の特徴は？',c:['フュージョンダンスによる合体','物語上フュージョン維持しながら戦う','超サイヤ人4での戦闘','ポタラ合体'],a:0,level:3},
+    {q:'フリーザの最終形態の戦闘力は（大全集によれば）？',c:['53万','1000万','1億2000万','5億'],a:2,level:3},
+    {q:'「人造人間16号」の特徴として正しいのは？',c:['戦闘が好き','自然や鳥が好きで穏やか','人間を嫌う','悟空を唯一守った'],a:1,level:3},
+    {q:'悟空がカメと出会い最初に連れて行った場所は？',c:['亀仙人の島','天下一武道会','ブルマのいる町','フライパン山'],a:0,level:3},
+    {q:'「超サイヤ人3」の変身時間が短い理由は？',c:['技術が未熟','エネルギー消費が極端に大きいから','敵が強すぎるから','鍛錬不足'],a:1,level:3},
+    {q:'ドラゴンボールの連載終了年は？',c:['1993年','1994年','1995年','1996年'],a:2,level:3},
+  ]},
+};
+
+// キーワードID検索
+function findKwId(keyword) {
+  const kw = keyword.toLowerCase().replace(/[\s×・]/g,'');
+  for(const [id,entry] of Object.entries(QB_KEYWORD)) {
+    if(entry.keys.some(k=>{
+      const k2=k.toLowerCase().replace(/[\s×・]/g,'');
+      return kw.includes(k2)||k2.includes(kw)||kw===k2;
+    })) return id;
+  }
+  return null;
+}
+
+function getAvailableKeywords() {
+  return Object.values(QB_KEYWORD).map(e=>e.display).join('・');
+}
+
+// ══════════════════════════════════════
+//  CPU対戦開始
+// ══════════════════════════════════════
+function startCPU(diff) {
+  const cfg = CPU_CFG[diff];
+  players = [
+    {id:'player', name:pName,        av:'🧙', score:0, isCPU:false, color:P_COLORS[0]},
+    {id:'cpu1',   name:cfg.name,     av:cfg.av, score:0, isCPU:true, diff, color:P_COLORS[1]},
+  ];
+  myPIdx = 0;
+  let pool = buildPool();
+  initBattle(pool);
+}
+
+function buildPool() {
+  let base = [...QB_BASE];
+  if(aiQuestions) {
+    base = aiMerge ? [...aiQuestions, ...base] : [...aiQuestions];
+    aiQuestions = null; aiMerge = false;
+  }
+  return shuf(base);
+}
+
+// ══════════════════════════════════════
+//  オンライン対戦
+// ══════════════════════════════════════
+function showJoinInput() {
+  const box = document.getElementById('joinBox');
+  box.style.display = box.style.display==='none' ? 'block' : 'none';
+}
+
+async function createRoom() {
+  if(!USE_SB || !sbClient) { alert('Supabaseの設定が必要です。ファイル先頭のSB_URL/SB_KEYを入力してください。'); return; }
+  roomCode = Math.floor(1000+Math.random()*9000).toString();
+  isHost = true;
+  await setupRoomChannel();
+  document.getElementById('displayCode').textContent = roomCode;
+  document.getElementById('hostStartArea').style.display='block';
+  document.getElementById('guestWaitArea').style.display='none';
+  go('waiting');
+  renderWaitingSlots();
+}
+
+async function joinRoom() {
+  if(!USE_SB || !sbClient) { alert('Supabaseの設定が必要です。'); return; }
+  const code = document.getElementById('joinCode').value.trim();
+  if(code.length<4) { alert('4桁のルームコードを入力してください'); return; }
+  roomCode = code;
+  isHost = false;
+  await setupRoomChannel();
+  document.getElementById('displayCode').textContent = roomCode;
+  document.getElementById('hostStartArea').style.display='none';
+  document.getElementById('guestWaitArea').style.display='block';
+  go('waiting');
+}
+
+async function setupRoomChannel() {
+  if(sbChannel) { await sbClient.removeChannel(sbChannel); }
+  sbChannel = sbClient.channel(`qf-${roomCode}`, {config:{presence:{key:myOnlineId}}})
+    .on('presence',{event:'sync'}, renderWaitingSlots)
+    .on('broadcast',{event:'start'}, (payload) => {
+      const d = payload.payload;
+      players = d.players;
+      myPIdx = players.findIndex(p=>p.id===myOnlineId);
+      if(myPIdx<0) myPIdx=0;
+      initBattle(shuf([...QB_BASE]));
+    })
+    .on('broadcast',{event:'answer'}, (payload) => {
+      const {pid,ci} = payload.payload;
+      if(isHost) hostProcessAnswer(pid, ci);
+    })
+    .on('broadcast',{event:'result'}, (payload) => {
+      const d = payload.payload;
+      players = d.players;
+      renderScoreboard();
+      setMsg(d.msg, d.msgType);
+      revealAns(d.correctIdx, d.wrongIdx);
+      setTimeout(()=>{
+        if(d.ended) showResult(d.winner);
+        else if(isHost) setTimeout(nextQ, 1600);
+      }, d.ended ? 1000 : 0);
+    });
+  await sbChannel.subscribe(async(status)=>{
+    if(status==='SUBSCRIBED'){
+      await sbChannel.track({id:myOnlineId, name:pName, score:0, av:'🧙'});
+    }
+  });
+}
+
+function renderWaitingSlots() {
+  if(!sbChannel) return;
+  const state = sbChannel.presenceState();
+  const online = Object.values(state).flat();
+  const el = document.getElementById('playerSlots');
+  let html = '';
+  for(let i=0;i<4;i++){
+    const p = online[i];
+    if(p) {
+      const isMe = p.id===myOnlineId;
+      html+=`<div class="player-slot" style="border-color:${P_COLORS[i]}40">
+        <div class="slot-num" style="color:${P_COLORS[i]}">${i+1}</div>
+        <div class="slot-av">${p.av||P_AVATARS[i]}</div>
+        <div class="slot-name">${esc(p.name)}</div>
+        <span class="slot-badge ${isMe?'slot-you':'slot-other'}">${isMe?'あなた':'参加中'}</span>
+      </div>`;
+    } else {
+      html+=`<div class="player-slot slot-empty">
+        <div class="slot-num" style="color:var(--tx-muted)">${i+1}</div>
+        <div class="slot-av">🤖</div>
+        <div class="slot-name" style="color:var(--tx-muted)">CPU（空き）</div>
+        <span class="slot-badge slot-cpu">待機中</span>
+      </div>`;
+    }
+  }
+  el.innerHTML = html;
+}
+
+function hostStartGame() {
+  if(!sbChannel) return;
+  const state = sbChannel.presenceState();
+  const online = Object.values(state).flat();
+  // プレイヤー配列構築（空きはCPU）
+  const cpuDiffs = ['easy','normal','hard'];
+  const gamePlayers = [];
+  for(let i=0;i<4;i++){
+    const p = online[i];
+    const cfg = CPU_CFG[cpuDiffs[i%3]];
+    gamePlayers.push(p
+      ? {id:p.id, name:p.name, av:p.av||P_AVATARS[i], score:0, isCPU:false, color:P_COLORS[i]}
+      : {id:`cpu${i}`, name:cfg.name, av:cfg.av, score:0, isCPU:true, diff:cpuDiffs[i%3], color:P_COLORS[i]}
+    );
+  }
+  sbChannel.send({type:'broadcast',event:'start',payload:{players:gamePlayers}});
+}
+
+function leaveRoom() {
+  if(sbChannel && sbClient) sbClient.removeChannel(sbChannel);
+  sbChannel=null; roomCode=null; isHost=false;
+  go('mode');
+}
+
+// ══════════════════════════════════════
+//  バトル初期化（CPU・オンライン共通）
+// ══════════════════════════════════════
+function initBattle(pool) {
+  gs = {
+    ans:false, qi:0, q:null, pool,
+    tIv:null, rIv:null, cTo:[],
+    rem:QT, ok:0, tot:0, t0:Date.now(),
+    online: !!roomCode,
+  };
+  go('battle');
+  renderScoreboard();
+  setTimeout(nextQ, 400);
+}
+
+// ══════════════════════════════════════
+//  スコアボード描画
+// ══════════════════════════════════════
+function renderScoreboard() {
+  const el = document.getElementById('scoreboard');
+  const sorted = [...players].sort((a,b)=>b.score-a.score);
+  el.innerHTML = sorted.map((p,rank)=>{
+    const isMe = p.id==='player'||p.id===myOnlineId;
+    const pips = Array.from({length:winPts},(_,i)=>{
+      const lit = i<p.score;
+      const col = p.color;
+      return `<div class="sc-pip${lit?' lit':''}" style="${lit?`background:${col};border-color:${col};box-shadow:0 0 8px ${col}40`:''}">${lit?'★':''}</div>`;
+    }).join('');
+    return `<div class="score-row">
+      <div class="score-rank">${rank+1}</div>
+      <div class="score-av">${p.av}</div>
+      <div class="score-name" style="color:${isMe?p.color:'var(--tx-heading)'}">${esc(p.name)}${isMe?' 👈':''}</div>
+      <div class="score-pips">${pips}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+//  問題進行
+// ══════════════════════════════════════
+function nextQ() {
+  clrAll(); gs.ans=false;
+  setMsg('','');
+  if(gs.qi>=gs.pool.length){gs.pool=shuf([...QB_BASE]);gs.qi=0;}
+  gs.q=gs.pool[gs.qi++];
+  document.getElementById('qG').textContent=gs.q.g;
+  document.getElementById('qT').textContent='';
+  document.getElementById('qN').textContent='Q.'+gs.qi;
+  document.getElementById('tFill').style.width='100%';
+  document.getElementById('tFill').style.background='var(--gold)';
+  renderChoices(); lockChoices(true);
+  let ci=0;
+  gs.rIv=setInterval(()=>{
+    if(ci<gs.q.q.length){ document.getElementById('qT').textContent+=gs.q.q[ci++]; }
+    else{ clearInterval(gs.rIv); lockChoices(false); startTimer(); startCPUs(); setMsg('✨ 答えよ！','info'); }
+  },70);
+}
+
+function renderChoices() {
+  const el=document.getElementById('choices'); el.innerHTML='';
+  const lb=['Ａ','Ｂ','Ｃ','Ｄ'];
+  gs.q.c.forEach((ch,i)=>{
+    const b=document.createElement('button'); b.className='choice';
+    b.innerHTML=`<span class="c-label">${lb[i]}</span>${ch}`;
+    b.onclick=()=>playerAns(i);
+    el.appendChild(b);
+  });
+}
+function lockChoices(v){document.querySelectorAll('.choice').forEach(b=>b.disabled=v);}
+
+function startTimer() {
+  gs.rem=QT;
+  const f=document.getElementById('tFill');
+  gs.tIv=setInterval(()=>{
+    gs.rem-=100;
+    const p=Math.max(0,(gs.rem/QT)*100);
+    f.style.width=p+'%';
+    f.style.background=p<25?'#ff4466':p<55?'#ffaa00':'var(--gold)';
+    if(gs.rem<=0){clrAll();if(!gs.ans)timeout();}
+  },100);
+}
+
+function timeout() {
+  gs.ans=true; lockChoices(true);
+  revealAns(-1,-1);
+  setMsg(`⏱️ 時間切れ！正解：「${gs.q.c[gs.q.a]}」`,'bad');
+  // タイムアウト：誰も得点なし
+  setTimeout(()=>checkEnd('タイムアップ'),1600);
+}
+
+// ══════════════════════════════════════
+//  CPU思考
+// ══════════════════════════════════════
+function startCPUs() {
+  players.forEach(p=>{
+    if(!p.isCPU) return;
+    const cfg=CPU_CFG[p.diff||'normal'];
+    const d=cfg.min+Math.random()*(cfg.max-cfg.min);
+    const to=setTimeout(()=>{
+      if(gs.ans)return;
+      const ok=Math.random()<cfg.acc;
+      const ci=ok?gs.q.a:[0,1,2,3].filter(x=>x!==gs.q.a)[Math.floor(Math.random()*3)];
+      if(!gs.ans) cpuAns(p,ci);
+    },d);
+    gs.cTo.push(to);
+  });
+}
+
+function cpuAns(cpuPlayer, ci) {
+  if(gs.ans)return;
+  gs.ans=true; clrAll(); gs.tot++;
+  lockChoices(true);
+  document.querySelectorAll('.choice')[ci]?.classList.add('cpu-pick');
+  if(ci===gs.q.a){
+    revealAns(ci,-1);
+    showSpell(C_SPELLS[Math.floor(Math.random()*C_SPELLS.length)],'cpu');
+    doFlash('fb');
+    setMsg(`${cpuPlayer.name}が先読みした！ 得点！`,'bad');
+    addScore(cpuPlayer.id);
+    setTimeout(()=>checkEnd(cpuPlayer.name),1600);
+  } else {
+    revealAns(ci,-1);
+    setMsg('💥 CPUが間違えた！今がチャンス！','good');
+    document.querySelectorAll('.choice')[gs.q.a].style.boxShadow='0 0 20px rgba(255,200,0,.6)';
+    gs.ans=false; lockChoices(false);
+  }
+}
+
+// ══════════════════════════════════════
+//  プレイヤー回答
+// ══════════════════════════════════════
+function playerAns(ci) {
+  if(gs.ans)return;
+  if(gs.online && sbChannel) {
+    // オンライン：ホストに送信
+    sbChannel.send({type:'broadcast',event:'answer',payload:{pid:myOnlineId,ci}});
+    lockChoices(true); // 送信後はロック（結果はbroadcastで来る）
+    return;
+  }
+  // CPU対戦ローカル
+  gs.ans=true; clrAll(); clearAllCPU();
+  gs.tot++;
+  lockChoices(true); revealAns(ci,-1);
+  if(ci===gs.q.a){
+    gs.ok++;
+    showSpell(P_SPELLS[Math.floor(Math.random()*P_SPELLS.length)],'player');
+    doFlash('fg');
+    spawnPtcl(document.querySelectorAll('.choice')[ci]);
+    setMsg('🎉 正解！魔法が炸裂！','good');
+    addScore('player');
+    setTimeout(()=>checkEnd(pName),1000);
+  } else {
+    showSpell('💥 MISS!','miss'); doFlash('fb');
+    setMsg(`❌ 不正解... 正解：「${gs.q.c[gs.q.a]}」`,'bad');
+    // 間違いは誰も得点なし → そのまま次の問題へ
+    setTimeout(()=>{ checkEnd(''); },1600);
+  }
+}
+
+// ホスト用：オンライン回答処理
+function hostProcessAnswer(pid, ci) {
+  if(gs.ans)return;
+  gs.ans=true; clrAll();
+  const p = players.find(pl=>pl.id===pid);
+  const correct = ci===gs.q.a;
+  let msg='', msgType='';
+  if(correct){
+    if(p) addScore(pid);
+    msg=`${p?p.name:'誰か'}が正解！`; msgType='good';
+  } else {
+    msg=`${p?p.name:'誰か'}が不正解...　正解：「${gs.q.c[gs.q.a]}」`; msgType='bad';
+  }
+  const winner=players.find(pl=>pl.score>=winPts);
+  sbChannel.send({type:'broadcast',event:'result',payload:{
+    players, msg, msgType,
+    correctIdx:gs.q.a, wrongIdx:correct?-1:ci,
+    ended:!!winner, winner:winner?.name||''
+  }});
+  if(winner) showResult(winner.name);
+  else setTimeout(nextQ,1700);
+}
+
+function revealAns(pi, wrongIdx) {
+  document.querySelectorAll('.choice').forEach((b,i)=>{
+    if(i===gs.q.a) b.classList.add('correct');
+    else if(i===pi&&pi!==gs.q.a) b.classList.add('wrong');
+    else if(i===wrongIdx) b.classList.add('wrong');
+  });
+}
+
+function addScore(id) {
+  const p=players.find(pl=>pl.id===id);
+  if(p) p.score++;
+  renderScoreboard();
+}
+
+function checkEnd(scorer) {
+  const winner = players.find(p=>p.score>=winPts);
+  if(winner) showResult(winner.name);
+  else setTimeout(nextQ,1700);
+}
+
+// ══════════════════════════════════════
+//  リザルト
+// ══════════════════════════════════════
+function showResult(winnerName) {
+  clrAll();
+  const me = players[myPIdx];
+  const iWon = winnerName===pName||winnerName===me?.name;
+  const acc = gs.tot?Math.round((gs.ok/gs.tot)*100):0;
+  const diff = players.find(p=>p.isCPU)?.diff||'normal';
+  const score = Math.floor((gs.ok*100+acc)*({easy:1,normal:1.5,hard:2.5}[diff]||(players.length>2?2:1))+(iWon?500:0));
+  document.getElementById('rC').textContent=gs.ok;
+  document.getElementById('rA').textContent=acc+'%';
+  document.getElementById('rSc').textContent=score.toLocaleString();
+  const rt=document.getElementById('rT');
+  if(iWon){rt.textContent='VICTORY';rt.className='result-title win';document.getElementById('rI').textContent='🏆';}
+  else{rt.textContent='DEFEATED';rt.className='result-title lose';document.getElementById('rI').textContent='💀';}
+  document.getElementById('rS').textContent=iWon?`${winnerName}の勝利！おめでとう！`:`${winnerName}の勝利！次は負けない！`;
+  document.getElementById('saveBtn').disabled=false;document.getElementById('saveBtn').textContent='✨ 登録';
+  // カテゴリ情報を付与
+  const cat = _selGenre
+    ? (_selGenre.type==='category' ? _selGenre.name : (loadBank()[_selGenre.bankKey]?.category || _selGenre.bankKey || ''))
+    : '';
+  window._ps={name:pName,score,acc,diff,res:iWon?'win':'lose',category:cat};
+  go('result');
+}
+
+function exitBattle() {
+  clrAll();
+  if(sbChannel&&sbClient){sbClient.removeChannel(sbChannel);sbChannel=null;roomCode=null;}
+  go('title');
+}
+
+// ══════════════════════════════════════
+//  エフェクト
+// ══════════════════════════════════════
+function showSpell(txt,cls){
+  const w=document.getElementById('spellWord');w.textContent=txt;w.className=cls;
+  const fx=document.getElementById('spellFX');fx.classList.add('on');
+  w.style.animation='none';w.offsetWidth;w.style.animation='spellA 1.4s ease forwards';
+  setTimeout(()=>fx.classList.remove('on'),1400);
+}
+function doFlash(cls){const el=document.getElementById('flash');el.className='';el.offsetWidth;el.className=cls;}
+function spawnPtcl(btn){
+  if(!btn)return;const r=btn.getBoundingClientRect();
+  const cols=['#ffd040','#70e8ff','#ff88cc','#60ffa0','#fff','#ff6600'];
+  for(let i=0;i<22;i++){
+    const p=document.createElement('div');p.className='ptcl';
+    const sz=5+Math.random()*10,tx=(Math.random()-.5)*200,ty=-80-Math.random()*120;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${r.left+r.width/2+(Math.random()-.5)*60}px;top:${r.top+r.height/2}px;background:${cols[Math.floor(Math.random()*cols.length)]};--dur:${.7+Math.random()*.8}s;--tx:${tx}px;--ty:${ty}px;animation-delay:${Math.random()*.2}s;`;
+    document.body.appendChild(p);setTimeout(()=>p.remove(),2000);
+  }
+}
+function setMsg(txt,type){const el=document.getElementById('bMsg');el.textContent=txt||'　';el.className='b-msg'+(type?' '+type:'');}
+function clrAll(){clearInterval(gs.tIv);clearInterval(gs.rIv);gs.tIv=gs.rIv=null;clearAllCPU();}
+function clearAllCPU(){gs.cTo?.forEach(t=>clearTimeout(t));gs.cTo=[];}
+
+// ══════════════════════════════════════
+//  ランキング保存・読込
+// ══════════════════════════════════════
+async function saveScore(){
+  const d=window._ps;if(!d)return;
+  const btn=document.getElementById('saveBtn');btn.disabled=true;btn.textContent='⏳...';
+  if(USE_SB&&sbClient){
+    try{
+      const r=await sbClient.from('quiz_fever_scores').insert({player_name:d.name,score:d.score,accuracy:d.acc,difficulty:d.diff,outcome:d.res});
+      btn.textContent=r.error?'✅ ローカル保存':'✅ 登録完了！';if(r.error)lsave(d);
+    }catch(e){lsave(d);btn.textContent='✅ ローカル保存';}
+  }else{lsave(d);btn.textContent='✅ ローカル保存';}
+}
+function lsave(d){
+  const a=JSON.parse(localStorage.getItem('qf_scores')||'[]');
+  a.push({...d,date:new Date().toISOString()});a.sort((x,y)=>y.score-x.score);a.splice(20);
+  /* category追加済み */ localStorage.setItem('qf_scores',JSON.stringify(a));
+}
+let _rankCat = 'all'; // 現在選択中のカテゴリ
+
+function goRankScreen() {
+  go('ranking');
+  _buildRankCatTabs();
+  loadRanking();
+}
+
+function _buildRankCatTabs() {
+  const tabs = document.getElementById('rankCatTabs');
+  if(!tabs) return;
+  // カテゴリ一覧を取得
+  const bank = loadBank();
+  const cats = [...new Set(Object.values(bank).map(g=>g.category).filter(Boolean))];
+  const allCats = ['all', ...cats];
+  tabs.innerHTML = allCats.map(c => {
+    const active = _rankCat === c;
+    const label = c === 'all' ? '🌟 総合' : c;
+    return `<button onclick="_selectRankCat('${esc(c)}')"
+      style="padding:8px 14px;border-radius:20px;min-height:38px;
+        border:2px solid ${active?'var(--gold)':'var(--bd-default)'};
+        background:${active?'rgba(255,208,64,.12)':'var(--bg-card)'};
+        color:${active?'var(--gold)':'var(--tx-body)'};
+        font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer;
+        -webkit-tap-highlight-color:transparent">
+      ${esc(label)}
+    </button>`;
+  }).join('');
+}
+
+function _selectRankCat(cat) {
+  _rankCat = cat;
+  _buildRankCatTabs();
+  loadRanking();
+}
+
+async function loadRanking(){
+  const el=document.getElementById('rankList');
+  el.innerHTML='<div class="spin"></div>';
+
+  // localStorageからスコアを取得
+  let allScores = [];
+  try { allScores = JSON.parse(localStorage.getItem('qf_scores')||'[]'); } catch(e){}
+
+  // カテゴリフィルタ
+  let filtered = _rankCat==='all'
+    ? allScores
+    : allScores.filter(s=>s.category===_rankCat);
+
+  // 名前ごとの最高スコアに集約
+  const best = {};
+  filtered.forEach(s=>{
+    const key = s.name || 'プレイヤー';
+    if(!best[key] || s.score > best[key].score) best[key] = s;
+  });
+  let rows = Object.values(best).sort((a,b)=>b.score-a.score).slice(0,10);
+
+  // Supabaseが設定されていれば上書き
+  if(USE_SB && sbClient){
+    try{
+      const q = sbClient.from('quiz_fever_scores').select('player_name,score,accuracy,difficulty,category').order('score',{ascending:false});
+      const filter = _rankCat!=='all' ? q.eq('category',_rankCat) : q;
+      const {data} = await filter.limit(10);
+      if(data&&data.length) rows = data.map(d=>({name:d.player_name,score:d.score,acc:d.accuracy,diff:d.difficulty,category:d.category}));
+    }catch(e){}
+  }
+
+  if(!rows.length){
+    const catLabel = _rankCat==='all'?'総合':_rankCat;
+    el.innerHTML=`<div style="text-align:center;padding:36px;font-size:15px;color:var(--tx-muted)">「${catLabel}」の記録がありません。<br>対戦して最初の魔道師になれ！</div>`;
+    return;
+  }
+
+  const de={easy:'🐣',normal:'📖',hard:'💀'};
+  const pc=['g','s','b'];
+  const medals=['🥇','🥈','🥉'];
+  el.innerHTML = rows.map((r,i)=>{
+    const name = esc(r.name||r.player_name||'魔道師');
+    const score = Number(r.score||0).toLocaleString();
+    const acc = r.acc||r.accuracy||0;
+    const diff = r.diff||r.difficulty||'normal';
+    const correct = r.correct||'';
+    return `<div class="rank-row">
+      <div class="rk-pos ${pc[i]||''}" style="font-size:${i<3?'24px':'16px'}">${i<3?medals[i]:i+1}</div>
+      <div style="font-size:20px">${de[diff]||'⭐'}</div>
+      <div class="rk-name">${name}${r.category&&_rankCat==='all'?`<span style="font-size:11px;color:var(--tx-muted);margin-left:4px">${esc(r.category)}</span>`:''}</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+        <div class="rk-score">${score}pt</div>
+        <div style="font-size:11px;color:var(--tx-muted)">${acc}%正解</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
+</body>
+</html>
