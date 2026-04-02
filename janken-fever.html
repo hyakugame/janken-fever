@@ -929,9 +929,9 @@ function judge(pKey,cpuKey,ph,ch){
 // ROULETTE
 function buildRlSVG(){
   const svg=document.getElementById('rl-svg');svg.innerHTML='';svg.setAttribute('viewBox','0 0 320 320');
-  const vals=RL_VALS,n=vals.length,cx=160,cy=160,R=150,rIn=50,seg=360/n;
+  const vals=RL_VALS,n=vals.length,cx=160,cy=160,R=152,rIn=52,seg=360/n;
   const texts=[];
-  // 1st pass: 全pathを描画
+  // 1st pass: 全pathを描画（境界線は細く薄く）
   for(let i=0;i<n;i++){
     const v=vals[i]*betAmount,a0=(i*seg-90)*Math.PI/180,a1=((i+1)*seg-90)*Math.PI/180,lf=seg>180?1:0;
     const x1=cx+R*Math.cos(a0),y1=cy+R*Math.sin(a0),x2=cx+R*Math.cos(a1),y2=cy+R*Math.sin(a1);
@@ -939,18 +939,22 @@ function buildRlSVG(){
     const isJP=v>=25,p=document.createElementNS('http://www.w3.org/2000/svg','path');
     p.setAttribute('d',`M${xi1},${yi1} L${x1},${y1} A${R},${R} 0 ${lf} 1 ${x2},${y2} L${xi2},${yi2} A${rIn},${rIn} 0 ${lf} 0 ${xi1},${yi1} Z`);
     p.setAttribute('fill',isJP?'#cc0033':SEG_COLS[i%SEG_COLS.length]);
-    p.setAttribute('stroke','#111');p.setAttribute('stroke-width','2.5');
-    p.setAttribute('id','seg'+i);p.setAttribute('opacity','0.92');svg.appendChild(p);
+    p.setAttribute('stroke','rgba(0,0,0,0.35)');p.setAttribute('stroke-width','1.5');
+    p.setAttribute('id','seg'+i);p.setAttribute('opacity','1');svg.appendChild(p);
     const midA=((i+0.5)*seg-90)*Math.PI/180,tR=(R+rIn)/2;
     texts.push({v,isJP,tx:cx+tR*Math.cos(midA),ty:cy+tR*Math.sin(midA),ang:(i+0.5)*seg});
   }
-  // 2nd pass: 全textを前面に描画（lineは使わない）
+  // 2nd pass: 全textを前面に描画（下半分は180°反転で正向きに）
   texts.forEach(({v,isJP,tx,ty,ang})=>{
     const t=document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x',tx);t.setAttribute('y',ty);t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
-    t.setAttribute('font-family','Oswald,sans-serif');t.setAttribute('font-size',isJP?'17':'22');t.setAttribute('font-weight','900');
-    t.setAttribute('fill','#fff');t.setAttribute('stroke','#000');t.setAttribute('stroke-width','3.5');t.setAttribute('paint-order','stroke');
-    t.setAttribute('transform',`rotate(${ang},${tx},${ty})`);
+    // 大きい値は小さめフォント、通常は大きく
+    const fs=v>=100?'14':v>=25?'16':'20';
+    t.setAttribute('font-family','Oswald,sans-serif');t.setAttribute('font-size',fs);t.setAttribute('font-weight','900');
+    t.setAttribute('fill','#fff');t.setAttribute('stroke','#000');t.setAttribute('stroke-width','3');t.setAttribute('paint-order','stroke');
+    // 下半分(ang 90〜270°)は180°加算でテキストを正向きに
+    const tAng=ang>90&&ang<270?ang+180:ang;
+    t.setAttribute('transform',`rotate(${tAng},${tx},${ty})`);
     t.textContent=v+'枚';svg.appendChild(t);
   });
 }
