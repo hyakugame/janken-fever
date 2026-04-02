@@ -183,7 +183,22 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
   <div class="led-row" id="patlamp"><div class="led l0"></div><div class="led l1"></div><div class="led l2"></div><div class="led l3"></div><div class="led l4"></div><div class="led l5"></div><div class="led l6"></div><div class="led l7"></div><div class="led l8"></div><div class="led l9"></div><div class="led la"></div><div class="led lb"></div></div>
 
   <!-- ロビー -->
-  <div id="sa" class="gs active">
+  
+  <!-- ベット選択画面 -->
+  <div id="sbet" class="gs">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;padding:20px 16px">
+      <div style="font-size:52px;text-align:center">✊✌️🖐️</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:#FFD700;text-align:center;text-shadow:0 0 15px rgba(255,215,0,.4)">GU-CHOKI-PA<br>FEVER !!</div>
+      <div style="background:rgba(0,0,0,.4);border:1px solid rgba(0,200,60,.3);border-radius:12px;padding:12px 24px;width:100%;text-align:center">
+        <div style="font-size:12px;color:#888;letter-spacing:.08em;margin-bottom:4px">所持メダル</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:48px;font-weight:700;color:#00FF41;line-height:1" id="bet-medals">0</div>
+      </div>
+      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#aaa;text-align:center">何枚でプレイ？<br><span style="font-size:13px;font-weight:400;color:#666">多いほどルーレット賞金アップ！</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%" id="bet-btns"></div>
+      <button onclick="goBackLobby()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#888;padding:10px;font-size:14px;border-radius:8px;cursor:pointer;width:100%;font-family:'Oswald',sans-serif">← ロビーへ戻る</button>
+    </div>
+  </div>
+  <div id="sa" class="gs">
     <div class="lobby-inner">
       <div class="jk-emoji">✊✌️🖐️</div>
       <div class="jk-title">GU-CHOKI-PA<br>FEVER !!</div>
@@ -647,7 +662,7 @@ let inputOK=false,tmrId=null,tLeft=5;
 let signTid=null,signIdx=0,signRunning=false;
 let rlLitIdx=0,rlLitTid=null,rlStopping=false;
 let patId=null,pfId=null,rovTimer=null;
-let hlMedals=0,hlActive=false,hlBtnOK=false;
+let hlMedals=0,hlActive=false,hlBtnOK=false,betAmount=1;
 let pendingScore=0;
 
 // UI
@@ -764,6 +779,64 @@ function seHLLose(){
   tone('square',300,0.12,0.22,0.12,200);
   tone('sawtooth',150,0.15,0.3,0.28,80);
 }
+
+// ===== ベット選択 =====
+function showBetScreen(){
+  var su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  var medals=su?su.medals:0;
+  var bm=document.getElementById('bet-medals');
+  if(bm) bm.textContent=medals;
+  var maxBet=Math.min(5,medals);
+  var bb=document.getElementById('bet-btns');
+  if(!bb)return;
+  bb.innerHTML='';
+  var betOptions=[1,2,3,4,5];
+  betOptions.forEach(function(n){
+    var disabled=n>maxBet;
+    var btn=document.createElement('button');
+    btn.textContent=n+'枚';
+    btn.style.cssText='background:'+(disabled?'rgba(255,255,255,.05)':'linear-gradient(180deg,'+(n>=5?'#FFD700,#e5a800':n>=3?'#ff8800,#cc5500':'#00cc44,#009933')+')')
+      +';color:'+(disabled?'#444':'#fff'+(n>=5?' !important; color:#000':''))
+      +';border:none;border-radius:10px;padding:16px 8px;font-family:Oswald,sans-serif;font-size:20px;font-weight:700;cursor:'+(disabled?'not-allowed':'pointer')
+      +';opacity:'+(disabled?'0.3':'1')
+      +';box-shadow:'+(disabled?'none':'0 4px 12px rgba(0,0,0,.4)');
+    if(n>=5) btn.style.color='#000';
+    if(!disabled){
+      btn.onclick=function(){ startWithBet(n); };
+    }
+    // ラベル
+    var multi = n;
+    var lbl=document.createElement('div');
+    lbl.textContent=disabled?'×':'×'+multi;
+    lbl.style.cssText='font-size:11px;color:#aaa;text-align:center;margin-top:4px';
+    var wrap=document.createElement('div');
+    wrap.style.cssText='display:flex;flex-direction:column;align-items:center';
+    wrap.appendChild(btn);
+    wrap.appendChild(lbl);
+    bb.appendChild(wrap);
+  });
+  show('sbet');
+  bgmPlay('attract');
+}
+
+function startWithBet(n){
+  wake();
+  var su=JSON.parse(localStorage.getItem('hkg_user')||'null');
+  if(!su||su.medals<n){return;}
+  su.medals=Math.max(0,su.medals-n);
+  localStorage.setItem('hkg_user',JSON.stringify(su));
+  betAmount=n;
+  credits=1;
+  sessionGained=0;
+  php=5;
+  updMed(); updPHP();
+  show('sb');
+  bgmPlay('attract');
+  setV('グー・チョキ・パーを\n選ぼう！','call');
+  setBtns(true);
+  window._waitFirstPick=true;
+  seCoin();
+}
 function goBackLobby(){stopAll();var su=JSON.parse(localStorage.getItem('hkg_user')||'null');if(su){su.medals=(su.medals||0)+totalMedals;localStorage.setItem('hkg_user',JSON.stringify(su));}location.href='index.html';}
 function openPoker(){
   const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
@@ -830,7 +903,7 @@ function buildRlSVG(){
   const svg=document.getElementById('rl-svg');svg.innerHTML='';
   const vals=RL_VALS,n=vals.length,cx=140,cy=140,R=128,rIn=42,seg=360/n;
   for(let i=0;i<n;i++){
-    const v=vals[i],a0=(i*seg-90)*Math.PI/180,a1=((i+1)*seg-90)*Math.PI/180,lf=seg>180?1:0;
+    const v=vals[i]*betAmount,a0=(i*seg-90)*Math.PI/180,a1=((i+1)*seg-90)*Math.PI/180,lf=seg>180?1:0;
     const x1=cx+R*Math.cos(a0),y1=cy+R*Math.sin(a0),x2=cx+R*Math.cos(a1),y2=cy+R*Math.sin(a1);
     const xi1=cx+rIn*Math.cos(a0),yi1=cy+rIn*Math.sin(a0),xi2=cx+rIn*Math.cos(a1),yi2=cy+rIn*Math.sin(a1);
     const isJP=v>=25,p=document.createElementNS('http://www.w3.org/2000/svg','path');
@@ -867,7 +940,7 @@ function finishRl(){
   const fi=(rlLitIdx-1+RL_VALS.length)%RL_VALS.length,won=RL_VALS[fi],isJP=won>=25;
   litSeg(fi);document.getElementById('rl-num').textContent=won;document.getElementById('rl-hdr').textContent='やっぴー！！';document.getElementById('rl-lbl').textContent='+'+won+'枚 → ハイ＆ローへ！';
   bgmStop();if(isJP){seJP();speakAt('ジャックポット！やったー！',400);}else{seWin();speakAt('やっっぴー！！',300);}
-  setTimeout(()=>seMedal(won),600);patFlash();hlMedals=won;
+  var wonAmt=won*betAmount;setTimeout(()=>seMedal(wonAmt),600);patFlash();hlMedals=wonAmt;document.getElementById('rl-lbl').textContent='+'+wonAmt+'枚 (×'+betAmount+') → ハイ＆ローへ！';document.getElementById('rl-num').textContent=wonAmt;
   setTimeout(()=>{patOff();startHL();},3500);
 }
 
@@ -982,24 +1055,11 @@ function shareToLINE(){
 })();
 document.addEventListener('click',()=>wake(),{once:true});
 document.addEventListener('touchstart',()=>wake(),{once:true});
-// 自動起動：hkg_userがあればじゃんけん画面を即表示（タイマーは選択後スタート）
+// 起動時：ベット選択画面を表示
 (function(){
   var su=JSON.parse(localStorage.getItem('hkg_user')||'null');
   if(su && su.medals>0){
-    su.medals=Math.max(0,su.medals-1);
-    localStorage.setItem('hkg_user',JSON.stringify(su));
-    credits=1;
-    sessionGained=0;
-    php=5;
-    var lm=document.getElementById('lobby-med');if(lm)lm.textContent=su.medals;
-    updMed(); updPHP();
-    show('sb');
-    bgmPlay('attract');
-    // タイマー開始せず「グー・チョキ・パーを選ぼう」表示
-    setV('グー・チョキ・パーを\n選ぼう！','call');
-    setBtns(true);
-    // 最初の一手でタイマー開始するようフラグセット
-    window._waitFirstPick = true;
+    showBetScreen();
   } else {
     goAttract();
   }
