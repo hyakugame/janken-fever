@@ -490,7 +490,7 @@ async function saveOnlineScore(name,score){
   const cfg=getSBConfig();if(!cfg)return false;
   const H={'apikey':cfg.key,'Authorization':'Bearer '+cfg.key,'Content-Type':'application/json','Accept':'application/json'};
   try{
-    const ex=await fetch(cfg.url+'/rest/v1/rankings?name=eq.'+encodeURIComponent(name)+'&select=id,score',{headers:H}).then(r=>r.json()).catch(()=>[]);
+    const ex=await fetch(cfg.url+'/rest/v1/rankings?name=eq.'+encodeURIComponent(name)+'&created_at=gte.'+RANK_RESET+'&select=id,score',{headers:H}).then(r=>r.json()).catch(()=>[]);
     if(ex&&ex.length>0){if(ex[0].score>=score)return true;await fetch(cfg.url+'/rest/v1/rankings?id=eq.'+ex[0].id,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({score})});}
     else{await fetch(cfg.url+'/rest/v1/rankings',{method:'POST',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({name,score})});}
     return true;
@@ -651,6 +651,7 @@ function initSetupScreen(){
 
 
 // ROULETTE
+const RANK_RESET='2026-04-02';
 const RL_VALS=[2,6,4,10,4,25,4,8,4,50,4,6];
 const SEG_COLS=['#dd2222','#ff6600','#cc8800','#226600','#0055aa','#880088','#cc2233','#ff5500','#aa6600','#116644','#0044aa','#880066'];
 const BEATS={rock:'scissors',scissors:'paper',paper:'rock'};
@@ -709,7 +710,7 @@ function loadSaRank(){
     var cfg=JSON.parse(localStorage.getItem('gcpfever-supabase')||'null');
     if(!cfg||!cfg.url){el.textContent='(ランキング未設定)';return;}
     var H={'apikey':cfg.key,'Authorization':'Bearer '+cfg.key};
-    fetch(cfg.url+'/rest/v1/rankings?select=name,score&order=score.desc&limit=10',{headers:H})
+    fetch(cfg.url+'/rest/v1/rankings?select=name,score&created_at=gte.'+RANK_RESET+'&order=score.desc&limit=10',{headers:H})
       .then(r=>r.json()).then(data=>{
         if(!Array.isArray(data)||data.length===0){el.textContent='(まだ記録なし)';return;}
         el.innerHTML=data.map((r,i)=>'<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)">'+
