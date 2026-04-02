@@ -287,7 +287,7 @@ async function loadRankings(){
     // dedup by name
     const seen={},deduped=[];
     data.forEach(r=>{if(!seen[r.name]){seen[r.name]=true;deduped.push(r);}});
-    eljk.innerHTML<`<table class="tbl">
+    eljk.innerHTML=`<table class="tbl">
       <tr><th>順位</th><th>名前</th><th>スコア</th><th>日時</th></tr>
       ${deduped.map((r,i)=>`<tr>
         <td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'位'}</td>
