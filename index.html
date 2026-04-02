@@ -223,7 +223,7 @@ function loadRankings(){
     });
     
   // じゃんけんランキング（jk_scoresテーブル）
-  fetch(SBU+'/rest/v1/rankings?select=name,score,created_at&created_at=gte.2026-04-02&order=score.desc&limit=50',{headers:H})
+  fetch(SBU+'/rest/v1/rankings?select=name,score,created_at&created_at=gte.2026-04-02T02:30:00&order=score.desc&limit=50',{headers:H})
     .then(r=>r.json()).then(data=>{
       var el=document.getElementById('rank-janken');if(!el)return;
       if(!Array.isArray(data)||data.length===0){el.textContent='(まだ記録なし)';return;}
