@@ -208,14 +208,20 @@ function loadRankings(){
   var H={'apikey':SBK,'Authorization':'Bearer '+SBK};
   
   // ポーカーランキング（game_usersテーブル）
-  fetch(SBU+'/rest/v1/game_users?select=name,medals&medals=gt.0&order=medals.desc&limit=10',{headers:H})
+  fetch(SBU+'/rest/v1/rankings?select=name,score&name=like.[pk]%&created_at=gte.2026-04-02T02:30:00&score=gt.0&order=score.desc&limit=50',{headers:H})
     .then(r=>r.json()).then(data=>{
       var el=document.getElementById('rank-poker');if(!el)return;
       if(!Array.isArray(data)||data.length===0){el.textContent='(まだ記録なし)';return;}
-      el.innerHTML=data.map(function(r,i){
-        var medal=r.medals||0;
+      // [pk]プレフィックスを除去してdedup
+      var seen={},deduped=[];
+      data.forEach(function(r){
+        var nm=(r.name||'').replace(/^[pk]/,'');
+        if(!seen[nm]){seen[nm]=true;deduped.push({name:nm,score:r.score});}
+      });
+      if(deduped.length===0){el.textContent='(まだ記録なし)';return;}
+      el.innerHTML=deduped.slice(0,10).map(function(r,i){
         var badge=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'位';
-        return '<div class="rank-row"><span class="rank-pos">'+badge+'</span><span class="rank-name">'+((r.name||'---').slice(0,10))+'</span><span class="rank-score">'+medal+'枚</span></div>';
+        return '<div class="rank-row"><span class="rank-pos">'+badge+'</span><span class="rank-name">'+((r.name||'---').slice(0,10))+'</span><span class="rank-score">'+(r.score||0)+'枚</span></div>';
       }).join('');
     }).catch(function(){
       var el=document.getElementById('rank-poker');
