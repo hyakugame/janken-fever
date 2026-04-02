@@ -761,7 +761,18 @@ const QB_BASE=[
 // ══════════════════════════════════════
 //  初期化
 // ══════════════════════════════════════
-onload = () => { makeStars(); refreshW(); initBank(); renderGenreLib(); refreshCatChips(); };
+onload = () => {
+  makeStars(); initBank(); renderGenreLib(); refreshCatChips();
+  // 初回起動（名前未設定）は直接名前入力ダイアログを表示してゲームモードへ
+  if(!localStorage.getItem('qf_name')) {
+    // タイトル画面をスキップしてログイン→モード画面へ
+    _firstLogin = true;
+    openDlg();
+  } else {
+    refreshW();
+  }
+};
+let _firstLogin = false;
 function makeStars() {
   const c = document.getElementById('stars');
   for(let i=0;i<180;i++){
@@ -774,8 +785,19 @@ function makeStars() {
 function refreshW() { document.getElementById('welcomeTxt').textContent=`ようこそ、${pName} 殿！`; }
 function go(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+id).classList.add('active'); }
 function goRanking() { goRankScreen(); }
-function openDlg() { document.getElementById('nameIn').value=pName; document.getElementById('nameWrap').classList.add('on'); setTimeout(()=>document.getElementById('nameIn').focus(),100); }
-function saveName() { const v=document.getElementById('nameIn').value.trim()||'魔道師'; pName=v; localStorage.setItem('qf_name',v); document.getElementById('nameWrap').classList.remove('on'); refreshW(); }
+function openDlg() {
+  document.getElementById('nameIn').value = _firstLogin ? '' : pName;
+  document.getElementById('nameWrap').classList.add('on');
+  setTimeout(()=>document.getElementById('nameIn').focus(),100);
+}
+function saveName() {
+  const v=document.getElementById('nameIn').value.trim()||'魔道師';
+  pName=v; localStorage.setItem('qf_name',v);
+  document.getElementById('nameWrap').classList.remove('on');
+  refreshW();
+  // 初回ログイン時はそのままモード画面へ
+  if(_firstLogin) { _firstLogin=false; go('mode'); }
+}
 document.getElementById('nameIn').onkeydown=e=>{if(e.key==='Enter')saveName();if(e.key==='Escape')document.getElementById('nameWrap').classList.remove('on');};
 document.getElementById('nameWrap').onclick=e=>{if(e.target===document.getElementById('nameWrap'))document.getElementById('nameWrap').classList.remove('on');};
 
