@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ç®¡ç†è€…ãƒ‘ãƒãƒ« | ç™¾å¼ã‚²ãƒ¼ãƒ çŽ‹å›½</title>
+<title>管理者パネル | 百式ゲーム王国</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a14;color:#ccc;font-family:'Segoe UI',sans-serif;min-height:100vh}
@@ -12,8 +12,6 @@ body{background:#0a0a14;color:#ccc;font-family:'Segoe UI',sans-serif;min-height:
 .header-sub{font-size:12px;color:#888}
 .logout-btn{margin-left:auto;padding:6px 14px;background:rgba(255,80,80,.15);border:1px solid rgba(255,80,80,.3);color:#ff8888;border-radius:6px;cursor:pointer;font-size:13px}
 .container{max-width:900px;margin:0 auto;padding:20px}
-
-/* Login */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh}
 .login-box{background:#111;border:1px solid #333;border-radius:14px;padding:36px 32px;width:320px;text-align:center}
 .login-logo{font-size:40px;margin-bottom:12px}
@@ -23,20 +21,14 @@ body{background:#0a0a14;color:#ccc;font-family:'Segoe UI',sans-serif;min-height:
 .login-input:focus{outline:none;border-color:#FFD700}
 .login-btn{width:100%;padding:12px;background:linear-gradient(180deg,#FFD700,#c88000);border:none;border-radius:8px;color:#000;font-weight:700;font-size:16px;cursor:pointer}
 .login-err{color:#ff6666;font-size:13px;margin-top:8px;min-height:20px}
-
-/* Main */
 #main-screen{display:none}
 .tab-bar{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid #222;padding-bottom:0}
 .tab{padding:10px 18px;cursor:pointer;font-size:14px;font-weight:600;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px}
 .tab.active{color:#FFD700;border-bottom-color:#FFD700}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
-
-/* Cards */
 .card{background:#111;border:1px solid #222;border-radius:10px;padding:16px;margin-bottom:14px}
 .card-title{font-size:13px;font-weight:700;color:#888;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
-
-/* Table */
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl th{background:#0a0a0a;color:#888;font-size:11px;letter-spacing:.08em;padding:8px 10px;text-align:left;border-bottom:1px solid #222}
 .tbl td{padding:10px;border-bottom:1px solid #1a1a1a;vertical-align:middle}
@@ -44,8 +36,6 @@ body{background:#0a0a14;color:#ccc;font-family:'Segoe UI',sans-serif;min-height:
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
 .badge-green{background:rgba(0,200,60,.15);color:#00cc44;border:1px solid rgba(0,200,60,.3)}
 .badge-gold{background:rgba(255,215,0,.15);color:#FFD700;border:1px solid rgba(255,215,0,.3)}
-
-/* Inputs */
 .inp{background:#0a0a0a;border:1px solid #333;border-radius:6px;padding:8px 10px;color:#fff;font-size:14px;width:100%}
 .inp:focus{outline:none;border-color:#FFD700}
 .btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700}
@@ -53,109 +43,110 @@ body{background:#0a0a14;color:#ccc;font-family:'Segoe UI',sans-serif;min-height:
 .btn-danger{background:rgba(255,80,80,.15);border:1px solid rgba(255,80,80,.3);color:#ff8888}
 .btn-gold{background:linear-gradient(180deg,#FFD700,#c88000);color:#000}
 .btn-sm{padding:5px 12px;font-size:12px}
-
 .medal-row{display:flex;gap:8px;align-items:center}
 .medal-inp{width:90px}
 .status-msg{margin-top:10px;padding:8px 12px;border-radius:6px;font-size:13px;display:none}
 .status-msg.ok{display:block;background:rgba(0,200,60,.1);border:1px solid rgba(0,200,60,.3);color:#00cc44}
 .status-msg.err{display:block;background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.3);color:#ff8888}
-
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .stat-box{background:#0a0a0a;border:1px solid #222;border-radius:8px;padding:12px;text-align:center}
 .stat-n{font-size:28px;font-weight:700;color:#FFD700;font-family:Oswald,sans-serif}
 .stat-l{font-size:11px;color:#666;margin-top:2px}
 .loading{color:#888;font-size:13px;padding:20px;text-align:center}
-
 .reset-section{border-top:1px solid #222;margin-top:16px;padding-top:16px}
 </style>
 </head>
 <body>
 
-<!-- ãƒ­ã‚°ã‚¤ãƒ³ç”»é¢ -->
+<!-- ログイン画面 -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">ðŸ”</div>
-    <div class="login-title">ç®¡ç†è€…ãƒ‘ãƒãƒ«</div>
-    <div class="login-sub">ç™¾å¼ã‚²ãƒ¼ãƒ çŽ‹å›½</div>
-    <input class="login-input" id="pw-input" type="password" placeholder="ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">ãƒ­ã‚°ã‚¤ãƒ³</button>
+    <div class="login-logo">🔑</div>
+    <div class="login-title">管理者パネル</div>
+    <div class="login-sub">百式ゲーム王国</div>
+    <input class="login-input" id="pw-input" type="password" placeholder="パスワード" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">ログイン</button>
     <div class="login-err" id="login-err"></div>
   </div>
 </div>
 
-<!-- ãƒ¡ã‚¤ãƒ³ç”»é¢ -->
+<!-- メイン画面 -->
 <div id="main-screen">
   <div class="header">
     <div>
-      <div class="header-title">ðŸ”§ ç®¡ç†è€…ãƒ‘ãƒãƒ«</div>
-      <div class="header-sub">ç™¾å¼ã‚²ãƒ¼ãƒ çŽ‹å›½</div>
+      <div class="header-title">🔑 管理者パネル</div>
+      <div class="header-sub">百式ゲーム王国</div>
     </div>
-    <button class="logout-btn" onclick="doLogout()">ãƒ­ã‚°ã‚¢ã‚¦ãƒˆ</button>
+    <button class="logout-btn" onclick="doLogout()">ログアウト</button>
   </div>
   <div class="container">
     <div class="tab-bar">
-      <div class="tab active" onclick="switchTab('users',this)">ðŸ‘¤ ãƒ¦ãƒ¼ã‚¶ãƒ¼ç®¡ç†</div>
-      <div class="tab" onclick="switchTab('rankings',this)">ðŸ† ãƒ©ãƒ³ã‚­ãƒ³ã‚°</div>
-    2 <div class="tab" onclick="switchTab('stats',this)">ðŸ“Š çµ±è¨ˆ</div>
+      <div class="tab active" onclick="switchTab('users',this)">👤 ユーザー管理</div>
+      <div class="tab" onclick="switchTab('rankings',this)">🏆 ランキング</div>
+      <div class="tab" onclick="switchTab('stats',this)">📊 統計</div>
     </div>
 
-    <!-- ãƒ¦ãƒ¼ã‚¶ãƒ¼ç®¡ç† -->
+    <!-- ユーザー管理 -->
     <div class="tab-panel active" id="tab-users">
       <div class="card">
-        <div class="card-title">ç™»éŒ²ãƒ¦ãƒ¼ã‚¶ãƒ¼ä¸€è¦§</div>
-        <div id="users-list" class="loading">èª­ã¿è¾¼ã¿ä¸­...</div>
+        <div class="card-title">ユーザー一覧</div>
+        <div id="users-list" class="loading">読み込み中...</div>
       </div>
       <div class="card">
-        <div class="card-title">ãƒ¡ãƒ€ãƒ«ä»˜ä¸Ž / æ–°è¦ãƒ¦ãƒ¼ã‚¶ãƒ¼ä½œæˆ</div>
+        <div class="card-title">メダル追加 / 新規ユーザー作成</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
-            <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">ãƒ¦ãƒ¼ã‚¶ãƒ¼é¸æŠž</label>
-            <select class="inp" id="target-user" style="width:100%"><option value="">-- é¸æŠž --</option></select>
+            <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">ユーザー選択</label>
+            <select class="inp" id="target-user" style="width:100%"><option value="">-- 選択 --</option></select>
           </div>
           <div>
-            <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">ãƒ¡ãƒ€ãƒ«è¿½åŠ é‡</label>
+            <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">メダル操作数</label>
             <div class="medal-row">
               <input class="inp medal-inp" id="medal-amount" type="number" value="100" min="1">
-              <button class="btn btn-gold" onclick="addMedals()">è¿½åŠ </button>
-              <button class="btn btn-danger btn-sm" onclick="setMedals()">ã‚»ãƒƒãƒˆ</button>
+              <button class="btn btn-gold" onclick="addMedals()">追加</button>
+              <button class="btn btn-danger btn-sm" onclick="setMedals()">セット</button>
             </div>
           </div>
         </div>
         <div class="status-msg" id="medal-status"></div>
         <div style="border-top:1px solid #222;margin-top:16px;padding-top:14px">
-          <div style="font-size:12px;color:#888;margin-bottom:8px">æ–°è¦ãƒ¦ãƒ¼ã‚¶ãƒ¼ä½œæˆ</div>
+          <div style="font-size:12px;color:#888;margin-bottom:8px">新規ユーザー作成</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input class="inp" id="new-name" placeholder="åå‰" style="width:130px">
-            <input class="inp" id="new-pin" placeholder="PIN (4æ¡)" maxlength="4" style="width:100px">
-            <input class="inp" id="new-medals" type="number" value="100" placeholder="åˆæœŸãƒ¡ãƒ€ãƒ«" style="width:110px">
-            <button class="btn btn-primary" onclick="createUser()">ä½œæˆ</button>
+            <input class="inp" id="new-name" placeholder="名前" style="width:130px">
+            <input class="inp" id="new-pin" placeholder="PIN (4桁)" maxlength="4" style="width:100px">
+            <input class="inp" id="new-medals" type="number" value="100" placeholder="初期メダル" style="width:110px">
+            <button class="btn btn-primary" onclick="createUser()">作成</button>
           </div>
           <div class="status-msg" id="create-status"></div>
         </div>
       </div>
     </div>
 
-    <!-- ãƒ©ãƒ³ã‚­ãƒ³ã‚° -->
+    <!-- ランキング -->
     <div class="tab-panel" id="tab-rankings">
       <div class="card">
-        <div class="card-title">ã˜ã‚ƒã‚“ã‘ã‚“ãƒ©ãƒ³ã‚­ãƒ³ã‚°ï¼ˆrankings ãƒ†ãƒ¼ãƒ–ãƒ«ï¼‰</div>
-        <div id="rank-list" class="loading">èª­ã¿è¾¼ã¿ä¸­...</div>
+        <div class="card-title">じゃんけんランキング (rankingsテーブル・[pk]なし)</div>
+        <div id="rank-list-jk" class="loading">読み込み中...</div>
+      </div>
+      <div class="card">
+        <div class="card-title">ポーカーランキング (rankingsテーブル・[pk]プレフィックス)</div>
+        <div id="rank-list-pk" class="loading">読み込み中...</div>
         <div class="reset-section">
-          <button class="btn btn-danger" onclick="resetRankings()">ðŸ—‘ï¸ ãƒ©ãƒ³ã‚­ãƒ³ã‚°å…¨ãƒªã‚»ãƒƒãƒˆ</button>
-          <span style="font-size:12px;color:#666;margin-left:10px">â€» å…ƒã«æˆ»ã›ã¾ã›ã‚“</span>
+          <button class="btn btn-danger" onclick="resetRankings()">🔥 全ランキングリセット</button>
+          <span style="font-size:12px;color:#666;margin-left:10px">… 元に戻せません</span>
           <div class="status-msg" id="rank-status"></div>
         </div>
       </div>
     </div>
 
-    <!-- çµ±è¨ˆ -->
+    <!-- 統計 -->
     <div class="tab-panel" id="tab-stats">
       <div class="card">
-        <div class="card-title">å…¨ä½“çµ±è¨ˆ</div>
+        <div class="card-title">現状統計</div>
         <div class="stat-grid" id="stat-grid">
-          <div class="stat-box"><div class="stat-n" id="stat-users">-</div><div class="stat-l">ç™»éŒ²ãƒ¦ãƒ¼ã‚¶ãƒ¼æ•°</div></div>
-          <div class="stat-box"><div class="stat-n" id="stat-medals">-</div><div class="stat-l">ç·ãƒ¡ãƒ€ãƒ«æ•°</div></div>
-          <div class="stat-box"><div class="stat-n" id="stat-ranks">-</div><div class="stat-l">ãƒ©ãƒ³ã‚­ãƒ³ã‚°ä»¶æ•°</div></div>
+          <div class="stat-box"><div class="stat-n" id="stat-users">-</div><div class="stat-l">登録ユーザー数</div></div>
+          <div class="stat-box"><div class="stat-n" id="stat-medals">-</div><div class="stat-l">総メダル流通数</div></div>
+          <div class="stat-box"><div class="stat-n" id="stat-ranks">-</div><div class="stat-l">ランキング件数</div></div>
         </div>
       </div>
     </div>
@@ -182,7 +173,7 @@ function doLogin(){
     document.getElementById('main-screen').style.display='block';
     loadAll();
   }else{
-    document.getElementById('login-err').textContent='ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒé•ã„ã¾ã™';
+    document.getElementById('login-err').textContent='パスワードが正しくありません';
     document.getElementById('pw-input').value='';
   }
 }
@@ -205,121 +196,140 @@ function showMsg(id,msg,ok){
 
 async function loadAll(){
   await loadUsers();
-  loadRankings();
   loadStats();
 }
 
 async function loadUsers(){
   const el=document.getElementById('users-list');
   try{
-    _users=(await sbFetch('game_users?select=*&order=created_at.asc')).filter(u=>!u.name.startsWith('_del_'));
-    // ã‚»ãƒ¬ã‚¯ãƒˆã‚’æ›´æ–°
+    const all=await sbFetch('game_users?select=*&order=created_at.asc');
+    // _del_プレフィックスを除外
+    _users=(all||[]).filter(u=>!u.name.startsWith('_del_'));
     const sel=document.getElementById('target-user');
-    sel.innerHTML='<option value="">-- é¸æŠž --</option>';
-    _users.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.name+' (ç¾åœ¨'+u.medals+'æžš)';sel.appendChild(o);});
-    // ãƒ†ãƒ¼ãƒ–ãƒ«è¡¨ç¤º
-    if(!_users||!_users.length){el.innerHTML='<div class="loading">ãƒ¦ãƒ¼ã‚¶ãƒ¼ãªã—</div>';return;}
+    sel.innerHTML='<option value="">-- 選択 --</option>';
+    _users.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.name+' (現在'+u.medals+'枚)';sel.appendChild(o);});
+    if(!_users.length){el.innerHTML='<div class="loading">ユーザーなし</div>';return;}
     el.innerHTML=`<table class="tbl">
-      <tr><th>ID</th><th>åå‰</th><th>PIN</th><th>ãƒ¡ãƒ€ãƒ«</th><th>ç™»éŒ²æ—¥</th><th>æ“ä½œ</th></tr>
+      <tr><th>ID</th><th>名前</th><th>PIN</th><th>メダル</th><th>登録日</th><th>操作</th></tr>
       ${_users.map(u=>`<tr>
         <td><span class="badge badge-gold">#${u.id}</span></td>
         <td><b style="color:#fff">${esc(u.name)}</b></td>
         <td><span style="color:#666;font-family:monospace">${u.pin||'-'}</span></td>
-        <td><span class="badge badge-green">ðŸª™ ${u.medals}æžš</span></td>
+        <td><span class="badge badge-green">🪙 ${u.medals}枚</span></td>
         <td style="color:#666;font-size:12px">${new Date(u.created_at).toLocaleDateString('ja-JP')}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id},'${esc(u.name)}')">å‰Šé™¤</button></td>
+        <td><button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id},'${esc(u.name)}')">無効化</button></td>
       </tr>`).join('')}
     </table>`;
-  }catch(e){el.innerHTML='<div class="loading" style="color:#f88">å–å¾—ã‚¨ãƒ©ãƒ¼</div>';}
+  }catch(e){el.innerHTML='<div class="loading" style="color:#f88">取得エラー</div>';}
 }
 
 async function addMedals(){
   const uid=document.getElementById('target-user').value;
   const amt=parseInt(document.getElementById('medal-amount').value)||0;
-  if(!uid){showMsg('medal-status','ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’é¸æŠžã—ã¦ãã ã•ã„',false);return;}
-  if(amt<=0){showMsg('medal-status','æžšæ•°ã‚’æ­£ã—ãå…¥åŠ›ã—ã¦ãã ã•ã„',false);return;}
+  if(!uid){showMsg('medal-status','ユーザーを選んでください',false);return;}
+  if(amt<=0){showMsg('medal-status','枚数を正しく入力してください',false);return;}
   const user=_users.find(u=>String(u.id)===uid);
   if(!user)return;
   const newMedals=(user.medals||0)+amt;
   try{
     await sbFetch('game_users?id=eq.'+uid,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({medals:newMedals})});
-    showMsg('medal-status',user.name+'ã«'+amt+'æžšè¿½åŠ  â†’ è¨ˆ'+newMedals+'æžš',true);
+    showMsg('medal-status',user.name+'に'+amt+'枚追加 → 計'+newMedals+'枚',true);
     loadUsers();
-  }catch(e){showMsg('medal-status','ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ',false);}
+  }catch(e){showMsg('medal-status','エラーが発生しました',false);}
 }
 
 async function setMedals(){
   const uid=document.getElementById('target-user').value;
   const amt=parseInt(document.getElementById('medal-amount').value);
-  if(!uid){showMsg('medal-status','ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‚’é¸æŠžã—ã¦ãã ã•ã„',false);return;}
-  if(isNaN(amt)||amt<0){showMsg('medal-status','æžšæ•°ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„',false);return;}
+  if(!uid){showMsg('medal-status','ユーザーを選んでください',false);return;}
+  if(isNaN(amt)||amt<0){showMsg('medal-status','枚数を入力してください',false);return;}
   const user=_users.find(u=>String(u.id)===uid);
   if(!user)return;
-  if(!confirm(user.name+'ã®ãƒ¡ãƒ€ãƒ«ã‚’'+amt+'æžšã«ã‚»ãƒƒãƒˆã—ã¾ã™ã‹ï¼Ÿ'))return;
+  if(!confirm(user.name+'のメダルを'+amt+'枚にセットしますか？'))return;
   try{
     await sbFetch('game_users?id=eq.'+uid,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({medals:amt})});
-    showMsg('medal-status',user.name+'ã®ãƒ¡ãƒ€ãƒ«ã‚’'+amt+'æžšã«ã‚»ãƒƒãƒˆå®ŒÄº†',true);
+    showMsg('medal-status',user.name+'のメダルを'+amt+'枚にセット完了',true);
     loadUsers();
-  }catch(e){showMsg('medal-status','ã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã—ã¾ã—ãŸ',false);}
+  }catch(e){showMsg('medal-status','エラーが発生しました',false);}
 }
 
 async function createUser(){
   const name=document.getElementById('new-name').value.trim();
   const pin=document.getElementById('new-pin').value.trim();
   const medals=parseInt(document.getElementById('new-medals').value)||0;
-  if(!name||!pin){showMsg('create-status','åå‰ã¨PINã‚’å…¥åŠ›ã—ã¦ãã ã•ã„',false);return;}
-  if(pin.length!==4){showMsg('create-status','PINã¯4æ¡ã§å…¥åŠ›ã—ã¦ãã ã•ã„',false);return;}
+  if(!name||!pin){showMsg('create-status','名前とPINを入力してください',false);return;}
+  if(pin.length!==4){showMsg('create-status','PINは4桁で入力してください',false);return;}
   try{
     await sbFetch('game_users',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name,pin,medals})});
-    showMsg('create-status',name+'ã‚’ä½œæˆã—ã¾ã—ãŸï¼ˆ'+medals+'æžšï¼‰',true);
+    showMsg('create-status',name+'を作成しました（'+medals+'枚）',true);
     document.getElementById('new-name').value='';
     document.getElementById('new-pin').value='';
     loadUsers();
-  }catch(e){showMsg('create-status','ä½œæˆã‚¨ãƒ©ãƒ¼ï¼ˆåå‰é‡è¤‡ã®å¯èƒ½æ€§ï¼‰',false);}
+  }catch(e){showMsg('create-status','作成エラー（名前重複の可能性）',false);}
 }
 
 async function deleteUser(id,name){
-  if(!confirm(name+'を無効化（論理削除）しますか？\n※物理削除はSupabaseダッシュボードから行ってください'))return;
+  if(!confirm(name+'を無効化しますか？\n※物理削除はSupabaseから行ってください'))return;
   try{
-    // RLS制限のためDELETEの代わりにPATCHで無効化
     await sbFetch('game_users?id=eq.'+id,{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({name:'_del_'+id,medals:0,pin:'0000'})});
-    showMsg('medal-status',name+'を無効化しました（ログインリストから削除）',true);
+    showMsg('medal-status',name+'を無効化しました',true);
     loadUsers();
   }catch(e){showMsg('medal-status','エラー: '+e,false);}
 }
 
 async function loadRankings(){
-  const el=document.getElementById('rank-list');
-  el.innerHTML='<div class="loading">èª­ã¿è¾¼ã¿ä¸­...</div>';
+  const RESET='2026-04-02T02:30:00';
+  // じゃんけんランキング（[pk]なし）
+  const eljk=document.getElementById('rank-list-jk');
   try{
-    const data=await sbFetch('rankings?select=*&order=score.desc&limit=50');
-    if(!data||!data.length){el.innerHTML='<div class="loading">ãƒ©ãƒ³ã‚­ãƒ³ã‚°ãƒ‡ãƒ¼ã‚¿ãªã—</div>';return;}
-    el.innerHTML<`<table class="tbl">
-      <tr><th>é †ä½</th><th>åå‰</th><th>ã‚¹ã‚³ã‚¢</th><th>æ—¥æ™‚</th></tr>
-      ${data.map((r,i)=>`<tr>
-        <td>${i===0?'ðŸ¥‡':i===1?'ðŸ¥ˆ':i===2?'ðŸ¥‰':(i+1)+'ä½'}</td>
+    const data=await sbFetch('rankings?select=*&name=not.like.%5Bpk%5D*&created_at=gte.'+RESET+'&score=gt.0&order=score.desc&limit=50');
+    if(!data||!data.length){eljk.innerHTML='<div class="loading">ランキングなし</div>';return;}
+    // dedup by name
+    const seen={},deduped=[];
+    data.forEach(r=>{if(!seen[r.name]){seen[r.name]=true;deduped.push(r);}});
+    eljk.innerHTML<`<table class="tbl">
+      <tr><th>順位</th><th>名前</th><th>スコア</th><th>日時</th></tr>
+      ${deduped.map((r,i)=>`<tr>
+        <td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'位'}</td>
         <td>${esc(r.name)}</td>
-        <td><b style="color:#00FF41">ðŸª™ ${r.score.toLocaleString()}æžš</b></td>
+        <td><b style="color:#00FF41">🪙 ${r.score.toLocaleString()}枚</b></td>
         <td style="color:#666;font-size:12px">${new Date(r.created_at).toLocaleString('ja-JP')}</td>
       </tr>`).join('')}
     </table>`;
-  }catch(e){el.innerHTML='<div class="loading" style="color:#f88">å–å¾—ã‚¨ãƒ©ãƒ¼</div>';}
+  }catch(e){eljk.innerHTML='<div class="loading" style="color:#f88">取得エラー</div>';}
+  // ポーカーランキング（[pk]プレフィックス）
+  const elpk=document.getElementById('rank-list-pk');
+  try{
+    const data=await sbFetch('rankings?select=*&name=like.%5Bpk%5D*&created_at=gte.'+RESET+'&score=gt.0&order=score.desc&limit=50');
+    if(!data||!data.length){elpk.innerHTML='<div class="loading">ランキングなし</div>';return;}
+    const seen={},deduped=[];
+    data.forEach(r=>{const nm=r.name.replace(/^\[pk\]/,'');if(!seen[nm]){seen[nm]=true;deduped.push({...r,name:nm});}});
+    elpk.innerHTML=`<table class="tbl">
+      <tr><th>順位</th><th>名前</th><th>スコア</th><th>日時</th></tr>
+      ${deduped.map((r,i)=>`<tr>
+        <td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'位'}</td>
+        <td>${esc(r.name)}</td>
+        <td><b style="color:#00FF41">🪙 ${r.score.toLocaleString()}枚</b></td>
+        <td style="color:#666;font-size:12px">${new Date(r.created_at).toLocaleString('ja-JP')}</td>
+      </tr>`).join('')}
+    </table>`;
+  }catch(e){elpk.innerHTML='<div class="loading" style="color:#f88">取得エラー</div>';}
 }
 
 async function resetRankings(){
-  if(!confirm('ãƒ©ãƒ³ã‚­ãƒ³ã‚°ã‚’å…¨ä»¶å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ\nã“ã®æ“ä½œã¯å…ƒã«æˆ»ã›ã¾ã›ã‚“ã€‚'))return;
+  if(!confirm('ランキングを全件リセットしますか？\nこの操作は元に戻せません。'))return;
   try{
-    await sbFetch('rankings?id=gte.0',{method:'DELETE',headers:{'Prefer':'return=minimal'}});
-    showMsg('rank-status','ãƒ©ãƒ³ã‚­ãƒ³ã‚°ã‚’ãƒªã‚»ãƒƒãƒˆã—ã¾ã—ãŸ',true);
+    await sbFetch('rankings?id=gte.0',{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify({score:-1})});
+    showMsg('rank-status','ランキングをリセットしました',true);
     loadRankings();loadStats();
-  }catch(e){showMsg('rank-status','å‰Šé™¤ã‚¨ãƒ©ãƒ¼',false);}
+  }catch(e){showMsg('rank-status','エラーが発生しました',false);}
 }
 
 async function loadStats(){
   try{
     const [users,ranks]=await Promise.all([
       sbFetch('game_users?select=medals'),
-      sbFetch('rankings?select=id')
+      sbFetch('rankings?select=id&score=gt.0')
     ]);
     document.getElementById('stat-users').textContent=users?users.length:0;
     document.getElementById('stat-medals').textContent=users?(users.reduce((s,u)=>s+(u.medals||0),0)).toLocaleString():0;
@@ -329,7 +339,7 @@ async function loadStats(){
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// æ—¢ã«ãƒ­ã‚°ã‚¤ãƒ³æ¸ˆã¿ãªã‚‰ç›´æŽ¥è¡¨ç¤º
+// 起動時にログイン済みなら自動表示
 if(sessionStorage.getItem('admin_ok')==='1'){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('main-screen').style.display='block';
