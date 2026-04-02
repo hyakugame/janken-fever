@@ -275,14 +275,14 @@ body{background:var(--dark);color:#fff;font-family:'Barlow Condensed','Noto Sans
       </div>
       <!-- カード表示 -->
       <div style="display:flex;justify-content:center;align-items:center;gap:20px;padding:8px 0">
-        <div id="prev-card" class="card-slot" style="background:#fff;border-radius:12px;width:90px;height:126px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.6);position:relative">
-          <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:900" id="prev-num">?</div>
-          <div style="font-size:42px;line-height:1" id="prev-suit">?</div>
+        <div id="prev-card" class="card-slot" style="background:#fff;border-radius:12px;width:150px;height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.6);position:relative">
+          <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:900" id="prev-num">?</div>
+          <div style="font-size:56px;line-height:1" id="prev-suit">?</div>
         </div>
         <div style="font-size:32px;color:#555">→</div>
-        <div id="next-card" class="card-slot" style="background:#fff;border-radius:12px;width:90px;height:126px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(255,215,0,.5);border:3px solid #FFD700;position:relative;opacity:.5">
-          <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:900" id="next-num">?</div>
-          <div style="font-size:42px;line-height:1" id="next-suit">?</div>
+        <div id="next-card" class="card-slot" style="background:#fff;border-radius:12px;width:150px;height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(255,215,0,.5);border:3px solid #FFD700;position:relative;opacity:.4">
+          <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:900" id="next-num">?</div>
+          <div style="font-size:56px;line-height:1" id="next-suit">?</div>
         </div>
       </div>
       <!-- 結果 -->
@@ -716,7 +716,11 @@ function pickHL(dir){
   // 次のカードをめくる
   document.getElementById('next-num').textContent=cLabel(nn);
   document.getElementById('next-suit').textContent=SUITS[ns];
-  nc.className='card-slot '+(SUIT_RED[ns]?'hl-red':'hl-blk');
+  var ncol=SUIT_RED[ns]?'#CC0000':'#111';
+  document.getElementById('next-num').style.color=ncol;
+  document.getElementById('next-suit').style.color=ncol;
+  nc.className='card up '+(SUIT_RED[ns]?'red':'blk');
+  nc.style.opacity='1';
   nc.dataset.num=nn;
   const isHi=nn>prevNum,isLo=nn<prevNum,draw=nn===prevNum;
   const res=document.getElementById('hl-res');
@@ -877,9 +881,17 @@ function startHL(){
 }
 function dealNewCards(){
   const ln=Math.floor(Math.random()*13)+1,ls=Math.floor(Math.random()*4);
-  document.getElementById('prev-num').textContent=cLabel(ln);document.getElementById('prev-suit').textContent=SUITS[ls];
-  document.getElementById('prev-card').className='card up '+(SUIT_RED[ls]?'red':'blk');document.getElementById('prev-card').dataset.num=ln;
-  document.getElementById('next-card').className='card dn';document.getElementById('next-num').textContent='';document.getElementById('next-suit').textContent='';
+  const col=SUIT_RED[ls]?'#CC0000':'#111';
+  var pn=document.getElementById('prev-num'),ps=document.getElementById('prev-suit');
+  pn.textContent=cLabel(ln); pn.style.color=col;
+  ps.textContent=SUITS[ls]; ps.style.color=col;
+  document.getElementById('prev-card').className='card up '+(SUIT_RED[ls]?'red':'blk');
+  document.getElementById('prev-card').dataset.num=ln;
+  document.getElementById('prev-card').style.opacity='1';
+  var nc=document.getElementById('next-card');
+  nc.className='card dn'; nc.style.opacity='0.4';
+  document.getElementById('next-num').textContent='';
+  document.getElementById('next-suit').textContent='';
 }
 function updateHLInfo(){document.getElementById('hl-med').textContent=hlMedals+'枚';document.getElementById('hl-nxt').textContent=(hlMedals*2)+'枚';document.getElementById('hl-quit').textContent='💰 やめてメダルをもらう ('+hlMedals+'枚)';}
 function setHLBtns(on){document.getElementById('btn-hi').disabled=!on;document.getElementById('btn-lo').disabled=!on;}
