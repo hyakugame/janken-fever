@@ -882,7 +882,7 @@ function insertCoin(){
   document.getElementById('start-btn').disabled=false;
   seCoin(); bgmPlay('attract');
 }
-function goAttract(){window._waitFirstPick=false;stopAll();credits=0;document.getElementById('start-btn').disabled=true;var hv=document.getElementById('hi-v');if(hv)hv.textContent=hiScore;var tv=document.getElementById('tot-v');if(tv)tv.textContent=totalMedals;var lm=document.getElementById('lobby-med');if(lm)lm.textContent=hiScore;bgmPlay('attract');show('sa');loadSaRank();}
+function goAttract(){window._waitFirstPick=false;stopAll();showBetScreen();}
 
 // GAME
 function startGame(){if(!credits)return;wake();credits--;bgmStop();sessionGained=0;php=5;updMed();updPHP();show('sb');startRound();}
@@ -1068,12 +1068,7 @@ document.addEventListener('click',()=>wake(),{once:true});
 document.addEventListener('touchstart',()=>wake(),{once:true});
 // 起動時：ベット選択画面を表示
 (function(){
-  var su=JSON.parse(localStorage.getItem('hkg_user')||'null');
-  if(su && su.medals>0){
-    showBetScreen();
-  } else {
-    goAttract();
-  }
+  showBetScreen();
 })();
 </script>
 </body>
