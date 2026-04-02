@@ -62,8 +62,8 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
 .glbl{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.3em;text-align:center;margin-bottom:10px}
 .card{display:block;text-decoration:none;background:linear-gradient(135deg,rgba(0,20,40,.9),rgba(0,10,25,.95));border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;margin-bottom:12px;position:relative;transition:all .2s}
 .card:hover{border-color:rgba(0,200,255,.3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.card:active{transform:none}
-.banner{height:120px;display:flex;align-items:center;justify-content:center;font-size:56px;letter-spacing:4px}
+.card:active{transform:none}.icon-edit-btn{position:absolute;top:6px;right:6px;z-index:10;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;opacity:0;transition:.2s;-webkit-tap-highlight-color:transparent}.card:hover .icon-edit-btn,.card:active .icon-edit-btn{opacity:1}
+.banner{height:140px;display:flex;align-items:center;justify-content:center;font-size:64px;letter-spacing:4px;position:relative;overflow:hidden}.banner img.custom-icon{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.banner .emoji-wrap{position:relative;z-index:1}
 .banner.sl{background:linear-gradient(135deg,#003355,#001a33);border-bottom:2px solid #0099bb}
 .banner.jk{background:linear-gradient(135deg,#1a0033,#0d001a);border-bottom:2px solid #8800cc}
 .banner.pk{background:linear-gradient(135deg,#001a00,#000d00);border-bottom:2px solid #00aa44}
@@ -153,7 +153,7 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
     <div class="glbl">▶ SELECT GAME ◀</div>
 
     <a class="card" href="slot.html" onclick="go(event,'slot.html')">
-      <div class="banner sl">🎰🌴🌺</div>
+      <div class="banner sl" id="banner-slot"><button class="icon-edit-btn" onclick="editIcon('slot',event)">📷 変更</button><span class="emoji-wrap">🎰🌴🌺</span></div>
       <div class="cinfo">
         <div class="cname">OKI FEVER SLOT <small>沖縄スロット</small></div>
         <div class="cdesc">天国モード・ドキドキモード搭載。6段階設定でハラハラドキドキ！</div>
@@ -162,7 +162,7 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
     </a>
 
     <a class="card" href="janken-fever.html" onclick="go(event,'janken-fever.html')">
-      <div class="banner jk">✊✌🖐</div>
+      <div class="banner jk" id="banner-jk"><button class="icon-edit-btn" onclick="editIcon('jk',event)">📷 変更</button><span class="emoji-wrap">✊✌🖐</span></div>
       <div class="cinfo">
         <div class="cname">グーチョキパー FEVER <small>じゃんけんゲーム</small></div>
         <div class="cdesc">早出しバトル！連勝でFEVER突入。メダルを増やせ！</div>
@@ -170,7 +170,7 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
     </a>
 
     <a class="card" href="poker_fever.html" onclick="go(event,'poker_fever.html')">
-      <div class="banner pk">🃏♠🃏</div>
+      <div class="banner pk" id="banner-poker"><button class="icon-edit-btn" onclick="editIcon('poker',event)">📷 変更</button><span class="emoji-wrap">🃏♠🃏</span></div>
       <div class="cinfo">
         <div class="cname">ポーカーFEVER <small>7's WILD PLUS</small></div>
         <div class="cdesc">53枚デッキ＋ジョーカーのビデオポーカー。役を揃えてダブルアップ勝負！</div>
@@ -179,7 +179,7 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
     </a>
 
     <a class="card" href="quiz_fever.html" onclick="go(event,'quiz_fever.html')">
-      <div class="banner" style="background:linear-gradient(135deg,#1a0840,#3d1380);font-size:2em">🧙❓📚</div>
+      <div class="banner" id="banner-quiz" style="background:linear-gradient(135deg,#1a0840,#3d1380);font-size:2em"><span class="emoji-wrap">🧙❓📚</span></div>
       <div class="cinfo">
         <div class="cname">クイズ魔道学院FEVER <small>早押しクイズ対戦</small></div>
         <div class="cdesc">キーワード検索で問題を無限生成！CPU相手に早押し対決！</div>
@@ -364,6 +364,56 @@ function save(){
 function msg(t,c){var e=document.getElementById('lmsg');e.textContent=t;e.className='lmsg'+(c?' '+c:'');}
 var _tt;
 function toast(m){clearTimeout(_tt);var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');_tt=setTimeout(function(){t.classList.remove('show');},2500);}
+
+// ══ アイコンカスタマイズ ══
+const ICON_KEYS = {slot:'lobby_icon_slot',jk:'lobby_icon_jk',poker:'lobby_icon_poker',quiz:'lobby_icon_quiz'};
+function loadCustomIcons() {
+  Object.entries(ICON_KEYS).forEach(([id, key]) => {
+    const img = localStorage.getItem(key);
+    if(img) applyIcon(id, img);
+  });
+}
+function applyIcon(id, dataUrl) {
+  const banner = document.getElementById('banner-'+id);
+  if(!banner) return;
+  let imgEl = banner.querySelector('img.custom-icon');
+  if(!imgEl) { imgEl = document.createElement('img'); imgEl.className='custom-icon'; banner.prepend(imgEl); }
+  imgEl.src = dataUrl;
+}
+function editIcon(id, e) {
+  e.preventDefault(); e.stopPropagation();
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = ev => {
+    const file = ev.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = re => {
+      const dataUrl = re.result;
+      localStorage.setItem(ICON_KEYS[id], dataUrl);
+      applyIcon(id, dataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+function resetIcon(id) {
+  localStorage.removeItem(ICON_KEYS[id]);
+  const banner = document.getElementById('banner-'+id);
+  if(!banner) return;
+  const imgEl = banner.querySelector('img.custom-icon');
+  if(imgEl) imgEl.remove();
+}
+// 長押しでリセット
+document.addEventListener('DOMContentLoaded', () => {
+  loadCustomIcons();
+  Object.keys(ICON_KEYS).forEach(id => {
+    const banner = document.getElementById('banner-'+id);
+    if(!banner) return;
+    let pressTimer;
+    banner.addEventListener('touchstart', () => { pressTimer = setTimeout(() => { if(confirm(id+'のアイコンをリセットしますか？')) resetIcon(id); }, 800); });
+    banner.addEventListener('touchend', () => clearTimeout(pressTimer));
+  });
+});
 </script>
 <footer style="text-align:center;padding:12px;font-size:11px"><a href="admin.html" style="color:#444;text-decoration:none;opacity:0.5">🔧 管理者ログイン</a></footer>
 </body>
