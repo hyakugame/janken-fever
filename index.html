@@ -79,6 +79,17 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
 /* トースト */
 .toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.9);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;color:#fff;pointer-events:none;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap}
 .toast.show{opacity:1}
+
+.ranking-section{padding:0 12px 16px;display:flex;flex-direction:column;gap:12px}
+.rank-section-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#FFD700;text-align:center;padding:10px 0;border-bottom:1px solid rgba(255,215,0,.3);margin-bottom:4px}
+.rank-block{background:rgba(0,0,0,.35);border:1px solid rgba(0,200,60,.25);border-radius:12px;padding:12px}
+.rank-block-title{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:#00FF41;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(0,200,60,.2)}
+.rank-list{display:flex;flex-direction:column;gap:4px;font-size:14px}
+.rank-row{display:flex;align-items:center;gap:8px;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.05)}
+.rank-row:last-child{border:none}
+.rank-pos{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#FFD700;min-width:24px}
+.rank-name{flex:1;color:#ccc}
+.rank-score{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#00FF41}
 </style>
 </head>
 <body>
@@ -166,6 +177,24 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
       </div>
       <span class="badge bhot">HOT</span>
     </a>
+  
+  <!-- ランキング -->
+  <div class="ranking-section" id="rankingSection">
+    <div class="rank-section-title">🏆 プレイヤーランキング</div>
+    
+    <!-- ポーカー -->
+    <div class="rank-block">
+      <div class="rank-block-title">🃏 ポーカー</div>
+      <div class="rank-list" id="rank-poker">読み込み中...</div>
+    </div>
+    
+    <!-- じゃんけん -->
+    <div class="rank-block">
+      <div class="rank-block-title">✊ グーチョキパー FEVER</div>
+      <div class="rank-list" id="rank-janken">読み込み中...</div>
+    </div>
+  </div>
+
   </div>
   <div class="foot">© 2025 百式ゲーム王国 · メダルはゲーム間で共通</div>
 </div>
@@ -173,6 +202,42 @@ body{background:#050810;font-family:'Barlow Condensed',sans-serif;min-height:100
 <div class="toast" id="toast"></div>
 
 <script>
+
+function loadRankings(){
+  var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co',SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+  var H={'apikey':SBK,'Authorization':'Bearer '+SBK};
+  
+  // ポーカーランキング（game_usersテーブル）
+  fetch(SBU+'/rest/v1/game_users?select=name,medals&order=medals.desc&limit=10',{headers:H})
+    .then(r=>r.json()).then(data=>{
+      var el=document.getElementById('rank-poker');if(!el)return;
+      if(!Array.isArray(data)||data.length===0){el.textContent='(まだ記録なし)';return;}
+      el.innerHTML=data.map(function(r,i){
+        var medal=r.medals||0;
+        var badge=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'位';
+        return '<div class="rank-row"><span class="rank-pos">'+badge+'</span><span class="rank-name">'+((r.name||'---').slice(0,10))+'</span><span class="rank-score">'+medal+'枚</span></div>';
+      }).join('');
+    }).catch(function(){
+      var el=document.getElementById('rank-poker');
+      if(el)el.innerHTML='<div style="color:#666;font-size:12px">取得できませんでした</div>';
+    });
+    
+  // じゃんけんランキング（jk_scoresテーブル）
+  fetch(SBU+'/rest/v1/jk_scores?select=name,score&order=score.desc&limit=10',{headers:H})
+    .then(r=>r.json()).then(data=>{
+      var el=document.getElementById('rank-janken');if(!el)return;
+      if(!Array.isArray(data)||data.length===0){el.textContent='(まだ記録なし)';return;}
+      el.innerHTML=data.map(function(r,i){
+        var score=r.score||0;
+        var badge=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'位';
+        return '<div class="rank-row"><span class="rank-pos">'+badge+'</span><span class="rank-name">'+((r.name||'---').slice(0,10))+'</span><span class="rank-score">'+score+'枚</span></div>';
+      }).join('');
+    }).catch(function(){
+      var el=document.getElementById('rank-janken');
+      if(el)el.innerHTML='<div style="color:#666;font-size:12px">取得できませんでした</div>';
+    });
+}
+
 var pin='', user=null;
 
 // 起動時チェック
@@ -181,7 +246,7 @@ try{
   if(saved&&saved.name){user=saved;openLobby();}
 }catch(e){}
 
-function openLobby(){
+function openLobby(){loadRankings();
   document.getElementById('login').style.display='none';
   document.getElementById('lobby').style.display='flex';
   var n=user.name||'GUEST';
