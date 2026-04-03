@@ -393,7 +393,42 @@ body{display:block !important}
   pointer-events:none;
   z-index:0;
 }
-#ctrl{display:none!important}</style>
+#ctrl{display:none!important}
+/* ===== LOGIN UI REFRESH ===== */
+/* ④ ネオンタイトル */
+.ll-en{font-family:var(--font-en);font-size:clamp(9px,2.2vw,12px);color:#0cf;letter-spacing:.3em;opacity:.8;margin-bottom:4px;text-align:center}
+.ll-title{font-family:var(--font-jp);font-weight:900;font-size:clamp(26px,7vw,38px);color:#0ef;letter-spacing:.05em;line-height:1.1;text-align:center;text-shadow:0 0 8px #0ef,0 0 20px #0af,0 0 40px rgba(0,160,255,.6);animation:neonFl 5s ease-in-out infinite}
+.ll-sub{font-family:var(--font-en);font-size:clamp(8px,1.8vw,10px);color:#0af;letter-spacing:.25em;opacity:.6;margin-top:4px;text-align:center}
+@keyframes neonFl{0%,88%,100%{opacity:1;text-shadow:0 0 8px #0ef,0 0 20px #0af,0 0 40px rgba(0,160,255,.6)}90%,94%{opacity:.7;text-shadow:0 0 4px #0ef}92%{opacity:.9}}
+/* ② ぷるんアニメーション */
+@keyframes puru{0%{transform:scale(1)}20%{transform:scale(1.18);filter:drop-shadow(0 0 10px var(--red))}50%{transform:scale(0.93)}75%{transform:scale(1.06)}100%{transform:scale(1)}}
+.pin-dot.puru{animation:puru .38s cubic-bezier(.36,.07,.19,.97)}
+/* ② OKボタン制御 */
+.nb-ok{opacity:.35 !important;pointer-events:none !important;transition:opacity .3s,box-shadow .3s}
+.nb-ok.ready{opacity:1 !important;pointer-events:auto !important;animation:okGl 1.6s ease-in-out infinite}
+@keyframes okGl{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25) drop-shadow(0 0 8px #0ef)}}
+/* ⑤ レスポンシブ余白 */
+#slogin{justify-content:center;min-height:0;overflow-y:auto;padding:12px 12px !important;gap:10px !important}
+/* ===== CRYSTAL BUTTON SPRITES ===== */
+.nb{background-size:100% 100%;background-repeat:no-repeat;background-color:transparent;border:none !important;color:transparent !important;font-size:0 !important;padding:0 !important;width:100%;aspect-ratio:323/140;cursor:pointer;transition:filter .12s,transform .12s}
+.nb::before{display:none}
+.nb:active{transform:scale(.93);filter:brightness(.8)}
+.nb svg{width:22px;height:16px;color:#fff;transition:none}
+.nb-del{color:white !important;font-size:0 !important;display:flex;align-items:center;justify-content:center}
+.nb-del svg{display:block}
+.nb[onclick*="('1')"]{background-image:url('./images/nb1.jpg')}
+.nb[onclick*="('2')"]{background-image:url('./images/nb2.jpg')}
+.nb[onclick*="('3')"]{background-image:url('./images/nb3.jpg')}
+.nb[onclick*="('4')"]{background-image:url('./images/nb4.jpg')}
+.nb[onclick*="('5')"]{background-image:url('./images/nb5.jpg')}
+.nb[onclick*="('6')"]{background-image:url('./images/nb6.jpg')}
+.nb[onclick*="('7')"]{background-image:url('./images/nb7.jpg')}
+.nb[onclick*="('8')"]{background-image:url('./images/nb8.jpg')}
+.nb[onclick*="('9')"]{background-image:url('./images/nb9.jpg')}
+.nb[onclick*="('0')"]{background-image:url('./images/nb0.jpg')}
+.nb-del{background-image:url('./images/nbdel.jpg')}
+.nb-ok{background-image:url('./images/nbok.jpg')}
+</style>
 
 <script>
 (function(){
@@ -429,7 +464,7 @@ body{display:block !important}
 </div>
 <div class="screen"><div class="fl"></div>
 <div id="slogin" class="gs active">
-  <div class="login-logo">👑 百式ゲーム王国へ<br><span>ようこそ！</span></div>
+  <div class="login-logo"><div class="ll-en">GAME KINGDOM</div><div class="ll-title">ゲーム王国</div><div class="ll-sub">ALL GAMES · ALL MEDALS</div></div>
   <div class="login-box">
     <div class="login-tabs"><div class="login-tab active" id="tab-l" onclick="switchTab('login')">ログイン</div><div class="login-tab" id="tab-s" onclick="switchTab('signup')">新規登録</div></div>
     <div class="login-box-title" id="lbt">名前とPINで入場</div>
@@ -439,7 +474,7 @@ body{display:block !important}
       <button class="nb" onclick="pin('1')">1</button><button class="nb" onclick="pin('2')">2</button><button class="nb" onclick="pin('3')">3</button>
       <button class="nb" onclick="pin('4')">4</button><button class="nb" onclick="pin('5')">5</button><button class="nb" onclick="pin('6')">6</button>
       <button class="nb" onclick="pin('7')">7</button><button class="nb" onclick="pin('8')">8</button><button class="nb" onclick="pin('9')">9</button>
-      <button class="nb nb-del" onclick="pin('del')">←消す</button><button class="nb" onclick="pin('0')">0</button><button class="nb nb-ok" onclick="pin('ok')">OK✓</button>
+      <button class="nb nb-del" onclick="pin('del')"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M8 1.5L2 8l6 6.5H20V1.5H8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><line x1="11.5" y1="5.5" x2="16.5" y2="10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="16.5" y1="5.5" x2="11.5" y2="10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="nb" onclick="pin('0')">0</button><button class="nb nb-ok" id="nb-ok-btn" onclick="pin('ok')">OK✓</button>
     </div>
     <div class="login-msg" id="lmsg"></div>
   </div>
@@ -1158,7 +1193,7 @@ async function checkDailyBonus(userId,currentMedals){const TODAY=new Date().toIS
 function showBonusNotice(){const el=document.createElement('div');el.id='daily-bonus-notice';el.innerHTML='🎁 デイリーボーナス<br><span style="font-size:28px;font-family:Barlow Condensed,sans-serif;font-weight:900;color:var(--gold)">＋100枚！</span><br><span style="font-size:12px;color:#aaa">明日またもらえます</span>';document.body.appendChild(el);setTimeout(()=>el.remove(),2800);}
 function show(id){document.querySelectorAll('.gs').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('ctrl').classList.toggle('hidden',!['spoker','supgame'].includes(id));}
 function setMsg(t,c){const e=document.getElementById('lmsg');e.textContent=t;e.className='login-msg'+(c?' '+c:'');}
-function updPin(){for(let i=0;i<4;i++){const e=document.getElementById('p'+i);if(i<pinBuf.length){e.textContent='●';e.classList.add('filled');}else{e.textContent='○';e.classList.remove('filled');}}}
+function updPin(){for(let i=0;i<4;i++){const e=document.getElementById('p'+i);if(i<pinBuf.length){if(!e.classList.contains('filled')){e.classList.add('filled');e.classList.remove('puru');void e.offsetWidth;e.classList.add('puru');e.addEventListener('animationend',()=>e.classList.remove('puru'),{once:true});}}else{e.classList.remove('filled','puru');}}const ok=document.getElementById('nb-ok-btn');if(ok){if(pinBuf.length===4){ok.classList.add('ready');ok.style.backgroundImage="url('./images/nbok_ready.jpg')";}else{ok.classList.remove('ready');ok.style.backgroundImage="url('./images/nbok.jpg')";}}}
 function disableNP(v){document.querySelectorAll('.nb').forEach(b=>b.disabled=v);}
 function switchTab(m){lmode=m;document.getElementById('tab-l').classList.toggle('active',m==='login');document.getElementById('tab-s').classList.toggle('active',m==='signup');document.getElementById('lbt').textContent=m==='login'?'名前とPINで入場':'名前(10文字)とPIN(4桁)を決めて登録';setMsg('','');pinBuf='';updPin();}
 function pin(v){if(v==='del'){pinBuf=pinBuf.slice(0,-1);}else if(v==='ok'){doAuth();}else{if(pinBuf.length>=4)return;pinBuf+=v;if(pinBuf.length===4&&lmode==='login')doAuth();}updPin();}
