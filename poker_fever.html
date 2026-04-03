@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>百式ゲーム王国</title>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Sans+JP:wght@400;700;900&family=Barlow+Condensed:wght@400;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
+<style>body.loading{opacity:0}body{transition:opacity .12s ease}
 :root{--red:#EF4444;--red2:#F87171;--red3:#FCA5A5;--gold:#FBBF24;--gold2:#FCD34D;--dark:#111827;--dark2:#1F2937;--dark3:#374151;--gray:#9CA3AF;--light:#F9FAFB;--white:#FFFFFF;--green:#22C55E;--green2:#4ADE80;--blue:#3B82F6;--blue2:#60A5FA;--win:#FBBF24;--lose:#EF4444;--font-jp:'Noto Sans JP',sans-serif;--font-en:'Barlow Condensed','Oswald',sans-serif;}
 *,::before,::after{margin:0;padding:0;box-sizing:border-box}
 body{background:#0f172a;min-height:100vh;display:flex;font-family:var(--font-jp);overflow-x:hidden;color:var(--white);}
@@ -404,7 +404,7 @@ body{display:block !important}
   if(!u.id){u.id="hkg-"+u.name;localStorage.setItem("hkg_user",JSON.stringify(u));}
 })();
 </script></head>
-<body>
+<body class="loading">
 <div id="screen-flash"></div>
 <div id="av-modal"><div class="av-modal-box"><div class="av-modal-title">🎭 アイコンを選択</div><div class="av-grid" id="av-grid"></div><button class="av-close" onclick="closeAvModal()">✕ 閉じる</button></div></div>
 <div id="sidebar" class="hidden">
@@ -1892,7 +1892,7 @@ var u=null;
 try{u=JSON.parse(localStorage.getItem('hkg_user')||'null');}catch(e){}
 if(!u||!u.name){location.href='index.html';return;}
 if(!u.id){u.id='hkg-'+u.name;localStorage.setItem('hkg_user',JSON.stringify(u));}
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener('DOMContentLoaded',function(){document.body.classList.remove('loading');
 var b=document.createElement('button');
 b.textContent='\u2190 \u30ed\u30d3\u30fc';
 b.style.cssText='position:fixed;top:8px;left:8px;z-index:99999;background:rgba(0,0,0,.9);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:7px 16px;font-size:14px;cursor:pointer;';
