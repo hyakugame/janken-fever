@@ -12,7 +12,7 @@ body{background:#050810;color:#eee;font-family:'Barlow Condensed',sans-serif;min
 /* ===== ログイン ===== */
 #login{width:100%;max-width:380px;padding:24px 20px;display:flex;flex-direction:column;align-items:center}
 .logo-en{font-size:11px;letter-spacing:.3em;color:rgba(0,200,255,.5);margin-bottom:4px}
-.logo-jp{font-family:'Noto Sans JP',sans-serif;font-size:28px;font-weight:900;background:linear-gradient(135deg,#fff 0%,#88ddff 40%,#ffcc44 70%,#ff8844 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.06em;line-height:1;margin-bottom:4px}
+.logo-jp{filter:drop-shadow(0 0 8px rgba(0,200,255,.9)) drop-shadow(0 0 22px rgba(0,150,255,.5));font-family:'Noto Sans JP',sans-serif;font-size:28px;font-weight:900;background:linear-gradient(135deg,#fff 0%,#88ddff 40%,#ffcc44 70%,#ff8844 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.06em;line-height:1;margin-bottom:4px}
 .logo-sub{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.2em;margin-bottom:24px}
 .box{width:100%;background:linear-gradient(135deg,rgba(0,20,40,.9),rgba(0,10,25,.95));border:1px solid rgba(0,200,255,.2);border-radius:14px;padding:22px 20px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
 .box-title{font-size:14px;color:#88ddff;letter-spacing:.08em;text-align:center;margin-bottom:4px}
@@ -22,12 +22,12 @@ body{background:#050810;color:#eee;font-family:'Barlow Condensed',sans-serif;min
 .nf:focus{border-color:rgba(0,200,255,.4)}
 .dots{display:flex;justify-content:center;gap:14px;margin-bottom:16px}
 .dot{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;transition:.15s}
-.dot.on{border-color:#00ccff;background:rgba(0,200,255,.15);box-shadow:0 0 10px rgba(0,200,255,.3)}
+@keyframes dotPop{0%{transform:scale(1)}50%{transform:scale(1.18)}100%{transform:scale(1)}}.dot.on{border-color:#00ccff;background:rgba(0,200,255,.2);box-shadow:0 0 14px rgba(0,200,255,.6),0 0 28px rgba(0,150,255,.3);filter:drop-shadow(0 0 6px rgba(0,200,255,.9));animation:dotPop .28s cubic-bezier(.36,2,.5,1)}
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .pb{height:52px;border:1px solid rgba(255,255,255,.1);border-radius:10px;cursor:pointer;background:rgba(255,255,255,.07);color:#fff;font-size:22px;font-weight:700;font-family:'Barlow Condensed',sans-serif}
 .pb:active{transform:scale(.94)}
 .pb.del{font-size:14px;color:rgba(255,255,255,.5)}
-.pb.ok{background:linear-gradient(135deg,#0088cc,#0055aa);font-size:16px;box-shadow:0 3px 0 #003366}
+@keyframes okGlow{0%,100%{box-shadow:0 3px 0 #003366,0 0 10px rgba(0,200,255,.3)}50%{box-shadow:0 3px 0 #004499,0 0 28px rgba(0,200,255,1),0 0 55px rgba(0,150,255,.6)}}.pb.ok{background:linear-gradient(135deg,#0088cc,#0055aa);font-size:16px;box-shadow:0 3px 0 #003366;transition:opacity .2s}.pb.ok[disabled]{opacity:.4;pointer-events:none;filter:grayscale(.4);animation:none !important}.pb.ok:not([disabled]){animation:okGlow .9s ease infinite;background:linear-gradient(135deg,#00ccff,#0055ee)}
 .pb.ok:active{transform:translateY(2px);box-shadow:0 1px 0 #003366}
 .pb.ok:disabled{background:rgba(40,50,70,.6);color:rgba(255,255,255,.25);box-shadow:none;cursor:not-allowed}
 .lmsg{text-align:center;font-size:12px;font-weight:700;min-height:20px;color:#aaa}
@@ -119,7 +119,7 @@ body{background:#050810;color:#eee;font-family:'Barlow Condensed',sans-serif;min
       <button class="pb" onclick="pi('7')">7</button>
       <button class="pb" onclick="pi('8')">8</button>
       <button class="pb" onclick="pi('9')">9</button>
-      <button class="pb del" onclick="pd()">←消す</button>
+      <button class="pb del" onclick="pd()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22"><path fill="rgba(255,255,255,.7)" d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3.59 12.59L16.17 17l-4.17-4.17-4.17 4.17-1.42-1.41 4.17-4.18-4.17-4.17 1.42-1.41 4.17 4.17 4.17-4.17 1.42 1.41-4.17 4.17 4.17 4.18z"/></svg></button>
       <button class="pb" onclick="pi('0')">0</button>
       <button class="pb ok" id="ok" onclick="doLogin()" disabled>OK✓</button>
     </div>
@@ -337,7 +337,7 @@ function openLogin(){
 // PIN
 function pi(n){if(pin.length>=4)return;pin+=n;upd();if(pin.length===4)document.getElementById('ok').disabled=false;}
 function pd(){pin=pin.slice(0,-1);upd();document.getElementById('ok').disabled=true;}
-function upd(){for(var i=0;i<4;i++){var d=document.getElementById('d'+i);d.textContent=i<pin.length?'●':'';i<pin.length?d.classList.add('on'):d.classList.remove('on');}}
+function upd(){for(var i=0;i<4;i++){var d=document.getElementById('d'+i);d.textContent=i<pin.length?'●':'';if(i<pin.length){d.classList.remove('on');void d.offsetWidth;d.classList.add('on');}else{d.classList.remove('on');}}var ok=document.getElementById('ok');if(ok)ok.disabled=pin.length<4;}
 
 function doLogin(){
   var name=document.getElementById('nf').value.trim();
