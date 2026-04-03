@@ -356,6 +356,11 @@ body{display:block !important}
   // idを追加（ポーカーのauto-loginに必要）
   if(!u.id){u.id="hkg-"+u.name;localStorage.setItem("hkg_user",JSON.stringify(u));}
 })();
+</script><script>
+(function(){
+  var imgs=['joker','k_s','k_h','k_d','k_c','q_s','q_h','q_d','q_c','j_s','j_h','j_d','j_c'];
+  imgs.forEach(function(n){var i=new Image();i.src='./images/'+n+'.jpg';});
+})();
 </script></head>
 <body class="loading">
 <div id="screen-flash"></div>
