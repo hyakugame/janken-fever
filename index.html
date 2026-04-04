@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-function doLogin(){
+async function doLogin(){
   const name=document.getElementById('nameField').value.trim();
   if(!name){setMsg('なまえを入力してください','err');return;}
   if(pin.length<4){setMsg('4桁のPINを入力してください','err');return;}
