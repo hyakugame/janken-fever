@@ -3,36 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>グーチョキパー FEVER!!</title>
+<title>ã°ã¼ãã§ã­ãã¼ FEVER!!</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Barlow+Condensed:wght@400;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--green:#44DD88;--gold:#FFD740;--red:#FF6677;--blue:#66AAFF;--dark:#081408;--dark2:#0d1e0e;--card:rgba(5,25,8,.88);--border:rgba(60,200,100,.4);--tx-primary:#F0FFF4;--tx-muted:#A8C4A8}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Condensed',sans-serif;font-weight:500;height:100dvh;overflow:hidden;display:flex;justify-content:center}
 .cab{display:flex;flex-direction:column;width:100%;max-width:480px;height:100dvh;background:linear-gradient(180deg,#0a1a0a,#0f2010)}
-/* マーキー */
+/* ãã¼ã­ã¼ */
 .mq-wrap{background:#c00;padding:4px 0;overflow:hidden;flex-shrink:0}
 .mq{display:flex;width:max-content;animation:mqA 22s linear infinite}
 @keyframes mqA{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .mq span{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#fff;letter-spacing:.05em;padding:0 30px;white-space:nowrap}
-/* ゲームタイトルヘッダー */
+/* ã²ã¼ã ã¿ã¤ãã«ãããã¼ */
 .cab-header{background:linear-gradient(180deg,#111,#1a2a1a);border-bottom:2px solid #00cc44;padding:6px 16px;text-align:center;flex-shrink:0}
 .cab-header-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--gold)}
 /* LED */
 .led-row{display:flex;justify-content:center;gap:4px;padding:4px 0;flex-shrink:0}
 .led{width:8px;height:8px;border-radius:50%;background:#222}
 .led.on{background:var(--gold);box-shadow:0 0 6px var(--gold)}
-/* スクリーン */
+/* ã¹ã¯ãªã¼ã³ */
 .gs{display:none;flex:1;flex-direction:column;overflow-y:auto;overflow-x:hidden}
 .gs.active{display:flex}
-/* 共通コンポーネント */
+/* å±éã³ã³ãã¼ãã³ã */
 .screen-pad{padding:12px;display:flex;flex-direction:column;gap:10px;flex:1}
 .panel{background:rgba(10,30,12,.9);border:1px solid rgba(60,200,100,.25);border:1px solid var(--border);border-radius:10px;padding:12px}
 .panel-title{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--gold);text-align:center;margin-bottom:8px}
 .lbl{font-size:11px;color:#888;letter-spacing:.08em;text-transform:uppercase}
 .val{font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:var(--green)}
 .val-gold{color:var(--gold)}
-/* ボタン */
+/* ãã¿ã³ */
 .btn{border:none;border-radius:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:16px;letter-spacing:.05em;transition:.15s;width:100%;padding:15px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 .btn:active{transform:scale(.97)}
 .btn-gold{background:linear-gradient(180deg,#FFD700,#e5a800);color:#000;font-size:20px}
@@ -42,7 +42,7 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .btn-gray{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#aaa;font-size:15px}
 .btn:disabled{background:#2a2a2a;color:#555;box-shadow:none;cursor:not-allowed}
 .btn-sm{padding:10px;font-size:14px}
-/* ===== #sa ロビー ===== */
+/* ===== #sa ã­ãã¼ ===== */
 #sa .lobby-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;padding:16px}
 .jk-emoji{font-size:56px;text-align:center;line-height:1}
 .jk-title{font-family:'Noto Sans JP',sans-serif;font-size:38px;font-weight:900;color:var(--gold);letter-spacing:.06em;text-align:center;text-shadow:0 0 20px rgba(255,215,0,.4);line-height:1.1}
@@ -53,7 +53,7 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .score-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center}
 .score-lbl{font-size:14px;color:#A8C4A8;letter-spacing:.05em;font-weight:700;font-family:'Noto Sans JP',sans-serif}
 .score-val{font-family:'Zen Dots',sans-serif;text-shadow:0 2px 8px rgba(0,0,0,.6);font-family:'Oswald',sans-serif;font-size:24px;font-weight:700;color:var(--gold)}
-/* ===== #sb じゃんけん ===== */
+/* ===== #sb ããããã ===== */
 #sb{position:relative}
 .rov{position:absolute;inset:0;background:rgba(0,0,0,.9);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:10;padding:20px;gap:12px}
 .rov-bg{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,215,0,.15) 0%,transparent 70%)}
@@ -81,7 +81,7 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .jk-btn:active{transform:scale(.93);background:rgba(0,200,60,.15);border-color:var(--green)}
 .jk-btn-lbl{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--green);margin-top:6px}
 .rlbl{display:none}
-/* ===== #sr ルーレット ===== */
+/* ===== #sr ã«ã¼ã¬ãã ===== */
 #sr{align-items:center}
 .rl-hdr{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:var(--gold);text-align:center;padding:12px 16px;text-shadow:0 0 20px rgba(255,215,0,.5);flex-shrink:0}
 .rl-wrap{position:relative;display:flex;align-items:center;justify-content:center;flex:1;width:100%}
@@ -95,7 +95,7 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .rl-lbl{font-size:13px;color:#888;text-align:center;padding:8px 16px;flex-shrink:0}
 .stop-btn{background:linear-gradient(180deg,#ff3333,#cc0000);color:#fff;border:none;padding:16px;font-size:24px;font-weight:900;font-family:'Oswald',sans-serif;border-radius:10px;cursor:pointer;width:calc(100% - 24px);margin:0 12px 12px;letter-spacing:.1em;box-shadow:0 4px 20px rgba(255,0,0,.4);flex-shrink:0}
 .stop-btn:disabled{background:#2a2a2a;color:#555;box-shadow:none;cursor:not-allowed}
-/* ===== #shl ハイ&ロー ===== */
+/* ===== #shl ãã¤&ã­ã¼ ===== */
 #shl .screen-pad{justify-content:space-between}
 .hl-hdr{font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--gold);text-align:center;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px}
 .hl-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -112,7 +112,7 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .hl-q{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;text-align:center;color:#aaa;padding:4px 0}
 .hl-btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hl-quit{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#888;padding:10px;font-size:13px;border-radius:8px;cursor:pointer;width:100%;font-family:'Barlow Condensed',sans-serif}
-/* ===== #sgr 結果 ===== */
+/* ===== #sgr çµæ ===== */
 #sgr .inner{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;padding:20px}
 .gr-stars{font-size:52px;text-align:center}
 .gr-title{font-family:'Oswald',sans-serif;font-size:38px;font-weight:700;color:var(--gold);text-align:center}
@@ -124,14 +124,14 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .gr-row-val.total{color:var(--gold);font-size:26px}
 .nr-badge{background:rgba(255,215,0,.15);border:1px solid var(--gold);border-radius:8px;padding:10px;text-align:center;color:var(--gold);font-weight:700;font-size:18px;width:100%}
 .gr-btns{display:flex;flex-direction:column;gap:8px;width:100%}
-/* ===== #sname 名前 ===== */
+/* ===== #sname åå ===== */
 #sname .inner{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;padding:20px}
 .name-trophy{font-size:52px;text-align:center}
 .name-title{font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:var(--gold);text-align:center}
 .name-score{font-family:'Oswald',sans-serif;font-size:52px;font-weight:700;color:var(--green);text-align:center}
 .name-input{background:#111;border:2px solid var(--border);color:#fff;padding:14px;font-size:20px;border-radius:8px;width:100%;text-align:center;outline:none;font-family:'Noto Sans JP',sans-serif}
 .name-input:focus{border-color:var(--gold)}
-/* ===== #srank ランキング ===== */
+/* ===== #srank ã©ã³ã­ã³ã° ===== */
 #srank .screen-pad{}
 .rank-hdr{font-family:'Oswald',sans-serif;font-size:22px;color:var(--gold);text-align:center;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:10px}
 .rank-status{font-size:12px;color:#666;text-align:center;padding:6px}
@@ -142,7 +142,7 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .rank-name{flex:1;color:#ccc}
 .rank-score{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--green)}
 .rank-btns{display:flex;gap:8px}
-/* ===== #ssetup セットアップ ===== */
+/* ===== #ssetup ã»ããã¢ãã ===== */
 #ssetup .screen-pad{overflow-y:auto}
 .setup-panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .setup-hdr{font-size:16px;font-weight:700;color:var(--gold);text-align:center}
@@ -159,12 +159,12 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 .btn-coin{background:linear-gradient(180deg,#00cc44,#009933);color:#fff}
 .btn-start{background:linear-gradient(180deg,var(--gold),#e5a800);color:#000}
 .btn-start:disabled{background:#2a2a2a;color:#555;cursor:not-allowed}
-/* 共通 */
+/* å±é */
 .hidden{display:none!important}
 .patlamp{display:none}
 @keyframes winAnim{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 
-/* ハイ&ロー カード色 */
+/* ãã¤&ã­ã¼ ã«ã¼ãè² */
 .card.red #prev-num,.card.red #next-num{color:#CC0000}
 .card.blk #prev-num,.card.blk #next-num{color:#111}
 .card.red #prev-suit,.card.red #next-suit{color:#CC0000}
@@ -176,31 +176,31 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
 </head>
 <body>
 <div class="cab">
-  <div style="position:fixed;top:8px;left:8px;z-index:999"><button onclick="goBackLobby()" style="background:rgba(0,0,0,.7);color:#aaa;border:1px solid rgba(255,255,255,.2);padding:6px 12px;font-size:13px;border-radius:6px;cursor:pointer;font-family:Oswald,sans-serif">← ロビー</button></div><div class="mq-wrap"><div class="mq">
-    <span>★ グーチョキパー FEVER!! ★ じゃんけんで勝ってルーレット！ ★ ハイ＆ローで倍々ゲーム！ ★</span>
-    <span>★ グーチョキパー FEVER!! ★ じゃんけんで勝ってルーレット！ ★ ハイ＆ローで倍々ゲーム！ ★</span>
+  <div style="position:fixed;top:8px;left:8px;z-index:999"><button onclick="goBackLobby()" style="background:rgba(0,0,0,.7);color:#aaa;border:1px solid rgba(255,255,255,.2);padding:6px 12px;font-size:13px;border-radius:6px;cursor:pointer;font-family:Oswald,sans-serif">â ã­ãã¼</button></div><div class="mq-wrap"><div class="mq">
+    <span>â ã°ã¼ãã§ã­ãã¼ FEVER!! â ãããããã§åã£ã¦ã«ã¼ã¬ããï¼ â ãã¤ï¼ã­ã¼ã§åãã²ã¼ã ï¼ â</span>
+    <span>â ã°ã¼ãã§ã­ãã¼ FEVER!! â ãããããã§åã£ã¦ã«ã¼ã¬ããï¼ â ãã¤ï¼ã­ã¼ã§åãã²ã¼ã ï¼ â</span>
   </div></div>
   <div class="led-row" id="patlamp"><div class="led l0"></div><div class="led l1"></div><div class="led l2"></div><div class="led l3"></div><div class="led l4"></div><div class="led l5"></div><div class="led l6"></div><div class="led l7"></div><div class="led l8"></div><div class="led l9"></div><div class="led la"></div><div class="led lb"></div></div>
 
-  <!-- ロビー -->
+  <!-- ã­ãã¼ -->
   
-  <!-- ベット選択画面 -->
+  <!-- ãããé¸æç»é¢ -->
   <div id="sbet" class="gs">
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;padding:20px 16px">
-      <div style="font-size:52px;text-align:center">✊✌️🖐️</div>
+      <div style="font-size:52px;text-align:center">ââï¸ðï¸</div>
       <div style="font-family:'Oswald',sans-serif;font-size:32px;font-weight:700;color:#FFD700;text-align:center;text-shadow:0 0 15px rgba(255,215,0,.4)">GU-CHOKI-PA<br>FEVER !!</div>
       <div style="background:rgba(0,0,0,.4);border:1px solid rgba(0,200,60,.3);border-radius:12px;padding:12px 24px;width:100%;text-align:center">
-        <div style="font-size:12px;color:#888;letter-spacing:.08em;margin-bottom:4px">所持メダル</div>
+        <div style="font-size:12px;color:#888;letter-spacing:.08em;margin-bottom:4px">ææã¡ãã«</div>
         <div style="font-family:'Oswald',sans-serif;font-size:48px;font-weight:700;color:#00FF41;line-height:1" id="bet-medals">0</div>
       </div>
-      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#aaa;text-align:center">何枚でプレイ？<br><span style="font-size:13px;font-weight:400;color:#666">多いほどルーレット賞金アップ！</span></div>
+      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:#aaa;text-align:center">ä½æã§ãã¬ã¤ï¼<br><span style="font-size:13px;font-weight:400;color:#666">å¤ãã»ã©ã«ã¼ã¬ããè³éã¢ããï¼</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;width:100%" id="bet-btns"></div>
-      <button onclick="goBackLobby()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#888;padding:10px;font-size:14px;border-radius:8px;cursor:pointer;width:100%;font-family:'Oswald',sans-serif">← ロビーへ戻る</button>
+      <button onclick="goBackLobby()" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#888;padding:10px;font-size:14px;border-radius:8px;cursor:pointer;width:100%;font-family:'Oswald',sans-serif">â ã­ãã¼ã¸æ»ã</button>
     </div>
   </div>
   <div id="sa" class="gs">
     <div class="lobby-inner">
-      <div class="jk-emoji">✊✌️🖐️</div>
+      <div class="jk-emoji">ââï¸ðï¸</div>
       <div class="jk-title">GU-CHOKI-PA<br>FEVER !!</div>
       <div class="lobby-medals">
         <div class="lobby-med-lbl">MEDALS</div>
@@ -212,28 +212,28 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
       </div>
     
       <div style="background:rgba(0,0,0,.5);border:1px solid rgba(0,200,60,.3);border-radius:10px;padding:10px;width:100%;margin-top:4px">
-        <div style="font-family:Oswald,sans-serif;font-size:16px;color:#FFD700;text-align:center;margin-bottom:8px">🏆 ランキング</div>
-        <div id="sa-rank-list" style="font-size:13px;color:#aaa;text-align:center">読み込み中...</div>
+        <div style="font-family:Oswald,sans-serif;font-size:16px;color:#FFD700;text-align:center;margin-bottom:8px">ð ã©ã³ã­ã³ã°</div>
+        <div id="sa-rank-list" style="font-size:13px;color:#aaa;text-align:center">èª­ã¿è¾¼ã¿ä¸­...</div>
       </div>
     </div>
   </div>
 
-  <!-- じゃんけん -->
+  <!-- ããããã -->
   <div id="sb" class="gs" style="justify-content:flex-start">
     <div class="rov" id="rov"><div class="rov-bg"></div><div class="rov-main" id="rov-main">WIN!</div><div class="rov-sub" id="rov-sub"></div></div>
     <div class="sb-hud">
       <div class="hud-block"><div class="hud-lbl">MEDALS</div><div class="hud-val" id="med-v">0</div></div>
-      <div class="hud-block"><div class="hud-lbl" style="font-size:11px;letter-spacing:.08em">BET</div><div class="hud-val" id="bet-hud-v" style="color:#FFD700;font-size:38px">1</div><div style="font-size:12px;color:#888;margin-top:-4px">枚</div></div>
+      <div class="hud-block"><div class="hud-lbl" style="font-size:11px;letter-spacing:.08em">BET</div><div class="hud-val" id="bet-hud-v" style="color:#FFD700;font-size:38px">1</div><div style="font-size:12px;color:#888;margin-top:-4px">æ</div></div>
       <div class="hud-block"><div class="hud-lbl">TIME</div><div class="hud-val hud-time" id="tmr">05</div></div>
     </div>
     <div class="arena">
-      <!-- バトルゾーン：YOUとCPUを横並び -->
+      <!-- ããã«ã¾ã¼ã³ï¼YOUã¨CPUãæ¨ªä¸¦ã³ -->
       <div style="display:flex;align-items:center;justify-content:space-around;padding:12px 8px;flex:0 0 auto">
         <!-- YOU -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1">
           <div style="font-size:11px;color:#888;letter-spacing:.1em">YOU</div>
-          <div id="p-hand" class="p-hand" style="font-size:72px;line-height:1">✊</div>
-          <div class="hp-bar" style="width:100%;margin-top:2px"><div class="hp-fill" id="p-hp" style="width:100%"></div></div>
+          <div id="p-hand" class="p-hand" style="font-size:72px;line-height:1">â</div>
+          <div class="hp-bar" style="display:none;width:100%;margin-top:2px"><div class="hp-fill" id="p-hp" style="width:100%"></div></div>
         </div>
         <!-- VS -->
         <div style="font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:#444;flex:0 0 36px;text-align:center">VS</div>
@@ -241,149 +241,149 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1">
           <div style="font-size:11px;color:#888;letter-spacing:.1em">CPU</div>
           <div class="sign" id="sign" style="text-align:center">
-            <span style="font-size:72px;line-height:1" id="sh">❓</span>
-            <div style="font-size:12px;color:#888;margin-top:2px" id="sl">？？？</div>
+            <span style="font-size:72px;line-height:1" id="sh">â</span>
+            <div style="font-size:12px;color:#888;margin-top:2px" id="sl">ï¼ï¼ï¼</div>
           </div>
           <div class="hp-bar" style="width:100%;margin-top:2px"><div class="hp-fill" id="e-hp" style="width:100%;background:linear-gradient(90deg,#ff4444,#ff8888)"></div></div>
         </div>
       </div>
-      <!-- メッセージ -->
+      <!-- ã¡ãã»ã¼ã¸ -->
       <div style="background:rgba(0,0,0,.35);border:1px solid rgba(0,200,60,.2);border-radius:10px;padding:12px 16px;margin:0 4px;text-align:center">
-        <div class="vbox" id="vbox" style="font-size:28px;margin:0;min-height:36px">グー・チョキ・パーを選ぼう！</div>
+        <div class="vbox" id="vbox" style="font-size:28px;margin:0;min-height:36px">ã°ã¼ã»ãã§ã­ã»ãã¼ãé¸ã¼ãï¼</div>
       </div>
     </div>
     <div class="jk-btns">
-      <button class="jk-btn" id="b-r" onclick="pick('rock')">✊<div class="jk-btn-lbl">グー</div></button>
-      <button class="jk-btn" id="b-s" onclick="pick('scissors')">✌️<div class="jk-btn-lbl">チョキ</div></button>
-      <button class="jk-btn" id="b-p" onclick="pick('paper')">🖐️<div class="jk-btn-lbl">パー</div></button>
+      <button class="jk-btn" id="b-r" onclick="pick('rock')">â<div class="jk-btn-lbl">ã°ã¼</div></button>
+      <button class="jk-btn" id="b-s" onclick="pick('scissors')">âï¸<div class="jk-btn-lbl">ãã§ã­</div></button>
+      <button class="jk-btn" id="b-p" onclick="pick('paper')">ðï¸<div class="jk-btn-lbl">ãã¼</div></button>
     </div>
   </div>
 
-  <!-- ルーレット -->
+  <!-- ã«ã¼ã¬ãã -->
   <div id="sr" class="gs">
-    <div class="rl-hdr" id="rl-hdr">フィーバー！！</div>
+    <div class="rl-hdr" id="rl-hdr">ãã£ã¼ãã¼ï¼ï¼</div>
     <div class="rl-wrap">
       <div class="rl-ring-outer"></div>
       <div class="rl-ring-mask"></div>
       <div class="rl-svg-wrap"><svg class="rl-svg" id="rl-svg" viewBox="0 0 280 280"></svg></div>
-      <div class="rl-ctr"><div class="rl-cn" id="rl-num">?</div><div class="rl-cl">枚</div></div>
+      <div class="rl-ctr"><div class="rl-cn" id="rl-num">?</div><div class="rl-cl">æ</div></div>
     </div>
-    <div class="rl-lbl" id="rl-lbl">ボタンを押してストップ！</div>
-    <button class="stop-btn" id="stop-btn" onclick="stopRl()" disabled>STOP！</button>
+    <div class="rl-lbl" id="rl-lbl">ãã¿ã³ãæ¼ãã¦ã¹ãããï¼</div>
+    <button class="stop-btn" id="stop-btn" onclick="stopRl()" disabled>STOPï¼</button>
   </div>
 
-  <!-- ハイ&ロー -->
+  <!-- ãã¤&ã­ã¼ -->
   
 <div id="shl" class="gs">
     <div style="display:flex;flex-direction:column;flex:1;padding:12px;gap:10px">
-      <!-- タイトル -->
-      <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#FFD700;text-align:center;padding:10px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(0,0,0,.5));border:2px solid rgba(255,215,0,.5);border-radius:12px;text-shadow:0 0 15px rgba(255,215,0,.6)">🃏 ハイ＆ロー 🃏</div>
-      <!-- メダル情報 -->
+      <!-- ã¿ã¤ãã« -->
+      <div style="font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:#FFD700;text-align:center;padding:10px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(0,0,0,.5));border:2px solid rgba(255,215,0,.5);border-radius:12px;text-shadow:0 0 15px rgba(255,215,0,.6)">ð ãã¤ï¼ã­ã¼ ð</div>
+      <!-- ã¡ãã«æå ± -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div style="background:rgba(0,0,0,.5);border:1px solid rgba(0,200,60,.4);border-radius:10px;padding:12px;text-align:center">
-          <div style="font-size:12px;color:#888;letter-spacing:.08em">現在</div>
-          <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#FFD700;line-height:1" id="hl-med">0枚</div>
+          <div style="font-size:12px;color:#888;letter-spacing:.08em">ç¾å¨</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#FFD700;line-height:1" id="hl-med">0æ</div>
         </div>
         <div style="background:rgba(0,0,0,.5);border:2px solid rgba(0,255,65,.5);border-radius:10px;padding:12px;text-align:center">
-          <div style="font-size:12px;color:#888;letter-spacing:.08em">当たれば</div>
-          <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#00FF41;line-height:1" id="hl-nxt">0枚</div>
+          <div style="font-size:12px;color:#888;letter-spacing:.08em">å½ããã°</div>
+          <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:700;color:#00FF41;line-height:1" id="hl-nxt">0æ</div>
         </div>
       </div>
-      <!-- カード表示 -->
+      <!-- ã«ã¼ãè¡¨ç¤º -->
       <div style="display:flex;justify-content:center;align-items:center;gap:20px;padding:8px 0">
         <div id="prev-card" class="card-slot" style="background:#fff;border-radius:12px;width:150px;height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.6);position:relative">
           <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:900" id="prev-num">?</div>
           <div style="font-size:56px;line-height:1" id="prev-suit">?</div>
         </div>
-        <div style="font-size:32px;color:#555">→</div>
+        <div style="font-size:32px;color:#555">â</div>
         <div id="next-card" class="card-slot" style="background:#fff;border-radius:12px;width:150px;height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(255,215,0,.5);border:3px solid #FFD700;position:relative;opacity:.4">
           <div style="font-family:'Oswald',sans-serif;font-size:40px;font-weight:900" id="next-num">?</div>
           <div style="font-size:56px;line-height:1" id="next-suit">?</div>
         </div>
       </div>
-      <!-- 結果 -->
+      <!-- çµæ -->
       <div style="font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;text-align:center;min-height:40px;padding:6px" id="hl-res"></div>
-      <!-- HIGHかLOWか -->
-      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;text-align:center;color:#aaa">HIGH か LOW か？</div>
-      <!-- ボタン -->
+      <!-- HIGHãLOWã -->
+      <div style="font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;text-align:center;color:#aaa">HIGH ã LOW ãï¼</div>
+      <!-- ãã¿ã³ -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1">
-        <button id="btn-hi" onclick="pickHL('hi')" style="background:linear-gradient(180deg,#ff3333,#cc0000);color:#fff;border:none;border-radius:12px;padding:20px 10px;font-family:'Oswald',sans-serif;font-size:28px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(255,0,0,.4);line-height:1.2">⬆<br>HIGH<br><span style="font-size:14px;font-weight:400;opacity:.8">次が高い</span></button>
-        <button id="btn-lo" onclick="pickHL('lo')" style="background:linear-gradient(180deg,#4488ff,#0055cc);color:#fff;border:none;border-radius:12px;padding:20px 10px;font-family:'Oswald',sans-serif;font-size:28px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(0,100,255,.4);line-height:1.2">⬇<br>LOW<br><span style="font-size:14px;font-weight:400;opacity:.8">次が低い</span></button>
+        <button id="btn-hi" onclick="pickHL('hi')" style="background:linear-gradient(180deg,#ff3333,#cc0000);color:#fff;border:none;border-radius:12px;padding:20px 10px;font-family:'Oswald',sans-serif;font-size:28px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(255,0,0,.4);line-height:1.2">â¬<br>HIGH<br><span style="font-size:14px;font-weight:400;opacity:.8">æ¬¡ãé«ã</span></button>
+        <button id="btn-lo" onclick="pickHL('lo')" style="background:linear-gradient(180deg,#4488ff,#0055cc);color:#fff;border:none;border-radius:12px;padding:20px 10px;font-family:'Oswald',sans-serif;font-size:28px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(0,100,255,.4);line-height:1.2">â¬<br>LOW<br><span style="font-size:14px;font-weight:400;opacity:.8">æ¬¡ãä½ã</span></button>
       </div>
-      <!-- やめるボタン -->
-      <button id="hl-quit" onclick="quitHL()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#aaa;padding:14px;font-size:16px;border-radius:10px;cursor:pointer;font-family:'Oswald',sans-serif;width:100%">💰 やめてメダルをもらう</button>
+      <!-- ããããã¿ã³ -->
+      <button id="hl-quit" onclick="quitHL()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#aaa;padding:14px;font-size:16px;border-radius:10px;cursor:pointer;font-family:'Oswald',sans-serif;width:100%">ð° ããã¦ã¡ãã«ãããã</button>
     </div>
   </div>
 
-  <!-- 結果 -->
+  <!-- çµæ -->
   <div id="sgr" class="gs">
     <div class="inner">
-      <div class="gr-stars">⭐⭐⭐</div>
-      <div class="gr-title" id="gr-t">メダルゲット！</div>
+      <div class="gr-stars">â­â­â­</div>
+      <div class="gr-title" id="gr-t">ã¡ãã«ã²ããï¼</div>
       <div class="gr-panel">
-        <div class="gr-row"><span class="gr-row-lbl">今回</span><span class="gr-row-val"><b id="gr-got">0</b>枚</span></div>
-        <div class="gr-row"><span class="gr-row-lbl">トータル</span><span class="gr-row-val total"><b id="gr-tot">0</b>枚</span></div>
+        <div class="gr-row"><span class="gr-row-lbl">ä»å</span><span class="gr-row-val"><b id="gr-got">0</b>æ</span></div>
+        <div class="gr-row"><span class="gr-row-lbl">ãã¼ã¿ã«</span><span class="gr-row-val total"><b id="gr-tot">0</b>æ</span></div>
       </div>
-      <div class="nr-badge" id="gr-nr" style="display:none">★ NEW RECORD! ★</div>
+      <div class="nr-badge" id="gr-nr" style="display:none">â NEW RECORD! â</div>
       <div class="gr-btns">
-        <button class="btn btn-gold" onclick="showBetScreen()">🔄 もう一度プレイ</button>
+        <button class="btn btn-gold" onclick="showBetScreen()">ð ããä¸åº¦ãã¬ã¤</button>
       </div>
     </div>
   </div>
 
-  <!-- 名前入力 -->
+  <!-- ååå¥å -->
   <div id="sname" class="gs">
     <div class="inner">
-      <div class="name-trophy">🏆</div>
-      <div class="name-title">ハイスコア！<br>名前を登録しよう</div>
-      <div class="name-score" id="name-score-disp">0枚</div>
-      <input class="name-input" id="name-input" type="text" maxlength="10" placeholder="なまえをいれてね"/>
-      <button class="btn btn-gold" onclick="submitName()">✅ 登録する</button>
-      <button class="btn btn-gray btn-sm" onclick="show('sgr')">スキップ</button>
+      <div class="name-trophy">ð</div>
+      <div class="name-title">ãã¤ã¹ã³ã¢ï¼<br>ååãç»é²ããã</div>
+      <div class="name-score" id="name-score-disp">0æ</div>
+      <input class="name-input" id="name-input" type="text" maxlength="10" placeholder="ãªã¾ããããã¦ã­"/>
+      <button class="btn btn-gold" onclick="submitName()">â ç»é²ãã</button>
+      <button class="btn btn-gray btn-sm" onclick="show('sgr')">ã¹ã­ãã</button>
     </div>
   </div>
 
-  <!-- ランキング -->
+  <!-- ã©ã³ã­ã³ã° -->
   <div id="srank" class="gs">
     <div class="screen-pad">
-      <div class="rank-hdr">🏆 オンラインランキング</div>
-      <div class="rank-status" id="rank-status">読み込み中…</div>
+      <div class="rank-hdr">ð ãªã³ã©ã¤ã³ã©ã³ã­ã³ã°</div>
+      <div class="rank-status" id="rank-status">èª­ã¿è¾¼ã¿ä¸­â¦</div>
       <div class="rank-list" id="rank-list"></div>
       <div class="rank-btns">
-        <button class="btn btn-gray btn-sm" style="flex:1" onclick="loadRank()">🔄 更新</button>
-        <button class="btn btn-gray btn-sm" style="flex:1" onclick="show('sgr')">← 戻る</button>
-        <button class="btn btn-gray btn-sm" style="flex:1" onclick="show('ssetup')">⚙️</button>
+        <button class="btn btn-gray btn-sm" style="flex:1" onclick="loadRank()">ð æ´æ°</button>
+        <button class="btn btn-gray btn-sm" style="flex:1" onclick="show('sgr')">â æ»ã</button>
+        <button class="btn btn-gray btn-sm" style="flex:1" onclick="show('ssetup')">âï¸</button>
       </div>
     </div>
   </div>
 
-  <!-- セットアップ -->
+  <!-- ã»ããã¢ãã -->
   <div id="ssetup" class="gs">
     <div class="screen-pad">
-      <div class="rank-hdr" style="font-size:18px">🌐 ランキング設定</div>
+      <div class="rank-hdr" style="font-size:18px">ð ã©ã³ã­ã³ã°è¨­å®</div>
       <div class="setup-panel">
         <div><div class="setup-inp-lbl">Supabase URL</div><input class="setup-inp" id="setup-url" type="text" placeholder="https://xxx.supabase.co"/></div>
         <div><div class="setup-inp-lbl">Anon Key</div><input class="setup-inp" id="setup-key" type="text" placeholder="eyJ..."/></div>
         <div class="setup-status" id="setup-status"></div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-green btn-sm" style="flex:1" onclick="saveSetup()">💾 保存</button>
-          <button class="btn btn-gray btn-sm" style="flex:1" onclick="show('srank')">← 戻る</button>
+          <button class="btn btn-green btn-sm" style="flex:1" onclick="saveSetup()">ð¾ ä¿å­</button>
+          <button class="btn btn-gray btn-sm" style="flex:1" onclick="show('srank')">â æ»ã</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ctrl-panel (ロビーのみ) -->
+  <!-- ctrl-panel (ã­ãã¼ã®ã¿) -->
   <div id="ctrl-panel" style="display:flex;gap:8px;padding:10px 12px;background:#0d1a0d;border-top:1px solid var(--border);flex-shrink:0">
-    <button class="ctrl-btn btn-lobby" onclick="openPoker()">🏰 ポーカーへ</button>
-    <button class="ctrl-btn btn-coin" onclick="insertCoin()">🪙 コイン投入</button>
-    <button class="ctrl-btn btn-start" id="start-btn" onclick="startGame()" disabled>▶ スタート</button>
+    <button class="ctrl-btn btn-lobby" onclick="openPoker()">ð° ãã¼ã«ã¼ã¸</button>
+    <button class="ctrl-btn btn-coin" onclick="insertCoin()">ðª ã³ã¤ã³æå¥</button>
+    <button class="ctrl-btn btn-start" id="start-btn" onclick="startGame()" disabled>â¶ ã¹ã¿ã¼ã</button>
   </div>
 </div>
 <script>
 'use strict';
 
-// ★★★ Supabase オンラインランキング設定（埋め込み済み）★★★
+// âââ Supabase ãªã³ã©ã¤ã³ã©ã³ã­ã³ã°è¨­å®ï¼åãè¾¼ã¿æ¸ã¿ï¼âââ
 (function(){
   try{
     localStorage.setItem('gcpfever-supabase', JSON.stringify({
@@ -406,7 +406,7 @@ function tone(type,f,dur,vol,t0,fEnd){
 }
 function nz(dur,vol,t0){vol=vol||0.10;t0=t0||0;const b=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=AC.createBufferSource(),g=AC.createGain();s.buffer=b;s.connect(g);g.connect(AC.destination);const t=AC.currentTime+t0;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);s.start(t);s.stop(t+dur+0.05);}
 
-// BGM 3種
+// BGM 3ç¨®
 let bgmMode=null,bgmTid=null,bgmStep=0;
 const BGMS={
   attract:{notes:[784,1047,880,784,659,523,659,784,1047,1319,1047,880,784,1047,1319,1568,1319,1047,784,1047,880,659,784,523],tempo:180,vol:0.060},
@@ -437,14 +437,14 @@ speechSynthesis.addEventListener('voiceschanged',initVoice);initVoice();
 function speak(text){if(!text||!ttsReady)return;const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.pitch=1.85;u.rate=0.82;u.volume=1.0;if(ttsVoice)u.voice=ttsVoice;speechSynthesis.speak(u);}
 function speakAt(text,ms){setTimeout(()=>speak(text),ms||0);}
 
-// ════════════════════════════════════════
-// RANKING — Supabase REST API + localStorage
-// ════════════════════════════════════════
+// ââââââââââââââââââââââââââââââââââââââââ
+// RANKING â Supabase REST API + localStorage
+// ââââââââââââââââââââââââââââââââââââââââ
 const LOCAL_KEY = 'gcpfever-v3';
 const SB_CFG_KEY = 'gcpfever-supabase';
 const MAX_RANK = 20;
 
-// Supabase設定を読み込む
+// Supabaseè¨­å®ãèª­ã¿è¾¼ã
 function getSBConfig(){
   try{
     const v = localStorage.getItem(SB_CFG_KEY);
@@ -456,7 +456,7 @@ function setSBConfig(url, key){
   try{ localStorage.setItem(SB_CFG_KEY, JSON.stringify({url: url.trim().replace(/\/$/, ''), key: key.trim()})); }catch(e){}
 }
 
-// Supabase REST APIヘルパー
+// Supabase REST APIãã«ãã¼
 async function sbFetch(path, opts={}){
   const cfg = getSBConfig();
   if(!cfg) return null;
@@ -474,7 +474,7 @@ async function sbFetch(path, opts={}){
   }catch(e){ return null; }
 }
 
-// Supabase から上位20件取得
+// Supabase ããä¸ä½20ä»¶åå¾
 async function loadOnlineRanking(){
   const res = await sbFetch('rankings?select=name,score,created_at&order=score.desc&limit=20', {
     headers: {'Accept': 'application/json'}
@@ -486,7 +486,7 @@ async function loadOnlineRanking(){
   }catch(e){ return null; }
 }
 
-// Supabase にスコアを保存
+// Supabase ã«ã¹ã³ã¢ãä¿å­
 async function saveOnlineScore(name,score){
   const cfg=getSBConfig();if(!cfg)return false;
   const H={'apikey':cfg.key,'Authorization':'Bearer '+cfg.key,'Content-Type':'application/json','Accept':'application/json'};
@@ -498,18 +498,18 @@ async function saveOnlineScore(name,score){
   }catch(e){return false;}
 }
 
-// 接続テスト
+// æ¥ç¶ãã¹ã
 async function testSBConnection(url, key){
   try{
     const res = await fetch(url + '/rest/v1/rankings?select=id&limit=1', {
       headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Accept': 'application/json' }
     });
-    if(res.status === 401) return {ok:false, msg:'APIキーが違います'};
-    if(res.status === 404) return {ok:false, msg:'テーブルが見つかりません\nSTEP 2のSQLを実行しましたか？'};
-    if(res.status === 400) return {ok:false, msg:'URLが正しくありません'};
-    if(res.ok) return {ok:true, msg:'接続成功！'};
-    return {ok:false, msg:'エラー: ' + res.status};
-  }catch(e){ return {ok:false, msg:'URLが正しくありません\n' + e.message}; }
+    if(res.status === 401) return {ok:false, msg:'APIã­ã¼ãéãã¾ã'};
+    if(res.status === 404) return {ok:false, msg:'ãã¼ãã«ãè¦ã¤ããã¾ãã\nSTEP 2ã®SQLãå®è¡ãã¾ãããï¼'};
+    if(res.status === 400) return {ok:false, msg:'URLãæ­£ããããã¾ãã'};
+    if(res.ok) return {ok:true, msg:'æ¥ç¶æåï¼'};
+    return {ok:false, msg:'ã¨ã©ã¼: ' + res.status};
+  }catch(e){ return {ok:false, msg:'URLãæ­£ããããã¾ãã\n' + e.message}; }
 }
 
 async function saveSupabaseConfig(){
@@ -517,37 +517,37 @@ async function saveSupabaseConfig(){
   const key = document.getElementById('setup-key').value.trim();
   const st  = document.getElementById('setup-status');
   if(!url || !key){
-    st.className='setup-status err'; st.textContent='URLとAPIキーを両方入力してください';
+    st.className='setup-status err'; st.textContent='URLã¨APIã­ã¼ãä¸¡æ¹å¥åãã¦ãã ãã';
     return;
   }
-  // URLの形式チェックだけ（fetchはCORSでブロックされるので行わない）
+  // URLã®å½¢å¼ãã§ãã¯ã ãï¼fetchã¯CORSã§ãã­ãã¯ãããã®ã§è¡ããªãï¼
   if(!url.includes('supabase.co')){
-    st.className='setup-status err'; st.textContent='URLは https://xxxx.supabase.co の形式で入力してください';
+    st.className='setup-status err'; st.textContent='URLã¯ https://xxxx.supabase.co ã®å½¢å¼ã§å¥åãã¦ãã ãã';
     return;
   }
   if(!key.startsWith('eyJ')){
-    st.className='setup-status err'; st.textContent='APIキーは eyJ... から始まる文字列を入力してください';
+    st.className='setup-status err'; st.textContent='APIã­ã¼ã¯ eyJ... ããå§ã¾ãæå­åãå¥åãã¦ãã ãã';
     return;
   }
   setSBConfig(url, key);
   st.className='setup-status ok';
-  st.textContent='✅ 設定を保存しました！ゲームをプレイしてスコアを登録してみてください。';
+  st.textContent='â è¨­å®ãä¿å­ãã¾ããï¼ã²ã¼ã ããã¬ã¤ãã¦ã¹ã³ã¢ãç»é²ãã¦ã¿ã¦ãã ããã';
   updateRankStatus();
 }
 
-// 設定を埋め込んだHTMLをダウンロード
+// è¨­å®ãåãè¾¼ãã HTMLããã¦ã³ã­ã¼ã
 function saveAndDownload(){
   const url = document.getElementById('setup-url').value.trim();
   const key = document.getElementById('setup-key').value.trim();
   const st  = document.getElementById('setup-status');
   if(!url || !key){
-    st.className='setup-status err'; st.textContent='URLとAPIキーを入力してください';
+    st.className='setup-status err'; st.textContent='URLã¨APIã­ã¼ãå¥åãã¦ãã ãã';
     return;
   }
-  // 現在のHTMLを取得してSUPABASE設定を埋め込む
+  // ç¾å¨ã®HTMLãåå¾ãã¦SUPABASEè¨­å®ãåãè¾¼ã
   let html = document.documentElement.outerHTML;
-  // 既存のconfig保存をインラインに置き換え
-  const inject = `\n// ★ 埋め込み設定\ntry{localStorage.setItem('gcpfever-supabase',JSON.stringify({url:'${url.replace(/'/g,"\\'")}',key:'${key.replace(/'/g,"\\'")}'}));}catch(e){}\n`;
+  // æ¢å­ã®configä¿å­ãã¤ã³ã©ã¤ã³ã«ç½®ãæã
+  const inject = `\n// â åãè¾¼ã¿è¨­å®\ntry{localStorage.setItem('gcpfever-supabase',JSON.stringify({url:'${url.replace(/'/g,"\\'")}',key:'${key.replace(/'/g,"\\'")}'}));}catch(e){}\n`;
   html = html.replace("'use strict';", "'use strict';" + inject);
   const blob = new Blob([html], {type:'text/html'});
   const a = document.createElement('a');
@@ -555,31 +555,31 @@ function saveAndDownload(){
   a.download = 'gcpfever_online.html';
   a.click();
   st.className='setup-status ok';
-  st.textContent='✅ ダウンロードしました！このHTMLをGitHub Pagesにアップしてください。';
+  st.textContent='â ãã¦ã³ã­ã¼ããã¾ããï¼ãã®HTMLãGitHub Pagesã«ã¢ãããã¦ãã ããã';
 }
 
 function updateRankStatus(){
   const el = document.getElementById('rank-status');
   if(!el) return;
   const cfg = getSBConfig();
-  el.textContent = cfg ? '🌐 オンラインランキング有効' : '⚙️ Supabase未設定 — ローカルのみ';
+  el.textContent = cfg ? 'ð ãªã³ã©ã¤ã³ã©ã³ã­ã³ã°æå¹' : 'âï¸ Supabaseæªè¨­å® â ã­ã¼ã«ã«ã®ã¿';
   el.style.color = cfg ? '#44ff88' : 'rgba(170,140,255,.5)';
 }
 
-// スコア登録（オンライン + ローカル）
+// ã¹ã³ã¢ç»é²ï¼ãªã³ã©ã¤ã³ + ã­ã¼ã«ã«ï¼
 async function addScore(name, score){
-  // ローカル保存
+  // ã­ã¼ã«ã«ä¿å­
   const local = loadLocalRanking();
-  local.push({name: name.trim()||'？？？', score, date: new Date().toLocaleDateString('ja-JP')});
+  local.push({name: name.trim()||'ï¼ï¼ï¼', score, date: new Date().toLocaleDateString('ja-JP')});
   local.sort((a,b) => b.score - a.score);
   const trimmed = local.slice(0, MAX_RANK);
   try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(trimmed)); }catch(e){}
-  // オンライン保存（失敗しても問題なし）
-  if(getSBConfig()) saveOnlineScore(name.trim()||'？？？', score).catch(()=>{});
+  // ãªã³ã©ã¤ã³ä¿å­ï¼å¤±æãã¦ãåé¡ãªãï¼
+  if(getSBConfig()) saveOnlineScore(name.trim()||'ï¼ï¼ï¼', score).catch(()=>{});
   return trimmed;
 }
 
-// ローカルランキング読み込み（同期）
+// ã­ã¼ã«ã«ã©ã³ã­ã³ã°èª­ã¿è¾¼ã¿ï¼åæï¼
 function loadLocalRanking(){
   try{
     const v = localStorage.getItem(LOCAL_KEY);
@@ -587,7 +587,7 @@ function loadLocalRanking(){
   }catch(e){ return []; }
 }
 
-// ハイスコア判定（同期・フリーズしない）
+// ãã¤ã¹ã³ã¢å¤å®ï¼åæã»ããªã¼ãºããªãï¼
 function isHighScoreSync(score){
   if(score <= 0) return false;
   const list = loadLocalRanking();
@@ -595,54 +595,54 @@ function isHighScoreSync(score){
   return score > list[list.length - 1].score;
 }
 
-// ランキング画面表示
+// ã©ã³ã­ã³ã°ç»é¢è¡¨ç¤º
 async function showRanking(){
   show('srank');
   updateRankStatus();
   const el = document.getElementById('rank-list');
 
-  // まずローカルを即表示
+  // ã¾ãã­ã¼ã«ã«ãå³è¡¨ç¤º
   const local = loadLocalRanking();
   renderRankList(el, local);
 
-  // Supabase設定あればオンラインを取得して上書き
+  // Supabaseè¨­å®ããã°ãªã³ã©ã¤ã³ãåå¾ãã¦ä¸æ¸ã
   const cfg = getSBConfig();
   if(cfg){
-    el.innerHTML = '<div class="rank-loading">オンラインランキング読み込み中…</div>';
+    el.innerHTML = '<div class="rank-loading">ãªã³ã©ã¤ã³ã©ã³ã­ã³ã°èª­ã¿è¾¼ã¿ä¸­â¦</div>';
     const online = await loadOnlineRanking();
     if(online && online.length > 0){
       renderRankList(el, online);
     } else if(online === null){
-      // 取得失敗 → ローカルにフォールバック
+      // åå¾å¤±æ â ã­ã¼ã«ã«ã«ãã©ã¼ã«ããã¯
       renderRankList(el, local);
     } else {
-      el.innerHTML = '<div class="rank-empty">まだ記録がありません！<br>プレイして登録しよう 🏆</div>';
+      el.innerHTML = '<div class="rank-empty">ã¾ã è¨é²ãããã¾ããï¼<br>ãã¬ã¤ãã¦ç»é²ããã ð</div>';
     }
   }
 }
 
 function renderRankList(el, list){
   if(!list || list.length === 0){
-    el.innerHTML = '<div class="rank-empty">まだ記録がありません！<br>プレイして登録しよう 🏆</div>';
+    el.innerHTML = '<div class="rank-empty">ã¾ã è¨é²ãããã¾ããï¼<br>ãã¬ã¤ãã¦ç»é²ããã ð</div>';
     return;
   }
-  const medals = ['🥇','🥈','🥉'], cls = ['gold','silver','bronze'];
+  const medals = ['ð¥','ð¥','ð¥'], cls = ['gold','silver','bronze'];
   el.innerHTML = list.map((r,i) => `
     <div class="rank-item ${cls[i]||''}">
       <div class="rank-pos">${medals[i]||String(i+1)}</div>
       <div class="rank-name">${escHtml(r.name)}</div>
-      <div class="rank-score">${r.score}枚</div>
+      <div class="rank-score">${r.score}æ</div>
     </div>`).join('');
 }
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// 設定画面を開いたときに既存値を復元
+// è¨­å®ç»é¢ãéããã¨ãã«æ¢å­å¤ãå¾©å
 function initSetupScreen(){
   const cfg = getSBConfig();
   if(cfg){
     document.getElementById('setup-url').value = cfg.url || '';
     document.getElementById('setup-key').value = cfg.key || '';
-    document.getElementById('setup-status').textContent = '現在の設定が読み込まれました';
+    document.getElementById('setup-status').textContent = 'ç¾å¨ã®è¨­å®ãèª­ã¿è¾¼ã¾ãã¾ãã';
     document.getElementById('setup-status').className = 'setup-status ok';
   }
 }
@@ -656,7 +656,7 @@ const RANK_RESET='2026-04-02T02:30:00';
 const RL_VALS=[2,6,4,10,4,25,4,8,4,50,4,6];
 const SEG_COLS=['#dd2222','#ff6600','#cc8800','#226600','#0055aa','#880088','#cc2233','#ff5500','#aa6600','#116644','#0044aa','#880066'];
 const BEATS={rock:'scissors',scissors:'paper',paper:'rock'};
-const HANDS=[{key:'rock',ic:'✊',nm:'グー'},{key:'scissors',ic:'✌️',nm:'チョキ'},{key:'paper',ic:'🖐️',nm:'パー'}];
+const HANDS=[{key:'rock',ic:'â',nm:'ã°ã¼'},{key:'scissors',ic:'âï¸',nm:'ãã§ã­'},{key:'paper',ic:'ðï¸',nm:'ãã¼'}];
 function hByKey(k){return HANDS.find(h=>h.key===k);}
 
 // STATE
@@ -709,21 +709,21 @@ function loadSaRank(){
   var el=document.getElementById('sa-rank-list'); if(!el)return;
   try{
     var cfg=JSON.parse(localStorage.getItem('gcpfever-supabase')||'null');
-    if(!cfg||!cfg.url){el.textContent='(ランキング未設定)';return;}
+    if(!cfg||!cfg.url){el.textContent='(ã©ã³ã­ã³ã°æªè¨­å®)';return;}
     var H={'apikey':cfg.key,'Authorization':'Bearer '+cfg.key};
     fetch(cfg.url+'/rest/v1/rankings?select=name,score&created_at=gte.'+RANK_RESET+'&order=score.desc&limit=10',{headers:H})
       .then(r=>r.json()).then(data=>{
-        if(!Array.isArray(data)||data.length===0){el.textContent='(まだ記録なし)';return;}
+        if(!Array.isArray(data)||data.length===0){el.textContent='(ã¾ã è¨é²ãªã)';return;}
         el.innerHTML=data.map((r,i)=>'<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)">'+
           '<span style="color:#FFD700;font-family:Oswald,sans-serif;width:24px">'+(i+1)+'</span>'+
           '<span style="flex:1;color:#ccc">'+r.name+'</span>'+
-          '<span style="color:#00FF41;font-family:Oswald,sans-serif">'+r.score+'枚</span>'+
+          '<span style="color:#00FF41;font-family:Oswald,sans-serif">'+r.score+'æ</span>'+
         '</div>').join('');
-      }).catch(()=>{el.textContent='(取得失敗)';});
-  }catch(e){el.textContent='(エラー)';}
+      }).catch(()=>{el.textContent='(åå¾å¤±æ)';});
+  }catch(e){el.textContent='(ã¨ã©ã¼)';}
 }
 
-// ===== ハイ&ロー 操作関数 =====
+// ===== ãã¤&ã­ã¼ æä½é¢æ° =====
 function pickHL(dir){
   if(!hlActive||!hlBtnOK)return;
   wake(); hlBtnOK=false; setHLBtns(false);
@@ -731,7 +731,7 @@ function pickHL(dir){
   const nc=document.getElementById('next-card');
   const nn=Math.floor(Math.random()*13)+1,ns=Math.floor(Math.random()*4);
   const prevNum=parseInt(document.getElementById('prev-card').dataset.num||'7');
-  // 次のカードをめくる
+  // æ¬¡ã®ã«ã¼ããããã
   document.getElementById('next-num').textContent=cLabel(nn);
   document.getElementById('next-suit').textContent=SUITS[ns];
   var ncol=SUIT_RED[ns]?'#CC0000':'#111';
@@ -743,19 +743,19 @@ function pickHL(dir){
   const isHi=nn>prevNum,isLo=nn<prevNum,draw=nn===prevNum;
   const res=document.getElementById('hl-res');
   if(draw){
-    res.textContent='✨ あいこ！もう一度！';
+    res.textContent='â¨ ãããï¼ããä¸åº¦ï¼';
     res.style.color='#FFD700';
     seAiko();
     setTimeout(()=>{dealNewCards();updateHLInfo();setHLBtns(true);hlBtnOK=true;},1400);
   }else if((dir==='hi'&&isHi)||(dir==='lo'&&isLo)){
     hlMedals=hlMedals*2;
-    res.textContent='🎉 正解！ '+hlMedals+'枚！';
+    res.textContent='ð æ­£è§£ï¼ '+hlMedals+'æï¼';
     res.style.color='#00FF41';
     seHLWin();
     updateHLInfo();
     setTimeout(()=>{dealNewCards();updateHLInfo();setHLBtns(true);hlBtnOK=true;},1600);
   }else{
-    res.textContent='❌ ハズレ…メダルを失った！';
+    res.textContent='â ããºã¬â¦ã¡ãã«ãå¤±ã£ãï¼';
     res.style.color='#FF4444';
     hlActive=false;
     seHLLose();
@@ -768,7 +768,7 @@ function quitHL(){
   seWin();
   finishGame(hlMedals);
 }
-// ピコピコSE
+// ãã³ãã³SE
 function seHLPick(){
   tone('square',880,0.05,0.25);
   tone('square',1320,0.05,0.18,0.06);
@@ -783,7 +783,7 @@ function seHLLose(){
   tone('sawtooth',150,0.15,0.3,0.28,80);
 }
 
-// ===== ベット選択 =====
+// ===== ãããé¸æ =====
 function showBetScreen(){
   var su=JSON.parse(localStorage.getItem('hkg_user')||'null');
   var medals=su?su.medals:0;
@@ -793,7 +793,7 @@ function showBetScreen(){
   if(!bb)return;
   if(medals<=0){
     bb.style.cssText='';
-    bb.innerHTML='<div style="text-align:center;padding:24px;color:#888;font-size:16px">メダルが足りません</div>';
+    bb.innerHTML='<div style="text-align:center;padding:24px;color:#888;font-size:16px">ã¡ãã«ãè¶³ãã¾ãã</div>';
     show('sbet');bgmPlay('attract');return;
   }
   window._betMax=medals;window._betCur=1;
@@ -801,8 +801,8 @@ function showBetScreen(){
     var cb=window._betCur;
     var bc=document.getElementById('_betN');if(bc)bc.textContent=cb;
     var mi=Math.min(...RL_VALS)*cb,ma=Math.max(...RL_VALS)*cb;
-    var pv=document.getElementById('_betP');if(pv)pv.innerHTML='<span style="color:#FFD700;font-size:22px;font-family:Oswald,sans-serif">'+mi+'〜'+ma+'枚</span> のチャンス！';
-    var go=document.getElementById('_betG');if(go)go.textContent='▶ '+cb+'枚でスタート！';
+    var pv=document.getElementById('_betP');if(pv)pv.innerHTML='<span style="color:#FFD700;font-size:22px;font-family:Oswald,sans-serif">'+mi+'ã'+ma+'æ</span> ã®ãã£ã³ã¹ï¼';
+    var go=document.getElementById('_betG');if(go)go.textContent='â¶ '+cb+'æã§ã¹ã¿ã¼ãï¼';
     var bm2=document.getElementById('_betM');if(bm2)bm2.disabled=(cb<=1);
     var bp=document.getElementById('_betA');if(bp)bp.disabled=(cb>=window._betMax);
   };
@@ -810,12 +810,12 @@ function showBetScreen(){
   bb.innerHTML=
     '<div style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%">'+
     '<div style="display:flex;align-items:center;gap:18px">'+
-      '<button id="_betM" style="width:64px;height:64px;border-radius:50%;background:rgba(255,80,80,.15);border:2px solid rgba(255,80,80,.35);color:#ff9999;font-size:36px;cursor:pointer;font-family:Oswald;display:flex;align-items:center;justify-content:center">−</button>'+
+      '<button id="_betM" style="width:64px;height:64px;border-radius:50%;background:rgba(255,80,80,.15);border:2px solid rgba(255,80,80,.35);color:#ff9999;font-size:36px;cursor:pointer;font-family:Oswald;display:flex;align-items:center;justify-content:center">â</button>'+
       '<div style="text-align:center;min-width:120px">'+
         '<div id="_betN" style="font-family:Oswald,sans-serif;font-size:88px;font-weight:700;color:#FFD700;line-height:1">1</div>'+
-        '<div style="font-size:17px;color:#aaa;margin-top:2px">枚ベット</div>'+
+        '<div style="font-size:17px;color:#aaa;margin-top:2px">æããã</div>'+
       '</div>'+
-      '<button id="_betA" style="width:64px;height:64px;border-radius:50%;background:rgba(0,200,60,.15);border:2px solid rgba(0,200,60,.35);color:#00FF41;font-size:36px;cursor:pointer;font-family:Oswald;display:flex;align-items:center;justify-content:center">＋</button>'+
+      '<button id="_betA" style="width:64px;height:64px;border-radius:50%;background:rgba(0,200,60,.15);border:2px solid rgba(0,200,60,.35);color:#00FF41;font-size:36px;cursor:pointer;font-family:Oswald;display:flex;align-items:center;justify-content:center">ï¼</button>'+
     '</div>'+
     '<div style="display:flex;gap:10px;width:100%;justify-content:center">'+
       '<button onclick="window._betCur=1;window._updBet()" style="flex:1;padding:12px 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#bbb;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:Oswald,sans-serif;max-width:100px">MIN</button>'+
@@ -823,9 +823,9 @@ function showBetScreen(){
       '<button onclick="window._betCur=window._betMax;window._updBet()" style="flex:1;padding:12px 0;background:linear-gradient(180deg,#FFD700,#c88000);border:none;color:#000;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:Oswald,sans-serif;max-width:100px">ALL IN</button>'+
     '</div>'+
     '<div id="_betP" style="background:rgba(0,200,60,.08);border:1px solid rgba(0,200,60,.2);border-radius:12px;padding:12px 20px;text-align:center;width:100%;font-size:15px;color:#888">'+
-      '<span style="color:#FFD700;font-size:22px;font-family:Oswald,sans-serif">2〜50枚</span> のチャンス！'+
+      '<span style="color:#FFD700;font-size:22px;font-family:Oswald,sans-serif">2ã50æ</span> ã®ãã£ã³ã¹ï¼'+
     '</div>'+
-    '<button id="_betG" style="width:100%;padding:20px;background:linear-gradient(180deg,#00cc44,#008833);border:none;border-radius:14px;font-family:Oswald,sans-serif;font-size:26px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,60,.5);letter-spacing:.04em">▶ 1枚でスタート！</button>'+
+    '<button id="_betG" style="width:100%;padding:20px;background:linear-gradient(180deg,#00cc44,#008833);border:none;border-radius:14px;font-family:Oswald,sans-serif;font-size:26px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,60,.5);letter-spacing:.04em">â¶ 1æã§ã¹ã¿ã¼ãï¼</button>'+
     '</div>';
   document.getElementById('_betM').onclick=function(){if(window._betCur>1){window._betCur--;window._updBet();}};
   document.getElementById('_betA').onclick=function(){if(window._betCur<window._betMax){window._betCur++;window._updBet();}};
@@ -845,11 +845,9 @@ function startWithBet(n){
   var _bv=document.getElementById('bet-hud-v');if(_bv)_bv.textContent=n;
   credits=1;
   sessionGained=0;
-  php=5;
-  updMed(); updPHP();
-  show('sb');
+  updMed();show('sb');
   bgmPlay('attract');
-  setV('グー・チョキ・パーを\n選ぼう！','call');
+  setV('ã°ã¼ã»ãã§ã­ã»ãã¼ã\né¸ã¼ãï¼','call');
   setBtns(true);
   window._waitFirstPick=true;
   seCoin();
@@ -870,10 +868,10 @@ function goBackLobby(){
 function openPoker(){
   const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
   if(!su) { location.href='poker_fever.html'; return; }
-  // 今セッションで得たメダルを加算して保存
+  // ä»ã»ãã·ã§ã³ã§å¾ãã¡ãã«ãå ç®ãã¦ä¿å­
   su.medals = (su.medals||0) + totalMedals;
   localStorage.setItem('hkg_user', JSON.stringify(su));
-  // Supabaseにも保存
+  // Supabaseã«ãä¿å­
   if(su.id){
     const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
     const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
@@ -885,7 +883,7 @@ function openPoker(){
 function updateBadge(){
   const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
   const b=document.getElementById('hkg-badge');
-  if(b&&su) b.textContent='👤 '+su.name+'  🪙 '+su.medals;
+  if(b&&su) b.textContent='ð¤ '+su.name+'  ðª '+su.medals;
 }
 function insertCoin(){
   const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
@@ -899,32 +897,32 @@ function insertCoin(){
 function goAttract(){window._waitFirstPick=false;stopAll();showBetScreen();}
 
 // GAME
-function startGame(){if(!credits)return;wake();credits--;bgmStop();sessionGained=0;php=5;updMed();updPHP();show('sb');startRound();}
-function startRound(){document.getElementById('p-hand').textContent='🙂';document.getElementById('p-hand').className='p-hand';document.getElementById('sign').className='sign';setV('じゃーん　けーん','call');setBtns(true);signStart();timerStart();speakAt('じゃーん、けーん！',200);}
+function startGame(){if(!credits)return;wake();credits--;bgmStop();sessionGained=0;updMed();show('sb');startRound();}
+function startRound(){document.getElementById('p-hand').textContent='ð';document.getElementById('p-hand').className='p-hand';document.getElementById('sign').className='sign';setV('ããã¼ãããã¼ã','call');setBtns(true);signStart();timerStart();speakAt('ããã¼ãããã¼ãï¼',200);}
 function setBtns(on){inputOK=on;['b-r','b-s','b-p'].forEach(id=>document.getElementById(id).disabled=!on);}
 function autoPick(){pick(HANDS[Math.floor(Math.random()*3)].key);}
 function pick(pKey){
   if(!inputOK)return;wake();if(window._waitFirstPick){window._waitFirstPick=false;signStart();}inputOK=false;setBtns(false);timerStop();
   const cpuKey=HANDS[Math.floor(Math.random()*3)].key,ph=hByKey(pKey),ch=hByKey(cpuKey);
   const pEl=document.getElementById('p-hand');pEl.textContent=ph.ic;pEl.classList.add('atk');setTimeout(()=>pEl.classList.remove('atk'),350);
-  speakAt('じゃんけーん！',0);sePon();setTimeout(()=>signFreeze(ch),300);setTimeout(()=>judge(pKey,cpuKey,ph,ch),900);
+  speakAt('ããããã¼ãï¼',0);sePon();setTimeout(()=>signFreeze(ch),300);setTimeout(()=>judge(pKey,cpuKey,ph,ch),900);
 }
 function judge(pKey,cpuKey,ph,ch){
   const result=pKey===cpuKey?'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'draw':BEATS[pKey]===cpuKey?'win':'lose';
   const pEl=document.getElementById('p-hand');
   if(result==='win'){
     document.getElementById('sign').className='sign win-d';pEl.className='p-hand win-g';
-    seWin();showRov('win','WIN！','フィーバー！！',1400);setV('フィーバー！！','fever');speakAt('フィーバー！！',500);
+    seWin();showRov('win','WINï¼','ãã£ã¼ãã¼ï¼ï¼',1400);setV('ãã£ã¼ãã¼ï¼ï¼','fever');speakAt('ãã£ã¼ãã¼ï¼ï¼',500);
     setTimeout(()=>{hideRov();showRl();},1700);
   }else if(result==='lose'){
     document.getElementById('sign').className='sign lose-d';pEl.className='p-hand lose-g';
-    php=Math.max(0,php-1);updPHP();seLose();showRov('lose','LOSE…','ズコー！',1400);setV('ズコー！','zuko');speakAt('ずっこー！',500);
-    setTimeout(()=>{hideRov();if(php<=0)finishGame(0);else 
+    seLose();showRov('lose','LOSEâ¦','ãºã³ã¼ï¼',1400);setV('ãºã³ã¼ï¼','zuko');speakAt('ãã£ãã¼ï¼',500);
+    setTimeout(()=>{hideRov(); 
 {const __u=JSON.parse(localStorage.getItem('hkg_user')||'{}');__u.medals=Math.max(0,(__u.medals||0)-(_betCur||0));localStorage.setItem('hkg_user',JSON.stringify(__u));updMed();saveMedalsToPoker();}
-startRound();},1700);
+stopAll();showBetScreen();},1700);
   }else{
     document.getElementById('sign').className='sign draw-d';
-    seAiko();showRov('draw','DRAW','あいこでしょ！',1100);setV('あーいこーで　しょ！','draw');speakAt('あーいこで！しょっ！',200);
+    seAiko();showRov('draw','DRAW','ãããã§ããï¼',1100);setV('ãã¼ããã¼ã§ãããï¼','draw');speakAt('ãã¼ããã§ï¼ããã£ï¼',200);
     setTimeout(()=>{hideRov();startRound();},1400);
   }
 }
@@ -934,7 +932,7 @@ function buildRlSVG(){
   const svg=document.getElementById('rl-svg');svg.innerHTML='';svg.setAttribute('viewBox','0 0 320 320');
   const vals=RL_VALS,n=vals.length,cx=160,cy=160,R=152,rIn=52,seg=360/n;
   const texts=[];
-  // 1st pass: 全pathを描画（strokeなし）
+  // 1st pass: å¨pathãæç»ï¼strokeãªãï¼
   for(let i=0;i<n;i++){
     const v=vals[i]*betAmount,a0=(i*seg-90)*Math.PI/180,a1=((i+1)*seg-90)*Math.PI/180,lf=seg>180?1:0;
     const x1=cx+R*Math.cos(a0),y1=cy+R*Math.sin(a0),x2=cx+R*Math.cos(a1),y2=cy+R*Math.sin(a1);
@@ -947,7 +945,7 @@ function buildRlSVG(){
     const midA=((i+0.5)*seg-90)*Math.PI/180,tR=(R+rIn)/2;
     texts.push({v,isJP,tx:cx+tR*Math.cos(midA),ty:cy+tR*Math.sin(midA),ang:(i+0.5)*seg});
   }
-  // 2nd pass: 全textを最前面に描画
+  // 2nd pass: å¨textãæåé¢ã«æç»
   texts.forEach(({v,isJP,tx,ty,ang})=>{
     const t=document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x',tx);t.setAttribute('y',ty);t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
@@ -956,14 +954,14 @@ function buildRlSVG(){
     t.setAttribute('fill','#fff');t.setAttribute('stroke','#222');t.setAttribute('stroke-width','2.5');t.setAttribute('paint-order','stroke');
     const tAng=ang>90&&ang<270?ang+180:ang;
     t.setAttribute('transform',`rotate(${tAng},${tx},${ty})`);
-    t.textContent=v+'枚';svg.appendChild(t);
+    t.textContent=v+'æ';svg.appendChild(t);
   });
 }
 function litSeg(i){const n=RL_VALS.length;for(let j=0;j<n;j++){const el=document.getElementById('seg'+j);if(el)el.setAttribute('opacity',j===i?'1':'0.62');}document.getElementById('rl-num').textContent=RL_VALS[i];}
 function showRl(){
   signStop();buildRlSVG();rlLitIdx=0;rlStopping=false;
-  document.getElementById('rl-hdr').textContent='フィーバー！！';document.getElementById('rl-lbl').textContent='ボタンを押してストップ！';document.getElementById('rl-num').textContent='?';document.getElementById('stop-btn').disabled=true;
-  show('sr');bgmPlay('roulette');patOn();(function(){var mi=Math.min(...RL_VALS)*betAmount,ma=Math.max(...RL_VALS)*betAmount;var el=document.getElementById('rl-lbl');if(el)el.innerHTML='ボタンを押してストップ！<br><span style="color:#FFD700;font-family:Oswald,sans-serif;font-size:13px">🎰 '+mi+'〜'+ma+'枚 のチャンス！</span>';})();speak('フィーバー！！');
+  document.getElementById('rl-hdr').textContent='ãã£ã¼ãã¼ï¼ï¼';document.getElementById('rl-lbl').textContent='ãã¿ã³ãæ¼ãã¦ã¹ãããï¼';document.getElementById('rl-num').textContent='?';document.getElementById('stop-btn').disabled=true;
+  show('sr');bgmPlay('roulette');patOn();(function(){var mi=Math.min(...RL_VALS)*betAmount,ma=Math.max(...RL_VALS)*betAmount;var el=document.getElementById('rl-lbl');if(el)el.innerHTML='ãã¿ã³ãæ¼ãã¦ã¹ãããï¼<br><span style="color:#FFD700;font-family:Oswald,sans-serif;font-size:13px">ð° '+mi+'ã'+ma+'æ ã®ãã£ã³ã¹ï¼</span>';})();speak('ãã£ã¼ãã¼ï¼ï¼');
   if(rlLitTid){clearInterval(rlLitTid);rlLitTid=null;}
   rlLitTid=setInterval(()=>{litSeg(rlLitIdx%RL_VALS.length);seTick();rlLitIdx++;},80);
   setTimeout(()=>document.getElementById('stop-btn').disabled=false,1200);
@@ -978,19 +976,19 @@ function stopRl(){
 function finishRl(){
   if(rlLitTid){clearInterval(rlLitTid);rlLitTid=null;}
   const fi=(rlLitIdx-1+RL_VALS.length)%RL_VALS.length,won=RL_VALS[fi],isJP=won>=25;
-  litSeg(fi);document.getElementById('rl-num').textContent=won;document.getElementById('rl-hdr').textContent='やっぴー！！';document.getElementById('rl-lbl').textContent='+'+won+'枚 → ハイ＆ローへ！';
-  bgmStop();if(isJP){seJP();speakAt('ジャックポット！やったー！',400);}else{seWin();speakAt('やっっぴー！！',300);}
-  var wonAmt=won*betAmount;setTimeout(()=>seMedal(wonAmt),600);patFlash();hlMedals=wonAmt;document.getElementById('rl-lbl').textContent='+'+wonAmt+'枚 (×'+betAmount+') → ハイ＆ローへ！';document.getElementById('rl-num').textContent=wonAmt;
+  litSeg(fi);document.getElementById('rl-num').textContent=won;document.getElementById('rl-hdr').textContent='ãã£ã´ã¼ï¼ï¼';document.getElementById('rl-lbl').textContent='+'+won+'æ â ãã¤ï¼ã­ã¼ã¸ï¼';
+  bgmStop();if(isJP){seJP();speakAt('ã¸ã£ãã¯ãããï¼ãã£ãã¼ï¼',400);}else{seWin();speakAt('ãã£ã£ã´ã¼ï¼ï¼',300);}
+  var wonAmt=won*betAmount;setTimeout(()=>seMedal(wonAmt),600);patFlash();hlMedals=wonAmt;document.getElementById('rl-lbl').textContent='+'+wonAmt+'æ (Ã'+betAmount+') â ãã¤ï¼ã­ã¼ã¸ï¼';document.getElementById('rl-num').textContent=wonAmt;
   setTimeout(()=>{patOff();show('srlopt');},3500);
 }
 
 // HIGH & LOW
-const SUITS=['♠','♥','♦','♣'],SUIT_RED=[false,true,true,false];
+const SUITS=['â ','â¥','â¦','â£'],SUIT_RED=[false,true,true,false];
 function cLabel(n){if(n===1)return 'A';if(n===11)return 'J';if(n===12)return 'Q';if(n===13)return 'K';return String(n);}
 function startHL(){
   hlActive=true;hlBtnOK=false;dealNewCards();updateHLInfo();
-  document.getElementById('hl-res').textContent='HIGH か LOW か？';document.getElementById('hl-res').className='hl-res';
-  setHLBtns(true);show('shl');bgmPlay('hl');speakAt('ハイかローか！？',400);hlBtnOK=true;
+  document.getElementById('hl-res').textContent='HIGH ã LOW ãï¼';document.getElementById('hl-res').className='hl-res';
+  setHLBtns(true);show('shl');bgmPlay('hl');speakAt('ãã¤ãã­ã¼ãï¼ï¼',400);hlBtnOK=true;
 }
 function dealNewCards(){
   const ln=Math.floor(Math.random()*13)+1,ls=Math.floor(Math.random()*4);
@@ -1006,7 +1004,7 @@ function dealNewCards(){
   document.getElementById('next-num').textContent='';
   document.getElementById('next-suit').textContent='';
 }
-function updateHLInfo(){document.getElementById('hl-med').textContent=hlMedals+'枚';document.getElementById('hl-nxt').textContent=(hlMedals*2)+'枚';document.getElementById('hl-quit').textContent='💰 やめてメダルをもらう ('+hlMedals+'枚)';}
+function updateHLInfo(){document.getElementById('hl-med').textContent=hlMedals+'æ';document.getElementById('hl-nxt').textContent=(hlMedals*2)+'æ';document.getElementById('hl-quit').textContent='ð° ããã¦ã¡ãã«ãããã ('+hlMedals+'æ)';}
 function setHLBtns(on){document.getElementById('btn-hi').disabled=!on;document.getElementById('btn-lo').disabled=!on;}
 function hlGuess(guess){
   if(!hlBtnOK||!hlActive)return;hlBtnOK=false;setHLBtns(false);wake();
@@ -1018,14 +1016,14 @@ function hlGuess(guess){
   const correct=(guess==='hi'&&rn>ln)||(guess==='lo'&&rn<ln);
   setTimeout(()=>{
     if(correct){
-      hlMedals=hlMedals*2;seHLwin();document.getElementById('hl-res').textContent='正解！ → '+hlMedals+'枚！';document.getElementById('hl-res').className='hl-res ok';updateHLInfo();speakAt('正解！やったー！',300);
-      setTimeout(()=>{if(!hlActive)return;dealNewCards();document.getElementById('hl-res').textContent='HIGH か LOW か？';document.getElementById('hl-res').className='hl-res';updateHLInfo();setTimeout(()=>{if(hlActive){hlBtnOK=true;setHLBtns(true);}},400);},1800);
+      hlMedals=hlMedals*2;seHLwin();document.getElementById('hl-res').textContent='æ­£è§£ï¼ â '+hlMedals+'æï¼';document.getElementById('hl-res').className='hl-res ok';updateHLInfo();speakAt('æ­£è§£ï¼ãã£ãã¼ï¼',300);
+      setTimeout(()=>{if(!hlActive)return;dealNewCards();document.getElementById('hl-res').textContent='HIGH ã LOW ãï¼';document.getElementById('hl-res').className='hl-res';updateHLInfo();setTimeout(()=>{if(hlActive){hlBtnOK=true;setHLBtns(true);}},400);},1800);
     }else{
-      hlActive=false;seHLlose();bgmStop();document.getElementById('hl-res').textContent='ハズレ！メダルを失った…';document.getElementById('hl-res').className='hl-res ng';speakAt('ずっこー！残念！',400);setTimeout(()=>finishGame(0),2500);
+      hlActive=false;seHLlose();bgmStop();document.getElementById('hl-res').textContent='ããºã¬ï¼ã¡ãã«ãå¤±ã£ãâ¦';document.getElementById('hl-res').className='hl-res ng';speakAt('ãã£ãã¼ï¼æ®å¿µï¼',400);setTimeout(()=>finishGame(0),2500);
     }
   },600);
 }
-function hlQuit(){if(!hlActive)return;hlActive=false;hlBtnOK=false;setHLBtns(false);bgmStop();wake();seWin();speakAt('やったー！メダルゲット！',200);setTimeout(()=>finishGame(hlMedals),1200);}
+function hlQuit(){if(!hlActive)return;hlActive=false;hlBtnOK=false;setHLBtns(false);bgmStop();wake();seWin();speakAt('ãã£ãã¼ï¼ã¡ãã«ã²ããï¼',200);setTimeout(()=>finishGame(hlMedals),1200);}
 
 // FINISH
 function finishGame(gained){
@@ -1034,7 +1032,7 @@ function finishGame(gained){
   pendingScore=gained;
   if(gained>0){
     var _su=JSON.parse(localStorage.getItem('hkg_user')||'null');
-    var _nm=_su&&_su.name?_su.name:'？？？';
+    var _nm=_su&&_su.name?_su.name:'ï¼ï¼ï¼';
     addScore(_nm,gained).catch(function(){});
   }
   showResult();
@@ -1042,7 +1040,7 @@ function finishGame(gained){
 saveMedalsToPoker();
 }
 async function submitScore(){
-  const name=document.getElementById('name-input').value.trim()||'？？？';
+  const name=document.getElementById('name-input').value.trim()||'ï¼ï¼ï¼';
   if(pendingScore>0) await addScore(name,pendingScore);
   showResult();
 }
@@ -1067,12 +1065,12 @@ async function saveMedalsToPoker(){
 function showResult(){
   if(pendingScore>0) saveMedalsToPoker(pendingScore);
   const gained=pendingScore;
-  document.getElementById('gr-t').textContent=gained>0?'メダルゲット！':'ゲームオーバー…';
+  document.getElementById('gr-t').textContent=gained>0?'ã¡ãã«ã²ããï¼':'ã²ã¼ã ãªã¼ãã¼â¦';
   document.getElementById('gr-got').textContent=gained;document.getElementById('gr-tot').textContent=totalMedals;
   document.getElementById('gr-nr').style.display=(gained>0&&gained>=hiScore&&hiScore>0)?'block':'none';
   document.getElementById('hi-v').textContent=hiScore;document.getElementById('tot-v').textContent=totalMedals;
   show('sgr');bgmPlay('attract');
-  if(gained>0){seWin();speakAt('やっっぴー！！',400);}else{seLose();var _u=JSON.parse(localStorage.getItem('hkg_user')||'null');if(_u&&_u.medals>0){_u.medals=Math.max(0,_u.medals-1);localStorage.setItem('hkg_user',JSON.stringify(_u));if(typeof updateBadge==='function')updateBadge();}speakAt('ずっこー！',400);}
+  if(gained>0){seWin();speakAt('ãã£ã£ã´ã¼ï¼ï¼',400);}else{seLose();var _u=JSON.parse(localStorage.getItem('hkg_user')||'null');if(_u&&_u.medals>0){_u.medals=Math.max(0,_u.medals-1);localStorage.setItem('hkg_user',JSON.stringify(_u));if(typeof updateBadge==='function')updateBadge();}speakAt('ãã£ãã¼ï¼',400);}
 }
 
 // PAT LAMP
@@ -1083,29 +1081,29 @@ function patFlash(){clearInterval(patId);patId=null;clearInterval(pfId);pfId=nul
 // LINE SHARE
 function shareToLINE(){
   const score=pendingScore;
-  const text=score>0?`✊✌️🖐️ グーチョキパーFEVER!! で ${score}枚 獲得！\nあなたも挑戦してみて！`:`✊✌️🖐️ グーチョキパーFEVER!! で遊んでみた！\nじゃんけん→ルーレット→ハイ＆ローで倍々！\nあなたも挑戦して！`;
+  const text=score>0?`ââï¸ðï¸ ã°ã¼ãã§ã­ãã¼FEVER!! ã§ ${score}æ ç²å¾ï¼\nããªããææ¦ãã¦ã¿ã¦ï¼`:`ââï¸ðï¸ ã°ã¼ãã§ã­ãã¼FEVER!! ã§éãã§ã¿ãï¼\nãããããâã«ã¼ã¬ããâãã¤ï¼ã­ã¼ã§åãï¼\nããªããææ¦ãã¦ï¼`;
   window.open('https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(location.href)+'&text='+encodeURIComponent(text),'_blank');
 }
 
-// hkg_userセッション表示
+// hkg_userã»ãã·ã§ã³è¡¨ç¤º
 (function(){
   const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
   if(su&&su.medals!==undefined){
     const b=document.createElement('div');
     b.style='position:fixed;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:#aad;font-size:12px;font-family:monospace;padding:4px 10px;border-radius:12px;border:1px solid #446;z-index:999;pointer-events:none;';
     b.id='hkg-badge';
-    b.textContent='👤 '+su.name+'  🪙 '+su.medals;
+    b.textContent='ð¤ '+su.name+'  ðª '+su.medals;
     document.body.appendChild(b);
   }
 })();
 document.addEventListener('click',()=>wake(),{once:true});
 document.addEventListener('touchstart',()=>wake(),{once:true});
-// 起動時：ベット選択画面を表示
+// èµ·åæï¼ãããé¸æç»é¢ãè¡¨ç¤º
 (function(){
   showBetScreen();
 })();
 
-(function(){var el=document.createElement('div');el.id='srlopt';el.style.cssText='display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;background:#001a10;border:2px solid #00ff88;border-radius:12px;margin:10px;text-align:center;';el.innerHTML='<div style="font-size:17px;font-weight:700;color:#ffcc00;">&#127922; ルーレット獲得！</div><div style="font-size:12px;color:#aaffcc;margin:4px 0;">どうしますか？</div><button onclick="startHL()" style="width:190px;padding:12px;background:linear-gradient(135deg,#ff6600,#ff9900);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer;display:block;margin:4px auto;">&#127183; ハイ＆ローへ行く</button><button onclick="saveMedalsToPoker();showBetScreen();" style="width:190px;padding:12px;background:linear-gradient(135deg,#0066cc,#0099ff);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer;display:block;margin:4px auto;">&#127968; スタートへ戻る</button>';document.body.appendChild(el);})();
+(function(){var el=document.createElement('div');el.id='srlopt';el.style.cssText='display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;background:#001a10;border:2px solid #00ff88;border-radius:12px;margin:10px;text-align:center;';el.innerHTML='<div style="font-size:17px;font-weight:700;color:#ffcc00;">&#127922; ã«ã¼ã¬ããç²å¾ï¼</div><div style="font-size:12px;color:#aaffcc;margin:4px 0;">ã©ããã¾ããï¼</div><button onclick="startHL()" style="width:190px;padding:12px;background:linear-gradient(135deg,#ff6600,#ff9900);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer;display:block;margin:4px auto;">&#127183; ãã¤ï¼ã­ã¼ã¸è¡ã</button><button onclick="saveMedalsToPoker();showBetScreen();" style="width:190px;padding:12px;background:linear-gradient(135deg,#0066cc,#0099ff);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer;display:block;margin:4px auto;">&#127968; ã¹ã¿ã¼ãã¸æ»ã</button>';document.body.appendChild(el);})();
 </script>
 </body>
 </html>
