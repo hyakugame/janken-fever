@@ -450,6 +450,31 @@ document.addEventListener('DOMContentLoaded', () => {
     banner.addEventListener('touchend', () => clearTimeout(pressTimer));
   });
 });
+
+// === UX改善: upd()上書き ===
+(function(){
+const _origUpd=window.upd;
+window.upd=function(){
+  const n=inp.length;
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('d'+i);
+    if(i<n){
+      if(!d.classList.contains('on')){
+        d.classList.add('on');
+        d.style.animation='none';
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          d.style.animation='dotPop .35s cubic-bezier(.36,2,.6,1) forwards';
+        }));
+      }
+    } else {
+      d.classList.remove('on');
+      d.style.animation='none';
+    }
+  }
+  const ok=document.getElementById('ok');
+  if(ok) ok.disabled=n<4;
+};
+})();
 </script>
 <footer style="text-align:center;padding:12px;font-size:11px"><a href="admin.html" style="color:#444;text-decoration:none;opacity:0.5">🔧 管理者ログイン</a></footer>
 </body>
