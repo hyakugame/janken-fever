@@ -478,10 +478,10 @@ async function doLogin(){
       user={id:data[0].id,name:data[0].name,medals:data[0].medals,pin};
       msg('ログイン成功！','ok');
       save();
-      setTimeout(showLobby,500);
+      setTimeout(openLobby,500);
     }else{
       // 新規 or PIN違い → nameだけで検索
-      const res2=await fetch(`${SB}/rest/v1/game_users?name=eq.${encodeURIComponent(name)}`,{headers:SH});
+              setTimeout(openLobby,500);
       const data2=await res2.json();
       if(data2&&data2.length>0){
         msg('PINが違います','err');
@@ -494,9 +494,9 @@ async function doLogin(){
     // Supabase失敗 → ローカルのみで動作
     user={id:null,name,medals:200,pin};
     save();
-    setTimeout(showLobby,300);
+    setTimeout(openLobby,300);
   }
-}
+      setTimeout(openLobby,300);
 </script>
 <footer style="text-align:center;padding:12px;font-size:11px"><a href="admin.html" style="color:#444;text-decoration:none;opacity:0.5">🔧 管理者ログイン</a></footer>
 </body>
