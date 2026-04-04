@@ -918,7 +918,9 @@ function judge(pKey,cpuKey,ph,ch){
   }else if(result==='lose'){
     document.getElementById('sign').className='sign lose-d';pEl.className='p-hand lose-g';
     php=Math.max(0,php-1);updPHP();seLose();showRov('lose','LOSE…','ズコー！',1400);setV('ズコー！','zuko');speakAt('ずっこー！',500);
-    setTimeout(()=>{hideRov();if(php<=0)finishGame(0);else startRound();},1700);
+    setTimeout(()=>{hideRov();if(php<=0)finishGame(0);else 
+{const __u=JSON.parse(localStorage.getItem('hkg_user')||'{}');__u.medals=Math.max(0,(__u.medals||0)-(_betCur||0));localStorage.setItem('hkg_user',JSON.stringify(__u));updMed();saveMedalsToPoker();}
+startRound();},1700);
   }else{
     document.getElementById('sign').className='sign draw-d';
     seAiko();showRov('draw','DRAW','あいこでしょ！',1100);setV('あーいこーで　しょ！','draw');speakAt('あーいこで！しょっ！',200);
@@ -1035,23 +1037,31 @@ function finishGame(gained){
     addScore(_nm,gained).catch(function(){});
   }
   showResult();
+
+saveMedalsToPoker();
 }
 async function submitScore(){
   const name=document.getElementById('name-input').value.trim()||'？？？';
   if(pendingScore>0) await addScore(name,pendingScore);
   showResult();
 }
-async function saveMedalsToPoker(gained){
-  if(!gained||gained<=0) return;
-  const su=JSON.parse(localStorage.getItem('hkg_user')||'null');
-  if(!su||!su.id) return;
-  su.medals=(su.medals||0)+gained;
-  localStorage.setItem('hkg_user',JSON.stringify(su));
-  updateBadge();
-  const SB='https://gtzfcoiowdnyjvwikxku.supabase.co';
-  const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
-  const H={'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-  await fetch(SB+'/rest/v1/game_users?id=eq.'+su.id,{method:'PATCH',headers:H,body:JSON.stringify({medals:su.medals})});
+async function saveMedalsToPoker(){
+  const u=JSON.parse(localStorage.getItem('hkg_user')||'{}');
+  if(!u.name||u.name==='GUEST')return;
+  const medals=u.medals||0;
+  const cfg=getSBConfig();
+  const SBU=cfg.url||'';
+  const SBK=cfg.key||'';
+  if(!SBU||!SBK)return;
+  const headers={'apikey':SBK,'Authorization':'Bearer '+SBK,'Content-Type':'application/json'};
+  if(u.id){
+    fetch(SBU+'/rest/v1/game_users?id=eq.'+u.id,{method:'PATCH',headers,body:JSON.stringify({medals})}).catch(()=>{});
+  } else {
+    fetch(SBU+'/rest/v1/game_users?name=eq.'+encodeURIComponent(u.name),{headers})
+      .then(r=>r.json()).then(rows=>{
+        if(rows&&rows[0]){u.id=rows[0].id;localStorage.setItem('hkg_user',JSON.stringify(u));fetch(SBU+'/rest/v1/game_users?id=eq.'+rows[0].id,{method:'PATCH',headers,body:JSON.stringify({medals})}).catch(()=>{});}
+      }).catch(()=>{});
+  }
 }
 function showResult(){
   if(pendingScore>0) saveMedalsToPoker(pendingScore);
