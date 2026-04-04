@@ -918,7 +918,7 @@ function judge(pKey,cpuKey,ph,ch){
   }else if(result==='lose'){
     document.getElementById('sign').className='sign lose-d';pEl.className='p-hand lose-g';
     seLose();showRov('lose','LOSE…','ズコー！',1400);setV('ズコー！','zuko');speakAt('ずっこー！',500);
-    setTimeout(()=>{hideRov();{const __u=JSON.parse(localStorage.getItem('hkg_user')||'null')||{};__u.medals=Math.max(0,(__u.medals||0)-(_betCur||0));localStorage.setItem('hkg_user',JSON.stringify(__u));if(typeof updMed==='function')updMed();if(typeof saveMedalsToPoker==='function')saveMedalsToPoker();}showBetScreen();},1700);
+    setTimeout(()=>{hideRov();if(typeof saveMedalsToPoker==='function')saveMedalsToPoker();showBetScreen();},1700);
   }else{
     document.getElementById('sign').className='sign draw-d';
     seAiko();showRov('draw','DRAW','あいこでしょ！',1100);setV('あーいこーで　しょ！','draw');speakAt('あーいこで！しょっ！',200);
@@ -1103,7 +1103,7 @@ document.addEventListener('touchstart',()=>wake(),{once:true});
     +'<div style="font-size:13px;color:#aaffcc;margin-bottom:10px;">どうしますか？</div>'
     +'<button onclick="startHL()" style="width:200px;padding:13px;background:linear-gradient(135deg,#ff6600,#ff9900);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer;display:block;margin:5px auto;">&#127183; ハイ＆ローへ行く</button>'
     +'<button onclick="if(typeof saveMedalsToPoker===\'function\')saveMedalsToPoker();showBetScreen();" style="width:200px;padding:13px;background:linear-gradient(135deg,#0066cc,#0099ff);color:#fff;font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer;display:block;margin:5px auto;">&#127968; スタートへ戻る</button>';
-  document.body.appendChild(el);
+  (document.querySelector('.cab')||document.body).appendChild(el);
 })();
 </script>
 </body>
