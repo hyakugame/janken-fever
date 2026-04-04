@@ -136,7 +136,7 @@ body{background-image:linear-gradient(rgba(0,200,255,.05) 1px,transparent 1px),l
       <button class="pb pb-9" onclick="pi('9')"><span>9</span></button>
       <button class="pb pb-del" onclick="pd()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22"><path fill="rgba(255,255,255,.7)" d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3.59 12.59L16.17 17l-4.17-4.17-4.17 4.17-1.42-1.41 4.17-4.18-4.17-4.17 1.42-1.41 4.17 4.17 4.17-4.17 1.42 1.41-4.17 4.17 4.17 4.18z"/></svg></button>
       <button class="pb pb-0" onclick="pi('0')"><span>0</span></button>
-      <button class="pb pb-ok" id="ok" onclick="save()" disabled>OK✓</button>
+      <button class="pb pb-ok" id="ok" onclick="doLogin()" disabled>OK✓</button>
     </div>
     <div class="lmsg" id="lmsg"></div>
     <button class="gbtn" onclick="guest()">🎲 ゲストでプレイ（200枚からスタート）</button>
@@ -463,6 +463,40 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+function doLogin(){
+  const name=document.getElementById('nameField').value.trim();
+  if(!name){setMsg('なまえを入力してください','err');return;}
+  if(pin.length<4){setMsg('4桁のPINを入力してください','err');return;}
+  setMsg('認証中...','');
+
+  // Supabaseからname+pinで検索
+  try{
+    const res=await fetch(`${SB}/rest/v1/game_users?name=eq.${encodeURIComponent(name)}&pin=eq.${pin}`,{headers:SH});
+    const data=await res.json();
+    if(data&&data.length>0){
+      // 既存ユーザー
+      user={id:data[0].id,name:data[0].name,medals:data[0].medals,pin};
+      setMsg('ログイン成功！','ok');
+      save();
+      setTimeout(showLobby,500);
+    }else{
+      // 新規 or PIN違い → nameだけで検索
+      const res2=await fetch(`${SB}/rest/v1/game_users?name=eq.${encodeURIComponent(name)}`,{headers:SH});
+      const data2=await res2.json();
+      if(data2&&data2.length>0){
+        setMsg('PINが違います','err');
+      }else{
+        // 新規登録
+        await createUser(name,pin);
+      }
+    }
+  }catch(e){
+    // Supabase失敗 → ローカルのみで動作
+    user={id:null,name,medals:200,pin};
+    save();
+    setTimeout(showLobby,300);
+  }
+}
 </script>
 <footer style="text-align:center;padding:12px;font-size:11px"><a href="admin.html" style="color:#444;text-decoration:none;opacity:0.5">🔧 管理者ログイン</a></footer>
 </body>
