@@ -150,7 +150,26 @@ body{background:#0a0a14;color:#ccc;font-family:'Segoe UI',sans-serif;min-height:
     </div>
 
     <!-- 統計 -->
-    <div class="tab-panel" id="tab-stats">
+    
+    <!-- ポーカーランキング管理 -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">🎴 ポーカー FEVER ランキング</div>
+      <div id="rank-list-poker" class="loading">読み込み中...</div>
+      <div class="reset-section" style="margin-top:12px">
+        <button class="btn btn-danger btn-sm" onclick="clearTable('poker_scores','ポーカーランキング')">🗑 ポーカーランキングをリセット</button>
+        <div class="status-msg" id="poker-rank-status"></div>
+      </div>
+    </div>
+    <!-- クイズランキング管理 -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">🧙 クイズ FEVER ランキング</div>
+      <div id="rank-list-quiz" class="loading">読み込み中...</div>
+      <div class="reset-section" style="margin-top:12px">
+        <button class="btn btn-danger btn-sm" onclick="clearTable('quiz_fever_scores','クイズランキング')">🗑 クイズランキングをリセット</button>
+        <div class="status-msg" id="quiz-rank-status"></div>
+      </div>
+    </div>
+<div class="tab-panel" id="tab-stats">
       <div class="card">
         <div class="card-title">現状統計</div>
         <div class="stat-grid" id="stat-grid">
@@ -194,7 +213,7 @@ function switchTab(name,el){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
-  if(name==='rankings')loadRankings();
+  if(name==='rankings')loadRankings(); loadAdminRankings();;
   if(name==='stats')loadStats();
 }
 
@@ -378,6 +397,48 @@ if(sessionStorage.getItem('admin_ok')==='1'){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('main-screen').style.display='block';
   loadAll();
+}
+
+// ゲーム別ランキングテーブル全削除
+async function clearTable(table, label) {
+  if (!confirm(label + 'を全件削除しますか？この操作は元に戻せません。')) return;
+  var statusId = table === 'poker_scores' ? 'poker-rank-status' : 'quiz-rank-status';
+  var el = document.getElementById(statusId);
+  if (el) { el.textContent = '削除中...'; el.style.color = '#ffd040'; }
+  try {
+    var r = await sbFetch(null, '/rest/v1/' + table + '?id=gt.0', 'DELETE', {'Prefer':'return=minimal'});
+    if (r.ok || r.status === 204) {
+      if (el) { el.textContent = '✓ ' + label + 'をリセットしました'; el.style.color = '#60ffa0'; }
+      loadAdminRankings();
+    } else {
+      var t = await r.text();
+      if (el) { el.textContent = 'エラー: ' + t.slice(0,50); el.style.color = '#ff6060'; }
+    }
+  } catch(e) {
+    if (el) { el.textContent = 'エラー: ' + e.message; el.style.color = '#ff6060'; }
+  }
+}
+// ポーカー・クイズランキング読み込み
+async function loadAdminRankings() {
+  var SBU = 'https://gtzfcoiowdnyjvwikxku.supabase.co';
+  var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+  var H = {'apikey': SK, 'Authorization': 'Bearer ' + SK};
+  // Poker
+  fetch(SBU + '/rest/v1/poker_scores?select=player_name,medal_won&order=medal_won.desc&limit=10', {headers: H})
+    .then(r => r.json()).then(d => {
+      var el = document.getElementById('rank-list-poker');
+      if (!el) return;
+      if (!d || !d.length) { el.innerHTML = '<div style="color:#888;padding:8px">まだ記録がありません</div>'; return; }
+      el.innerHTML = d.map((r,i) => '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:8px"><span style="color:#ffd700;min-width:24px">' + (i+1) + '</span><span style="flex:1">' + r.player_name + '</span><span style="color:#39ff14">' + (r.medal_won||0).toLocaleString() + '枚</span></div>').join('');
+    }).catch(() => { var el = document.getElementById('rank-list-poker'); if(el) el.innerHTML = '<div style="color:#888;padding:8px">取得エラー</div>'; });
+  // Quiz
+  fetch(SBU + '/rest/v1/quiz_fever_scores?select=player_name,score&order=score.desc&limit=10', {headers: H})
+    .then(r => r.json()).then(d => {
+      var el = document.getElementById('rank-list-quiz');
+      if (!el) return;
+      if (!d || !d.length) { el.innerHTML = '<div style="color:#888;padding:8px">まだ記録がありません</div>'; return; }
+      el.innerHTML = d.map((r,i) => '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:8px"><span style="color:#ffd700;min-width:24px">' + (i+1) + '</span><span style="flex:1">' + r.player_name + '</span><span style="color:#39ff14">' + (r.score||0) + '問</span></div>').join('');
+    }).catch(() => { var el = document.getElementById('rank-list-quiz'); if(el) el.innerHTML = '<div style="color:#888;padding:8px">取得エラー</div>'; });
 }
 </script>
 </body>
