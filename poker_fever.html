@@ -492,13 +492,14 @@ async function getUser(n){const r=await sbGet('game_users?select=*&name=eq.'+enc
 async function createUser(n,pin){const ok=await sbPost('game_users',{name:n,pin:pin,medals:100,avatar:'👑'});if(!ok)return null;for(let i=0;i<8;i++){await new Promise(r=>setTimeout(r,500));const u=await getUser(n);if(u)return u;}return{id:null,name:n,pin:pin,medals:100,avatar:'👑'};}
 async function saveMedals(id,m){if(!id)return;return sbPatch('game_users?id=eq.'+id,{medals:m});}
 function savePokerScore(u){
-  if(!u||!u.name||u.name==='GUEST')return;
+  var net=Math.max(0,(u.medals||0)-(window._pkStartMedals||0));
+  if(!u||!u.name||u.name==='GUEST'||net<=0)return;
   var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
   var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
   fetch(SBU+'/rest/v1/poker_scores',{
     method:'POST',
     headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},
-    body:JSON.stringify({player_name:u.name,medal_won:Math.max(0,(u.medals||0)-(window._pkStartMedals||0))})
+    body:JSON.stringify({player_name:u.name,medal_won:net})
   }).catch(function(){});
 }
 async function saveAvatar(id,av){if(!id)return;return sbPatch('game_users?id=eq.'+id,{avatar:av});}
