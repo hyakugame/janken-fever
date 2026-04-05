@@ -167,22 +167,13 @@ body{background-image:linear-gradient(rgba(0,200,255,.05) 1px,transparent 1px),l
   <div class="lobby-body">
     <div class="glbl">▶ SELECT GAME ◀</div>
 
-    <a class="card" href="slot.html" onclick="go(event,'slot.html')">
-      <div class="banner sl" id="banner-slot"><button class="icon-edit-btn" onclick="editIcon('slot',event)">📷 変更</button><span class="emoji-wrap">🎰🌴🌺</span></div>
+    <a class="card" href="quiz_fever.html" onclick="go(event,'quiz_fever.html')">
+      <div class="banner" id="banner-quiz" style="background:linear-gradient(135deg,#1a0840,#3d1380);font-size:2em"><span class="emoji-wrap">🧙❓📚</span></div>
       <div class="cinfo">
-        <div class="cname">OKI FEVER SLOT <small>沖縄スロット</small></div>
-        <div class="cdesc">天国モード・ドキドキモード搭載。6段階設定でハラハラドキドキ！</div>
+        <div class="cname">クイズ魔道学院FEVER <small>早押しクイズ対戦</small></div>
+        <div class="cdesc">キーワード検索で問題を無限生成！CPU相手に早押し対決！</div>
       </div>
     </a>
-
-    <a class="card" href="janken-fever.html" onclick="go(event,'janken-fever.html')">
-      <div class="banner jk" id="banner-jk"><button class="icon-edit-btn" onclick="editIcon('jk',event)">📷 変更</button><span class="emoji-wrap">✊✌🖐</span></div>
-      <div class="cinfo">
-        <div class="cname">グーチョキパー FEVER <small>じゃんけんゲーム</small></div>
-        <div class="cdesc">早出しバトル！連勝でFEVER突入。メダルを増やせ！</div>
-      </div>
-    </a>
-
     <a class="card" href="poker_fever.html" onclick="go(event,'poker_fever.html')">
       <div class="banner pk" id="banner-poker"><button class="icon-edit-btn" onclick="editIcon('poker',event)">📷 変更</button><span class="emoji-wrap">🃏♠🃏</span></div>
       <div class="cinfo">
@@ -190,12 +181,18 @@ body{background-image:linear-gradient(rgba(0,200,255,.05) 1px,transparent 1px),l
         <div class="cdesc">53枚デッキ＋ジョーカーのビデオポーカー。役を揃えてダブルアップ勝負！</div>
       </div>
     </a>
-
-    <a class="card" href="quiz_fever.html" onclick="go(event,'quiz_fever.html')">
-      <div class="banner" id="banner-quiz" style="background:linear-gradient(135deg,#1a0840,#3d1380);font-size:2em"><span class="emoji-wrap">🧙❓📚</span></div>
+    <a class="card" href="janken-fever.html" onclick="go(event,'janken-fever.html')">
+      <div class="banner jk" id="banner-jk"><button class="icon-edit-btn" onclick="editIcon('jk',event)">📷 変更</button><span class="emoji-wrap">✊✌🖐</span></div>
       <div class="cinfo">
-        <div class="cname">クイズ魔道学院FEVER <small>早押しクイズ対戦</small></div>
-        <div class="cdesc">キーワード検索で問題を無限生成！CPU相手に早押し対決！</div>
+        <div class="cname">グーチョキパー FEVER <small>じゃんけんゲーム</small></div>
+        <div class="cdesc">早出しバトル！連勝でFEVER突入。メダルを増やせ！</div>
+      </div>
+    </a>
+    <a class="card" style="display:none" href="slot.html" onclick="go(event,'slot.html')">
+      <div class="banner sl" id="banner-slot"><button class="icon-edit-btn" onclick="editIcon('slot',event)">📷 変更</button><span class="emoji-wrap">🎰🌴🌺</span></div>
+      <div class="cinfo">
+        <div class="cname">OKI FEVER SLOT <small>沖縄スロット</small></div>
+        <div class="cdesc">天国モード・ドキドキモード搭載。6段階設定でハラハラドキドキ！</div>
       </div>
     </a>
   
