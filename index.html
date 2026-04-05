@@ -108,8 +108,6 @@ body{background-image:linear-gradient(rgba(0,200,255,.05) 1px,transparent 1px),l
 <link rel="stylesheet" href="btn_sprites.css"><link rel="stylesheet" href="btn_sprites.css">
 </head>
 <body>
-
-<!-- ログイン -->
 <div id="login">
   <div class="logo-en">GAME KINGDOM</div>
   <div class="logo-jp">ゲーム王国</div>
@@ -144,104 +142,14 @@ body{background-image:linear-gradient(rgba(0,200,255,.05) 1px,transparent 1px),l
 </div>
 
 <!-- ロビー -->
-<div id="lobby">
-  <div class="hdr">
-    <div class="avatar" id="avatar">?</div>
-    <div class="hdr-info">
-      <div class="hdr-name" id="uname">--</div>
-      <div class="hdr-medals" id="mc">00000</div>
-    </div>
-    <button class="lout" onclick="doLogout()">ログアウト</button>
-  </div>
-
-  <!-- デイリーボーナス -->
-  <div class="bonus-bar" id="bonusBar" onclick="claimBonus()">
-    <div class="bonus-icon">🎁</div>
-    <div class="bonus-info">
-      <div class="bonus-title">デイリーボーナス</div>
-      <div class="bonus-sub" id="bonusSub">タップして50枚もらおう！</div>
-    </div>
-    <div class="bonus-badge" id="bonusBadge">+50枚</div>
-  </div>
-
-  <div class="lobby-body">
-    <div class="glbl">▶ SELECT GAME ◀</div>
-
-    <a class="card" href="quiz_fever.html" onclick="go(event,'quiz_fever.html')">
-      <div class="banner" id="banner-quiz" style="background:linear-gradient(135deg,#1a0840,#3d1380);font-size:2em"><span class="emoji-wrap">🧙❓📚</span></div>
-      <div class="cinfo">
-        <div class="cname">クイズ魔道学院FEVER <small>早押しクイズ対戦</small></div>
-        <div class="cdesc">キーワード検索で問題を無限生成！CPU相手に早押し対決！</div>
-      </div>
-    </a>
-    <a class="card" href="poker_fever.html" onclick="go(event,'poker_fever.html')">
-      <div class="banner pk" id="banner-poker"><button class="icon-edit-btn" onclick="editIcon('poker',event)">📷 変更</button><span class="emoji-wrap">🃏♠🃏</span></div>
-      <div class="cinfo">
-        <div class="cname">ポーカーFEVER <small>7's WILD PLUS</small></div>
-        <div class="cdesc">53枚デッキ＋ジョーカーのビデオポーカー。役を揃えてダブルアップ勝負！</div>
-      </div>
-    </a>
-    <a class="card" href="janken-fever.html" onclick="go(event,'janken-fever.html')">
-      <div class="banner jk" id="banner-jk"><button class="icon-edit-btn" onclick="editIcon('jk',event)">📷 変更</button><span class="emoji-wrap">✊✌🖐</span></div>
-      <div class="cinfo">
-        <div class="cname">グーチョキパー FEVER <small>じゃんけんゲーム</small></div>
-        <div class="cdesc">早出しバトル！連勝でFEVER突入。メダルを増やせ！</div>
-      </div>
-    </a>
-    <a class="card" style="display:none" href="slot.html" onclick="go(event,'slot.html')">
-      <div class="banner sl" id="banner-slot"><button class="icon-edit-btn" onclick="editIcon('slot',event)">📷 変更</button><span class="emoji-wrap">🎰🌴🌺</span></div>
-      <div class="cinfo">
-        <div class="cname">OKI FEVER SLOT <small>沖縄スロット</small></div>
-        <div class="cdesc">天国モード・ドキドキモード搭載。6段階設定でハラハラドキドキ！</div>
-      </div>
-    </a>
-  
-  <!-- ランキング -->
-  <div class="ranking-section" id="rankingSection">
-    <div class="rank-section-title">🏆 ゲーム別ランキング</div>
-    <div class="rank-block">
-      <div class="rank-block-title">🧙 クイズ FEVER <span style="font-size:11px;color:#aaa">(正解数ハイスコア)</span></div>
-      <div class="rank-list" id="rank-quiz">読み込み中...</div>
-    </div>
-    <div class="rank-block">
-      <div class="rank-block-title">🏴 ポーカー FEVER <span style="font-size:11px;color:#aaa">(獲得メダルハイスコア)</span></div>
-      <div class="rank-list" id="rank-poker">読み込み中...</div>
-    </div>
-    <div class="rank-block">
-      <div class="rank-block-title">✊ グーチョキパー FEVER <span style="font-size:11px;color:#aaa">(獲得メダルハイスコア)</span></div>
-      <div class="rank-list" id="rank-janken">読み込み中...</div>
-    </div>
-  </div>
-
-  </div>
-  <div class="foot">© 2025 百式ゲーム王国 · メダルはゲーム間で共通</div>
-</div>
-
-<div class="toast" id="toast"></div>
-
 <script>
 var user=null;
+// PINログイン機能
 
-function loadRankings(){
-var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co',SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
-var H={'apikey':SBK,'Authorization':'Bearer '+SBK};
-var medals=['🥇','🥈','🥉'];
-function best(d,nk,sk){var b={};(d||[]).forEach(function(r){var n=r[nk]||'?',v=r[sk]||0;if(!b[n]||v>b[n])b[n]=v;});return Object.entries(b).map(function(e){return{name:e[0],score:e[1]};}).sort(function(a,b){return b.score-a.score;});}
-function noData(id){var el=document.getElementById(id);if(el)el.innerHTML='<div style="color:#888;padding:8px;font-size:13px">まだ記録がありません</div>';}
-function render(id,rows,label){var el=document.getElementById(id);if(!el)return;if(!rows||!rows.length){noData(id);return;}el.innerHTML=rows.slice(0,10).map(function(r,i){var b=i<3?medals[i]:'<span style="font-size:13px;color:#aaa">'+(i+1)+'</span>';return '<div class="rank-row"><span class="rank-pos">'+b+'</span><span class="rank-name">'+String(r.name).slice(0,10)+'</span><span class="rank-score">'+r.score.toLocaleString()+label+'</span></div>';}).join('');}
-fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&limit=500',{headers:H}).then(function(r){return r.json();}).then(function(d){render('rank-quiz',best(d,'player_name','score'),'問');}).catch(function(){noData('rank-quiz');});
-fetch(SBU+'/rest/v1/poker_scores?select=player_name,medal_won&limit=500',{headers:H}).then(function(r){return r.json();}).then(function(d){render('rank-poker',best(d,'player_name','medal_won'),'枚');}).catch(function(){noData('rank-poker');});
-fetch(SBU+'/rest/v1/rankings?select=name,score&game=eq.janken&limit=500',{headers:H}).then(function(r){return r.json();}).then(function(d){render('rank-janken',best(d,'name','score'),'枚');}).catch(function(){noData('rank-janken');});
-}
-function openLobby(){loadRankings();
-  document.getElementById('login').style.display='none';
-  document.getElementById('lobby').style.display='flex';
-  var n=user.name||'GUEST';
-  document.getElementById('uname').textContent=n;
-  document.getElementById('avatar').textContent=n==='GUEST'?'🎲':n.charAt(0).toUpperCase();
-  document.getElementById('mc').textContent='🪙 '+String(user.medals||0).padStart(5,'0');
-  checkBonus();
-}
+var user=null;
+
+
+function openLobby(){location.replace("lobby.html");}
 function openLogin(){
   document.getElementById('login').style.display='flex';
   document.getElementById('lobby').style.display='none';
@@ -377,7 +285,7 @@ async function doLogin(){
       user={id:data[0].id,name:data[0].name,medals:data[0].medals,pin};
       msg('ログイン成功！','ok');
       save();
-      setTimeout(openLobby,500);
+      setTimeout(()=>location.replace('lobby.html'),300);
     }else{
       // 新規 or PIN違い → nameだけで検索
       const res2=await fetch(`${SB}/rest/v1/game_users?name=eq.${encodeURIComponent(name)}`,{headers:SH});
@@ -393,7 +301,7 @@ async function doLogin(){
     // Supabase失敗 → ローカルのみで動作
     user={id:null,name,medals:200,pin};
     save();
-    setTimeout(openLobby,300);
+    setTimeout(()=>location.replace('lobby.html'),300);
   }
 }
 
@@ -420,14 +328,8 @@ async function doLogout(){
 }
 
 
-// localStorageにユーザーがいればロビーを自動表示
-(function(){
-  try{
-    var _s=JSON.parse(localStorage.getItem('hkg_user')||'null');
-    if(_s&&_s.name){user=_s;openLobby();}
-  }catch(e){}
-})();
+(function(){try{var s=JSON.parse(localStorage.getItem("hkg_user")||"null");if(s&&s.name){location.replace("lobby.html");}}catch(e){}})();
+
 </script>
-<footer style="text-align:center;padding:12px;font-size:11px"><a href="admin.html" style="color:#444;text-decoration:none;opacity:0.5">🔧 管理者ログイン</a></footer>
 </body>
 </html>
