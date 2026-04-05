@@ -293,7 +293,7 @@ body{background:var(--bg-page);color:var(--tx-body);font-family:'Noto Sans JP',s
 
 <!-- ══════ モード選択 ══════ -->
 <div class="screen" id="screen-mode">
-  <button class="back-btn" onclick="go('title')">← 戻る</button>
+  <button class="back-btn" onclick="location.href='lobby.html'">← 戻る</button>
   <div style="height:64px"></div>
 
   <!-- 先取ポイント選択 -->
@@ -580,7 +580,7 @@ body{background:var(--bg-page);color:var(--tx-body);font-family:'Noto Sans JP',s
   </div>
   <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center">
     <button class="btn btn-purple" onclick="go('mode')">⚔️ もう一度</button>
-    <button class="btn btn-outline" onclick="go('title')">🏠 ホーム</button>
+    <button class="btn btn-outline" onclick="location.href='lobby.html'">🏠 ホーム</button>
     <button class="btn btn-outline" onclick="goRanking()">🏆 ランキング</button>
   </div>
 </div>
@@ -2305,7 +2305,7 @@ function showResult(winnerName) {
 function exitBattle() {
   clrAll();
   if(sbChannel&&sbClient){sbClient.removeChannel(sbChannel);sbChannel=null;roomCode=null;}
-  go('title');
+  location.href='lobby.html';
 }
 
 // ══════════════════════════════════════
