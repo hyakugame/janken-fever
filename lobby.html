@@ -228,13 +228,7 @@ function openLobby(){loadRankings();
   document.getElementById('mc').textContent='🪙 '+String(user.medals||0).padStart(5,'0');
   checkBonus();
 }
-function openLogin(){
-  document.getElementById('login').style.display='flex';
-  document.getElementById('lobby').style.display='none';
-}
-
-// PIN
-var pin='';
+function openLogin(){localStorage.removeItem('hkg_user');location.replace('index.html');}
 function pi(n){if(pin.length>=4)return;pin+=n;upd();if(pin.length===4)document.getElementById('ok').disabled=false;}
 function pd(){pin=pin.slice(0,-1);upd();document.getElementById('ok').disabled=true;}
 function upd(){const n=pin.length;for(let i=0;i<4;i++){const d=document.getElementById('d'+i);if(i<n){if(!d.classList.contains('on')){d.classList.add('on');d.style.animation='none';requestAnimationFrame(()=>{requestAnimationFrame(()=>{d.style.animation='dotPop .35s cubic-bezier(.36,2,.6,1) forwards';});});}}else{d.classList.remove('on');d.style.animation='none';}}document.getElementById('ok').disabled=n<4;}
