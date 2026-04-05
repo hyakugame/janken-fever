@@ -498,7 +498,7 @@ function savePokerScore(u){
   fetch(SBU+'/rest/v1/poker_scores',{
     method:'POST',
     headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},
-    body:JSON.stringify({player_name:u.name,medal_won:u.medals||0})
+    body:JSON.stringify({player_name:u.name,medal_won:Math.max(0,(u.medals||0)-(window._pkStartMedals||0))})
   }).catch(function(){});
 }
 async function saveAvatar(id,av){if(!id)return;return sbPatch('game_users?id=eq.'+id,{avatar:av});}
@@ -1105,7 +1105,7 @@ function switchTab(m){lmode=m;document.getElementById('tab-l').classList.toggle(
 function pin(v){if(v==='del'){pinBuf=pinBuf.slice(0,-1);}else if(v==='ok'){doAuth();}else{if(pinBuf.length>=4)return;pinBuf+=v;if(pinBuf.length===4&&lmode==='login')doAuth();}updPin();}
 async function doAuth(){const name=document.getElementById('lname').value.trim();if(!name){setMsg('名前を入力してください','err');return;}if(pinBuf.length<4){setMsg('4桁のPINを入力してください','err');return;}setMsg('確認中…','ing');disableNP(true);wake();if(lmode==='login'){const u=await getUser(name);disableNP(false);if(!u){setMsg('ユーザーが見つかりません','err');pinBuf='';updPin();return;}if(u.pin!==pinBuf){setMsg('PINが違います','err');pinBuf='';updPin();return;}user=u;seLogin();setMsg('ログイン成功！','ok');setTimeout(goLobby,600);}else{const ex=await getUser(name);if(ex){disableNP(false);setMsg('その名前はすでに使われています','err');return;}const u=await createUser(name,pinBuf);disableNP(false);if(!u){setMsg('登録に失敗しました。もう一度お試しください','err');return;}user=u;seLogin();setMsg('登録完了！ようこそ '+name+'さん！','ok');setTimeout(goLobby,700);}}
 function logout(){bgmStop();user=null;pinBuf='';updPin();document.getElementById('lname').value='';setMsg('','');document.getElementById('ctrl').classList.add('hidden');document.getElementById('sidebar').classList.add('hidden');show('slogin');}
-async function goLobby(){if(!user)return;updSidebar();document.getElementById('ctrl').classList.add('hidden');if(user.id){const newM=await checkDailyBonus(user.id,user.medals);if(newM!==user.medals){user.medals=newM;updSidebar();}}window.location.href='index.html';}
+async function goLobby(){if(!user)return;updSidebar();document.getElementById('ctrl').classList.add('hidden');if(user.id){const newM=await checkDailyBonus(user.id,user.medals);if(newM!==user.medals){user.medals=newM;updSidebar();}}localStorage.setItem('hkg_user',JSON.stringify({id:user.id,name:user.name,medals:user.medals,avatar:user.avatar}));window.location.href='index.html';}
 function gotoPoker(){if(!user)return;wake();startPoker();}
 function openJanken(){
   if(user){
