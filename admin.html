@@ -124,51 +124,38 @@ body{background:#0a0a14;color:#ccc;font-family:'Segoe UI',sans-serif;min-height:
 
     <!-- ランキング -->
     <div class="tab-panel" id="tab-rankings">
-      <div class="card">
-        <div class="card-title">じゃんけんランキング (rankingsテーブル・[pk]なし)</div>
-        <div id="rank-list-jk" class="loading">読み込み中...</div>
-      </div>
-      <div class="card">
-        <div class="card-title">ポーカーランキング (rankingsテーブル・[pk]プレフィックス)</div>
-        <div id="rank-list-pk" class="loading">読み込み中...</div>
-        <div class="reset-section">
-          <button class="btn btn-danger" onclick="resetRankings()">🔥 全ランキングリセット</button>
-        <div style="margin-top:16px">
-          <div style="font-size:13px;font-weight:700;color:#ffd040;margin-bottom:8px">🎮 ゲーム別ランキング削除</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <button class="btn btn-sm btn-danger" onclick="deleteGameRankings('janken','じゃんけん')">🪨 じゃんけん</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteGameRankings('slot','スロット')">🎰 スロット</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteGameRankings('poker','ポーカー')">🃏 ポーカー</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteGameRankings('quiz','クイズ')">🧙 クイズ</button>
-          </div>
-          <div id="deleteRankMsg" style="margin-top:8px;font-size:13px"></div>
-        </div>
-          <span style="font-size:12px;color:#666;margin-left:10px">… 元に戻せません</span>
-          <div class="status-msg" id="rank-status"></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- 統計 -->
-    
-    <!-- ポーカーランキング管理 -->
-    <div class="card" style="margin-top:16px">
-      <div class="card-title">🎴 ポーカー FEVER ランキング</div>
-      <div id="rank-list-poker" class="loading">読み込み中...</div>
-      <div class="reset-section" style="margin-top:12px">
-        <button class="btn btn-danger btn-sm" onclick="clearTable('poker_scores','ポーカーランキング')">🗑 ポーカーランキングをリセット</button>
-        <div class="status-msg" id="poker-rank-status"></div>
-      </div>
+  <!-- ポーカーランキング -->
+  <div class="card">
+    <div class="card-title">🎴 ポーカー FEVER ランキング</div>
+    <div id="rank-list-poker" style="min-height:40px"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-danger btn-sm" onclick="resetTable('poker_scores','ポーカー全件')">🗑 全件削除</button>
     </div>
-    <!-- クイズランキング管理 -->
-    <div class="card" style="margin-top:16px">
-      <div class="card-title">🧙 クイズ FEVER ランキング</div>
-      <div id="rank-list-quiz" class="loading">読み込み中...</div>
-      <div class="reset-section" style="margin-top:12px">
-        <button class="btn btn-danger btn-sm" onclick="clearTable('quiz_fever_scores','クイズランキング')">🗑 クイズランキングをリセット</button>
-        <div class="status-msg" id="quiz-rank-status"></div>
-      </div>
+    <div id="msg-poker" class="status-msg"></div>
+  </div>
+
+  <!-- クイズランキング -->
+  <div class="card">
+    <div class="card-title">🧙 クイズ FEVER ランキング</div>
+    <div id="rank-list-quiz" style="min-height:40px"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-danger btn-sm" onclick="resetTable('quiz_fever_scores','クイズ全件')">🗑 全件削除</button>
     </div>
+    <div id="msg-quiz" class="status-msg"></div>
+  </div>
+
+  <!-- じゃんけんランキング -->
+  <div class="card">
+    <div class="card-title">✊ グーチョキパー FEVER ランキング</div>
+    <div id="rank-list-jk" style="min-height:40px"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-danger btn-sm" onclick="resetTable('rankings','じゃんけん全件')">🗑 全件削除</button>
+    </div>
+    <div id="msg-jk" class="status-msg"></div>
+  </div>
+
+</div>
 <div class="tab-panel" id="tab-stats">
       <div class="card">
         <div class="card-title">現状統計</div>
@@ -400,46 +387,105 @@ if(sessionStorage.getItem('admin_ok')==='1'){
 }
 
 // ゲーム別ランキングテーブル全削除
-async function clearTable(table, label) {
-  if (!confirm(label + 'を全件削除しますか？この操作は元に戻せません。')) return;
-  var statusId = table === 'poker_scores' ? 'poker-rank-status' : 'quiz-rank-status';
-  var el = document.getElementById(statusId);
+// ===== ランキング管理 =====
+var ADM_SBU = 'https://gtzfcoiowdnyjvwikxku.supabase.co';
+var ADM_SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+
+function adm_headers() {
+  return {
+    'apikey': ADM_SK,
+    'Authorization': 'Bearer ' + ADM_SK,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+}
+
+// テーブルの全件削除
+async function resetTable(table, label) {
+  if (!confirm(label + 'を削除しますか？この操作は元に戻せません。')) return;
+  var msgId = table === 'poker_scores' ? 'msg-poker' : table === 'quiz_fever_scores' ? 'msg-quiz' : 'msg-jk';
+  var el = document.getElementById(msgId);
   if (el) { el.textContent = '削除中...'; el.style.color = '#ffd040'; }
   try {
-    var r = await sbFetch(null, '/rest/v1/' + table + '?id=gt.0', 'DELETE', {'Prefer':'return=minimal'});
+    var url = ADM_SBU + '/rest/v1/' + table + '?id=gte.0';
+    if (table === 'rankings') url = ADM_SBU + '/rest/v1/rankings?id=gte.0';
+    var r = await fetch(url, { method: 'DELETE', headers: adm_headers() });
     if (r.ok || r.status === 204) {
-      if (el) { el.textContent = '✓ ' + label + 'をリセットしました'; el.style.color = '#60ffa0'; }
-      loadAdminRankings();
+      if (el) { el.textContent = '✓ 削除完了'; el.style.color = '#60ffa0'; }
+      setTimeout(() => { if(el) el.textContent=''; }, 3000);
+      loadRankings();
     } else {
-      var t = await r.text();
-      if (el) { el.textContent = 'エラー: ' + t.slice(0,50); el.style.color = '#ff6060'; }
+      var txt = await r.text();
+      if (el) { el.textContent = 'エラー(' + r.status + '): ' + txt.slice(0,60); el.style.color = '#ff6060'; }
     }
   } catch(e) {
     if (el) { el.textContent = 'エラー: ' + e.message; el.style.color = '#ff6060'; }
   }
 }
-// ポーカー・クイズランキング読み込み
-async function loadAdminRankings() {
-  var SBU = 'https://gtzfcoiowdnyjvwikxku.supabase.co';
-  var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
-  var H = {'apikey': SK, 'Authorization': 'Bearer ' + SK};
-  // Poker
-  fetch(SBU + '/rest/v1/poker_scores?select=player_name,medal_won&order=medal_won.desc&limit=10', {headers: H})
-    .then(r => r.json()).then(d => {
+
+// 個別エントリー削除
+async function deleteEntry(table, id, label) {
+  if (!confirm(label + 'を削除しますか？')) return;
+  try {
+    var r = await fetch(ADM_SBU + '/rest/v1/' + table + '?id=eq.' + id, { method: 'DELETE', headers: adm_headers() });
+    if (r.ok || r.status === 204) {
+      loadRankings();
+    } else {
+      alert('削除エラー: ' + r.status);
+    }
+  } catch(e) { alert('エラー: ' + e.message); }
+}
+
+// ランキング読み込み
+async function loadRankings() {
+  var H = {'apikey': ADM_SK, 'Authorization': 'Bearer ' + ADM_SK};
+  // ポーカー
+  fetch(ADM_SBU + '/rest/v1/poker_scores?select=id,player_name,medal_won&order=medal_won.desc&limit=20', {headers:H})
+    .then(r=>r.json()).then(d=>{
       var el = document.getElementById('rank-list-poker');
       if (!el) return;
-      if (!d || !d.length) { el.innerHTML = '<div style="color:#888;padding:8px">まだ記録がありません</div>'; return; }
-      el.innerHTML = d.map((r,i) => '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:8px"><span style="color:#ffd700;min-width:24px">' + (i+1) + '</span><span style="flex:1">' + r.player_name + '</span><span style="color:#39ff14">' + (r.medal_won||0).toLocaleString() + '枚</span></div>').join('');
-    }).catch(() => { var el = document.getElementById('rank-list-poker'); if(el) el.innerHTML = '<div style="color:#888;padding:8px">取得エラー</div>'; });
-  // Quiz
-  fetch(SBU + '/rest/v1/quiz_fever_scores?select=player_name,score&order=score.desc&limit=10', {headers: H})
-    .then(r => r.json()).then(d => {
+      if (!Array.isArray(d) || !d.length) { el.innerHTML='<div style="color:#888;padding:8px">データなし</div>'; return; }
+      el.innerHTML = d.map((r,i)=>
+        '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)">' +
+        '<span style="color:#ffd700;min-width:22px">' + (i+1) + '</span>' +
+        '<span style="flex:1">' + r.player_name + '</span>' +
+        '<span style="color:#39ff14;min-width:60px;text-align:right">' + (r.medal_won||0).toLocaleString() + '枚</span>' +
+        '<button onclick="deleteEntry('poker_scores',' + r.id + ','' + r.player_name + '')" style="background:rgba(255,50,50,.7);border:none;color:#fff;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:11px">削除</button>' +
+        '</div>'
+      ).join('');
+    }).catch(()=>{ var el=document.getElementById('rank-list-poker'); if(el) el.innerHTML='<div style="color:#f66">取得エラー</div>'; });
+  // クイズ
+  fetch(ADM_SBU + '/rest/v1/quiz_fever_scores?select=id,player_name,score&order=score.desc&limit=20', {headers:H})
+    .then(r=>r.json()).then(d=>{
       var el = document.getElementById('rank-list-quiz');
       if (!el) return;
-      if (!d || !d.length) { el.innerHTML = '<div style="color:#888;padding:8px">まだ記録がありません</div>'; return; }
-      el.innerHTML = d.map((r,i) => '<div style="padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:8px"><span style="color:#ffd700;min-width:24px">' + (i+1) + '</span><span style="flex:1">' + r.player_name + '</span><span style="color:#39ff14">' + (r.score||0) + '問</span></div>').join('');
-    }).catch(() => { var el = document.getElementById('rank-list-quiz'); if(el) el.innerHTML = '<div style="color:#888;padding:8px">取得エラー</div>'; });
+      if (!Array.isArray(d) || !d.length) { el.innerHTML='<div style="color:#888;padding:8px">データなし</div>'; return; }
+      el.innerHTML = d.map((r,i)=>
+        '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)">' +
+        '<span style="color:#ffd700;min-width:22px">' + (i+1) + '</span>' +
+        '<span style="flex:1">' + r.player_name + '</span>' +
+        '<span style="color:#39ff14;min-width:60px;text-align:right">' + (r.score||0) + '問</span>' +
+        '<button onclick="deleteEntry('quiz_fever_scores',' + r.id + ','' + r.player_name + '')" style="background:rgba(255,50,50,.7);border:none;color:#fff;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:11px">削除</button>' +
+        '</div>'
+      ).join('');
+    }).catch(()=>{ var el=document.getElementById('rank-list-quiz'); if(el) el.innerHTML='<div style="color:#f66">取得エラー</div>'; });
+  // じゃんけん
+  fetch(ADM_SBU + '/rest/v1/rankings?select=id,name,score&game=eq.janken&order=score.desc&limit=20', {headers:H})
+    .then(r=>r.json()).then(d=>{
+      var el = document.getElementById('rank-list-jk');
+      if (!el) return;
+      if (!Array.isArray(d) || !d.length) { el.innerHTML='<div style="color:#888;padding:8px">データなし</div>'; return; }
+      el.innerHTML = d.map((r,i)=>
+        '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)">' +
+        '<span style="color:#ffd700;min-width:22px">' + (i+1) + '</span>' +
+        '<span style="flex:1">' + r.name + '</span>' +
+        '<span style="color:#39ff14;min-width:60px;text-align:right">' + (r.score||0).toLocaleString() + '枚</span>' +
+        '<button onclick="deleteEntry('rankings',' + r.id + ','' + r.name + '')" style="background:rgba(255,50,50,.7);border:none;color:#fff;padding:2px 6px;border-radius:3px;cursor:pointer;font-size:11px">削除</button>' +
+        '</div>'
+      ).join('');
+    }).catch(()=>{ var el=document.getElementById('rank-list-jk'); if(el) el.innerHTML='<div style="color:#f66">取得エラー</div>'; });
 }
+
 </script>
 </body>
 </html>
