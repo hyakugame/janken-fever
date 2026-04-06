@@ -210,6 +210,18 @@ function claimBonus(){
 // ===== DB =====
 function getDB(){try{return JSON.parse(localStorage.getItem('hkg_db')||'{}');}catch(e){return {};}}
 function saveDB(db){try{localStorage.setItem('hkg_db',JSON.stringify(db));}catch(e){}}
+function guest() {
+  // ゲストプレイ: localStorageに仮ユーザーをセットしてロビーへ
+  var existing = null;
+  try { existing = JSON.parse(localStorage.getItem('hkg_user') || 'null'); } catch(e){}
+  // 既にGUESTデータがあればそのメダル数を引き継ぐ、なければ200枚
+  var medals = (existing && existing.name === 'GUEST' && typeof existing.medals === 'number')
+    ? existing.medals : 200;
+  var u = {id: null, name: 'GUEST', medals: medals, pin: null};
+  try { localStorage.setItem('hkg_user', JSON.stringify(u)); } catch(e){}
+  setTimeout(function(){ location.replace('lobby.html'); }, 100);
+}
+
 function save(){
   try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}
   if(user&&user.name&&user.name!=='GUEST'){
