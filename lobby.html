@@ -4,111 +4,554 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>ゲーム王国</title>
-<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Barlow+Condensed:wght@700;900&family=Noto+Sans+JP:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Noto+Sans+JP:wght@400;700;900&family=Zen+Dots&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#050810;color:#eee;font-family:'Barlow Condensed',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;min-height:100dvh;background-image:linear-gradient(rgba(0,200,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,.03) 1px,transparent 1px),radial-gradient(ellipse at 20% 30%,rgba(0,100,255,.05) 0,transparent 60%),radial-gradient(ellipse at 80% 70%,rgba(120,0,255,.05) 0,transparent 60%);background-size:40px 40px,40px 40px,100% 100%,100% 100%}
+*{box-sizing:border-box;margin:0;padding:0;}
 
-/* ===== ログイン ===== */
-#login{width:100%;max-width:380px;padding:24px 20px;display:flex;flex-direction:column;align-items:center}
-.logo-en{font-size:11px;letter-spacing:.3em;color:rgba(0,200,255,.5);margin-bottom:4px}
-.logo-jp{filter:drop-shadow(0 0 8px rgba(0,200,255,1)) drop-shadow(0 0 24px rgba(0,180,255,.9)) drop-shadow(0 0 48px rgba(0,150,255,.6));text-shadow:0 0 10px rgba(0,240,255,1),0 0 30px rgba(0,200,255,.9),0 0 60px rgba(0,150,255,.6),0 0 100px rgba(0,100,255,.3)}
-.logo-sub{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.2em;margin-bottom:24px}
-.box{width:100%;background:linear-gradient(135deg,rgba(0,20,40,.9),rgba(0,10,25,.95));border:1px solid rgba(0,200,255,.2);border-radius:14px;padding:22px 20px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
-.box-title{font-size:14px;color:#88ddff;letter-spacing:.08em;text-align:center;margin-bottom:4px}
-.box-hint{font-size:11px;color:rgba(255,255,255,.25);text-align:center;margin-bottom:16px}
-.nf{width:100%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 12px;font-size:17px;font-weight:700;color:#fff;outline:none;margin-bottom:16px;font-family:'Barlow Condensed',sans-serif}
-.nf::placeholder{color:rgba(255,255,255,.2)}
-.nf:focus{border-color:rgba(0,200,255,.4)}
-.dots{display:flex;justify-content:center;gap:14px;margin-bottom:16px}.dot{width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(40,60,110,.95),rgba(8,12,30,.98));border:1.5px solid rgba(60,100,180,.3);box-shadow:inset 0 2px 5px rgba(255,255,255,.12),inset 0 -2px 5px rgba(0,0,0,.7),0 2px 10px rgba(0,0,0,.6),0 0 0 1px rgba(0,80,180,.08);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:transparent;transition:all .25s ease;position:relative;overflow:hidden}.dot::before{content:'';position:absolute;top:8%;left:15%;width:38%;height:28%;background:linear-gradient(135deg,rgba(255,255,255,.2),rgba(255,255,255,.03));border-radius:50%;filter:blur(1.5px)}.dot.on{background:radial-gradient(circle at 35% 35%,rgba(0,160,255,.65),rgba(0,60,180,.92));border-color:rgba(0,210,255,.85);box-shadow:inset 0 2px 8px rgba(0,220,255,.35),inset 0 -2px 5px rgba(0,0,0,.3),0 0 18px rgba(0,200,255,.95),0 0 36px rgba(0,150,255,.65),0 0 54px rgba(0,100,255,.35),0 0 0 1.5px rgba(0,200,255,.55)}
-.pb:active{transform:scale(.94)}
-.pb.del{font-size:14px;color:rgba(255,255,255,.5)}
-@keyframes okGlow{0%,100%{box-shadow:0 0 20px rgba(0,220,255,1),0 0 40px rgba(0,180,255,.85),0 0 80px rgba(0,150,255,.5);filter:brightness(1.25)}50%{box-shadow:0 0 30px rgba(0,240,255,1),0 0 60px rgba(0,200,255,1),0 0 100px rgba(0,150,255,.7),0 0 140px rgba(0,100,255,.35);filter:brightness(1.65) drop-shadow(0 0 18px rgba(0,230,255,.9))}}.pb.ok{background:linear-gradient(135deg,#0088cc,#0055aa);font-size:16px;box-shadow:0 3px 0 #003366;transition:opacity .2s}.pb.ok[disabled]{opacity:.4;pointer-events:none;filter:grayscale(.4);animation:none !important}.pb.ok:not([disabled]){animation:okGlow .9s ease infinite;background:linear-gradient(135deg,#00ccff,#0055ee)}
-.pb.ok:active{transform:translateY(2px);box-shadow:0 1px 0 #003366}
-.pb.ok:disabled{background:rgba(40,50,70,.6);color:rgba(255,255,255,.25);box-shadow:none;cursor:not-allowed}
-.lmsg{text-align:center;font-size:12px;font-weight:700;min-height:20px;color:#aaa}
-.lmsg.err{color:#ff6666}.lmsg.ok{color:#44ff88}
-.gbtn{width:100%;padding:10px;margin-top:12px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:transparent;cursor:pointer;font-size:13px;font-weight:700;color:rgba(255,255,255,.4);font-family:'Barlow Condensed',sans-serif}
-.gbtn:hover{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.3)}
+:root{
+  --gold:#ffd700;
+  --gold2:#ff9f00;
+  --neon-blue:#00cfff;
+  --neon-purple:#b44fff;
+  --neon-green:#39ff14;
+  --neon-pink:#ff2d78;
+  --bg-deep:#050818;
+  --bg-card:rgba(10,15,40,0.85);
+  --glass:rgba(255,255,255,0.04);
+}
 
-/* ===== ロビー ===== */
-#lobby{display:none;width:100%;max-width:420px;flex-direction:column}
+body{
+  background:#050818;
+  min-height:100vh;
+  font-family:'Noto Sans JP',sans-serif;
+  color:#eef;
+  overflow-x:hidden;
+  position:relative;
+}
 
-/* ヘッダー */
-.hdr{padding:12px 16px;background:rgba(0,0,0,.5);border-bottom:1px solid rgba(0,200,255,.12);display:flex;align-items:center;gap:12px}
-.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0088cc,#005588);border:2px solid rgba(0,200,255,.4);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;flex-shrink:0;text-transform:uppercase}
-.hdr-info{flex:1}
-.hdr-name{font-size:15px;font-weight:700;color:#fff}
-.hdr-medals{font-family:'Press Start 2P',monospace;font-size:12px;color:#ffcc00}
-.lout{background:none;border:1px solid rgba(255,255,255,.15);border-radius:5px;color:rgba(255,255,255,.4);font-size:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;padding:4px 10px;cursor:pointer;flex-shrink:0}
+/* ===== BACKGROUND: 夜の遊園地 ===== */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(20,10,80,0.9) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(60,0,100,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 80%, rgba(0,40,100,0.4) 0%, transparent 60%),
+    linear-gradient(180deg, #050818 0%, #080d25 50%, #0a0520 100%);
+  z-index:0;
+  pointer-events:none;
+}
 
-/* デイリーボーナス */
-.bonus-bar{margin:12px 16px 0;background:linear-gradient(135deg,rgba(255,180,0,.12),rgba(255,120,0,.08));border:1px solid rgba(255,180,0,.3);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.2s}
-.bonus-bar:hover{border-color:rgba(255,180,0,.6);background:linear-gradient(135deg,rgba(255,180,0,.2),rgba(255,120,0,.12))}
-.bonus-bar.got{cursor:default;opacity:.5}
-.bonus-icon{font-size:24px;flex-shrink:0}
-.bonus-info{flex:1}
-.bonus-title{font-size:14px;font-weight:700;color:#ffcc44;letter-spacing:.05em}
-.bonus-sub{font-size:11px;color:rgba(255,200,100,.6)}
-.bonus-badge{background:linear-gradient(135deg,#ff8800,#cc5500);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;white-space:nowrap;flex-shrink:0}
-.bonus-badge.done{background:rgba(255,255,255,.1);color:rgba(255,255,255,.3)}
+/* 観覧車シルエット */
+body::after{
+  content:'';
+  position:fixed;
+  bottom:0; right:-20px;
+  width:280px; height:280px;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 38%, rgba(100,60,200,0.08) 39%, rgba(100,60,200,0.08) 40%, transparent 41%),
+    radial-gradient(circle at 50% 50%, transparent 30%, rgba(100,60,200,0.06) 31%, rgba(100,60,200,0.06) 32%, transparent 33%),
+    radial-gradient(circle at 50% 50%, transparent 22%, rgba(100,60,200,0.05) 23%, rgba(100,60,200,0.05) 24%, transparent 25%);
+  border:2px solid rgba(100,60,200,0.07);
+  border-radius:50%;
+  opacity:0.6;
+  z-index:0;
+  pointer-events:none;
+  box-shadow:0 0 60px rgba(120,60,255,0.08);
+}
 
-/* ゲームリスト */
-.lobby-body{padding:12px 16px 16px}
-.glbl{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.3em;text-align:center;margin-bottom:10px}
-.card{display:block;text-decoration:none;background:linear-gradient(135deg,rgba(0,20,40,.9),rgba(0,10,25,.95));border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;margin-bottom:12px;position:relative;transition:all .2s}
-.card:hover{border-color:rgba(0,200,255,.3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.card:active{transform:none}.icon-edit-btn{position:absolute;top:6px;right:6px;z-index:10;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;opacity:0;transition:.2s;-webkit-tap-highlight-color:transparent}.card:hover .icon-edit-btn,.card:active .icon-edit-btn{opacity:1}
-.banner{height:140px;display:flex;align-items:center;justify-content:center;font-size:64px;letter-spacing:4px;position:relative;overflow:hidden}.banner img.custom-icon{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}.banner .emoji-wrap{position:relative;z-index:1}
-.banner.sl{background:linear-gradient(135deg,#003355,#001a33);border-bottom:2px solid #0099bb}
-.banner.jk{background:linear-gradient(135deg,#1a0033,#0d001a);border-bottom:2px solid #8800cc}
-.banner.pk{background:linear-gradient(135deg,#001a00,#000d00);border-bottom:2px solid #00aa44}
-.cinfo{padding:12px 14px}
-.cname{font-family:'Russo One',sans-serif;font-size:16px;color:#fff;margin-bottom:3px}
-.cname small{font-family:'Noto Sans JP',sans-serif;font-size:11px;color:rgba(255,255,255,.4);font-weight:400;margin-left:8px}
-.cdesc{font-size:12px;color:rgba(255,255,255,.35)}
-.badge{position:absolute;top:10px;right:10px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700}
-.bnew{background:rgba(255,80,80,.8);color:#fff}
-.bhot{background:rgba(255,150,0,.8);color:#fff}
-.foot{padding:12px;text-align:center;font-size:10px;color:rgba(255,255,255,.12)}
+/* 星 */
+.stars{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.stars span{
+  position:absolute;
+  background:#fff;
+  border-radius:50%;
+  animation:twinkle var(--dur,3s) infinite alternate ease-in-out;
+}
+@keyframes twinkle{0%{opacity:0.1;transform:scale(0.8);}100%{opacity:0.9;transform:scale(1.2);}}
+
+/* メインコンテナ */
+#lobby{
+  position:relative;
+  z-index:1;
+  max-width:480px;
+  margin:0 auto;
+  min-height:100vh;
+  padding-bottom:40px;
+}
+
+/* ===== HEADER ===== */
+.hdr{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 16px 10px;
+  background:linear-gradient(180deg, rgba(10,5,40,0.95) 0%, rgba(5,8,24,0.6) 100%);
+  position:sticky;
+  top:0;
+  z-index:100;
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(180,100,255,0.15);
+}
+
+.avatar{
+  width:42px; height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#b44fff,#6633cc);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:18px; color:#fff;
+  box-shadow:0 0 0 2px rgba(180,100,255,0.5), 0 0 16px rgba(180,100,255,0.4);
+  flex-shrink:0;
+}
+
+.hdr-info{display:flex;flex-direction:column;gap:1px;flex:1;}
+.hdr-name{font-size:13px;font-weight:700;color:#ddd;letter-spacing:.05em;}
+.hdr-medals{
+  font-family:'Zen Dots',monospace;
+  font-size:20px;
+  font-weight:700;
+  color:var(--gold);
+  text-shadow:0 0 10px rgba(255,200,0,0.6),0 0 30px rgba(255,150,0,0.3);
+  letter-spacing:.05em;
+}
+.hdr-medals::before{content:'🪙 ';}
+
+.lout{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,100,150,0.3);
+  color:rgba(255,150,180,0.8);
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:11px;
+  cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif;
+  transition:all .2s;
+  white-space:nowrap;
+}
+.lout:hover{background:rgba(255,50,100,0.15);border-color:rgba(255,100,150,0.6);color:#ff6090;}
+
+/* ===== DAILY BONUS ===== */
+.bonus-bar{
+  margin:10px 14px;
+  padding:12px 16px;
+  border-radius:14px;
+  background:linear-gradient(135deg, rgba(255,160,0,0.12) 0%, rgba(255,100,0,0.08) 100%);
+  border:1px solid rgba(255,180,0,0.25);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:all .2s;
+}
+.bonus-bar::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse at 20% 50%, rgba(255,200,0,0.12) 0%, transparent 60%);
+}
+.bonus-bar:active{transform:scale(0.98);}
+.bonus-bar.got{opacity:0.5;cursor:default;}
+.bonus-bar.got:active{transform:none;}
+
+.bonus-icon{font-size:32px;filter:drop-shadow(0 0 8px rgba(255,180,0,0.6));flex-shrink:0;}
+.bonus-info{flex:1;}
+.bonus-title{
+  font-size:13px;font-weight:700;color:var(--gold);
+  text-shadow:0 0 8px rgba(255,200,0,0.5);
+  letter-spacing:.05em;
+}
+.bonus-sub{font-size:11px;color:rgba(255,200,100,0.7);margin-top:2px;}
+.bonus-badge{
+  background:linear-gradient(135deg,#ff9f00,#ff5500);
+  color:#fff;font-size:11px;font-weight:700;
+  padding:4px 10px;border-radius:20px;
+  box-shadow:0 0 12px rgba(255,150,0,0.5);
+  white-space:nowrap;
+}
+.bonus-badge.done{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);box-shadow:none;}
+
+/* ===== SELECT GAME ===== */
+.section-label{
+  text-align:center;
+  padding:16px 0 10px;
+  font-size:11px;
+  letter-spacing:.25em;
+  color:rgba(150,180,255,0.5);
+  font-family:'Russo One',sans-serif;
+}
+.section-label::before,.section-label::after{
+  content:'◀';
+  margin:0 8px;
+  color:rgba(100,150,255,0.3);
+}
+.section-label::after{content:'▶';}
+
+/* ===== GAME CARDS ===== */
+.cards{padding:0 12px;display:flex;flex-direction:column;gap:12px;}
+
+.card{
+  border-radius:18px;
+  overflow:hidden;
+  cursor:pointer;
+  text-decoration:none;
+  display:block;
+  position:relative;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+  -webkit-tap-highlight-color:transparent;
+}
+.card:hover,.card:active{transform:translateY(-4px) scale(1.01);}
+
+/* クイズカード */
+.card-quiz{
+  background:linear-gradient(135deg, #0d1a4a 0%, #0a0d35 40%, #1a0d50 100%);
+  border:1px solid rgba(0,180,255,0.25);
+  box-shadow:
+    0 0 0 1px rgba(0,120,255,0.1),
+    0 8px 32px rgba(0,50,200,0.3),
+    inset 0 1px 0 rgba(100,180,255,0.1);
+}
+.card-quiz:hover{
+  box-shadow:
+    0 0 0 1px rgba(0,180,255,0.3),
+    0 12px 40px rgba(0,80,255,0.4),
+    0 0 60px rgba(0,150,255,0.15),
+    inset 0 1px 0 rgba(100,180,255,0.2);
+}
+
+/* ポーカーカード */
+.card-poker{
+  background:linear-gradient(135deg, #0a2010 0%, #061510 40%, #0d2800 100%);
+  border:1px solid rgba(0,200,80,0.2);
+  box-shadow:
+    0 0 0 1px rgba(0,150,50,0.1),
+    0 8px 32px rgba(0,100,30,0.3),
+    inset 0 1px 0 rgba(100,255,150,0.08);
+}
+.card-poker:hover{
+  box-shadow:
+    0 0 0 1px rgba(0,220,80,0.3),
+    0 12px 40px rgba(0,150,50,0.4),
+    0 0 60px rgba(0,200,80,0.15),
+    inset 0 1px 0 rgba(100,255,150,0.15);
+}
+
+/* グーチョキパーカード */
+.card-jk{
+  background:linear-gradient(135deg, #1a0835 0%, #120520 40%, #220840 100%);
+  border:1px solid rgba(180,60,255,0.25);
+  box-shadow:
+    0 0 0 1px rgba(150,30,255,0.1),
+    0 8px 32px rgba(100,0,200,0.3),
+    inset 0 1px 0 rgba(200,100,255,0.08);
+}
+.card-jk:hover{
+  box-shadow:
+    0 0 0 1px rgba(200,80,255,0.35),
+    0 12px 40px rgba(150,0,255,0.4),
+    0 0 60px rgba(180,60,255,0.2),
+    inset 0 1px 0 rgba(200,100,255,0.15);
+}
+
+.card-banner{
+  width:100%;
+  height:145px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:72px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* クイズバナー背景 */
+.banner-quiz{
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(0,100,255,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(100,0,255,0.2) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(0,80,200,0.2) 0%, rgba(50,0,150,0.15) 100%);
+}
+.banner-quiz::before{
+  content:'✨📖🔮';
+  position:absolute;
+  font-size:50px;
+  opacity:0.8;
+  text-shadow:0 0 20px rgba(0,150,255,0.8);
+  filter:drop-shadow(0 0 15px rgba(0,100,255,0.6));
+  letter-spacing:8px;
+}
+
+/* ポーカーバナー背景 */
+.banner-poker{
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(0,150,50,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 70%, rgba(0,200,100,0.15) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(0,120,40,0.2) 0%, rgba(0,60,20,0.15) 100%);
+}
+.banner-poker::before{
+  content:'🃏♠️🎰';
+  position:absolute;
+  font-size:50px;
+  opacity:0.8;
+  text-shadow:0 0 20px rgba(0,200,80,0.8);
+  filter:drop-shadow(0 0 15px rgba(0,180,60,0.6));
+  letter-spacing:8px;
+}
+
+/* グーチョキパーバナー背景 */
+.banner-jk{
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(160,0,255,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(200,50,255,0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 50%, rgba(100,0,200,0.2) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(120,0,200,0.2) 0%, rgba(60,0,120,0.15) 100%);
+}
+.banner-jk::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 30% 60% at 25% 50%, rgba(180,80,255,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 60% at 50% 50%, rgba(200,100,255,0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 60% at 75% 50%, rgba(150,50,255,0.25) 0%, transparent 70%);
+}
+.banner-jk-emoji{
+  position:relative;
+  z-index:1;
+  font-size:60px;
+  filter:drop-shadow(0 0 20px rgba(180,100,255,0.7));
+  display:flex;gap:12px;
+}
+
+/* カードフッター */
+.card-footer{
+  padding:12px 16px 14px;
+  position:relative;
+}
+.card-tag{
+  position:absolute;
+  top:8px; right:12px;
+  font-size:9px;
+  color:rgba(255,255,255,0.4);
+  letter-spacing:.15em;
+  font-family:'Russo One',sans-serif;
+}
+.icon-edit-btn{
+  position:absolute;
+  top:-52px; right:8px;
+  background:rgba(0,0,0,0.5);
+  border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.6);
+  width:28px;height:28px;
+  border-radius:6px;
+  font-size:11px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  z-index:5;
+  transition:.2s;
+}
+.icon-edit-btn:hover{background:rgba(255,255,255,0.1);}
+.card-name{
+  font-size:17px;
+  font-weight:900;
+  color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,0.5);
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+}
+.card-name-sub{
+  font-size:10px;
+  font-weight:700;
+  opacity:0.6;
+  letter-spacing:.05em;
+  font-family:'Russo One',sans-serif;
+}
+.card-desc{
+  font-size:11px;
+  color:rgba(220,230,255,0.6);
+  margin-top:4px;
+  line-height:1.5;
+}
+
+/* ネオンライン アクセント */
+.card-quiz .card-footer::before{
+  content:'';position:absolute;top:0;left:16px;right:16px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,180,255,0.4),transparent);
+}
+.card-poker .card-footer::before{
+  content:'';position:absolute;top:0;left:16px;right:16px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,220,80,0.4),transparent);
+}
+.card-jk .card-footer::before{
+  content:'';position:absolute;top:0;left:16px;right:16px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(200,80,255,0.4),transparent);
+}
+
+/* ===== RANKING SECTION ===== */
+.ranking-section{
+  margin:24px 12px 0;
+}
+
+.ranking-title{
+  text-align:center;
+  padding:14px 20px;
+  margin-bottom:12px;
+  position:relative;
+  font-family:'Russo One',sans-serif;
+  font-size:15px;
+  color:var(--gold);
+  text-shadow:0 0 15px rgba(255,200,0,0.6);
+  letter-spacing:.15em;
+}
+.ranking-title::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border:2px solid rgba(255,200,0,0.2);
+  border-radius:12px;
+  background:linear-gradient(135deg, rgba(255,180,0,0.05) 0%, rgba(255,100,0,0.03) 100%);
+}
+.ranking-title::after{
+  content:'🏆';
+  margin-right:8px;
+}
+
+/* 電球装飾 */
+.ranking-title span{
+  position:relative;
+  z-index:1;
+}
+.ranking-title span::before{
+  content:'💡 ';
+  font-size:12px;
+  filter:drop-shadow(0 0 4px rgba(255,220,0,0.8));
+}
+.ranking-title span::after{
+  content:' 💡';
+  font-size:12px;
+  filter:drop-shadow(0 0 4px rgba(255,220,0,0.8));
+}
+
+.rank-block{
+  background:rgba(8,12,35,0.7);
+  border-radius:14px;
+  margin-bottom:10px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(8px);
+}
+
+.rank-block-title{
+  padding:10px 14px;
+  font-size:12px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.02);
+}
+
+.rank-list{
+  padding:4px 0;
+  min-height:36px;
+}
+
+.rank-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 14px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  transition:background .15s;
+}
+.rank-item:last-child{border-bottom:none;}
+.rank-item:hover{background:rgba(255,255,255,0.03);}
+
+.rank-pos{
+  font-family:'Zen Dots',monospace;
+  font-size:13px;
+  min-width:28px;
+  text-align:center;
+}
+.rank-pos.p1{color:#ffd700;text-shadow:0 0 8px rgba(255,215,0,0.6);}
+.rank-pos.p2{color:#c0c0c0;text-shadow:0 0 6px rgba(192,192,192,0.4);}
+.rank-pos.p3{color:#cd7f32;text-shadow:0 0 6px rgba(205,127,50,0.4);}
+.rank-pos.pn{color:rgba(255,255,255,0.3);font-size:11px;}
+
+.rank-medal{font-size:18px;line-height:1;}
+.rank-name{flex:1;font-size:13px;font-weight:700;color:rgba(220,230,255,0.9);}
+.rank-score{
+  font-family:'Zen Dots',monospace;
+  font-size:13px;
+  color:var(--neon-green);
+  text-shadow:0 0 8px rgba(57,255,20,0.4);
+}
+.rank-empty{
+  padding:14px;
+  text-align:center;
+  color:rgba(255,255,255,0.2);
+  font-size:12px;
+}
+.rank-loading{
+  padding:12px;
+  text-align:center;
+  color:rgba(255,255,255,0.3);
+  font-size:11px;
+}
+
+/* フッター */
+.foot{
+  padding:20px 12px 10px;
+  text-align:center;
+  font-size:10px;
+  color:rgba(255,255,255,0.1);
+}
+.foot a{color:rgba(255,255,255,0.15);text-decoration:none;}
 
 /* トースト */
-.toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.9);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;color:#fff;pointer-events:none;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap}
-.toast.show{opacity:1}
+.toast{
+  position:fixed;
+  bottom:60px;left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,200,100,0.9);
+  color:#fff;font-size:13px;
+  padding:10px 20px;
+  border-radius:20px;
+  opacity:0;
+  transition:opacity .3s;
+  z-index:9999;
+  backdrop-filter:blur(8px);
+  white-space:nowrap;
+  pointer-events:none;
+}
+.toast.show{opacity:1;}
 
-.ranking-section{padding:0 12px 16px;display:flex;flex-direction:column;gap:12px}
-.rank-section-title{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:#FFD700;text-align:center;padding:10px 0;border-bottom:1px solid rgba(255,215,0,.3);margin-bottom:4px}
-.rank-block{background:rgba(0,0,0,.35);border:1px solid rgba(0,200,60,.25);border-radius:12px;padding:12px}
-.rank-block-title{font-family:'Oswald',sans-serif;font-size:15px;font-weight:700;color:#00FF41;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(0,200,60,.2)}
-.rank-list{display:flex;flex-direction:column;gap:4px;font-size:14px}
-.rank-row{display:flex;align-items:center;gap:8px;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.05)}
-.rank-row:last-child{border:none}
-.rank-pos{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#FFD700;min-width:24px}
-.rank-name{flex:1;color:#ccc}
-.rank-score{font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:#00FF41}
-.pb-ok[disabled]{opacity:.45 !important;pointer-events:none !important;filter:none !important;animation:none !important}
-.pb-ok[disabled]{opacity:.45 !important;pointer-events:none !important;filter:none !important;animation:none !important}
+/* スロット非表示 */
+.card-slot{display:none;}
 
-/* ===== UI UPGRADE v6 ===== */
-.pb{height:52px !important;width:100% !important}
-body{background-image:linear-gradient(rgba(0,200,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,.05) 1px,transparent 1px),radial-gradient(ellipse at 15% 25%,rgba(0,80,255,.10) 0,transparent 55%),radial-gradient(ellipse at 85% 75%,rgba(120,0,255,.10) 0,transparent 55%) !important;background-size:40px 40px,40px 40px,100% 100%,100% 100% !important;background-color:#050810 !important}
-.dot{width:52px !important;height:52px !important;border-radius:50% !important;position:relative !important;overflow:hidden !important;background:radial-gradient(circle at 35% 32%,rgba(70,100,170,.75) 0%,rgba(15,22,60,.96) 55%,rgba(4,6,18,1) 100%) !important;border:1.5px solid rgba(50,90,190,.22) !important;box-shadow:inset 0 3px 6px rgba(255,255,255,.13),inset 0 -3px 6px rgba(0,0,0,.78),0 3px 10px rgba(0,0,0,.65) !important;transition:all .3s ease !important;display:flex !important;align-items:center !important;justify-content:center !important}
-.dot::before{content:"" !important;position:absolute !important;top:7% !important;left:13% !important;width:40% !important;height:30% !important;background:radial-gradient(ellipse,rgba(255,255,255,.26) 0%,rgba(255,255,255,.02) 100%) !important;border-radius:50% !important;filter:blur(1px) !important;pointer-events:none !important}
-@keyframes dotGlowV6{0%,100%{box-shadow:inset 0 3px 8px rgba(0,240,255,.38),inset 0 -3px 6px rgba(0,0,0,.38),0 0 18px rgba(0,200,255,1),0 0 36px rgba(0,160,255,.80),0 0 54px rgba(0,120,255,.50),0 0 0 2px rgba(0,220,255,.58)}50%{box-shadow:inset 0 3px 10px rgba(0,240,255,.52),inset 0 -3px 6px rgba(0,0,0,.32),0 0 26px rgba(0,220,255,1),0 0 52px rgba(0,180,255,.90),0 0 78px rgba(0,140,255,.60),0 0 0 2.5px rgba(0,240,255,.78)}}
-.dot.on{background:radial-gradient(circle at 35% 32%,rgba(0,195,255,.82) 0%,rgba(0,75,215,.92) 50%,rgba(0,25,115,.97) 100%) !important;border-color:rgba(0,215,255,.92) !important;animation:dotGlowV6 .9s ease infinite !important}
-.logo-jp{filter:drop-shadow(0 0 6px rgba(0,220,255,1)) drop-shadow(0 0 18px rgba(0,180,255,.95)) drop-shadow(0 0 36px rgba(0,150,255,.75)) !important;text-shadow:0 0 8px rgba(0,255,255,1),0 0 20px rgba(0,220,255,.95),0 0 40px rgba(0,180,255,.8),0 0 70px rgba(0,150,255,.55) !important}
-@keyframes okV6{0%,100%{filter:brightness(1.2) drop-shadow(0 0 12px rgba(0,230,255,.9));box-shadow:0 0 20px rgba(0,220,255,1),0 0 40px rgba(0,180,255,.85),0 0 80px rgba(0,150,255,.55)}50%{filter:brightness(1.65) drop-shadow(0 0 22px rgba(0,240,255,1));box-shadow:0 0 30px rgba(0,240,255,1),0 0 60px rgba(0,200,255,1),0 0 100px rgba(0,160,255,.75),0 0 150px rgba(0,120,255,.45)}}
-.pb-ok:not([disabled]){animation:okV6 1.1s ease infinite !important}
-.pb-ok[disabled]{opacity:.28 !important;pointer-events:none !important;filter:grayscale(.7) brightness(.45) !important;animation:none !important;box-shadow:none !important}
-
-/* FIX WIDTH */
-.pb{width:100% !important;min-width:0 !important}
-.pad{display:grid !important;grid-template-columns:repeat(3,1fr) !important;gap:8px !important}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.card:nth-child(1){animation:float 6s ease-in-out infinite;}
+.card:nth-child(2){animation:float 7s ease-in-out infinite .5s;}
+.card:nth-child(3){animation:float 5.5s ease-in-out infinite 1s;}
 </style>
-<link rel="stylesheet" href="btn_sprites.css"><link rel="stylesheet" href="btn_sprites.css">
 </head>
 <body>
+
+<!-- 星 -->
+<div class="stars" id="stars"></div>
+
 <div id="lobby">
+  <!-- ヘッダー -->
   <div class="hdr">
     <div class="avatar" id="avatar">?</div>
     <div class="hdr-info">
@@ -120,75 +563,141 @@ body{background-image:linear-gradient(rgba(0,200,255,.05) 1px,transparent 1px),l
 
   <!-- デイリーボーナス -->
   <div class="bonus-bar" id="bonusBar" onclick="claimBonus()">
-    <div class="bonus-icon">🎁</div>
+    <div class="bonus-icon">💰</div>
     <div class="bonus-info">
       <div class="bonus-title">デイリーボーナス</div>
       <div class="bonus-sub" id="bonusSub">タップして50枚もらおう！</div>
     </div>
-    <div class="bonus-badge" id="bonusBadge">+50枚</div>
+    <div class="bonus-badge" id="bonusBadge">受取る</div>
   </div>
 
-  <div class="lobby-body">
-    <div class="glbl">▶ SELECT GAME ◀</div>
+  <!-- ゲーム選択 -->
+  <div class="section-label">SELECT GAME</div>
 
-    <a class="card" href="quiz_fever.html" onclick="go(event,'quiz_fever.html')">
-      <div class="banner" id="banner-quiz" style="background:linear-gradient(135deg,#1a0840,#3d1380);font-size:2em"><span class="emoji-wrap">🧙❓📚</span></div>
-      <div class="cinfo">
-        <div class="cname">クイズ魔道学院FEVER <small>早押しクイズ対戦</small></div>
-        <div class="cdesc">キーワード検索で問題を無限生成！CPU相手に早押し対決！</div>
+  <div class="cards">
+    <!-- クイズ -->
+    <a class="card card-quiz" href="quiz_fever.html" onclick="go(event,'quiz_fever.html')">
+      <div class="card-banner banner-quiz" id="banner-quiz"></div>
+      <div class="card-footer">
+        <div class="card-name">クイズ魔道学院FEVER <span class="card-name-sub">早押しクイズ対戦</span></div>
+        <div class="card-desc">キーワード検索で問題を無限生成　CPU職人に早押し対決！</div>
       </div>
     </a>
-    <a class="card" href="poker_fever.html" onclick="go(event,'poker_fever.html')">
-      <div class="banner pk" id="banner-poker"><button class="icon-edit-btn" onclick="editIcon('poker',event)">📷 変更</button><span class="emoji-wrap">🃏♠🃏</span></div>
-      <div class="cinfo">
-        <div class="cname">ポーカーFEVER <small>7's WILD PLUS</small></div>
-        <div class="cdesc">53枚デッキ＋ジョーカーのビデオポーカー。役を揃えてダブルアップ勝負！</div>
+
+    <!-- ポーカー -->
+    <a class="card card-poker" href="poker_fever.html" onclick="go(event,'poker_fever.html')">
+      <div class="card-banner banner-poker" id="banner-poker">
+        <button class="icon-edit-btn" onclick="editIcon('poker',event)">≡</button>
+      </div>
+      <div class="card-footer">
+        <div class="card-name">ポーカーFEVER <span class="card-name-sub">7's WILD PLUS</span></div>
+        <div class="card-desc">54枚デッキ＋ジョーカーのビデオポーカー。俺を捻えてダブルアップ勝負！</div>
       </div>
     </a>
-    <a class="card" href="janken-fever.html" onclick="go(event,'janken-fever.html')">
-      <div class="banner jk" id="banner-jk"><button class="icon-edit-btn" onclick="editIcon('jk',event)">📷 変更</button><span class="emoji-wrap">✊✌🖐</span></div>
-      <div class="cinfo">
-        <div class="cname">グーチョキパー FEVER <small>じゃんけんゲーム</small></div>
-        <div class="cdesc">早出しバトル！連勝でFEVER突入。メダルを増やせ！</div>
+
+    <!-- グーチョキパー -->
+    <a class="card card-jk" href="janken-fever.html" onclick="go(event,'janken-fever.html')">
+      <div class="card-banner banner-jk" id="banner-jk">
+        <button class="icon-edit-btn" onclick="editIcon('jk',event)">≡</button>
+        <div class="banner-jk-emoji">✊✌️🖐️</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-name">グーチョキパーFEVER <span class="card-name-sub">じゃんけんゲーム</span></div>
+        <div class="card-desc">早割しバトル！遊劇でrova役入、メダルを増やせ！</div>
       </div>
     </a>
-    <a class="card" style="display:none" href="slot.html" onclick="go(event,'slot.html')">
-      <div class="banner sl" id="banner-slot"><button class="icon-edit-btn" onclick="editIcon('slot',event)">📷 変更</button><span class="emoji-wrap">🎰🌴🌺</span></div>
-      <div class="cinfo">
-        <div class="cname">OKI FEVER SLOT <small>沖縄スロット</small></div>
-        <div class="cdesc">天国モード・ドキドキモード搭載。6段階設定でハラハラドキドキ！</div>
-      </div>
+
+    <!-- スロット（非表示） -->
+    <a class="card card-slot" href="slot.html" onclick="go(event,'slot.html')" style="display:none" id="banner-slot">
+      <button class="icon-edit-btn" onclick="editIcon('slot',event)">≡</button>
     </a>
-  
+  </div>
+
   <!-- ランキング -->
   <div class="ranking-section" id="rankingSection">
-    <div class="rank-section-title">🏆 ゲーム別ランキング</div>
+    <div class="ranking-title"><span>ゲーム別ランキング</span></div>
+
     <div class="rank-block">
-          <div class="rank-block-title">🧙 クイズ FEVER <span style="font-size:11px;color:#aaa">ソロ（正解数ハイスコア）</span></div>
-          <div class="rank-list" id="rank-quiz-solo"></div>
-        </div>
-        <div class="rank-block">
-          <div class="rank-block-title">🤖 クイズ FEVER <span style="font-size:11px;color:#aaa">CPU対戦（正解数ハイスコア）</span></div>
-          <div class="rank-list" id="rank-quiz-battle"></div>
-        </div>
+      <div class="rank-block-title">🧙 クイズ FEVER ソロ <span style="font-size:10px;color:rgba(150,180,255,0.5);margin-left:4px">正解数ハイスコア</span></div>
+      <div class="rank-list" id="rank-quiz-solo"><div class="rank-loading">読み込み中...</div></div>
     </div>
+
     <div class="rank-block">
-      <div class="rank-block-title">🏴 ポーカー FEVER <span style="font-size:11px;color:#aaa">(獲得メダルハイスコア)</span></div>
-      <div class="rank-list" id="rank-poker">読み込み中...</div>
+      <div class="rank-block-title">🤖 クイズ FEVER CPU対戦 <span style="font-size:10px;color:rgba(150,180,255,0.5);margin-left:4px">正解数ハイスコア</span></div>
+      <div class="rank-list" id="rank-quiz-battle"><div class="rank-loading">読み込み中...</div></div>
     </div>
+
     <div class="rank-block">
-      <div class="rank-block-title">✊ グーチョキパー FEVER <span style="font-size:11px;color:#aaa">(獲得メダルハイスコア)</span></div>
-      <div class="rank-list" id="rank-janken">読み込み中...</div>
+      <div class="rank-block-title">🎴 ポーカー FEVER <span style="font-size:10px;color:rgba(150,180,255,0.5);margin-left:4px">獲得メダルハイスコア</span></div>
+      <div class="rank-list" id="rank-poker"><div class="rank-loading">読み込み中...</div></div>
+    </div>
+
+    <div class="rank-block">
+      <div class="rank-block-title">✊ グーチョキパー FEVER <span style="font-size:10px;color:rgba(150,180,255,0.5);margin-left:4px">獲得メダルハイスコア</span></div>
+      <div class="rank-list" id="rank-janken"><div class="rank-loading">読み込み中...</div></div>
     </div>
   </div>
 
+  <div class="foot">
+    © 2025 百式ゲーム王国・メダルはゲーム間で共通<br>
+    <a href="admin.html">⚙ 管理</a>
   </div>
-  <div class="foot">© 2025 百式ゲーム王国 · メダルはゲーム間で共通
-  <a href="admin.html" style="display:block;margin-top:6px;font-size:10px;color:rgba(255,255,255,.18);text-decoration:none;">⚙ 管理</a></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+undefined
+
+<script>
+// 星を生成
+(function(){
+  var stars = document.getElementById('stars');
+  if (!stars) return;
+  for (var i = 0; i < 60; i++) {
+    var s = document.createElement('span');
+    var size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = [
+      'width:' + size + 'px',
+      'height:' + size + 'px',
+      'left:' + Math.random()*100 + '%',
+      'top:' + Math.random()*100 + '%',
+      '--dur:' + (2 + Math.random()*4) + 's',
+      'animation-delay:' + Math.random()*4 + 's',
+      'opacity:' + (0.2 + Math.random()*0.6)
+    ].join(';');
+    stars.appendChild(s);
+  }
+})();
+
+// ランキング render 関数をリニューアル
+function render(elId, data) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  if (!data || !data.length) {
+    el.innerHTML = '<div class="rank-empty">まだ記録がありません</div>';
+    return;
+  }
+  var medals = ['🥇','🥈','🥉'];
+  var posClass = ['p1','p2','p3'];
+  el.innerHTML = data.map(function(r, i) {
+    var pos = i < 3 ? medals[i] : (i+1);
+    var pc = i < 3 ? posClass[i] : 'pn';
+    var isScore = elId.includes('quiz');
+    var label = isScore ? '問' : '枚';
+    var val = isScore ? (r.score || 0) : (r.score || r.medal_won || 0);
+    var nm = r.player_name || r.name || '';
+    return '<div class="rank-item">' +
+      '<span class="rank-pos ' + pc + '">' + pos + '</span>' +
+      '<span class="rank-name">' + nm + '</span>' +
+      '<span class="rank-score">' + Number(val).toLocaleString() + label + '</span>' +
+      '</div>';
+  }).join('');
+}
+function noData(elId) {
+  var el = document.getElementById(elId);
+  if (el) el.innerHTML = '<div class="rank-empty">まだ記録がありません</div>';
+}
+</script>
 
 <script>
 var user=null;
