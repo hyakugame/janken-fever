@@ -282,41 +282,36 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-async function doLogin(){
-  const name=document.getElementById('nf').value.trim();
-  if(!name){msg('なまえを入力してください','err');return;}
-  if(pin.length<4){msg('4桁のPINを入力してください','err');return;}
-  msg('認証中...','');
-
-  // Supabaseからname+pinで検索
-  try{
-    const res=await fetch(`${SB}/rest/v1/game_users?name=eq.${encodeURIComponent(name)}&pin=eq.${pin}`,{headers:SH});
-    const data=await res.json();
-    if(data&&data.length>0){
-      // 既存ユーザー
-      user={id:data[0].id,name:data[0].name,medals:data[0].medals;}catch(e){return data[0].medals;}})(),pin};
-      msg('ログイン成功！','ok');
+async function doLogin() {
+  const name = document.getElementById('nf').value.trim();
+  if (!name) { msg('名前を入力してください', 'err'); return; }
+  if (pin.length < 4) { msg('4桁のPINを入力してください', 'err'); return; }
+  msg('Supabase確認中...', '');
+  const pinStr = pin.join('');
+  try {
+    const res = await fetch(SB + '/rest/v1/game_users?name=eq.' + encodeURIComponent(name) + '&pin=eq.' + pinStr, { headers: SH });
+    const data = await res.json();
+    if (data && data.length > 0) {
+      user = { id: data[0].id, name: data[0].name, medals: data[0].medals, pin: pinStr };
+      msg('OK', '');
       save();
-      setTimeout(()=>location.replace('lobby.html'),300);
-    }else{
-      // 新規 or PIN違い → nameだけで検索
-      const res2=await fetch(`${SB}/rest/v1/game_users?name=eq.${encodeURIComponent(name)}`,{headers:SH});
-      const data2=await res2.json();
-      if(data2&&data2.length>0){
-        msg('PINが違います','err');
-      }else{
-        // 新規登録
-        await createUser(name,pin);
+      setTimeout(() => location.replace('lobby.html'), 300);
+    } else {
+      // PINが違う or 名前が存在するか確認
+      const res2 = await fetch(SB + '/rest/v1/game_users?name=eq.' + encodeURIComponent(name), { headers: SH });
+      const data2 = await res2.json();
+      if (data2 && data2.length > 0) {
+        msg('PINが違います', 'err');
+      } else {
+        await createUser(name, pinStr);
       }
     }
-  }catch(e){
-    // Supabase失敗 → ローカルのみで動作
-    user={id:null,name,medals:200,pin};
+  } catch(e) {
+    user = { id: null, name: name, medals: 200, pin: pinStr };
     save();
-    setTimeout(()=>location.replace('lobby.html'),300);
+    setTimeout(() => location.replace('lobby.html'), 300);
   }
 }
-
 async function doLogout(){
   // Supabaseにメダルを保存してからログアウト
   const u=JSON.parse(localStorage.getItem('hkg_user')||'{}');
