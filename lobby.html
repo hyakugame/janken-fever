@@ -273,8 +273,9 @@ if(user){
   document.getElementById('cs-slot').addEventListener('touchend',function(e){if(csTx===null)return;var dx=csTx-e.changedTouches[0].clientX;if(Math.abs(dx)>35)csMove(dx>0?1:-1);csTx=null;},{passive:true});
   try{loadRankings();}catch(e){}
   try{checkBonus();}catch(e){}
+  try{initRetention();}catch(e){console.error('retention:',e);}
 }
-window.addEventListener('pageshow',function(){
+window.addEventListener('pageshow',function(){try{initRetention();}catch(e){};
   try{var s=JSON.parse(localStorage.getItem('hkg_user')||'null');if(s&&user&&s.name===user.name){user=s;document.getElementById('mc').textContent=String(user.medals||0).padStart(5,'0');}}catch(e){}
 });
 var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
@@ -291,7 +292,7 @@ function loadRankings(){
   fetch(SBU+'/rest/v1/rankings?select=name,score&game=eq.janken&limit=500',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-janken',best(d,'name','score'),'枚');}).catch(function(){noData('rank-janken');});
 }
 function checkBonus(){var today=new Date().toDateString();var bar=document.getElementById('bonusBar');var badge=document.getElementById('bonusBadge');var sub=document.getElementById('bonusSub');if(localStorage.getItem('hkg_daily_bonus')===today){bar.classList.add('got');badge.classList.add('done');badge.textContent='受取済';sub.textContent='また明日来てね！';}else{bar.classList.remove('got');badge.classList.remove('done');badge.textContent='+50枚';sub.textContent='タップして50枚もらおう！';}}
-function claimBonus(){var today=new Date().toDateString();if(localStorage.getItem('hkg_daily_bonus')===today){toast('今日はもう受け取り済みです！');return;}user.medals=(user.medals||0)+50;save();localStorage.setItem('hkg_daily_bonus',today);document.getElementById('mc').textContent=String(user.medals).padStart(5,'0');checkBonus();toast('🎁 デイリーボーナス +50枚！');}
+function claimBonus(){var today=new Date().toDateString();if(localStorage.getItem('hkg_daily_bonus')===today){toast('今日はもう受け取り済みです！');return;}user.medals=(user.medals||0)+50;save();localStorage.setItem('hkg_daily_bonus',today);document.getElementById('mc').textContent=String(user.medals).padStart(5,'0');toast('🎁 デイリーボーナス +50枚！');}
 function getDB(){try{return JSON.parse(localStorage.getItem('hkg_db')||'{}');}catch(e){return{};}}
 function saveDB(db){try{localStorage.setItem('hkg_db',JSON.stringify(db));}catch(e){}}
 function save(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}if(user&&user.name&&user.name!=='GUEST'){var db=getDB();if(db[user.name])db[user.name].medals=user.medals;saveDB(db);}}
