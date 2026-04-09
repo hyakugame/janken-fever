@@ -568,7 +568,6 @@ function updateRankStatus(){
 }
 
 // スコア登録（オンライン + ローカル）
-async 
 // ── ミッション進捗追跡ユーティリティ ──
 
 // ── じゃんけんXP付与 ──
@@ -615,7 +614,7 @@ function _missionUpdate(type,amount){
   }catch(e){}
 }
 
-function addScore(name, score){
+async function addScore(name, score){
   // ローカル保存
   const local = loadLocalRanking();
   local.push({name: name.trim()||'？？？', score, date: new Date().toLocaleDateString('ja-JP')});
