@@ -701,20 +701,19 @@ async function loadLeague(){
   var d=new Date(),dow=d.getDay(),mon=new Date(d);mon.setDate(d.getDate()-dow+1);
   var weekGame='wxp_'+mon.toISOString().slice(0,10);
   var uName=user.name||'';
-  // Supabase同期（UPSERT方式）
+  // Supabase同期（DELETE+INSERT方式）
   try{
-    var upsertRes=await fetch(SBU+'/rest/v1/rankings',{
-      method:'POST',
-      headers:Object.assign({},SBH,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
-      body:JSON.stringify([{name:uName,score:myXP,game:weekGame}])
-    });
-    // merge-duplicatesが効かない場合はPATCH
-    if(upsertRes.status===409||upsertRes.status===200){
-      var exRes=await fetch(SBU+'/rest/v1/rankings?game=eq.'+weekGame+'&name=eq.'+uName,{headers:SBH});
-      var exRows=await exRes.json();
-      if(exRows.length>0&&exRows[0].score!==myXP){
-        await fetch(SBU+'/rest/v1/rankings?id=eq.'+exRows[0].id,{method:'PATCH',headers:SBH,body:JSON.stringify({score:myXP})});
+    // 既存エントリを全削除してから最新XPでINSERT
+    var exRes=await fetch(SBU+'/rest/v1/rankings?game=eq.'+weekGame+'&name=eq.'+uName,{headers:SBH});
+    var exRows=await exRes.json();
+    if(exRows.length>0){
+      // スコアが変わっている場合のみDELETE+INSERT
+      if(exRows[0].score!==myXP){
+        await Promise.all(exRows.map(r=>fetch(SBU+'/rest/v1/rankings?id=eq.'+r.id,{method:'DELETE',headers:SBH})));
+        await fetch(SBU+'/rest/v1/rankings',{method:'POST',headers:SBH,body:JSON.stringify({name:uName,score:myXP,game:weekGame})});
       }
+    } else {
+      await fetch(SBU+'/rest/v1/rankings',{method:'POST',headers:SBH,body:JSON.stringify({name:uName,score:myXP,game:weekGame})});
     }
   }catch(e){}
   // 自分のXP表示
