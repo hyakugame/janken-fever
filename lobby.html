@@ -385,7 +385,7 @@ if(user){
   csRender(0);
   document.getElementById('cs-slot').addEventListener('touchstart',function(e){csTx=e.touches[0].clientX;},{passive:true});
   document.getElementById('cs-slot').addEventListener('touchend',function(e){if(csTx===null)return;var dx=csTx-e.changedTouches[0].clientX;if(Math.abs(dx)>35)csMove(dx>0?1:-1);csTx=null;},{passive:true});
-  try{loadRankings();}catch(e){}
+  setTimeout(function(){try{loadRankings();}catch(e){}},200);
   try{loadLeague();}catch(e){}
   try{checkBonus();}catch(e){}
   try{checkMissionCompleted();}catch(e){}
@@ -400,12 +400,24 @@ var SBH={'apikey':SBK,'Authorization':'Bearer '+SBK};
 function loadRankings(){
   var medals=['🥇','🥈','🥉'],pc=['p1','p2','p3'];
   function best(d,nk,sk){var b={};(d||[]).forEach(function(r){var nm=r[nk]||'?',v=r[sk]||0;if(!b[nm]||v>b[nm])b[nm]=v;});return Object.entries(b).map(function(e){return{name:e[0],score:e[1]};}).sort(function(a,b){return b.score-a.score;});}
-  function render(id,rows,label){var el=document.getElementById(id);if(!el)return;if(!rows||!rows.length){el.innerHTML='<div class="rank-empty">まだ記録がありません</div>';return;}el.innerHTML=rows.slice(0,10).map(function(r,i){return'<div class="rank-item"><span class="rank-pos '+(i<3?pc[i]:'pn')+'">'+(i<3?medals[i]:(i+1))+'</span><span class="rank-name">'+String(r.name).slice(0,10)+'</span><span class="rank-score">'+r.score.toLocaleString()+label+'</span></div>';}).join('');}
+  function render(id,rows,label){var el=document.getElementById(id);if(!el)return;if(!rows||!rows.length){el.innerHTML='<div class="rank-empty">まだ記録がありません</div>';return;}el.innerHTML=rows.slice(0,10).map(function(r,i){return'<div class="rank-item"><span class="rank-pos '+(i<3?pc[i]:'pn')+'">'+(i<3?medals[i]:(i+1))+'</span><span class="rank-name">'+String(r.name).slice(0,10)+'</span><span class="rank-score">'+Number(r.score||0).toLocaleString()+label+'</span></div>';}).join('');}
   function noData(id){var el=document.getElementById(id);if(el)el.innerHTML='<div class="rank-empty">まだ記録がありません</div>';}
-  fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&mode=eq.solo&order=score.desc&limit=20',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-quiz-solo',best(d,'player_name','score'),'問');}).catch(function(){noData('rank-quiz-solo');});
-  fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&mode=eq.battle&order=score.desc&limit=20',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-quiz-battle',best(d,'player_name','score'),'問');}).catch(function(){noData('rank-quiz-battle');});
-  fetch(SBU+'/rest/v1/poker_scores?select=player_name,medal_won&limit=500',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-poker',best(d,'player_name','medal_won'),'枚');}).catch(function(){noData('rank-poker');});
-  fetch(SBU+'/rest/v1/rankings?select=name,score&game=eq.janken&limit=500',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-janken',best(d,'name','score'),'枚');}).catch(function(){noData('rank-janken');});
+  fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&order=score.desc&limit=20',{headers:SBH})
+    .then(function(r){return r.json();})
+    .then(function(d){if(Array.isArray(d)&&d.length>0)render('rank-quiz-solo',best(d,'player_name','score'),'点');else noData('rank-quiz-solo');})
+    .catch(function(){noData('rank-quiz-solo');});
+  fetch(SBU+'/rest/v1/rankings?select=name,score&game=eq.quiz&order=score.desc&limit=20',{headers:SBH})
+    .then(function(r){return r.json();})
+    .then(function(d){if(Array.isArray(d)&&d.length>0)render('rank-quiz-battle',best(d,'name','score'),'点');else noData('rank-quiz-battle');})
+    .catch(function(){noData('rank-quiz-battle');});
+  fetch(SBU+'/rest/v1/poker_scores?select=player_name,medal_won&limit=500',{headers:SBH})
+    .then(function(r){return r.json();})
+    .then(function(d){if(Array.isArray(d)&&d.length>0)render('rank-poker',best(d,'player_name','medal_won'),'枚');else noData('rank-poker');})
+    .catch(function(){noData('rank-poker');});
+  fetch(SBU+'/rest/v1/rankings?select=name,score&game=eq.janken&name=not.like.%5Bpk%5D*&order=score.desc&limit=500',{headers:SBH})
+    .then(function(r){return r.json();})
+    .then(function(d){if(Array.isArray(d)&&d.length>0)render('rank-janken',best(d,'name','score'),'枚');else noData('rank-janken');})
+    .catch(function(){noData('rank-janken');});
 }
 function checkBonus(){var today=new Date().toDateString();var bar=document.getElementById('bonusBar');var badge=document.getElementById('bonusBadge');var sub=document.getElementById('bonusSub');if(localStorage.getItem('hkg_daily_bonus')===today){bar.classList.add('got');badge.classList.add('done');badge.textContent='受取済';sub.textContent='また明日来てね！';}else{bar.classList.remove('got');badge.classList.remove('done');badge.textContent='+50枚';sub.textContent='タップして50枚もらおう！';}}
 function claimBonus(){var today=new Date().toDateString();if(localStorage.getItem('hkg_daily_bonus')===today){toast('今日はもう受け取り済みです！');return;}user.medals=(user.medals||0)+50;save();localStorage.setItem('hkg_daily_bonus',today);document.getElementById('mc').textContent=String(user.medals).padStart(5,'0');toast('🎁 デイリーボーナス +50枚！');}
