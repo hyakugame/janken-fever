@@ -281,6 +281,9 @@ html{opacity:0;transition:opacity .12s}
   border:1px solid rgba(255,120,0,.4);border-radius:8px;padding:3px 8px;font-size:10px;
   color:#ff8c00;font-weight:700;z-index:100;display:none}
 
+
+.xp-result-box{margin:8px 0}
+
 </style>
 </head>
 <body>
@@ -597,6 +600,7 @@ html{opacity:0;transition:opacity .12s}
     <div class="rs"><span class="rs-val" id="rA">0%</span><div class="rs-lbl">正答率</div></div>
     <div class="rs"><span class="rs-val" id="rSc">0</span><div class="rs-lbl">スコア</div></div>
   </div>
+  <div class="xp-result-box" id="xpResultBox" style="display:none"></div>
   <div class="save-card">
     <p>スコアを記録してランキングへ挑戦！</p>
     <button class="btn btn-gold" style="width:100%" id="saveBtn" style="display:none"></button>
@@ -663,6 +667,7 @@ const P_SPELLS = ['⚡ THUNDER!','❄️ BLIZZARD!','🔥 FIREBALL!','🌊 AQUA!
 
 // ── ミッション進捗追跡ユーティリティ ──
 var _qComboCount=0;
+var _sessionXP=0; // このセッションで獲得したXP
 
 // ── XP計算（難易度・ストリーク・コンボ考慮）──
 
@@ -686,6 +691,42 @@ function showStreakBonusBadge(){
     if(!el){el=document.createElement('div');el.id='streak-bonus-badge';el.className='streak-bonus-badge';document.body.appendChild(el);}
     el.textContent='🔥'+days+'日 XP'+mult;el.style.display='block';
   }catch(e){}
+}
+
+
+// XP結果ボックス更新
+function _updateXPResultBox(){
+  var box=document.getElementById('xpResultBox');
+  if(!box)return;
+  var totalXP=parseInt(localStorage.getItem('hkg_total_xp')||'0');
+  var lv=1;
+  for(var i=XP_STEPS.length-1;i>=0;i--){if(totalXP>=XP_STEPS[i]){lv=i+1;break;}}
+  lv=Math.min(lv,20);
+  var lvName=LV_NAMES[lv-1]||'見習い魔道師';
+  var nextXP=XP_STEPS[lv]||XP_STEPS[XP_STEPS.length-1];
+  var prevXP=XP_STEPS[lv-1]||0;
+  var pct=nextXP>prevXP?Math.round((totalXP-prevXP)/(nextXP-prevXP)*100):100;
+  // ミッション進捗確認
+  var md=JSON.parse(localStorage.getItem('hkg_missions')||'{}');
+  var mDone=(md.missions||[]).filter(function(m){return m.done;}).length;
+  var mTotal=(md.missions||[]).length;
+  box.style.display='block';
+  box.innerHTML='<div style="background:rgba(120,60,255,.12);border:1px solid rgba(160,100,255,.35);border-radius:12px;padding:12px 16px;margin:8px 0;text-align:left">'
+    +'<div style="font-size:10px;color:rgba(200,180,255,.55);letter-spacing:.12em;margin-bottom:8px">⚡ 今セッションの成果</div>'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:6px">'
+    +'<span style="font-size:13px;color:#c084fc">獲得XP</span>'
+    +'<span style="font-family:monospace;font-size:16px;color:#ffd700;font-weight:900">+'+_sessionXP+' XP</span>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:8px">'
+    +'<span style="font-size:13px;color:#c084fc">現在のレベル</span>'
+    +'<span style="font-size:13px;color:#eef;font-weight:700">Lv.'+lv+' '+lvName+'</span>'
+    +'</div>'
+    +'<div style="height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin-bottom:8px">'
+    +'<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#a855f7,#60a5fa);border-radius:2px;transition:width .8s"></div>'
+    +'</div>'
+    +(mTotal>0?'<div style="font-size:11px;color:rgba(200,230,255,.55)">📋 ミッション: '+mDone+'/'+mTotal+' 完了</div>':'')
+    +'</div>';
+  _sessionXP=0; // リセット
 }
 
 function calcXP(){
@@ -2497,9 +2538,12 @@ function showResult(winnerName){
     const soloScore=gs.ok*100+acc;
     window._ps={name:pName,score:soloScore,correct:gs.ok,maxQ:_soloMaxQ,acc,mode:'solo',category:cat,genre:_selGenre?.bankKey||''};
   saveScore();
-    _soloMode=false;winPts=3;go('result');return;
+    _soloMode=false;winPts=3;
+  setTimeout(function(){_updateXPResultBox();},100);
+  go('result');return;
   }
   const iWon=winnerName===pName||winnerName===me?.name;
+  setTimeout(function(){_updateXPResultBox();},100);
   const diff=players.find(p=>p.isCPU)?.diff||'normal';
   const score=Math.floor((gs.ok*100+acc)*({easy:1,normal:1.5,hard:2.5}[diff]||(players.length>2?2:1))+(iWon?500:0));
   document.getElementById('rC').textContent=gs.ok;
