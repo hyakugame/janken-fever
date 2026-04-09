@@ -637,17 +637,17 @@ html{opacity:0;transition:opacity .12s}
 // ══════════════════════════════════════
 //  設定
 // ══════════════════════════════════════
-const SB_URL = '';     // 例: 'https://xxxx.supabase.co'
-const SB_KEY = '';     // 例: 'eyJhbGc...'
-const USE_SB = !!(SB_URL && SB_KEY);
-const QT = 8000; // タイマー ms
+var SB_URL = '';     // 例: 'https://xxxx.supabase.co'
+var SB_KEY = '';     // 例: 'eyJhbGc...'
+var USE_SB = !!(SB_URL && SB_KEY);
+var QT = 8000; // タイマー ms
 
 // ══════════════════════════════════════
 //  Supabase初期化
 // ══════════════════════════════════════
 // Supabaseが必要な時だけ動的ロード（USE_SB=trueの設定時のみ）
-let sbClient = null;
-let sbChannel = null;
+var sbClient = null;
+var sbChannel = null;
 if(USE_SB) {
   const _s = document.createElement('script');
   _s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
@@ -658,12 +658,12 @@ if(USE_SB) {
 // ══════════════════════════════════════
 //  CPU設定
 // ══════════════════════════════════════
-const CPU_CFG = {
+var CPU_CFG = {
   easy:   {name:'見習いゴーレム',   av:'🐣', min:2000, max:4000, acc:.50},
   normal: {name:'呪文書の守護者',   av:'📖', min:1000, max:2500, acc:.70},
   hard:   {name:'黒魔導師アルカン', av:'💀', min:300,  max:1000, acc:.90},
 };
-const P_SPELLS = ['⚡ THUNDER!','❄️ BLIZZARD!','🔥 FIREBALL!','🌊 AQUA!','✨ HOLY!','🌪️ CYCLONE!'];
+var P_SPELLS = ['⚡ THUNDER!','❄️ BLIZZARD!','🔥 FIREBALL!','🌊 AQUA!','✨ HOLY!','🌪️ CYCLONE!'];
 
 // ── ミッション進捗追跡ユーティリティ ──
 var _qComboCount=0;
@@ -783,11 +783,11 @@ function _missionUpdate(type,amount){
   }catch(e){}
 }
 
-const C_SPELLS = ['💜 DARK BOLT!','🌑 SHADOW!','☠️ DEATH RAY!','🔮 VOID!','👁️ EVIL EYE!'];
+var C_SPELLS = ['💜 DARK BOLT!','🌑 SHADOW!','☠️ DEATH RAY!','🔮 VOID!','👁️ EVIL EYE!'];
 // ══════ レベル・魔法システム ══════
-let _playerXP=0,_playerLevel=1,_spellCharges=0;
-const XP_PER_LEVEL=50;
-const LEVEL_NAMES=['見習い魔道師','初級魔道師','中級魔道師','上級魔道師','魔法博士','大魔道師','魔王級'];
+var _playerXP=0,_playerLevel=1,_spellCharges=0;
+var XP_PER_LEVEL=50;
+var LEVEL_NAMES=['見習い魔道師','初級魔道師','中級魔道師','上級魔道師','魔法博士','大魔道師','魔王級'];
 function addPlayerXP(amt){
   _playerXP+=amt;
   const lv=Math.min(Math.floor(_playerXP/XP_PER_LEVEL)+1,LEVEL_NAMES.length);
@@ -822,34 +822,34 @@ function _updSpellUI(){
 }
 
 // プレイヤーカラー4色
-const P_COLORS = ['#00e5ff','#ffd040','#69ff99','#ff7eb3'];
-const P_AVATARS = ['🧙','🧝','🧚','🧜'];
+var P_COLORS = ['#00e5ff','#ffd040','#69ff99','#ff7eb3'];
+var P_AVATARS = ['🧙','🧝','🧚','🧜'];
 
 // ══════════════════════════════════════
 //  グローバル状態
 // ══════════════════════════════════════
 // ロビーのhkg_userから名前を優先取得
-const _hkgUser = JSON.parse(localStorage.getItem('hkg_user') || 'null');
-let pName = (_hkgUser && _hkgUser.name) || localStorage.getItem('qf_name') || '魔道師';
-let winPts=3,_soloMode=false,_soloMaxQ=10,_soloN=10,_rankMode="solo";
-let aiQuestions = null; // AI生成問題
-let aiMerge = false;
+var _hkgUser = JSON.parse(localStorage.getItem('hkg_user') || 'null');
+var pName = (_hkgUser && _hkgUser.name) || localStorage.getItem('qf_name') || '魔道師';
+var winPts=3,_soloMode=false,_soloMaxQ=10,_soloN=10,_rankMode="solo";
+var aiQuestions = null; // AI生成問題
+var aiMerge = false;
 
 // バトル状態
-let gs = {};
+var gs = {};
 // プレイヤー配列 [{id,name,av,score,isCPU,diff,color}]
-let players = [];
-let myPIdx = 0; // 自分のインデックス
+var players = [];
+var myPIdx = 0; // 自分のインデックス
 
 // オンライン状態
-let roomCode = null;
-let isHost = false;
-let myOnlineId = Math.random().toString(36).slice(2,8);
+var roomCode = null;
+var isHost = false;
+var myOnlineId = Math.random().toString(36).slice(2,8);
 
 // ══════════════════════════════════════
 //  問題バンク
 // ══════════════════════════════════════
-const QB_BASE=[
+var QB_BASE=[
   {g:'🌏 一般常識',q:'日本で最も高い山は？',c:['富士山','北岳','槍ヶ岳','奥穂高岳'],a:0},
   {g:'🌏 一般常識',q:'世界で最も面積が大きい国は？',c:['中国','アメリカ','カナダ','ロシア'],a:3},
   {g:'🌏 一般常識',q:'円周率πの値として最も近いものは？',c:['3.14','3.16','3.12','3.18'],a:0},
@@ -989,7 +989,7 @@ onload = () => {
     go('mode');
   }
 };
-let _firstLogin = false;
+var _firstLogin = false;
 function makeStars() {
   const c = document.getElementById('stars');
   for(let i=0;i<180;i++){
@@ -1081,15 +1081,15 @@ function switchTab(mode){
 // ══════════════════════════════════════
 //  問題バンク管理（localStorage永続）
 // ══════════════════════════════════════
-const BKEY = 'qf_bank_v4';
-let _bank = null;
+var BKEY = 'qf_bank_v4';
+var _bank = null;
 
 function loadBank() {
   if(_bank) return _bank;
   try { _bank = JSON.parse(localStorage.getItem(BKEY)||'{}'); } catch{ _bank={}; }
   return _bank;
 }
-let _storageOK=null;
+var _storageOK=null;
 function saveBank() {
   if(_storageOK===false) return;
   try {
@@ -1174,7 +1174,7 @@ function renderGenreLib(containerId) {
 }
 
 // ── レベル選択モーダル（個別キーワード）──
-let _selGenre=null;
+var _selGenre=null;
 function openLvModal(bankKey){
   const bank=loadBank();
   const g=bank[bankKey]; if(!g||!g.questions.length){console.warn('openLvModal: key not found:',bankKey);return;}
@@ -1598,8 +1598,8 @@ async function generateAI() {
 // ══════════════════════════════════════
 //  問題管理画面
 // ══════════════════════════════════════
-let _manageKey = null;
-let _newAns = 0;
+var _manageKey = null;
+var _newAns = 0;
 
 // タブだけ再描画（無限ループ防止のため情報エリアには触れない）
 function _renderTabs() {
@@ -1848,7 +1848,7 @@ function clearBank() {
 // ══════════════════════════════════════
 //  カテゴリ定義
 // ══════════════════════════════════════
-const QB_CATEGORIES = {
+var QB_CATEGORIES = {
   'アニメ・漫画': ['hunterxhunter','onepiece','dragonball','naruto','kimetsunoyaiba','attackontitan','jujutsukaisen'],
   'ゲーム':       ['pokemon','mario','zelda','dragonquest','finalfantasy','minecraft'],
   'スポーツ':     ['soccer','baseball'],
@@ -1859,7 +1859,7 @@ const QB_CATEGORIES = {
 //  キーワード問題バンク（Lv1/2/3の3段階）
 //  初回追加→初級、2回目→中級、3回目→マニアック
 // ══════════════════════════════════════
-const QB_KEYWORD = {
+var QB_KEYWORD = {
   'hunterxhunter':{display:'HUNTER×HUNTER',keys:['hunter×hunter','ハンターハンター','hunterxhunter','hxh'],category:'アニメ・漫画',questions:[
     {q:'ゴン=フリークスの父親の名前は？',c:['キルア','ジン','ヒソカ','レオリオ'],a:1,level:1},
     {q:'ハンター試験の第一次試験は？',c:['筆記試験','体力測定','長距離走','料理対決'],a:2,level:1},
@@ -2646,7 +2646,7 @@ function lsave(d){
   a.push({...d,date:new Date().toISOString()});a.sort((x,y)=>y.score-x.score);a.splice(20);
   /* category追加済み */ localStorage.setItem('qf_scores',JSON.stringify(a));
 }
-let _rankCat = 'all'; // 現在選択中のカテゴリ
+var _rankCat = 'all'; // 現在選択中のカテゴリ
 
 function goRankScreen(){
   go('ranking');
@@ -2832,15 +2832,15 @@ function switchTab(mode){
 // ══════════════════════════════════════
 //  問題バンク管理（localStorage永続）
 // ══════════════════════════════════════
-const BKEY = 'qf_bank_v4';
-let _bank = null;
+var BKEY = 'qf_bank_v4';
+var _bank = null;
 
 function loadBank() {
   if(_bank) return _bank;
   try { _bank = JSON.parse(localStorage.getItem(BKEY)||'{}'); } catch{ _bank={}; }
   return _bank;
 }
-let _storageOK=null;
+var _storageOK=null;
 function saveBank() {
   if(_storageOK===false) return;
   try {
@@ -2925,7 +2925,7 @@ function renderGenreLib(containerId) {
 }
 
 // ── レベル選択モーダル（個別キーワード）──
-let _selGenre=null;
+var _selGenre=null;
 function openLvModal(bankKey){
   const bank=loadBank();
   const g=bank[bankKey]; if(!g||!g.questions.length){console.warn('openLvModal: key not found:',bankKey);return;}
@@ -3269,8 +3269,8 @@ async function generateAI() {
 // ══════════════════════════════════════
 //  問題管理画面
 // ══════════════════════════════════════
-let _manageKey = null;
-let _newAns = 0;
+var _manageKey = null;
+var _newAns = 0;
 
 // タブだけ再描画（無限ループ防止のため情報エリアには触れない）
 function _renderTabs() {
@@ -3519,7 +3519,7 @@ function clearBank() {
 // ══════════════════════════════════════
 //  カテゴリ定義
 // ══════════════════════════════════════
-const QB_CATEGORIES = {
+var QB_CATEGORIES = {
   'アニメ・漫画': ['hunterxhunter','onepiece','dragonball','naruto','kimetsunoyaiba','attackontitan','jujutsukaisen'],
   'ゲーム':       ['pokemon','mario','zelda','dragonquest','finalfantasy','minecraft'],
   'スポーツ':     ['soccer','baseball'],
@@ -3530,7 +3530,7 @@ const QB_CATEGORIES = {
 //  キーワード問題バンク（Lv1/2/3の3段階）
 //  初回追加→初級、2回目→中級、3回目→マニアック
 // ══════════════════════════════════════
-const QB_KEYWORD = {
+var QB_KEYWORD = {
   'hunterxhunter':{display:'HUNTER×HUNTER',keys:['hunter×hunter','ハンターハンター','hunterxhunter','hxh'],category:'アニメ・漫画',questions:[
     {q:'ゴン=フリークスの父親の名前は？',c:['キルア','ジン','ヒソカ','レオリオ'],a:1,level:1},
     {q:'ハンター試験の第一次試験は？',c:['筆記試験','体力測定','長距離走','料理対決'],a:2,level:1},
@@ -4290,7 +4290,7 @@ function lsave(d){
   a.push({...d,date:new Date().toISOString()});a.sort((x,y)=>y.score-x.score);a.splice(20);
   /* category追加済み */ localStorage.setItem('qf_scores',JSON.stringify(a));
 }
-let _rankCat = 'all'; // 現在選択中のカテゴリ
+var _rankCat = 'all'; // 現在選択中のカテゴリ
 
 function goRankScreen(){
   go('ranking');
