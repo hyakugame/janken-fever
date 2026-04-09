@@ -95,6 +95,53 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .foot a{color:rgba(255,255,255,.15);text-decoration:none;}
 .toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,200,100,.9);color:#fff;font-size:13px;padding:10px 20px;border-radius:20px;opacity:0;transition:opacity .3s;z-index:9999;backdrop-filter:blur(8px);white-space:nowrap;pointer-events:none;}
 .toast.show{opacity:1;}
+
+.hdr-extras{display:flex;align-items:center;gap:6px;margin-left:auto}
+.streak-badge{display:flex;align-items:center;gap:3px;background:rgba(255,100,0,.15);border:1px solid rgba(255,120,0,.4);border-radius:10px;padding:3px 7px;cursor:default}
+.streak-fire{font-size:14px;animation:sfPulse 1.2s ease-in-out infinite alternate}
+@keyframes sfPulse{0%{transform:scale(1)}100%{transform:scale(1.15)}}
+.streak-num{font-family:'Zen Dots',monospace;font-size:11px;color:#ff8c00;font-weight:900}
+.stones-badge{display:flex;align-items:center;gap:3px;background:rgba(100,50,200,.2);border:1px solid rgba(160,110,255,.4);border-radius:10px;padding:3px 7px}
+.stones-num{font-family:'Zen Dots',monospace;font-size:11px;color:#c084fc;font-weight:700}
+.cal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:900;display:flex;align-items:center;justify-content:center;padding:12px;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.cal-modal{background:linear-gradient(160deg,rgba(12,6,40,.98),rgba(5,10,30,.98));border:2px solid rgba(180,120,255,.5);border-radius:20px;width:100%;max-width:440px;padding:18px;box-shadow:0 0 50px rgba(120,60,255,.4),inset 0 0 30px rgba(80,40,180,.1)}
+.cal-hd{text-align:center;margin-bottom:12px}
+.cal-hd h2{font-size:15px;font-weight:900;color:#ffd700;letter-spacing:.15em;text-shadow:0 0 10px rgba(255,215,0,.5)}
+.cal-hd p{font-size:10px;color:rgba(255,200,100,.55);margin-top:3px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}
+.cal-cell{border-radius:7px;padding:5px 2px;text-align:center;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);cursor:pointer;transition:all .15s}
+.cal-cell:hover:not(.claimed):not(.locked){border-color:rgba(255,215,0,.5);background:rgba(255,215,0,.08)}
+.cal-cell.claimed{background:rgba(100,220,120,.08);border-color:rgba(100,220,120,.25);opacity:.55;cursor:default}
+.cal-cell.today-open{border-color:#ffd700!important;background:rgba(255,215,0,.12)!important;box-shadow:0 0 10px rgba(255,215,0,.35);cursor:pointer}
+.cal-cell.locked{opacity:.28;cursor:default}
+.cal-cell.milestone{border-color:rgba(255,180,0,.45)!important;background:rgba(255,150,0,.08)!important}
+.cal-cell.milestone.today-open{box-shadow:0 0 16px rgba(255,180,0,.5)}
+.cal-dn{font-size:8px;color:rgba(255,255,255,.35);line-height:1}
+.cal-icon{font-size:15px;margin:1px 0;line-height:1}
+.cal-lbl{font-size:7px;color:rgba(255,255,255,.42);line-height:1.3}
+.cal-footer{display:flex;gap:8px}
+.cal-close-btn{flex:1;padding:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#ccc;font-size:12px;cursor:pointer;font-family:inherit}
+.cal-claim-btn{flex:2;padding:9px;background:linear-gradient(135deg,#d97706,#b45309);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit;display:none}
+.cal-claim-btn.show{display:block;animation:mpulse 1.4s ease-in-out infinite}
+@keyframes mpulse{0%,100%{box-shadow:0 0 0 rgba(255,180,0,0)}50%{box-shadow:0 0 14px rgba(255,180,0,.6)}}
+.mission-wrap{margin:8px 14px 0;background:rgba(8,12,35,.75);border-radius:14px;border:1px solid rgba(103,232,249,.18);overflow:hidden}
+.mission-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.06)}
+.mission-ttl{font-size:11px;font-weight:900;color:#67e8f9;letter-spacing:.12em}
+.mission-reward{font-size:9px;color:rgba(200,230,255,.45)}
+.mission-all-btn{font-size:10px;padding:3px 9px;border-radius:8px;border:1px solid rgba(255,215,0,.35);background:rgba(255,215,0,.1);color:#ffd700;cursor:pointer;font-family:inherit;transition:all .2s}
+.mission-all-btn:disabled{opacity:.3;cursor:default}
+.mission-all-btn.ready{background:rgba(255,215,0,.22);border-color:#ffd700;animation:mpulse 1.5s ease-in-out infinite}
+.mission-list{padding:5px 8px 8px}
+.mc{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;margin-bottom:3px;background:rgba(255,255,255,.025);transition:background .2s}
+.mc.done{background:rgba(100,220,120,.07)}
+.mc-ico{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.mc-body{flex:1;min-width:0}
+.mc-name{font-size:11px;font-weight:700;color:#dde;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-bar{margin-top:3px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden}
+.mc-fill{height:100%;background:linear-gradient(90deg,#67e8f9,#a855f7);border-radius:2px;transition:width .5s}
+.mc-stat{font-size:11px;flex-shrink:0;min-width:28px;text-align:right}
+
 </style>
 </head>
 <body>
@@ -106,17 +153,18 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="hdr-name" id="uname">--</div>
       <div class="hdr-medals" id="mc">00000</div>
     </div>
-    <button class="lout" onclick="doLogout()">ログアウト</button>
+    <div id="hdr-extras" class="hdr-extras"><span id="streak-badge" class="streak-badge" style="display:none"><span class="streak-fire">🔥</span><span class="streak-num" id="streak-num">0</span><span style="font-size:9px;color:rgba(255,140,0,.6)">日</span></span><span id="stones-badge" class="stones-badge" style="display:none"><span class="stones-icon">💎</span><span class="stones-num" id="stones-num">0</span></span></div><button class="lout" onclick="doLogout()">ログアウト</button>
   </div>
-  <div class="bonus-bar" id="bonusBar" onclick="claimBonus()">
+  <div class="bonus-bar" id="bonusBar" onclick="openCalendar()">
     <div class="bonus-icon">💰</div>
     <div class="bonus-info">
       <div class="bonus-title">デイリーボーナス</div>
-      <div class="bonus-sub" id="bonusSub">タップして50枚もらおう！</div>
+      <div class="bonus-sub" id="bonusSub">タップしてカレンダーを開く</div>
     </div>
     <div class="bonus-badge" id="bonusBadge">受取る</div>
   </div>
-  <div class="sg-bar">
+  <div class="mission-wrap" id="missionWrap" style="display:none"><div class="mission-hdr"><span class="mission-ttl">⚔️ デイリーミッション</span><span class="mission-reward" id="mission-reward-hint">全完了→XP+200・メダル+100・💎+1</span><button class="mission-all-btn" id="mission-all-btn" onclick="claimAllMissions()" disabled>受取</button></div><div class="mission-list" id="mission-list"></div></div>
+<div class="sg-bar">
     <div class="sg-sweep"></div>
     <span class="sg-text">SELECT GAME</span>
     <button class="sg-menu-btn">≡</button>
@@ -155,6 +203,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   <div class="foot">© 2025 百式ゲーム王国・メダルはゲーム間で共通<br><a href="admin.html">⚙ 管理</a></div>
 </div>
 <div class="toast" id="toast"></div>
+<div class="cal-overlay" id="calOverlay" style="display:none" onclick="if(event.target===this)closeCalendar()"><div class="cal-modal"><div class="cal-hd"><h2>📅 月間ログインカレンダー</h2><p id="cal-subtitle">今月のログイン日数を確認しよう</p></div><div class="cal-grid" id="cal-grid"></div><div class="cal-footer"><button class="cal-close-btn" onclick="closeCalendar()">閉じる</button><button class="cal-claim-btn" id="cal-claim-btn" onclick="claimTodayBonus()">✨ 本日の報酬を受取る</button></div></div></div>
 <script>
 var GAMES=[
   {color:'blue',tc:'#60a5fa',bbg:'rgba(59,130,246,.18)',bbr:'rgba(59,130,246,.4)',bct:'#93c5fd',
@@ -247,6 +296,238 @@ function getDB(){try{return JSON.parse(localStorage.getItem('hkg_db')||'{}');}ca
 function saveDB(db){try{localStorage.setItem('hkg_db',JSON.stringify(db));}catch(e){}}
 function save(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}if(user&&user.name&&user.name!=='GUEST'){var db=getDB();if(db[user.name])db[user.name].medals=user.medals;saveDB(db);}}
 var _tt;function toast(m){clearTimeout(_tt);var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');_tt=setTimeout(function(){t.classList.remove('show');},2500);}
+
+// ═══════════════════════════════════════════
+//  リテンションシステム
+// ═══════════════════════════════════════════
+const MONTHLY_REWARDS=[
+  {d:1,icon:'🪙',label:'+50枚',medals:50,stones:0},
+  {d:2,icon:'🪙',label:'+80枚',medals:80,stones:0},
+  {d:3,icon:'🪙',label:'+120枚',medals:120,stones:0},
+  {d:4,icon:'🪙',label:'+150枚',medals:150,stones:0},
+  {d:5,icon:'💎',label:'+魔石×1',medals:0,stones:1},
+  {d:6,icon:'🪙',label:'+200枚',medals:200,stones:0},
+  {d:7,icon:'⭐',label:'週★+500+💎×2',medals:500,stones:2,milestone:true},
+  {d:8,icon:'🪙',label:'+100枚',medals:100,stones:0},
+  {d:9,icon:'🪙',label:'+120枚',medals:120,stones:0},
+  {d:10,icon:'💎',label:'+魔石×1',medals:0,stones:1},
+  {d:11,icon:'🪙',label:'+200枚',medals:200,stones:0},
+  {d:12,icon:'🪙',label:'+250枚',medals:250,stones:0},
+  {d:13,icon:'🪙',label:'+300枚',medals:300,stones:0},
+  {d:14,icon:'⭐',label:'2週★+800+💎×3',medals:800,stones:3,milestone:true},
+  {d:15,icon:'🪙',label:'+150枚',medals:150,stones:0},
+  {d:16,icon:'🪙',label:'+200枚',medals:200,stones:0},
+  {d:17,icon:'💎',label:'+魔石×2',medals:0,stones:2},
+  {d:18,icon:'🪙',label:'+300枚',medals:300,stones:0},
+  {d:19,icon:'🪙',label:'+350枚',medals:350,stones:0},
+  {d:20,icon:'🪙',label:'+400枚',medals:400,stones:0},
+  {d:21,icon:'⭐',label:'3週★+1000+💎×5',medals:1000,stones:5,milestone:true},
+  {d:22,icon:'🪙',label:'+200枚',medals:200,stones:0},
+  {d:23,icon:'🪙',label:'+250枚',medals:250,stones:0},
+  {d:24,icon:'💎',label:'+魔石×3',medals:0,stones:3},
+  {d:25,icon:'🪙',label:'+400枚',medals:400,stones:0},
+  {d:26,icon:'🪙',label:'+500枚',medals:500,stones:0},
+  {d:27,icon:'🪙',label:'+600枚',medals:600,stones:0},
+  {d:28,icon:'💎',label:'+魔石×5',medals:0,stones:5},
+  {d:29,icon:'🪙',label:'+800枚',medals:800,stones:0},
+  {d:30,icon:'👑',label:'皆勤★+2000+💎×10',medals:2000,stones:10,milestone:true},
+];
+
+const MISSION_POOL=[
+  {id:'login',icon:'🌟',name:'今日もログイン！',target:1,type:'login'},
+  {id:'quiz5',icon:'🧙',name:'クイズ5問正解',target:5,type:'quiz_correct'},
+  {id:'combo3',icon:'⚡',name:'クイズ3連続正解',target:1,type:'quiz_combo3'},
+  {id:'poker_hand',icon:'🎴',name:'ポーカーで役を作る',target:1,type:'poker_hand'},
+  {id:'poker_win',icon:'💰',name:'ポーカーで300枚獲得',target:300,type:'poker_win'},
+  {id:'janken5',icon:'✊',name:'じゃんけん5勝',target:5,type:'janken_win'},
+  {id:'maniac',icon:'🔴',name:'難問を1問正解',target:1,type:'quiz_maniac'},
+  {id:'any3',icon:'🎮',name:'どれかゲームを3回プレイ',target:3,type:'any_play'},
+];
+
+function _getStreak(){try{return JSON.parse(localStorage.getItem('hkg_streak')||'{"count":0,"last":"","shields":0}');}catch{return{count:0,last:'',shields:0};}}
+function _saveStreak(s){localStorage.setItem('hkg_streak',JSON.stringify(s));}
+function _getMonthly(){var ym=new Date().toISOString().slice(0,7);try{var d=JSON.parse(localStorage.getItem('hkg_monthly')||'{}');if(d.ym!==ym)d={ym,claimed:[]};return d;}catch{return{ym,claimed:[]};}}
+function _saveMonthly(d){localStorage.setItem('hkg_monthly',JSON.stringify(d));}
+function _getStones(){try{return parseInt(localStorage.getItem('hkg_stones')||'0');}catch{return 0;}}
+function _addStones(n){var s=_getStones()+n;localStorage.setItem('hkg_stones',s);document.getElementById('stones-num').textContent=s;document.getElementById('stones-badge').style.display='flex';}
+function _getMissions(){
+  var today=new Date().toDateString();
+  try{var d=JSON.parse(localStorage.getItem('hkg_missions')||'{}');if(d.date!==today){d=_newMissions(today);}return d;}
+  catch{return _newMissions(today);}
+}
+function _newMissions(today){
+  // ログイン固定+ランダム2つ
+  var pool=MISSION_POOL.filter(m=>m.id!=='login');
+  var picks=[MISSION_POOL[0]];
+  var shuffled=pool.sort(()=>Math.random()-.5);
+  picks.push(shuffled[0],shuffled[1]);
+  var missions=picks.map(m=>({...m,current:0,done:m.type==='login'}));
+  missions[0].current=1; // ログインは即完了
+  var d={date:today,missions,allClaimed:false};
+  localStorage.setItem('hkg_missions',JSON.stringify(d));
+  return d;
+}
+function _saveMissions(d){localStorage.setItem('hkg_missions',JSON.stringify(d));}
+
+function initRetention(){
+  if(!user)return;
+  var today=new Date().toDateString();
+  // ストリーク計算
+  var sk=_getStreak();
+  var yesterday=new Date(Date.now()-86400000).toDateString();
+  if(sk.last===today){/* already counted */}
+  else if(sk.last===yesterday){sk.count++;sk.last=today;}
+  else if(sk.last===''){sk.count=1;sk.last=today;}
+  else{sk.count=1;sk.last=today;} // リセット
+  _saveStreak(sk);
+  // ストリーク表示
+  var sb=document.getElementById('streak-badge');
+  var sn=document.getElementById('streak-num');
+  if(sb&&sn){sb.style.display='flex';sn.textContent=sk.count;}
+  // 魔石表示
+  var st=_getStones();
+  var stb=document.getElementById('stones-badge');
+  var stn=document.getElementById('stones-num');
+  if(stb&&stn&&st>0){stb.style.display='flex';stn.textContent=st;}
+  // ミッション初期化
+  var md=_getMissions();
+  renderMissions(md);
+  document.getElementById('missionWrap').style.display='block';
+  // ボーナスバー更新
+  var monthly=_getMonthly();
+  var todayDay=new Date().getDate();
+  var alreadyClaimed=monthly.claimed.includes(todayDay);
+  var badge=document.getElementById('bonusBadge');
+  var sub=document.getElementById('bonusSub');
+  var bar=document.getElementById('bonusBar');
+  if(alreadyClaimed){
+    bar.classList.add('got');
+    badge.classList.add('done');badge.textContent='受取済';
+    sub.textContent='また明日！ '+todayDay+'日目 ✅';
+  }else{
+    bar.classList.remove('got');
+    badge.classList.remove('done');
+    var r=MONTHLY_REWARDS[todayDay-1]||MONTHLY_REWARDS[29];
+    badge.textContent=r.icon+' '+r.label;
+    sub.textContent=todayDay+'日目の報酬！ タップで受取る';
+  }
+}
+
+function openCalendar(){
+  renderCalendar();
+  document.getElementById('calOverlay').style.display='flex';
+}
+function closeCalendar(){document.getElementById('calOverlay').style.display='none';}
+
+function renderCalendar(){
+  var monthly=_getMonthly();
+  var todayDay=new Date().getDate();
+  var grid=document.getElementById('cal-grid');
+  var sub=document.getElementById('cal-subtitle');
+  sub.textContent=todayDay+'日連続ログイン中！ 今月'+monthly.claimed.length+'日受取済み';
+  var html='';
+  MONTHLY_REWARDS.forEach(function(r){
+    var d=r.d;
+    var claimed=monthly.claimed.includes(d);
+    var isToday=d===todayDay;
+    var locked=d>todayDay;
+    var cls='cal-cell';
+    if(claimed)cls+=' claimed';
+    else if(isToday&&!claimed)cls+=' today-open';
+    else if(locked)cls+=' locked';
+    if(r.milestone)cls+=' milestone';
+    html+='<div class="'+cls+'" onclick="calCellClick('+d+')">'
+      +'<div class="cal-dn">'+d+'</div>'
+      +'<div class="cal-icon">'+(claimed?'✅':r.icon)+'</div>'
+      +'<div class="cal-lbl">'+r.label+'</div>'
+      +'</div>';
+  });
+  grid.innerHTML=html;
+  var btn=document.getElementById('cal-claim-btn');
+  var canClaim=!monthly.claimed.includes(todayDay)&&todayDay<=30;
+  btn.style.display=canClaim?'block':'none';
+  if(canClaim)btn.classList.add('show'); else btn.classList.remove('show');
+}
+
+function calCellClick(d){
+  var monthly=_getMonthly();
+  var todayDay=new Date().getDate();
+  if(d===todayDay&&!monthly.claimed.includes(d))claimTodayBonus();
+}
+
+function claimTodayBonus(){
+  var monthly=_getMonthly();
+  var todayDay=new Date().getDate();
+  if(monthly.claimed.includes(todayDay))return;
+  var r=MONTHLY_REWARDS[todayDay-1]||MONTHLY_REWARDS[29];
+  monthly.claimed.push(todayDay);
+  _saveMonthly(monthly);
+  if(r.medals>0){user.medals+=r.medals;save();document.getElementById('mc').textContent=String(user.medals).padStart(5,'0');}
+  if(r.stones>0)_addStones(r.stones);
+  closeCalendar();
+  toast('🎁 '+r.label+' 受取完了！');
+  // バー更新
+  var bar=document.getElementById('bonusBar');
+  var badge=document.getElementById('bonusBadge');
+  var sub=document.getElementById('bonusSub');
+  bar.classList.add('got');badge.classList.add('done');badge.textContent='受取済';
+  sub.textContent=todayDay+'日目 ✅ 明日また来よう！';
+}
+
+function renderMissions(md){
+  var list=document.getElementById('mission-list');
+  if(!list)return;
+  var all=md.missions.every(function(m){return m.done;});
+  var btn=document.getElementById('mission-all-btn');
+  if(md.allClaimed){
+    btn.disabled=true;btn.textContent='受取済 ✅';btn.classList.remove('ready');
+  }else if(all){
+    btn.disabled=false;btn.classList.add('ready');btn.textContent='✨ 受取る！';
+  }else{
+    btn.disabled=true;btn.classList.remove('ready');btn.textContent='受取';
+  }
+  var html='';
+  md.missions.forEach(function(m){
+    var pct=Math.min(100,Math.round(m.current/m.target*100));
+    html+='<div class="mc'+(m.done?' done':'')+'"><span class="mc-ico">'+m.icon+'</span>'
+      +'<div class="mc-body"><div class="mc-name">'+m.name+'</div>'
+      +'<div class="mc-bar"><div class="mc-fill" style="width:'+pct+'%"></div></div></div>'
+      +'<span class="mc-stat">'+(m.done?'✅':m.current+'/'+m.target)+'</span></div>';
+  });
+  list.innerHTML=html;
+}
+
+function claimAllMissions(){
+  var md=_getMissions();
+  if(md.allClaimed||!md.missions.every(function(m){return m.done;}))return;
+  md.allClaimed=true;
+  _saveMissions(md);
+  user.medals+=100;save();
+  document.getElementById('mc').textContent=String(user.medals).padStart(5,'0');
+  _addStones(1);
+  var btn=document.getElementById('mission-all-btn');
+  btn.disabled=true;btn.textContent='受取済 ✅';btn.classList.remove('ready');
+  toast('🎉 ミッション完了！ メダル+100・💎+1 獲得！');
+}
+
+// ミッション進捗更新（外部から呼ぶ）
+function updateMission(type,amount){
+  if(!amount)amount=1;
+  var md=_getMissions();
+  var changed=false;
+  md.missions.forEach(function(m){
+    if(m.done)return;
+    if(m.type===type||m.type==='any_play'){
+      m.current=Math.min(m.target,m.current+amount);
+      if(m.current>=m.target)m.done=true;
+      changed=true;
+    }
+  });
+  if(changed){_saveMissions(md);renderMissions(md);}
+}
+// ログインミッションは即完了
+updateMission('login');
+
 async function doLogout(){var u=JSON.parse(localStorage.getItem('hkg_user')||'{}');if(u.name&&u.name!=='GUEST'&&u.medals!==undefined){var headers={'apikey':SBK,'Authorization':'Bearer '+SBK,'Content-Type':'application/json'};try{if(u.id){await fetch(SBU+'/rest/v1/game_users?id=eq.'+u.id,{method:'PATCH',headers,body:JSON.stringify({medals:u.medals})});}else{var rows=await fetch(SBU+'/rest/v1/game_users?name=eq.'+encodeURIComponent(u.name),{headers}).then(function(r){return r.json();});if(rows&&rows[0])await fetch(SBU+'/rest/v1/game_users?id=eq.'+rows[0].id,{method:'PATCH',headers,body:JSON.stringify({medals:u.medals})});}}catch(e){}}localStorage.removeItem('hkg_user');location.replace('index.html');}
 </script>
 </body>
