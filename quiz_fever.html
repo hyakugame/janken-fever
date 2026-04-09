@@ -258,6 +258,14 @@ body{background:var(--bg-page);color:var(--tx-body);font-family:'Noto Sans JP',s
 .lv-btn-name{font-size:16px;font-weight:900;color:var(--tx-heading)}
 .lv-btn-desc{font-size:12px;color:var(--tx-muted);margin-top:2px}
 .lv-btn-cnt{font-family:'Zen Dots',sans-serif;font-size:20px;color:var(--gold);flex-shrink:0}
+html{opacity:0;transition:opacity .12s}
+.spell-ui-bar{width:100%;max-width:620px;background:rgba(20,5,40,.85);border:1px solid rgba(180,100,255,.4);border-radius:10px;padding:7px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0}
+.sp-lv{font-size:12px;font-weight:700;color:#d4a0ff;white-space:nowrap}
+.sp-xp-wrap{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;min-width:40px}
+.sp-xp-bar{height:100%;background:linear-gradient(90deg,#a855f7,#60a5fa);border-radius:3px;transition:width .4s}
+.sp-stars{font-size:14px;letter-spacing:2px}
+.sp-btn{font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid rgba(180,100,255,.5);background:rgba(80,20,120,.7);color:#d4a0ff;cursor:pointer;white-space:nowrap}
+.sp-btn:disabled{opacity:.35;cursor:default}
 </style>
 </head>
 <body>
@@ -638,6 +646,43 @@ const CPU_CFG = {
 };
 const P_SPELLS = ['⚡ THUNDER!','❄️ BLIZZARD!','🔥 FIREBALL!','🌊 AQUA!','✨ HOLY!','🌪️ CYCLONE!'];
 const C_SPELLS = ['💜 DARK BOLT!','🌑 SHADOW!','☠️ DEATH RAY!','🔮 VOID!','👁️ EVIL EYE!'];
+// ══════ レベル・魔法システム ══════
+let _playerXP=0,_playerLevel=1,_spellCharges=0;
+const XP_PER_LEVEL=50;
+const LEVEL_NAMES=['見習い魔道師','初級魔道師','中級魔道師','上級魔道師','魔法博士','大魔道師','魔王級'];
+function addPlayerXP(amt){
+  _playerXP+=amt;
+  const lv=Math.min(Math.floor(_playerXP/XP_PER_LEVEL)+1,LEVEL_NAMES.length);
+  if(lv>_playerLevel){
+    _playerLevel=lv;
+    _spellCharges=Math.min(_spellCharges+1,3);
+    setTimeout(()=>{showSpell('🌟 LEVEL UP! Lv.'+_playerLevel,'player');},100);
+  }
+  _updSpellUI();
+}
+function useEliminateSpell(){
+  if(_spellCharges<=0||!gs||gs.ans)return;
+  _spellCharges--;
+  const choices=document.querySelectorAll('.choice');
+  const wrong=[...choices].map((b,i)=>i).filter(i=>i!==gs.q.a&&!choices[i].disabled);
+  shuf(wrong).slice(0,2).forEach(i=>{
+    choices[i].disabled=true;
+    choices[i].style.opacity='0.15';
+    choices[i].style.textDecoration='line-through';
+  });
+  showSpell('🔮 消去魔法！','player');
+  _updSpellUI();
+}
+function _updSpellUI(){
+  const el=document.getElementById('spell-ui');if(!el)return;
+  const lvN=LEVEL_NAMES[Math.min(_playerLevel-1,LEVEL_NAMES.length-1)];
+  const stars='⭐'.repeat(_spellCharges)+'☆'.repeat(Math.max(0,3-_spellCharges));
+  el.innerHTML='<span class="sp-lv">Lv.'+_playerLevel+' '+lvN+'</span>'
+    +'<span class="sp-xp-wrap"><div class="sp-xp-bar" id="xp-fill" style="width:'+Math.round((_playerXP%XP_PER_LEVEL)/XP_PER_LEVEL*100)+'%"></div></span>'
+    +'<span class="sp-stars">'+stars+'</span>'
+    +'<button class="sp-btn" onclick="useEliminateSpell()" '+(_spellCharges>0?'':'disabled')+'>🔮 消去</button>';
+}
+
 // プレイヤーカラー4色
 const P_COLORS = ['#00e5ff','#ffd040','#69ff99','#ff7eb3'];
 const P_AVATARS = ['🧙','🧝','🧚','🧜'];
@@ -787,6 +832,7 @@ const QB_BASE=[
 //  初期化
 // ══════════════════════════════════════
 onload = () => {
+  document.documentElement.style.opacity=1;
   makeStars(); initBank(); renderGenreLib(); refreshCatChips();
   // ロビーからログイン済みなら即ゲームモード画面へ（タイトル画面スキップ）
   const _hu = JSON.parse(localStorage.getItem('hkg_user')||'null');
@@ -1153,7 +1199,7 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
 
   // ① 年号問題
   for(const s of sentences) {
-    if(qs.length >= Math.ceil(cnt*0.4)) break;
+    if(qs.length >= Math.ceil(cnt*0.1)) break;
     const yearM = s.match(/([^\s。]{2,10})(?:は|が|の)?(\d{4})年/);
     if(!yearM) continue;
     const subject = yearM[1].replace(/[はがをにでのも]$/,'');
@@ -1172,7 +1218,7 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
 
   // ② 数字問題
   for(const s of sentences) {
-    if(qs.length >= Math.ceil(cnt*0.6)) break;
+    if(qs.length >= Math.ceil(cnt*0.25)) break;
     const numM = s.match(/(\d{1,6})(人|個|本|枚|冊|匹|種|回|票|点|万|億|km|cm|m(?!a))/);
     if(!numM) continue;
     const n=parseInt(numM[1]); if(n<2||n>99999) continue;
@@ -2039,6 +2085,7 @@ function leaveRoom() {
 //  バトル初期化（CPU・オンライン共通）
 // ══════════════════════════════════════
 function initBattle(pool) {
+  _playerXP=0;_playerLevel=1;_spellCharges=0;
   gs = {
     ans:false, qi:0, q:null, pool,
     tIv:null, rIv:null, cTo:[],
@@ -2047,6 +2094,10 @@ function initBattle(pool) {
   };
   go('battle');
   renderScoreboard();
+  // spell-ui注入
+  const _sb=document.getElementById('scoreboard');
+  if(_sb&&!document.getElementById('spell-ui')){const _su=document.createElement('div');_su.id='spell-ui';_su.className='spell-ui-bar';_sb.parentNode.insertBefore(_su,_sb.nextSibling);}
+  _updSpellUI();
   setTimeout(nextQ, 400);
 }
 
@@ -2180,6 +2231,7 @@ function playerAns(ci) {
   lockChoices(true); revealAns(ci,-1);
   if(ci===gs.q.a){
     gs.ok++;
+    addPlayerXP(15);
     showSpell(P_SPELLS[Math.floor(Math.random()*P_SPELLS.length)],'player');
     doFlash('fg');
     spawnPtcl(document.querySelectorAll('.choice')[ci]);
