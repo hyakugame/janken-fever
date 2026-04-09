@@ -391,7 +391,7 @@ if(user){
   try{checkMissionCompleted();}catch(e){}
 setTimeout(function(){try{initRetention();}catch(e){console.error('retention:',e);}},0);
 }
-window.addEventListener('pageshow',function(){try{initRetention();}catch(e){};try{_renderShieldBadge();}catch(e){};try{checkLevelUp();}catch(e){};try{loadLeague();}catch(e){};
+window.addEventListener('pageshow',function(){try{initRetention();}catch(e){};try{_renderShieldBadge();}catch(e){};try{checkLevelUp();}catch(e){};
   try{var s=JSON.parse(localStorage.getItem('hkg_user')||'null');if(s&&user&&s.name===user.name){user=s;document.getElementById('mc').textContent=String(user.medals||0).padStart(5,'0');}}catch(e){}
 });
 var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
