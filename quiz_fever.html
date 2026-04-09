@@ -696,15 +696,17 @@ function showStreakBonusBadge(){
 
 // XP結果ボックス更新
 function _updateXPResultBox(){
+  var _XPS=[0,50,120,220,360,540,770,1060,1420,1860,2400,3050,3820,4720,5760,6960,8340,9920,11720,13760];
+  var _LVN=['見習い魔道師','初等魔道師','中等魔道師','上等魔道師','魔法学士','魔法修士','呪術師','魔導師','賢者','大魔導師','魔法博士','古代魔法士','天空の魔道師','魔界の賢者','神代魔道師','伝説の魔道師','時代の魔法士','世界の賢者','大魔王','創造神'];
   var box=document.getElementById('xpResultBox');
   if(!box)return;
   var totalXP=parseInt(localStorage.getItem('hkg_total_xp')||'0');
   var lv=1;
-  for(var i=XP_STEPS.length-1;i>=0;i--){if(totalXP>=XP_STEPS[i]){lv=i+1;break;}}
+  for(var i=_XPS.length-1;i>=0;i--){if(totalXP>=_XPS[i]){lv=i+1;break;}}
   lv=Math.min(lv,20);
-  var lvName=LV_NAMES[lv-1]||'見習い魔道師';
-  var nextXP=XP_STEPS[lv]||XP_STEPS[XP_STEPS.length-1];
-  var prevXP=XP_STEPS[lv-1]||0;
+  var lvName=_LVN[lv-1]||'見習い魔道師';
+  var nextXP=_XPS[lv]||_XPS[_XPS.length-1];
+  var prevXP=_XPS[lv-1]||0;
   var pct=nextXP>prevXP?Math.round((totalXP-prevXP)/(nextXP-prevXP)*100):100;
   // ミッション進捗確認
   var md=JSON.parse(localStorage.getItem('hkg_missions')||'{}');
