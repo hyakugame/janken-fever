@@ -508,11 +508,18 @@ function savePokerScore(u){
   if(!u||!u.name||u.name==='GUEST'||net<=0)return;
   var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
   var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
-  fetch(SBU+'/rest/v1/poker_scores',{
-    method:'POST',
-    headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},
-    body:JSON.stringify({player_name:u.name,medal_won:net})
-  }).catch(function(){});
+  // 最高スコアのみ保持（DELETE+INSERT方式）
+  (async function(){
+    try{
+      var ex=await fetch(SBU+'/rest/v1/poker_scores?player_name=eq.'+encodeURIComponent(u.name),{headers:{'apikey':SK,'Authorization':'Bearer '+SK}});
+      var rows=await ex.json();
+      var best=(rows||[]).reduce(function(a,b){return (b.medal_won>a)?b.medal_won:a;},0);
+      if(net>best){
+        await Promise.all((rows||[]).map(function(r){return fetch(SBU+'/rest/v1/poker_scores?id=eq.'+r.id,{method:'DELETE',headers:{'apikey':SK,'Authorization':'Bearer '+SK}});}));
+        fetch(SBU+'/rest/v1/poker_scores',{method:'POST',headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({player_name:u.name,medal_won:net})}).catch(function(){});
+      }
+    }catch(e){}
+  })();
 }
 async function saveAvatar(id,av){if(!id)return;return sbPatch('game_users?id=eq.'+id,{avatar:av});}
 const AC=new(window.AudioContext||window.webkitAudioContext)();
