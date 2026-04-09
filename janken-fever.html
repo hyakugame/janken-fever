@@ -400,7 +400,7 @@ body{background:var(--dark);color:#F0FFF4;font-family:'Noto Sans JP','Barlow Con
   }catch(e){}
 })();
 
-const AC=new(window.AudioContext||window.webkitAudioContext)();
+var AC=new(window.AudioContext||window.webkitAudioContext)();
 function wake(){if(AC.state==='suspended')AC.resume();}
 function tone(type,f,dur,vol,t0,fEnd){
   vol=vol||0.22;t0=t0||0;
@@ -414,8 +414,8 @@ function tone(type,f,dur,vol,t0,fEnd){
 function nz(dur,vol,t0){vol=vol||0.10;t0=t0||0;const b=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=AC.createBufferSource(),g=AC.createGain();s.buffer=b;s.connect(g);g.connect(AC.destination);const t=AC.currentTime+t0;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);s.start(t);s.stop(t+dur+0.05);}
 
 // BGM 3種
-let bgmMode=null,bgmTid=null,bgmStep=0;
-const BGMS={
+var bgmMode=null,bgmTid=null,bgmStep=0;
+var BGMS={
   attract:{notes:[784,1047,880,784,659,523,659,784,1047,1319,1047,880,784,1047,1319,1568,1319,1047,784,1047,880,659,784,523],tempo:180,vol:0.060},
   roulette:{notes:[784,880,1047,880,784,659,784,880,1047,1175,1047,880,784,880,1047,784],tempo:155,vol:0.065},
   hl:{notes:[523,784,1047,784,523,659,880,1047,880,659,523,659,784,1047,784,523],tempo:220,vol:0.055}
@@ -438,7 +438,7 @@ function seHLwin(){tone('square',880,0.06,0.32);tone('square',1100,0.06,0.32,0.0
 function seHLlose(){tone('sawtooth',300,0.10,0.26);tone('sawtooth',200,0.12,0.26,0.13,100);nz(0.15,0.13,0.26);}
 
 // TTS
-let ttsVoice=null,ttsReady=false;
+var ttsVoice=null,ttsReady=false;
 function initVoice(){const all=speechSynthesis.getVoices(),ja=all.filter(v=>v.lang&&v.lang.startsWith('ja'));ttsVoice=ja.find(v=>/Kyoko/i.test(v.name))||ja.find(v=>/Haruka/i.test(v.name))||ja.find(v=>/Google/i.test(v.name))||ja[0]||null;ttsReady=ja.length>0;}
 speechSynthesis.addEventListener('voiceschanged',initVoice);initVoice();
 function speak(text){if(!text||!ttsReady)return;const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.pitch=1.85;u.rate=0.82;u.volume=1.0;if(ttsVoice)u.voice=ttsVoice;speechSynthesis.speak(u);}
@@ -447,9 +447,9 @@ function speakAt(text,ms){setTimeout(()=>speak(text),ms||0);}
 // ════════════════════════════════════════
 // RANKING — Supabase REST API + localStorage
 // ════════════════════════════════════════
-const LOCAL_KEY = 'gcpfever-v3';
-const SB_CFG_KEY = 'gcpfever-supabase';
-const MAX_RANK = 20;
+var LOCAL_KEY = 'gcpfever-v3';
+var SB_CFG_KEY = 'gcpfever-supabase';
+var MAX_RANK = 20;
 
 // Supabase設定を読み込む
 function getSBConfig(){return {url:'https://gtzfcoiowdnyjvwikxku.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg'};}
@@ -699,21 +699,21 @@ function initSetupScreen(){
 
 
 // ROULETTE
-const RANK_RESET='2026-04-02T02:30:00';
-const RL_VALS=[2,6,4,10,4,25,4,8,4,50,4,6];
-const SEG_COLS=['#dd2222','#ff6600','#cc8800','#226600','#0055aa','#880088','#cc2233','#ff5500','#aa6600','#116644','#0044aa','#880066'];
-const BEATS={rock:'scissors',scissors:'paper',paper:'rock'};
-const HANDS=[{key:'rock',ic:'✊',nm:'グー'},{key:'scissors',ic:'✌️',nm:'チョキ'},{key:'paper',ic:'🖐️',nm:'パー'}];
+var RANK_RESET='2026-04-02T02:30:00';
+var RL_VALS=[2,6,4,10,4,25,4,8,4,50,4,6];
+var SEG_COLS=['#dd2222','#ff6600','#cc8800','#226600','#0055aa','#880088','#cc2233','#ff5500','#aa6600','#116644','#0044aa','#880066'];
+var BEATS={rock:'scissors',scissors:'paper',paper:'rock'};
+var HANDS=[{key:'rock',ic:'✊',nm:'グー'},{key:'scissors',ic:'✌️',nm:'チョキ'},{key:'paper',ic:'🖐️',nm:'パー'}];
 function hByKey(k){return HANDS.find(h=>h.key===k);}
 
 // STATE
-let credits=0,totalMedals=0,hiScore=0,sessionGained=0;
-let inputOK=false,tmrId=null,tLeft=5;
-let signTid=null,signIdx=0,signRunning=false;
-let rlLitIdx=0,rlLitTid=null,rlStopping=false;
-let patId=null,pfId=null,rovTimer=null;
-let hlMedals=0,hlActive=false,hlBtnOK=false,betAmount=1;
-let pendingScore=0;
+var credits=0,totalMedals=0,hiScore=0,sessionGained=0;
+var inputOK=false,tmrId=null,tLeft=5;
+var signTid=null,signIdx=0,signRunning=false;
+var rlLitIdx=0,rlLitTid=null,rlStopping=false;
+var patId=null,pfId=null,rovTimer=null;
+var hlMedals=0,hlActive=false,hlBtnOK=false,betAmount=1;
+var pendingScore=0;
 
 // UI
 function show(id){
@@ -1033,7 +1033,7 @@ function finishRl(){
 }
 
 // HIGH & LOW
-const SUITS=['♠','♥','♦','♣'],SUIT_RED=[false,true,true,false];
+var SUITS=['♠','♥','♦','♣'],SUIT_RED=[false,true,true,false];
 function cLabel(n){if(n===1)return 'A';if(n===11)return 'J';if(n===12)return 'Q';if(n===13)return 'K';return String(n);}
 function startHL(){
   hlActive=true;hlBtnOK=false;dealNewCards();updateHLInfo();
