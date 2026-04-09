@@ -698,51 +698,52 @@ async function loadLeague(){
   var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
   var SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
   var SBH={'apikey':SBK,'Authorization':'Bearer '+SBK,'Content-Type':'application/json'};
-  // 週キー
   var d=new Date(),dow=d.getDay(),mon=new Date(d);mon.setDate(d.getDate()-dow+1);
   var weekGame='wxp_'+mon.toISOString().slice(0,10);
-  // 自分のXPをSupabaseに同期
+  var uName=user.name||'';
+  // Supabase同期（UPSERT方式）
   try{
-    var ex=await fetch(SBU+'/rest/v1/rankings?game=eq.'+encodeURIComponent(weekGame)+'&name=eq.'+encodeURIComponent(user.name),{headers:SBH});
-    var exRows=await ex.json();
-    if(exRows.length>0){
-      await fetch(SBU+'/rest/v1/rankings?id=eq.'+exRows[0].id,{method:'PATCH',headers:SBH,body:JSON.stringify({score:myXP})});
-    } else {
-      await fetch(SBU+'/rest/v1/rankings',{method:'POST',headers:SBH,body:JSON.stringify({name:user.name,score:myXP,game:weekGame})});
+    var upsertRes=await fetch(SBU+'/rest/v1/rankings',{
+      method:'POST',
+      headers:Object.assign({},SBH,{'Prefer':'resolution=merge-duplicates,return=minimal'}),
+      body:JSON.stringify([{name:uName,score:myXP,game:weekGame}])
+    });
+    // merge-duplicatesが効かない場合はPATCH
+    if(upsertRes.status===409||upsertRes.status===200){
+      var exRes=await fetch(SBU+'/rest/v1/rankings?game=eq.'+weekGame+'&name=eq.'+uName,{headers:SBH});
+      var exRows=await exRes.json();
+      if(exRows.length>0&&exRows[0].score!==myXP){
+        await fetch(SBU+'/rest/v1/rankings?id=eq.'+exRows[0].id,{method:'PATCH',headers:SBH,body:JSON.stringify({score:myXP})});
+      }
     }
   }catch(e){}
   // 自分のXP表示
-  var lvName=_getLvName();
   myEl.innerHTML='<div class="league-my-rank">#?</div>'
-    +'<div class="league-my-info"><div class="league-my-name">'+user.name+'</div>'
+    +'<div class="league-my-info"><div class="league-my-name">'+uName+'</div>'
     +'<div class="league-my-xp">今週のXP: '+myXP.toLocaleString()+' XP  🔥'+myStreak+'日連続</div></div>'
-    +'<div class="league-my-badge">'+lvName+'</div>';
+    +'<div class="league-my-badge">'+_getLvName()+'</div>';
   // 週間XPランキング取得
   try{
-    var res=await fetch(SBU+'/rest/v1/rankings?game=eq.'+encodeURIComponent(weekGame)+'&select=name,score&order=score.desc&limit=10',{headers:SBH});
+    var res=await fetch(SBU+'/rest/v1/rankings?game=eq.'+weekGame+'&select=name,score&order=score.desc&limit=10',{headers:SBH});
     var rows=await res.json();
     if(!rows||!rows.length){
-      // XPランキングがなければメダル順にフォールバック
       var res2=await fetch(SBU+'/rest/v1/game_users?select=name,medals&order=medals.desc&limit=8',{headers:SBH});
       rows=(await res2.json()).map(function(r){return {name:r.name,score:r.medals,isMedal:true};});
     }
+    rows=rows.filter(function(r){return r.name&&!r.name.startsWith('_del_');});
     var medals=['🥇','🥈','🥉'];
     var clsArr=['r1','r2','r3'];
-    listEl.innerHTML=rows.filter(function(r){return !r.name.includes('_del_');}).map(function(r,i){
+    listEl.innerHTML=rows.map(function(r,i){
       var cls=i<3?clsArr[i]:'rn';
       var rnk=i<3?medals[i]:(i+1);
-      var isMe=r.name===user.name;
+      var isMe=r.name===uName;
       return '<div class="league-row'+(isMe?' style="background:rgba(255,215,0,.07)"':'')+'"><span class="lrk '+cls+'">'+rnk+'</span>'
-        +'<span class="lnm'+(isMe?' style="color:#ffd700"':'')+'">'+String(r.name||'？').slice(0,10)+(isMe?' ★':'')+'</span>'
-        +'<span class="lxp">'+(r.isMedal?'🪙':' ⚡')+Number(r.score||0).toLocaleString()+'</span>'
+        +'<span class="lnm'+(isMe?' style="color:#ffd700"':'')+'">'+String(r.name).slice(0,10)+(isMe?' ★':'')+'</span>'
+        +'<span class="lxp">'+(r.isMedal?'🪙':'⚡')+Number(r.score||0).toLocaleString()+'</span>'
         +'</div>';
     }).join('');
-    // 自分の順位を計算
-    var myRank=rows.findIndex(function(r){return r.name===user.name;})+1;
-    if(myRank>0){
-      var rankEl=myEl.querySelector('.league-my-rank');
-      if(rankEl)rankEl.textContent='#'+myRank;
-    }
+    var myRank=rows.findIndex(function(r){return r.name===uName;})+1;
+    if(myRank>0){ var rankEl=myEl.querySelector('.league-my-rank'); if(rankEl)rankEl.textContent='#'+myRank; }
   }catch(e){
     listEl.innerHTML='<div style="padding:10px;text-align:center;font-size:10px;color:rgba(255,255,255,.25)">読み込みエラー</div>';
   }
