@@ -920,13 +920,19 @@ function checkStreakMilestone(count){
   showStreakMilestone(count,ms);
 }
 function showStreakMilestone(days,ms){
+  document.querySelectorAll('.ms-overlay,.streak-milestone').forEach(function(e){e.remove();});
   var ovEl=document.createElement('div');ovEl.className='ms-overlay';
   var el=document.createElement('div');el.className='streak-milestone';
+  var closeBtn=document.createElement('button');
+  closeBtn.className='ms-close';closeBtn.textContent='✨ 受取る！';
+  closeBtn.addEventListener('click',function(){
+    document.querySelectorAll('.ms-overlay,.streak-milestone').forEach(function(e){e.remove();});
+  });
   el.innerHTML='<div class="ms-fire">'+ms.emoji+'</div>'
     +'<div class="ms-label">🎉 ストリーク達成！</div>'
     +'<div class="ms-days">'+days+'日</div>'
-    +'<div class="ms-reward">報酬：'+ms.bonus+'</div>'
-    +'<button class="ms-close" onclick="this.closest('.streak-milestone').remove();document.querySelector('.ms-overlay').remove()">✨ 受取る！</button>';
+    +'<div class="ms-reward">報酬：'+ms.bonus+'</div>';
+  el.appendChild(closeBtn);
   document.body.appendChild(ovEl);document.body.appendChild(el);
 }
 
