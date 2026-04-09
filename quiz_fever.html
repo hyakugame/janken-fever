@@ -645,6 +645,31 @@ const CPU_CFG = {
   hard:   {name:'黒魔導師アルカン', av:'💀', min:300,  max:1000, acc:.90},
 };
 const P_SPELLS = ['⚡ THUNDER!','❄️ BLIZZARD!','🔥 FIREBALL!','🌊 AQUA!','✨ HOLY!','🌪️ CYCLONE!'];
+
+// ── ミッション進捗追跡ユーティリティ ──
+var _qComboCount=0;
+function _missionUpdate(type,amount){
+  try{
+    var today=new Date().toDateString();
+    var md=JSON.parse(localStorage.getItem('hkg_missions')||'{}');
+    if(!md.date||md.date!==today||!md.missions)return;
+    var changed=false;
+    md.missions.forEach(function(m){
+      if(m.done)return;
+      if(m.type===type){
+        m.current=Math.min(m.target,(m.current||0)+amount);
+        if(m.current>=m.target)m.done=true;
+        changed=true;
+      } else if(m.type==='any_play'&&type==='any_play'){
+        m.current=Math.min(m.target,(m.current||0)+1);
+        if(m.current>=m.target)m.done=true;
+        changed=true;
+      }
+    });
+    if(changed)localStorage.setItem('hkg_missions',JSON.stringify(md));
+  }catch(e){}
+}
+
 const C_SPELLS = ['💜 DARK BOLT!','🌑 SHADOW!','☠️ DEATH RAY!','🔮 VOID!','👁️ EVIL EYE!'];
 // ══════ レベル・魔法システム ══════
 let _playerXP=0,_playerLevel=1,_spellCharges=0;
@@ -2306,6 +2331,11 @@ function playerAns(ci) {
   lockChoices(true); revealAns(ci,-1);
   if(ci===gs.q.a){
     gs.ok++;
+    _qComboCount++;
+    _missionUpdate('quiz_correct',1);
+    _missionUpdate('any_play',1);
+    if(gs.q&&gs.q.level===3)_missionUpdate('quiz_maniac',1);
+    if(_qComboCount>=3)_missionUpdate('quiz_combo3',1);
     addPlayerXP(15);
     showSpell(P_SPELLS[Math.floor(Math.random()*P_SPELLS.length)],'player');
     doFlash('fg');
@@ -3964,6 +3994,11 @@ function playerAns(ci) {
   lockChoices(true); revealAns(ci,-1);
   if(ci===gs.q.a){
     gs.ok++;
+    _qComboCount++;
+    _missionUpdate('quiz_correct',1);
+    _missionUpdate('any_play',1);
+    if(gs.q&&gs.q.level===3)_missionUpdate('quiz_maniac',1);
+    if(_qComboCount>=3)_missionUpdate('quiz_combo3',1);
     showSpell(P_SPELLS[Math.floor(Math.random()*P_SPELLS.length)],'player');
     doFlash('fg');
     spawnPtcl(document.querySelectorAll('.choice')[ci]);
