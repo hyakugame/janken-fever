@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>ã²ã¼ã çå½</title>
+<title>ゲーム王国</title>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Noto+Sans+JP:wght@400;700;900&family=Zen+Dots&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -19,7 +19,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .hdr-info{display:flex;flex-direction:column;gap:1px;flex:1;}
 .hdr-name{font-size:13px;font-weight:700;color:#ddd;}
 .hdr-medals{font-family:'Zen Dots',monospace;font-size:20px;font-weight:700;color:var(--gold);text-shadow:0 0 10px rgba(255,200,0,.6),0 0 30px rgba(255,150,0,.3);}
-.hdr-medals::before{content:'ðª ';}
+.hdr-medals::before{content:'🪙 ';}
 .lout{background:rgba(255,255,255,.06);border:1px solid rgba(255,100,150,.3);color:rgba(255,150,180,.8);padding:6px 12px;border-radius:20px;font-size:11px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .2s;white-space:nowrap;}
 .lout:hover{background:rgba(255,50,100,.15);border-color:rgba(255,100,150,.6);}
 .bonus-bar{margin:10px 14px;padding:12px 16px;border-radius:14px;cursor:pointer;position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;border:2px solid transparent;background:linear-gradient(rgba(10,8,30,.95),rgba(10,8,30,.95)) padding-box,linear-gradient(135deg,#ffd700,#ff8c00,#ffd700,#ff6000) border-box;box-shadow:0 0 20px rgba(255,160,0,.15),0 4px 20px rgba(0,0,0,.4),inset 0 0 30px rgba(255,180,0,.05);transition:all .2s;}
@@ -76,7 +76,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .ranking-title::before{content:'';position:absolute;top:4px;left:8px;right:8px;height:6px;background:repeating-linear-gradient(90deg,rgba(255,220,0,.7) 0px,rgba(255,220,0,.7) 5px,transparent 5px,transparent 14px);border-radius:3px;filter:blur(.5px);box-shadow:0 0 6px rgba(255,220,0,.5);}
 .ranking-title::after{content:'';position:absolute;bottom:4px;left:8px;right:8px;height:6px;background:repeating-linear-gradient(90deg,rgba(255,200,0,.6) 0px,rgba(255,200,0,.6) 5px,transparent 5px,transparent 14px);border-radius:3px;filter:blur(.5px);box-shadow:0 0 6px rgba(255,200,0,.4);}
 .ranking-title span{position:relative;z-index:1;}
-.ranking-title span::before{content:'ð ';}
+.ranking-title span::before{content:'🏆 ';}
 .rank-block{background:rgba(8,12,35,.7);border-radius:14px;margin-bottom:10px;overflow:hidden;border:1px solid rgba(255,255,255,.06);backdrop-filter:blur(8px);}
 .rank-block-title{padding:10px 14px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02);}
 .rank-list{padding:4px 0;min-height:36px;}
@@ -106,20 +106,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
       <div class="hdr-name" id="uname">--</div>
       <div class="hdr-medals" id="mc">00000</div>
     </div>
-    <button class="lout" onclick="doLogout()">ã­ã°ã¢ã¦ã</button>
+    <button class="lout" onclick="doLogout()">ログアウト</button>
   </div>
   <div class="bonus-bar" id="bonusBar" onclick="claimBonus()">
-    <div class="bonus-icon">ð°</div>
+    <div class="bonus-icon">💰</div>
     <div class="bonus-info">
-      <div class="bonus-title">ãã¤ãªã¼ãã¼ãã¹</div>
-      <div class="bonus-sub" id="bonusSub">ã¿ãããã¦50æããããï¼</div>
+      <div class="bonus-title">デイリーボーナス</div>
+      <div class="bonus-sub" id="bonusSub">タップして50枚もらおう！</div>
     </div>
-    <div class="bonus-badge" id="bonusBadge">ååã</div>
+    <div class="bonus-badge" id="bonusBadge">受取る</div>
   </div>
   <div class="sg-bar">
     <div class="sg-sweep"></div>
     <span class="sg-text">SELECT GAME</span>
-    <button class="sg-menu-btn">â¡</button>
+    <button class="sg-menu-btn">≡</button>
   </div>
   <div class="cs-section">
     <div class="cs-stage">
@@ -134,40 +134,40 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     </div>
   </div>
   <div class="ranking-section" id="rankingSection">
-    <div class="ranking-title"><span>ã²ã¼ã å¥ã©ã³ã­ã³ã°</span></div>
+    <div class="ranking-title"><span>ゲーム別ランキング</span></div>
     <div class="rank-block">
-      <div class="rank-block-title">ð§ ã¯ã¤ãº FEVER ã½ã­ <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">æ­£è§£æ°ãã¤ã¹ã³ã¢</span></div>
-      <div class="rank-list" id="rank-quiz-solo"><div class="rank-loading">èª­ã¿è¾¼ã¿ä¸­...</div></div>
+      <div class="rank-block-title">🧙 クイズ FEVER ソロ <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">正解数ハイスコア</span></div>
+      <div class="rank-list" id="rank-quiz-solo"><div class="rank-loading">読み込み中...</div></div>
     </div>
     <div class="rank-block">
-      <div class="rank-block-title">ð¤ ã¯ã¤ãº FEVER CPUå¯¾æ¦ <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">æ­£è§£æ°ãã¤ã¹ã³ã¢</span></div>
-      <div class="rank-list" id="rank-quiz-battle"><div class="rank-loading">èª­ã¿è¾¼ã¿ä¸­...</div></div>
+      <div class="rank-block-title">🤖 クイズ FEVER CPU対戦 <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">正解数ハイスコア</span></div>
+      <div class="rank-list" id="rank-quiz-battle"><div class="rank-loading">読み込み中...</div></div>
     </div>
     <div class="rank-block">
-      <div class="rank-block-title">ð´ ãã¼ã«ã¼ FEVER <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">ç²å¾ã¡ãã«ãã¤ã¹ã³ã¢</span></div>
-      <div class="rank-list" id="rank-poker"><div class="rank-loading">èª­ã¿è¾¼ã¿ä¸­...</div></div>
+      <div class="rank-block-title">🎴 ポーカー FEVER <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">獲得メダルハイスコア</span></div>
+      <div class="rank-list" id="rank-poker"><div class="rank-loading">読み込み中...</div></div>
     </div>
     <div class="rank-block">
-      <div class="rank-block-title">â ã°ã¼ãã§ã­ãã¼ FEVER <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">ç²å¾ã¡ãã«ãã¤ã¹ã³ã¢</span></div>
-      <div class="rank-list" id="rank-janken"><div class="rank-loading">èª­ã¿è¾¼ã¿ä¸­...</div></div>
+      <div class="rank-block-title">✊ グーチョキパー FEVER <span style="font-size:10px;color:rgba(150,180,255,.5);margin-left:4px">獲得メダルハイスコア</span></div>
+      <div class="rank-list" id="rank-janken"><div class="rank-loading">読み込み中...</div></div>
     </div>
   </div>
-  <div class="foot">Â© 2025 ç¾å¼ã²ã¼ã çå½ã»ã¡ãã«ã¯ã²ã¼ã éã§å±é<br><a href="admin.html">â ç®¡ç</a></div>
+  <div class="foot">© 2025 百式ゲーム王国・メダルはゲーム間で共通<br><a href="admin.html">⚙ 管理</a></div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
 var GAMES=[
   {color:'blue',tc:'#60a5fa',bbg:'rgba(59,130,246,.18)',bbr:'rgba(59,130,246,.4)',bct:'#93c5fd',
-   title:'ã¯ã¤ãºé­éå­¦é¢FEVER',badge:'æ©æ¼ã / ã©ã³ã­ã³ã°å¯¾æ¦',
-   desc:'ã­ã¼ã¯ã¼ãæ¤ç´¢ã§åé¡ãç¡éçæ\u3000æå¼·CPUã¨æ©æ¼ãå¯¾æ±ºï¼',
+   title:'クイズ魔道学院FEVER',badge:'早押し / ランキング対戦',
+   desc:'キーワード検索で問題を無限生成\u3000最強CPUと早押し対決！',
    img:'quiz_fever_banner.jpg',url:'quiz_fever.html'},
   {color:'green',tc:'#4ade80',bbg:'rgba(34,197,94,.18)',bbr:'rgba(34,197,94,.4)',bct:'#86efac',
-   title:'ãã¼ã«ã¼FEVER',badge:"7\'s WILD PLUS",
-   desc:'ã¡ãã«ãè³­ãã¦ãã¼ã«ã¼åè² ï¼å½¹ãæãã¦å¤§éç²å¾ãçãï¼',
+   title:'ポーカーFEVER',badge:"7\'s WILD PLUS",
+   desc:'メダルを賭けてポーカー勝負！役を揃えて大量獲得を狙え！',
    img:'poker_fever_banner.jpg',url:'poker_fever.html'},
   {color:'purple',tc:'#c084fc',bbg:'rgba(168,85,247,.18)',bbr:'rgba(168,85,247,.4)',bct:'#d8b4fe',
-   title:'ã°ã¼ãã§ã­ãã¼FEVER',badge:'JANKEN BATTLE',
-   desc:'æ©æ¼ãããã«ï¼éè»¢ãã¼ãã¹çªå¥ï¼ã¡ãã«ãå¢ããï¼',
+   title:'グーチョキパーFEVER',badge:'JANKEN BATTLE',
+   desc:'早押しバトル！逆転ボーナス突入！メダルを増やせ！',
    img:'janken_fever_banner.jpg',url:'janken-fever.html'}
 ];
 var csCur=0,csBusy=false,csTx=null;
@@ -233,17 +233,17 @@ var SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
 var SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
 var SBH={'apikey':SBK,'Authorization':'Bearer '+SBK};
 function loadRankings(){
-  var medals=['ð¥','ð¥','ð¥'],pc=['p1','p2','p3'];
+  var medals=['🥇','🥈','🥉'],pc=['p1','p2','p3'];
   function best(d,nk,sk){var b={};(d||[]).forEach(function(r){var nm=r[nk]||'?',v=r[sk]||0;if(!b[nm]||v>b[nm])b[nm]=v;});return Object.entries(b).map(function(e){return{name:e[0],score:e[1]};}).sort(function(a,b){return b.score-a.score;});}
-  function render(id,rows,label){var el=document.getElementById(id);if(!el)return;if(!rows||!rows.length){el.innerHTML='<div class="rank-empty">ã¾ã è¨é²ãããã¾ãã</div>';return;}el.innerHTML=rows.slice(0,10).map(function(r,i){return'<div class="rank-item"><span class="rank-pos '+(i<3?pc[i]:'pn')+'">'+(i<3?medals[i]:(i+1))+'</span><span class="rank-name">'+String(r.name).slice(0,10)+'</span><span class="rank-score">'+r.score.toLocaleString()+label+'</span></div>';}).join('');}
-  function noData(id){var el=document.getElementById(id);if(el)el.innerHTML='<div class="rank-empty">ã¾ã è¨é²ãããã¾ãã</div>';}
-  fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&mode=eq.solo&order=score.desc&limit=20',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-quiz-solo',best(d,'player_name','score'),'å');}).catch(function(){noData('rank-quiz-solo');});
-  fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&mode=eq.battle&order=score.desc&limit=20',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-quiz-battle',best(d,'player_name','score'),'å');}).catch(function(){noData('rank-quiz-battle');});
-  fetch(SBU+'/rest/v1/poker_scores?select=player_name,medal_won&limit=500',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-poker',best(d,'player_name','medal_won'),'æ');}).catch(function(){noData('rank-poker');});
-  fetch(SBU+'/rest/v1/rankings?select=name,score&game=eq.janken&limit=500',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-janken',best(d,'name','score'),'æ');}).catch(function(){noData('rank-janken');});
+  function render(id,rows,label){var el=document.getElementById(id);if(!el)return;if(!rows||!rows.length){el.innerHTML='<div class="rank-empty">まだ記録がありません</div>';return;}el.innerHTML=rows.slice(0,10).map(function(r,i){return'<div class="rank-item"><span class="rank-pos '+(i<3?pc[i]:'pn')+'">'+(i<3?medals[i]:(i+1))+'</span><span class="rank-name">'+String(r.name).slice(0,10)+'</span><span class="rank-score">'+r.score.toLocaleString()+label+'</span></div>';}).join('');}
+  function noData(id){var el=document.getElementById(id);if(el)el.innerHTML='<div class="rank-empty">まだ記録がありません</div>';}
+  fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&mode=eq.solo&order=score.desc&limit=20',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-quiz-solo',best(d,'player_name','score'),'問');}).catch(function(){noData('rank-quiz-solo');});
+  fetch(SBU+'/rest/v1/quiz_fever_scores?select=player_name,score&mode=eq.battle&order=score.desc&limit=20',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-quiz-battle',best(d,'player_name','score'),'問');}).catch(function(){noData('rank-quiz-battle');});
+  fetch(SBU+'/rest/v1/poker_scores?select=player_name,medal_won&limit=500',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-poker',best(d,'player_name','medal_won'),'枚');}).catch(function(){noData('rank-poker');});
+  fetch(SBU+'/rest/v1/rankings?select=name,score&game=eq.janken&limit=500',{headers:SBH}).then(function(r){return r.json();}).then(function(d){render('rank-janken',best(d,'name','score'),'枚');}).catch(function(){noData('rank-janken');});
 }
-function checkBonus(){var today=new Date().toDateString();var bar=document.getElementById('bonusBar');var badge=document.getElementById('bonusBadge');var sub=document.getElementById('bonusSub');if(localStorage.getItem('hkg_daily_bonus')===today){bar.classList.add('got');badge.classList.add('done');badge.textContent='ååæ¸';sub.textContent='ã¾ãææ¥æ¥ã¦ã­ï¼';}else{bar.classList.remove('got');badge.classList.remove('done');badge.textContent='+50æ';sub.textContent='ã¿ãããã¦50æããããï¼';}}
-function claimBonus(){var today=new Date().toDateString();if(localStorage.getItem('hkg_daily_bonus')===today){toast('ä»æ¥ã¯ããåãåãæ¸ã¿ã§ãï¼');return;}user.medals=(user.medals||0)+50;save();localStorage.setItem('hkg_daily_bonus',today);document.getElementById('mc').textContent=String(user.medals).padStart(5,'0');checkBonus();toast('ð ãã¤ãªã¼ãã¼ãã¹ +50æï¼');}
+function checkBonus(){var today=new Date().toDateString();var bar=document.getElementById('bonusBar');var badge=document.getElementById('bonusBadge');var sub=document.getElementById('bonusSub');if(localStorage.getItem('hkg_daily_bonus')===today){bar.classList.add('got');badge.classList.add('done');badge.textContent='受取済';sub.textContent='また明日来てね！';}else{bar.classList.remove('got');badge.classList.remove('done');badge.textContent='+50枚';sub.textContent='タップして50枚もらおう！';}}
+function claimBonus(){var today=new Date().toDateString();if(localStorage.getItem('hkg_daily_bonus')===today){toast('今日はもう受け取り済みです！');return;}user.medals=(user.medals||0)+50;save();localStorage.setItem('hkg_daily_bonus',today);document.getElementById('mc').textContent=String(user.medals).padStart(5,'0');checkBonus();toast('🎁 デイリーボーナス +50枚！');}
 function getDB(){try{return JSON.parse(localStorage.getItem('hkg_db')||'{}');}catch(e){return{};}}
 function saveDB(db){try{localStorage.setItem('hkg_db',JSON.stringify(db));}catch(e){}}
 function save(){try{localStorage.setItem('hkg_user',JSON.stringify(user));}catch(e){}if(user&&user.name&&user.name!=='GUEST'){var db=getDB();if(db[user.name])db[user.name].medals=user.medals;saveDB(db);}}
