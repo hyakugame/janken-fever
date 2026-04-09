@@ -417,7 +417,7 @@ var _tt;function toast(m){clearTimeout(_tt);var t=document.getElementById('toast
 // ═══════════════════════════════════════════
 //  リテンションシステム
 // ═══════════════════════════════════════════
-const MONTHLY_REWARDS=[
+var MONTHLY_REWARDS=[
   {d:1,icon:'🪙',label:'+50枚',medals:50,stones:0},
   {d:2,icon:'🪙',label:'+80枚',medals:80,stones:0},
   {d:3,icon:'🪙',label:'+120枚',medals:120,stones:0},
@@ -450,7 +450,7 @@ const MONTHLY_REWARDS=[
   {d:30,icon:'👑',label:'皆勤★+2000+💎×10',medals:2000,stones:10,milestone:true},
 ];
 
-const MISSION_POOL=[
+var MISSION_POOL=[
   {id:'login',icon:'🌟',name:'今日もログイン！',target:1,type:'login'},
   {id:'quiz5',icon:'🧙',name:'クイズ5問正解',target:5,type:'quiz_correct'},
   {id:'combo3',icon:'⚡',name:'クイズ3連続正解',target:1,type:'quiz_combo3'},
@@ -817,7 +817,7 @@ function addGlobalXP(xp){
 
 
 // ══════ 称号ガチャシステム ══════
-const GACHA_TITLES=[
+var GACHA_TITLES=[
   // LEGENDARY (2%)
   {id:'t_legend1',name:'🌟 時を超えし者',desc:'伝説の称号',rarity:'legendary',weight:2},
   {id:'t_legend2',name:'🔱 創世の魔道師',desc:'最高位の称号',rarity:'legendary',weight:2},
@@ -843,8 +843,8 @@ const GACHA_TITLES=[
   {id:'t_com4',name:'🌿 薬草使い',desc:'自然の恵みを操る',rarity:'common',weight:50},
   {id:'t_com5',name:'🎪 魔法の旅人',desc:'世界を巡る魔道師',rarity:'common',weight:50},
 ];
-const GACHA_RARITY_LABEL={legendary:'✨ LEGENDARY',epic:'💜 EPIC',rare:'💙 RARE',common:'⬜ COMMON'};
-const GACHA_COST=10;
+var GACHA_RARITY_LABEL={legendary:'✨ LEGENDARY',epic:'💜 EPIC',rare:'💙 RARE',common:'⬜ COMMON'};
+var GACHA_COST=10;
 
 function _getGachaOwned(){try{return JSON.parse(localStorage.getItem('hkg_gacha_owned')||'[]');}catch{return[];}}
 function _saveGachaOwned(arr){localStorage.setItem('hkg_gacha_owned',JSON.stringify(arr));}
@@ -918,7 +918,7 @@ function closeGacha(){document.getElementById('gachaOverlay').style.display='non
 
 
 // ══════ ストリークマイルストーン ══════
-const STREAK_MILESTONES={3:{emoji:'🔥',bonus:'XP×1.1！',stones:0},7:{emoji:'🔥🔥',bonus:'XP×1.2 & 💎×2！',stones:2},
+var STREAK_MILESTONES={3:{emoji:'🔥',bonus:'XP×1.1！',stones:0},7:{emoji:'🔥🔥',bonus:'XP×1.2 & 💎×2！',stones:2},
   14:{emoji:'🔥🔥🔥',bonus:'XP×1.3 & 💎×3！',stones:3},30:{emoji:'💫',bonus:'XP×1.5 & 💎×5！',stones:5},
   60:{emoji:'💎',bonus:'XP×1.75 & 💎×10！',stones:10},100:{emoji:'👑',bonus:'XP×2.0 & 💎×20！',stones:20}};
 
