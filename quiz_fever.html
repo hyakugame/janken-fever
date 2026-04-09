@@ -673,6 +673,9 @@ function calcXP(){
     var wk=new Date();var dow=wk.getDay();var mon=new Date(wk);mon.setDate(wk.getDate()-dow+1);
     var wkey='hkg_wxp_'+mon.toISOString().slice(0,10);
     localStorage.setItem(wkey,(parseInt(localStorage.getItem(wkey)||'0')+base));
+    // 総合計XP更新
+    var tot=parseInt(localStorage.getItem('hkg_total_xp')||'0');
+    localStorage.setItem('hkg_total_xp',tot+base);
   }catch(e){}
   return base;
 }
