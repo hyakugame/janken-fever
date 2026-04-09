@@ -190,13 +190,12 @@ function csRender(dir){
     d.style.background=i===csCur?dc:'rgba(148,163,184,.22)';
     d.style.boxShadow=i===csCur?'0 0 6px '+dc:'none';
   });
-  document.getElementById('cs-nav-l').classList.toggle('off',csCur===0);
-  document.getElementById('cs-nav-r').classList.toggle('off',csCur===GAMES.length-1);
+  document.getElementById('cs-nav-l').classList.remove('off');
+  document.getElementById('cs-nav-r').classList.remove('off');
 }
 function csMove(dir){
   if(csBusy)return;
-  var nx=csCur+dir;
-  if(nx<0||nx>=GAMES.length)return;
+  var nx=csCur+dir; if(nx<0)nx=GAMES.length-1; if(nx>=GAMES.length)nx=0;
   csBusy=true;csCur=nx;csRender(dir);
   setTimeout(function(){csBusy=false;},240);
 }
