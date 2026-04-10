@@ -1104,9 +1104,21 @@ function saveBank() {
 }
 function _saveBankToSupabase() {
   if(!_bank) return;
-  const rows=Object.entries(_bank).map(([k,g])=>({bank_key:k,name:g.name||k,category:g.category||g.name||k,questions:g.questions||[],updated_at:new Date().toISOString()}));
-  if(!rows.length) return;
-  fetch(_SBU+'/rest/v1/quiz_bank',{method:'POST',headers:{'apikey':_SBK,'Authorization':'Bearer '+_SBK,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify(rows)}).catch(()=>{});
+  Object.entries(_bank).forEach(([k,g])=>{
+    const row={bank_key:k,name:g.name||k,category:g.category||g.name||k,questions:g.questions||[],updated_at:new Date().toISOString()};
+    // まずPATCHで更新試行、0件更新ならPOSTで新規挿入
+    fetch(_SBU+'/rest/v1/quiz_bank?bank_key=eq.'+encodeURIComponent(k),{
+      method:'PATCH',headers:{'apikey':_SBK,'Authorization':'Bearer '+_SBK,'Content-Type':'application/json','Prefer':'return=representation'},
+      body:JSON.stringify({questions:row.questions,updated_at:row.updated_at})
+    }).then(r=>{
+      if(r.status===204||r.ok) return;
+      // 存在しない場合はPOSTで新規作成
+      return fetch(_SBU+'/rest/v1/quiz_bank',{
+        method:'POST',headers:{'apikey':_SBK,'Authorization':'Bearer '+_SBK,'Content-Type':'application/json'},
+        body:JSON.stringify(row)
+      });
+    }).catch(()=>{});
+  });
 }
 function initBank() {
   if(!_bank) loadBank();
