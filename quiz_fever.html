@@ -749,6 +749,7 @@ function calcXP(){
     else if(days>=7)base=Math.floor(base*1.2);
     else if(days>=3)base=Math.floor(base*1.1);
   }catch(e){}
+  _sessionXP+=base;
   // 週間XP更新
   try{
     var wk=new Date();var dow=wk.getDay();var mon=new Date(wk);mon.setDate(wk.getDate()-dow+1);
