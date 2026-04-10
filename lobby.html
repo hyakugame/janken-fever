@@ -375,7 +375,7 @@ var user=null;
 (function(){
   try{var s=JSON.parse(localStorage.getItem('hkg_user')||'null');if(!s||!s.name){location.replace('index.html');return;}user=s;
   // メダルがnull/0の場合はDBから非同期同期
-  if(!user.medals&&user.id){var _mSBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';fetch('https://gtzfcoiowdnyjvwikxku.supabase.co/rest/v1/game_users?id=eq.'+user.id,{headers:{'apikey':_mSBK,'Authorization':'Bearer '+_mSBK}}).then(function(r){return r.json();}).then(function(rows){if(rows&&rows[0]&&rows[0].medals!=null){user.medals=rows[0].medals;localStorage.setItem('hkg_user',JSON.stringify(user));var mc=document.getElementById('mc');if(mc)mc.textContent=String(user.medals).padStart(5,'0');}});}
+  if(user.medals==null&&user.id){var _mSBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';fetch('https://gtzfcoiowdnyjvwikxku.supabase.co/rest/v1/game_users?id=eq.'+user.id,{headers:{'apikey':_mSBK,'Authorization':'Bearer '+_mSBK}}).then(function(r){return r.json();}).then(function(rows){if(rows&&rows[0]&&rows[0].medals!=null){user.medals=rows[0].medals;localStorage.setItem('hkg_user',JSON.stringify(user));var mc=document.getElementById('mc');if(mc)mc.textContent=String(user.medals).padStart(5,'0');}});}
 }
   catch(e){location.replace('index.html');return;}
 })();
