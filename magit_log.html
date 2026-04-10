@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>マギト・ログ ～クイズ魔法学園の記憶～</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#ffd700;--purple:#c084fc;--bg:#050818}
+html,body{height:100%;width:100%;overflow:hidden;background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:#eef}
+
+/* ── 共通 ── */
+#screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;z-index:1}
+.hidden{display:none!important}
+.btn{background:linear-gradient(135deg,#7c3aed,#4f46e5);border:none;color:#fff;padding:12px 28px;border-radius:30px;font-size:16px;font-family:'Noto Sans JP',sans-serif;font-weight:700;cursor:pointer;margin:6px;transition:all .2s;box-shadow:0 0 16px rgba(139,92,246,.5)}
+.btn:hover{transform:scale(1.06);box-shadow:0 0 24px rgba(139,92,246,.8)}
+.btn-sm{padding:8px 18px;font-size:14px}
+.title-grad{background:linear-gradient(90deg,#a78bfa,#ffd700,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+
+/* ── 星背景 ── */
+#stars{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) var(--delay,0s) infinite alternate}
+@keyframes twinkle{from{opacity:.1}to{opacity:.9}}
+
+/* ── プロローグ ── */
+#prologue{text-align:center;max-width:600px}
+#prologue-text{font-size:clamp(14px,3.5vw,18px);line-height:2.2;color:#d8ceff;white-space:pre-line;text-shadow:0 0 12px rgba(160,120,255,.6)}
+#prologue-text .line{opacity:0;display:block;transform:translateY(10px);animation:fadeUp .8s forwards}
+@keyframes fadeUp{to{opacity:1;transform:none}}
+
+/* ── キャラメイク ── */
+#chara-make{text-align:center;max-width:580px;width:100%}
+.chara-section{margin:12px 0}
+.chara-label{font-size:13px;color:#a78bfa;letter-spacing:.15em;margin-bottom:8px;text-transform:uppercase}
+.choice-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.choice-btn{background:rgba(124,58,237,.2);border:1.5px solid rgba(124,58,237,.4);color:#c4b5fd;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:14px;font-family:'Noto Sans JP',sans-serif;transition:all .2s}
+.choice-btn:hover,.choice-btn.sel{background:rgba(124,58,237,.5);border-color:#a78bfa;color:#fff;box-shadow:0 0 12px rgba(139,92,246,.5)}
+.chara-preview{font-size:48px;margin:10px 0;filter:drop-shadow(0 0 12px rgba(160,120,255,.8))}
+
+/* ── 問答 ── */
+#questions{text-align:center;max-width:560px;width:100%}
+.q-num{font-size:12px;color:#7c3aed;letter-spacing:.2em;margin-bottom:8px}
+.q-text{font-size:clamp(16px,4vw,22px);color:#e2d9ff;line-height:1.7;margin-bottom:20px;text-shadow:0 0 16px rgba(139,92,246,.6)}
+.wave-bar{height:40px;margin:12px 0;position:relative;overflow:hidden;border-radius:20px;background:rgba(124,58,237,.1)}
+.wave-inner{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(139,92,246,.4),transparent);animation:wave 1.2s infinite;transform:translateX(-100%)}
+@keyframes wave{to{transform:translateX(200%)}}
+.q-choices{display:flex;flex-direction:column;gap:8px;max-width:400px;margin:0 auto}
+
+/* ── マギト誕生 ── */
+#birth{text-align:center;max-width:500px}
+.magit-sprite{font-size:90px;animation:bounce 1s infinite alternate;filter:drop-shadow(0 0 20px var(--mc,#a78bfa));display:block;margin:10px 0}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.magit-name-box{font-size:clamp(20px,5vw,28px);font-weight:900;color:var(--mc,#a78bfa);text-shadow:0 0 16px var(--mc,#a78bfa);margin:8px 0}
+.magit-desc{font-size:14px;color:#c4b5fd;line-height:1.8;max-width:380px;margin:8px auto}
+.name-input{background:rgba(124,58,237,.2);border:1.5px solid rgba(124,58,237,.5);color:#fff;padding:10px 20px;border-radius:20px;font-size:18px;font-family:'Noto Sans JP',sans-serif;text-align:center;width:200px;outline:none}
+.name-input:focus{border-color:#a78bfa;box-shadow:0 0 12px rgba(139,92,246,.5)}
+
+/* ── クイズ ── */
+#quiz-game{text-align:center;max-width:580px;width:100%}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:8px 16px;background:rgba(124,58,237,.15);border-radius:12px}
+.quiz-q{font-size:clamp(15px,3.5vw,18px);color:#e2d9ff;line-height:1.7;margin:12px 0;padding:12px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(124,58,237,.2)}
+.quiz-choices{display:flex;flex-direction:column;gap:8px}
+.quiz-choice{background:rgba(124,58,237,.15);border:1.5px solid rgba(124,58,237,.3);color:#c4b5fd;padding:12px 16px;border-radius:10px;cursor:pointer;font-size:14px;text-align:left;transition:all .2s}
+.quiz-choice:hover{background:rgba(124,58,237,.35);border-color:#a78bfa;color:#fff}
+.quiz-choice.correct{background:rgba(34,197,94,.2);border-color:#4ade80;color:#4ade80}
+.quiz-choice.wrong{background:rgba(239,68,68,.2);border-color:#f87171;color:#f87171}
+.xp-popup{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);font-size:28px;font-weight:900;color:var(--gold);text-shadow:0 0 20px var(--gold);pointer-events:none;animation:xpFloat 1.4s forwards}
+@keyframes xpFloat{0%{opacity:1;transform:translate(-50%,-70%)}100%{opacity:0;transform:translate(-50%,-140%)}}
+.word-bubble{display:inline-block;background:rgba(124,58,237,.25);border:1px solid rgba(124,58,237,.4);border-radius:16px;padding:6px 14px;font-size:13px;color:#c4b5fd;margin:4px}
+
+/* ── ホワイトアウト ── */
+.whiteout{position:fixed;inset:0;background:#fff;z-index:999;animation:whiteout .8s forwards}
+@keyframes whiteout{0%{opacity:0}50%{opacity:1}100%{opacity:0;pointer-events:none}}
+
+/* ── スクロール ── */
+#screen{overflow-y:auto}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="screen">
+
+<!-- プロローグ -->
+<div id="prologue">
+  <div id="prologue-text"></div>
+  <div id="prologue-btn" class="hidden" style="margin-top:24px">
+    <button class="btn" onclick="startCharaMake()">✨ Logを起動する</button>
+  </div>
+</div>
+
+<!-- キャラメイク -->
+<div id="chara-make" class="hidden">
+  <div style="font-size:clamp(18px,4vw,24px);font-weight:900;margin-bottom:4px" class="title-grad">📖 主人公を登録せよ</div>
+  <div style="font-size:12px;color:#7c3aed;margin-bottom:16px">— PLAYER CREATION —</div>
+  <div class="chara-preview" id="chara-avatar">🧑‍🎓</div>
+  <div class="chara-section">
+    <div class="chara-label">素体</div>
+    <div class="choice-row">
+      <button class="choice-btn" onclick="setChara('gender','boy')">👦 男の子</button>
+      <button class="choice-btn" onclick="setChara('gender','girl')">👧 女の子</button>
+    </div>
+  </div>
+  <div class="chara-section">
+    <div class="chara-label">髪型</div>
+    <div class="choice-row" id="hair-row"></div>
+  </div>
+  <div class="chara-section">
+    <div class="chara-label">瞳</div>
+    <div class="choice-row">
+      <button class="choice-btn" onclick="setChara('eyes','dot')">・ 点目</button>
+      <button class="choice-btn" onclick="setChara('eyes','sparkly')">✨ ぱっちり目</button>
+      <button class="choice-btn" onclick="setChara('eyes','cool')">— じと目</button>
+      <button class="choice-btn" onclick="setChara('eyes','mystic')">🌙 神秘的な瞳</button>
+    </div>
+  </div>
+  <div class="chara-section">
+    <div class="chara-label">適性（肩書き）</div>
+    <div class="choice-row">
+      <button class="choice-btn" onclick="setChara('aptitude','lib')">📚 図書委員（文系）</button>
+      <button class="choice-btn" onclick="setChara('aptitude','astro')">🔭 天文部（理系）</button>
+      <button class="choice-btn" onclick="setChara('aptitude','drama')">🎭 演劇部（エンタメ）</button>
+      <button class="choice-btn" onclick="setChara('aptitude','news')">📰 新聞部（社会）</button>
+      <button class="choice-btn" onclick="setChara('aptitude','game')">🎮 ゲーム研究会（サブカル）</button>
+    </div>
+  </div>
+  <div style="margin-top:16px">
+    <button class="btn" id="chara-next-btn" onclick="startRitual()" style="opacity:.4;pointer-events:none">次へ → 創生儀式へ</button>
+  </div>
+</div>
+
+<!-- 7つの問答 -->
+<div id="questions" class="hidden">
+  <div class="q-num" id="q-num">Question 1 / 7</div>
+  <div class="wave-bar"><div class="wave-inner"></div></div>
+  <div class="q-text" id="q-text"></div>
+  <div class="q-choices" id="q-choices"></div>
+</div>
+
+<!-- マギト誕生 -->
+<div id="birth" class="hidden">
+  <div style="font-size:13px;color:#a78bfa;letter-spacing:.2em;margin-bottom:8px">— MAGIT BORN —</div>
+  <div style="font-size:clamp(18px,4vw,24px);font-weight:900;margin-bottom:4px" class="title-grad" id="birth-title"></div>
+  <div class="magit-sprite" id="magit-sprite"></div>
+  <div class="magit-name-box" id="magit-species"></div>
+  <div class="magit-desc" id="magit-desc"></div>
+  <div style="margin-top:20px">
+    <div style="font-size:14px;color:#a78bfa;margin-bottom:8px">この子に、君だけの呼び名をあげて。</div>
+    <input class="name-input" id="name-input" type="text" maxlength="10" placeholder="呼び名を入力...">
+    <br><button class="btn" style="margin-top:10px" onclick="confirmName()">📜 契約を結ぶ</button>
+  </div>
+</div>
+
+<!-- クイズゲーム -->
+<div id="quiz-game" class="hidden">
+  <div class="quiz-header">
+    <div>
+      <div style="font-size:10px;color:#7c3aed">MY MAGIT</div>
+      <div style="font-size:14px;font-weight:700;color:var(--mc,#a78bfa)"><span id="hdr-sprite" style="font-size:20px"></span> <span id="hdr-name"></span></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:10px;color:#7c3aed">WORDS</div>
+      <div style="font-size:14px;font-weight:700;color:var(--gold)" id="word-count">0語</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:10px;color:#7c3aed">COMBO</div>
+      <div style="font-size:14px;font-weight:700;color:#f97316" id="combo-count">×1</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:#6d28d9;margin-bottom:8px" id="quiz-genre"></div>
+  <div class="quiz-q" id="quiz-q">読み込み中...</div>
+  <div class="quiz-choices" id="quiz-choices"></div>
+  <div style="margin-top:12px;min-height:40px" id="word-row"></div>
+  <div style="margin-top:8px;display:flex;gap:8px;justify-content:center">
+    <button class="btn btn-sm" onclick="nextQuiz()">次の問題 →</button>
+    <button class="btn btn-sm" style="background:rgba(124,58,237,.3)" onclick="backToLobby()">← ロビーへ</button>
+  </div>
+</div>
+
+</div><!-- /screen -->
+
+<script>
+// ── 設定 ──
+const SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
+const SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
+
+// ── マギト種族定義 ──
+const SPECIES = {
+  bit:  {name:'ビット種',color:'#60a5fa',sprite:'🫧',gem:'💙',attr:'理系',desc:'青いしずく型の小さな知性体。無垢な点目で世界のすべてを論理で解析する。バイナリの海を泳ぎながら、静かに真実を見つめている。'},
+  rune: {name:'ルーン種',color:'#f87171',sprite:'🍡',gem:'❤️',attr:'文系',desc:'薄紅色のお餅のような柔らかい存在。頭から生えた羽ペンが揺れ、タレ目で詩を綴る。言葉と感情の間を舞うような、繊細な魂の持ち主。'},
+  pop:  {name:'ポップ種',color:'#fbbf24',sprite:'🌟',gem:'💛',attr:'エンタメ',desc:'ふわふわとした黄色い雲のような体。猫耳ヘッドホンから常に音楽を奏で、笑顔が絶えない。周囲を元気にする太陽のような存在。'},
+  lore: {name:'ロア種',color:'#4ade80',sprite:'🌿',gem:'💚',attr:'社会',desc:'深緑の毛玉。片目にモノクルをかけた大きな瞳が、世界の真理を静かに観察している。知識の図書館を背負って歩く、博識な魂。'},
+  neo:  {name:'ネオ種',color:'#c084fc',sprite:'💜',gem:'💜',attr:'サブカル',desc:'紫色の透明スライム。頭の星アンテナで様々な文化を受信し、じと目で世界を斜めに見つめる。独自のセンスを持つサブカルの申し子。'}
+};
+
+// ── 7つの問答 ──
+const QUESTIONS = [
+  {text:'心の景色を吹く風の向きは？',choices:[
+    {text:'北──冷たく、論理的に',scores:{bit:3,rune:0,pop:0,lore:1,neo:1}},
+    {text:'南──温かく、言葉があふれる',scores:{bit:0,rune:3,pop:1,lore:0,neo:1}},
+    {text:'東──明るく、どこへでも',scores:{bit:0,rune:1,pop:3,lore:0,neo:1}},
+    {text:'西──静かに、記録しながら',scores:{bit:1,rune:1,pop:0,lore:3,neo:0}},
+    {text:'どこにもない──自分だけの向き',scores:{bit:1,rune:0,pop:1,lore:0,neo:3}},
+  ]},
+  {text:'その風に触れた温度は？',choices:[
+    {text:'ひんやり──クリアで透き通っている',scores:{bit:3,rune:0,pop:0,lore:1,neo:1}},
+    {text:'ぽかぽか──包まれるような優しさ',scores:{bit:0,rune:2,pop:2,lore:0,neo:1}},
+    {text:'熱い──胸が燃えるような高揚感',scores:{bit:0,rune:1,pop:3,lore:0,neo:1}},
+    {text:'涼しい──落ち着いた知的な空気',scores:{bit:1,rune:1,pop:0,lore:3,neo:0}},
+    {text:'わからない──言葉にならない温度',scores:{bit:1,rune:1,pop:0,lore:0,neo:3}},
+  ]},
+  {text:'暗闘で裾を引く力強さは？',choices:[
+    {text:'小さく、でも確実に',scores:{bit:3,rune:1,pop:0,lore:1,neo:0}},
+    {text:'柔らかく、でも手放さない',scores:{bit:0,rune:3,pop:1,lore:0,neo:1}},
+    {text:'強く、引っ張り上げるように',scores:{bit:0,rune:0,pop:3,lore:1,neo:1}},
+    {text:'静かに、でも重く',scores:{bit:1,rune:0,pop:0,lore:3,neo:1}},
+    {text:'細く、でも不思議な感触',scores:{bit:1,rune:1,pop:0,lore:0,neo:3}},
+  ]},
+  {text:'その何かを、どう抱きしめる？',choices:[
+    {text:'分析してから、丁寧に',scores:{bit:3,rune:0,pop:0,lore:2,neo:0}},
+    {text:'言葉をかけながら、ゆっくりと',scores:{bit:0,rune:3,pop:1,lore:0,neo:1}},
+    {text:'思い切り、全力で',scores:{bit:0,rune:0,pop:3,lore:0,neo:2}},
+    {text:'観察してから、慎重に',scores:{bit:1,rune:0,pop:0,lore:3,neo:1}},
+    {text:'独自の方法で、こだわって',scores:{bit:0,rune:1,pop:1,lore:0,neo:3}},
+  ]},
+  {text:'鏡の中の知らない誰か、その口元は？',choices:[
+    {text:'真一文字──感情を秘めている',scores:{bit:3,rune:0,pop:0,lore:1,neo:1}},
+    {text:'微笑んでいる──言葉を届けたそうに',scores:{bit:0,rune:3,pop:1,lore:1,neo:0}},
+    {text:'笑っている──はじけるように',scores:{bit:0,rune:0,pop:3,lore:0,neo:2}},
+    {text:'静かに閉じている──観察している',scores:{bit:1,rune:1,pop:0,lore:3,neo:0}},
+    {text:'少し歪んでいる──個性的に',scores:{bit:1,rune:0,pop:1,lore:0,neo:3}},
+  ]},
+  {text:'一番自分らしいと感じる時間は？',choices:[
+    {text:'問題を解いているとき',scores:{bit:3,rune:0,pop:0,lore:1,neo:1}},
+    {text:'物語を読んだり書いたりするとき',scores:{bit:0,rune:3,pop:0,lore:1,neo:1}},
+    {text:'誰かと笑って盛り上がっているとき',scores:{bit:0,rune:1,pop:3,lore:0,neo:1}},
+    {text:'歴史や社会を学んでいるとき',scores:{bit:1,rune:1,pop:0,lore:3,neo:0}},
+    {text:'ゲームやアニメに没頭しているとき',scores:{bit:1,rune:0,pop:1,lore:0,neo:3}},
+  ]},
+  {text:'……キミの名前（プレイヤー名）を教えて。ログを専用にするから。',isName:true},
+];
+
+// ── 状態 ──
+let chara={gender:'',hair:'',eyes:'',aptitude:''};
+let scores={bit:0,rune:0,pop:0,lore:0,neo:0};
+let qIdx=0, playerName='', magitNickname='', mySpecies=null;
+let words=[], wordCount=0, combo=1, quizBank=[], quizIdx=0;
+
+// ── 星生成 ──
+function makeStars(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    s.style.cssText=`width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${Math.random()*3+2}s;--delay:${Math.random()*3}s`;
+    c.appendChild(s);
+  }
+}
+
+// ── プロローグ ──
+const PROLOGUE = [
+  'かつて、世界を叡智で彩った\n『マギト』たちは、',
+  '人々の忘却と共に\n色のないログへと封印された。',
+  '人々が知ることをやめ、\n世界から意味が失われた時──',
+  '　　　　図書館は、崩壊した。',
+  '',
+  '……いま、',
+  '君の手にあるのは最後のかけら、\n禁断のデバイス『 L o g 』。',
+  '',
+  'さあ、君だけの記録を綴ろう。\n失われた世界の記憶を取り戻すために。'
+];
+
+async function showPrologue(){
+  makeStars();
+  const el=document.getElementById('prologue-text');
+  for(let i=0;i<PROLOGUE.length;i++){
+    const span=document.createElement('span');
+    span.className='line';
+    span.style.animationDelay=(i*0.6)+'s';
+    span.textContent=PROLOGUE[i].replace(/\\n/g,'\n');
+    el.appendChild(span);
+    await sleep(620);
+  }
+  await sleep(1200);
+  document.getElementById('prologue-btn').classList.remove('hidden');
+}
+
+// ── キャラメイク ──
+function startCharaMake(){
+  show('chara-make');
+  buildHairRow();
+}
+
+const HAIR_BOY=[['tsum','ツンツンヘア'],['mash','マッシュボブ'],['side','七三分け']];
+const HAIR_GIRL=[['pony','ポニーテール'],['bob','ボブカット'],['twin','ツインテール']];
+
+function buildHairRow(){
+  const row=document.getElementById('hair-row');
+  row.innerHTML='';
+  const list=chara.gender==='girl'?HAIR_GIRL:HAIR_BOY;
+  list.forEach(([id,label])=>{
+    const b=document.createElement('button');
+    b.className='choice-btn';
+    b.textContent=label;
+    b.onclick=()=>setChara('hair',id);
+    row.appendChild(b);
+  });
+}
+
+function setChara(key,val){
+  chara[key]=val;
+  if(key==='gender') buildHairRow();
+  // ボタンハイライト
+  document.querySelectorAll('.choice-row .choice-btn').forEach(b=>{
+    if(b.textContent.includes(val)||b.onclick?.toString().includes(val)) b.classList.add('sel');
+  });
+  // アバター更新
+  const avatars={boy:'🧑‍🎓',girl:'👩‍🎓'};
+  if(chara.gender) document.getElementById('chara-avatar').textContent=avatars[chara.gender]||'🧑‍🎓';
+  // 全部選択されたら次へ
+  if(chara.gender&&chara.hair&&chara.eyes&&chara.aptitude){
+    const nb=document.getElementById('chara-next-btn');
+    nb.style.opacity='1';nb.style.pointerEvents='auto';
+  }
+}
+
+// ── 創生儀式 ──
+function startRitual(){
+  scores={bit:0,rune:0,pop:0,lore:0,neo:0};
+  qIdx=0;
+  show('questions');
+  showQuestion();
+}
+
+function showQuestion(){
+  const q=QUESTIONS[qIdx];
+  document.getElementById('q-num').textContent=`Question ${qIdx+1} / 7`;
+  document.getElementById('q-text').textContent=q.text;
+  const cc=document.getElementById('q-choices');
+  cc.innerHTML='';
+  if(q.isName){
+    const inp=document.createElement('input');
+    inp.type='text';inp.maxLength=12;inp.placeholder='あなたの名前...';
+    inp.className='name-input';inp.style.margin='0 auto';inp.style.display='block';
+    const btn=document.createElement('button');
+    btn.className='btn';btn.style.marginTop='12px';btn.textContent='Logに刻む →';
+    btn.onclick=()=>{
+      if(!inp.value.trim()) return;
+      playerName=inp.value.trim();
+      whiteout(()=>birthMagit());
+    };
+    cc.appendChild(inp);cc.appendChild(btn);
+  } else {
+    q.choices.forEach(ch=>{
+      const b=document.createElement('button');
+      b.className='btn';b.style.width='100%';b.style.textAlign='left';
+      b.style.borderRadius='10px';b.style.background='rgba(124,58,237,.2)';
+      b.textContent=ch.text;
+      b.onclick=()=>{
+        Object.entries(ch.scores).forEach(([k,v])=>scores[k]+=v);
+        qIdx++;
+        if(qIdx>=QUESTIONS.length) whiteout(()=>birthMagit());
+        else showQuestion();
+      };
+      cc.appendChild(b);
+    });
+  }
+}
+
+// ── マギト誕生 ──
+function birthMagit(){
+  // 最高スコアの種族を選択
+  const best=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  mySpecies=SPECIES[best];
+  document.documentElement.style.setProperty('--mc',mySpecies.color);
+  document.getElementById('birth-title').textContent=`「${playerName}」のログから──`;
+  document.getElementById('magit-sprite').textContent=mySpecies.sprite;
+  document.getElementById('magit-species').textContent=`『${mySpecies.name}』が産まれた！`;
+  document.getElementById('magit-desc').textContent=mySpecies.desc;
+  show('birth');
+}
+
+function confirmName(){
+  const n=document.getElementById('name-input').value.trim();
+  if(!n) return;
+  magitNickname=n;
+  // localStorage保存
+  localStorage.setItem('magit_data',JSON.stringify({playerName,magitNickname,species:Object.keys(SPECIES).find(k=>SPECIES[k]===mySpecies),wordCount:0,words:[]}));
+  startQuiz();
+}
+
+// ── クイズ ──
+async function startQuiz(){
+  document.getElementById('hdr-sprite').textContent=mySpecies.sprite;
+  document.getElementById('hdr-name').textContent=magitNickname;
+  document.documentElement.style.setProperty('--mc',mySpecies.color);
+  show('quiz-game');
+  // Supabaseからバンクを取得
+  try{
+    const res=await fetch(SBU+'/rest/v1/quiz_bank?select=questions&bank_key=eq.hunterxhunter',{
+      headers:{'apikey':SBK,'Authorization':'Bearer '+SBK}
+    });
+    const rows=await res.json();
+    quizBank=rows&&rows[0]?shuffle(rows[0].questions):[];
+  }catch(e){quizBank=[];}
+  if(!quizBank.length){
+    document.getElementById('quiz-q').textContent='問題バンクが空です。クイズ魔道学院FEVERで問題を追加してください。';
+    return;
+  }
+  quizIdx=0;loadQuiz();
+}
+
+function loadQuiz(){
+  if(quizIdx>=quizBank.length){quizIdx=0;quizBank=shuffle(quizBank);}
+  const q=quizBank[quizIdx++];
+  document.getElementById('quiz-genre').textContent=q.g||'';
+  document.getElementById('quiz-q').textContent=q.q;
+  const cc=document.getElementById('quiz-choices');
+  cc.innerHTML='';
+  q.c.forEach((ch,i)=>{
+    const b=document.createElement('button');
+    b.className='quiz-choice';
+    b.textContent=['Ａ','Ｂ','Ｃ','Ｄ'][i]+' '+ch;
+    b.onclick=()=>answerQuiz(b,i===q.a,ch,q);
+    cc.appendChild(b);
+  });
+  document.getElementById('word-row').innerHTML='';
+}
+
+function answerQuiz(btn,correct,ch,q){
+  document.querySelectorAll('.quiz-choice').forEach(b=>b.style.pointerEvents='none');
+  if(correct){
+    btn.classList.add('correct');
+    combo++;
+    wordCount+=combo;
+    // 新しい言葉を覚える
+    const word=q.q.replace(/[？?]/g,'').slice(0,8);
+    words.push(word);
+    document.getElementById('word-row').innerHTML=words.slice(-4).map(w=>`<span class="word-bubble">${w}</span>`).join('');
+    showXP(`+${combo}語！`);
+  } else {
+    btn.classList.add('wrong');
+    // 正解を表示
+    document.querySelectorAll('.quiz-choice').forEach((b,i)=>{if(i===q.a)b.classList.add('correct');});
+    combo=1;
+  }
+  document.getElementById('word-count').textContent=wordCount+'語';
+  document.getElementById('combo-count').textContent='×'+combo;
+  // 保存
+  const saved=JSON.parse(localStorage.getItem('magit_data')||'{}');
+  saved.wordCount=wordCount;saved.words=words;
+  localStorage.setItem('magit_data',JSON.stringify(saved));
+}
+
+function nextQuiz(){loadQuiz();}
+
+function showXP(msg){
+  const el=document.createElement('div');
+  el.className='xp-popup';el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1400);
+}
+
+function backToLobby(){location.href='lobby.html';}
+
+// ── ユーティリティ ──
+function show(id){
+  ['prologue','chara-make','questions','birth','quiz-game'].forEach(s=>{
+    document.getElementById(s).classList.toggle('hidden',s!==id);
+  });
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function whiteout(cb){
+  const el=document.createElement('div');el.className='whiteout';
+  document.body.appendChild(el);
+  setTimeout(()=>{cb();el.remove();},800);
+}
+
+// ── セーブデータ読込 ──
+window.onload=()=>{
+  const saved=localStorage.getItem('magit_data');
+  if(saved){
+    try{
+      const d=JSON.parse(saved);
+      if(d.species&&SPECIES[d.species]&&d.magitNickname){
+        playerName=d.playerName||'';
+        magitNickname=d.magitNickname;
+        mySpecies=SPECIES[d.species];
+        wordCount=d.wordCount||0;
+        words=d.words||[];
+        // 再開確認
+        document.getElementById('prologue-text').textContent='';
+        const msg=document.createElement('span');
+        msg.className='line';msg.style.animationDelay='0s';
+        msg.textContent=`おかえり、${playerName}。\n${magitNickname}(${mySpecies.name})が待っていたよ。`;
+        document.getElementById('prologue-text').appendChild(msg);
+        document.getElementById('prologue-btn').innerHTML=`
+          <button class="btn" onclick="continueGame()">✨ 続きからはじめる</button>
+          <button class="btn btn-sm" style="background:rgba(124,58,237,.3)" onclick="newGame()">🔄 最初からはじめる</button>
+        `;
+        document.getElementById('prologue-btn').classList.remove('hidden');
+        makeStars();
+        return;
+      }
+    }catch(e){}
+  }
+  showPrologue();
+};
+function continueGame(){
+  document.documentElement.style.setProperty('--mc',mySpecies.color);
+  startQuiz();
+}
+function newGame(){
+  localStorage.removeItem('magit_data');
+  location.reload();
+}
+</script>
+</body>
+</html>
