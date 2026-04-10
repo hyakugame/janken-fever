@@ -1450,13 +1450,14 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
     const subject = yearM[1].replace(/[はがをにでのも]$/,'');
     const year = parseInt(yearM[2]);
     if(year<1600||year>2030) continue;
-    const q = `「${title}」関連：${subject}は何年？`;
+    const q = `「${title}」${subject}は何年？`;
     if(usedQ.has(q)) continue;
     const deltas = shuf([1,2,3,5,7,10,15,20,25,-1,-2,-3,-5,-7,-10,-15,-20]);
     const wrongs=[];
     for(const d of deltas){const wy=year+d;if(wy>1600&&wy<2031&&!wrongs.includes(wy+'年'))wrongs.push(wy+'年');if(wrongs.length>=3)break;}
     if(wrongs.length<3) continue;
     const all=shuf([year+'年',...wrongs]);
+    if(q.includes('___')||q.includes('＿')) continue;
     qs.push({q,c:all,a:all.indexOf(year+'年'),g:`🔍 ${keyword}`});
     usedQ.add(q);
   }
@@ -1468,8 +1469,10 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
     if(!numM) continue;
     const n=parseInt(numM[1]); if(n<2||n>99999) continue;
     const unit=numM[2];
-    const ctx=s.replace(numM[0],'___').slice(0,35);
-    const q=`「${title}」関連：${ctx}の___は？`;
+    // 数字を「何unit」に置換して自然な疑問文を生成
+    const qRaw = s.replace(numM[0], `何${unit}`);
+    const qClean = qRaw.replace(/[、。！？\s]+$/, '').slice(0, 40);
+    const q = qClean.endsWith('？') ? qClean : qClean + '？'`;
     if(usedQ.has(q)) continue;
     const ws=[n+1,n-1,Math.round(n*1.5),Math.round(n*2)].filter(x=>x>0&&x!==n);
     if(ws.length<3) continue;
@@ -1484,7 +1487,7 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
     if(qs.length>=cnt) break;
     const sh=s=>s.length>38?s.slice(0,38)+'…':s;
     const correctS=sh(correct);
-    const q=`「${title}」について正しいのはどれ？`;
+    const q=`「${title}」について正しいものはどれか？`;
     const qKey=q+'|'+correctS;
     if(usedQ.has(qKey)) continue;
     const wrongs=[];
@@ -1497,7 +1500,8 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
     qs.push({q,c:all,a:all.indexOf(correctS),g:`🔍 ${keyword}`});
     usedQ.add(qKey);
   }
-  return qs.slice(0,cnt);
+  // ___や＿を含む問題を除外
+  return qs.filter(q=>!q.q.includes('___')&&!q.q.includes('＿')).slice(0,cnt);
 }
 
 // バンクに追加（bankIdを指定すると既存エントリに追記）
@@ -3144,7 +3148,7 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
     const subject = yearM[1].replace(/[はがをにでのも]$/,'');
     const year = parseInt(yearM[2]);
     if(year<1600||year>2030) continue;
-    const q = `「${title}」関連：${subject}は何年？`;
+    const q = `「${title}」${subject}は何年？`;
     if(usedQ.has(q)) continue;
     const deltas = shuf([1,2,3,5,7,10,15,20,25,-1,-2,-3,-5,-7,-10,-15,-20]);
     const wrongs=[];
@@ -3162,8 +3166,10 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
     if(!numM) continue;
     const n=parseInt(numM[1]); if(n<2||n>99999) continue;
     const unit=numM[2];
-    const ctx=s.replace(numM[0],'___').slice(0,35);
-    const q=`「${title}」関連：${ctx}の___は？`;
+    // 数字を「何unit」に置換して自然な疑問文を生成
+    const qRaw=s.replace(numM[0],`何${unit}`);
+    const qClean=qRaw.replace(/[、。！？\s]+$/,'').slice(0,42);
+    const q=qClean.endsWith('？')?qClean:qClean+'？';
     if(usedQ.has(q)) continue;
     const ws=[n+1,n-1,Math.round(n*1.5),Math.round(n*2)].filter(x=>x>0&&x!==n);
     if(ws.length<3) continue;
