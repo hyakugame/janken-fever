@@ -972,7 +972,7 @@ var QB_BASE=[
 // ══════════════════════════════════════
 onload = () => {
   document.documentElement.style.opacity=1;
-  makeStars(); initBank(); renderGenreLib(); refreshCatChips();
+  makeStars(); initBank(); renderGenreLib(); refreshCatChips(); syncBankFromSupabase();
   // ロビーからログイン済みなら即ゲームモード画面へ（タイトル画面スキップ）
   const _hu = JSON.parse(localStorage.getItem('hkg_user')||'null');
   if(_hu && _hu.name) {
@@ -1084,6 +1084,8 @@ function switchTab(mode){
 // ══════════════════════════════════════
 var BKEY = 'qf_bank_v4';
 var _bank = null;
+var _SBU='https://gtzfcoiowdnyjvwikxku.supabase.co';
+var _SBK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0emZjb2lvd2RueWp2d2lreGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1ODk3MTksImV4cCI6MjA5MDE2NTcxOX0.aET6tP6-JUyRuwFOrPa-xn0RofVX4o3gRCPBm13Dbvg';
 
 function loadBank() {
   if(_bank) return _bank;
@@ -1097,11 +1099,36 @@ function saveBank() {
     const json=JSON.stringify(_bank||{});
     localStorage.setItem(BKEY,json);
     _storageOK=true;
-  } catch(e) { _storageOK=false; /* sandboxではメモリのみ使用 */ }
+  } catch(e) { _storageOK=false; }
+  _saveBankToSupabase();
 }
-
+function _saveBankToSupabase() {
+  if(!_bank) return;
+  const rows=Object.entries(_bank).map(([k,g])=>({bank_key:k,name:g.name||k,category:g.category||g.name||k,questions:g.questions||[],updated_at:new Date().toISOString()}));
+  if(!rows.length) return;
+  fetch(_SBU+'/rest/v1/quiz_bank',{method:'POST',headers:{'apikey':_SBK,'Authorization':'Bearer '+_SBK,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},body:JSON.stringify(rows)}).catch(()=>{});
+}
 function initBank() {
   if(!_bank) loadBank();
+}
+async function syncBankFromSupabase() {
+  try {
+    const res=await fetch(_SBU+'/rest/v1/quiz_bank?select=*&order=updated_at.desc',{headers:{'apikey':_SBK,'Authorization':'Bearer '+_SBK}});
+    const rows=await res.json();
+    if(!Array.isArray(rows)||!rows.length) return;
+    if(!_bank) loadBank();
+    rows.forEach(row=>{
+      if(!_bank[row.bank_key]){
+        _bank[row.bank_key]={name:row.name,category:row.category||row.name,questions:row.questions||[]};
+      } else {
+        const local=new Set((_bank[row.bank_key].questions||[]).map(q=>q.q));
+        const newQs=(row.questions||[]).filter(q=>!local.has(q.q));
+        if(newQs.length) _bank[row.bank_key].questions=(_bank[row.bank_key].questions||[]).concat(newQs);
+      }
+    });
+    try{localStorage.setItem(BKEY,JSON.stringify(_bank));}catch(e){}
+    renderGenreLib();
+  } catch(e){ console.warn('quiz bank sync err:',e); }
 }
 
 // ── ジャンルライブラリ描画 ──
