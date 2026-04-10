@@ -1442,79 +1442,104 @@ function openApiKeyModal(){
 function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
   const qs = [];
   existingQ = existingQ || new Set();
-  const sentences = text
+  const usedQ = new Set(existingQ);
+
+  // 文を分割・クリーニング
+  const rawSentences = text
     .replace(/={2,}[^=]+=+/g,'')
     .replace(/\[\[|\]\]/g,'')
     .replace(/\n+/g,' ')
     .split(/(?<=[。！？])/)
     .map(s=>s.trim())
-    .filter(s=>s.length>=15 && s.length<=80 && !/^[（\(「『【\|・]/.test(s));
-  if(sentences.length < 3) return qs;
-  const usedQ = new Set(existingQ);
+    .filter(s=>{
+      if(s.length < 15 || s.length > 80) return false;
+      // 代名詞・接続詞始まりは除外（前後の文脈が必要なため）
+      if(/^(この|その|これ|それ|また|なお|ただし|さらに|しかし|一方|そして|ため|なぜ|もし|つまり|ちなみに)/.test(s)) return false;
+      if(/^[（\(「『【\|・※▼▽→←↑↓]/.test(s)) return false;
+      return true;
+    });
 
-  // ① 年号問題
-  for(const s of sentences) {
-    if(qs.length >= Math.ceil(cnt*0.1)) break;
-    const yearM = s.match(/([^\s。]{2,10})(?:は|が|の)?(\d{4})年/);
-    if(!yearM) continue;
-    const subject = yearM[1].replace(/[はがをにでのも]$/,'');
-    const year = parseInt(yearM[2]);
-    if(year<1600||year>2030) continue;
-    const q = `「${title}」${subject}は何年？`;
+  if(rawSentences.length < 3) return qs;
+
+  // ① 年号問題（改善版）
+  for(const s of rawSentences) {
+    if(qs.length >= Math.ceil(cnt * 0.15)) break;
+    const m = s.match(/([^\s。、]{2,12})(?:は|が|の)?(\d{4})年/);
+    if(!m) continue;
+    const subject = m[1].replace(/[はがをにでのも]$/,'').slice(-10);
+    const year = parseInt(m[2]);
+    if(year < 1900 || year > 2030 || subject.length < 2) continue;
+    const q = `${subject}は何年？`;
     if(usedQ.has(q)) continue;
-    const deltas = shuf([1,2,3,5,7,10,15,20,25,-1,-2,-3,-5,-7,-10,-15,-20]);
-    const wrongs=[];
-    for(const d of deltas){const wy=year+d;if(wy>1600&&wy<2031&&!wrongs.includes(wy+'年'))wrongs.push(wy+'年');if(wrongs.length>=3)break;}
-    if(wrongs.length<3) continue;
-    const all=shuf([year+'年',...wrongs]);
-    if(q.includes('___')||q.includes('＿')) continue;
-    qs.push({q,c:all,a:all.indexOf(year+'年'),g:`🔍 ${keyword}`});
+    const deltas = shuf([1,2,3,5,7,10,15,-1,-2,-3,-5,-7,-10,-15]);
+    const wrongs = [];
+    for(const d of deltas){const wy=year+d;if(wy>1900&&wy<2031&&!wrongs.includes(wy+'年'))wrongs.push(wy+'年');if(wrongs.length>=3)break;}
+    if(wrongs.length < 3) continue;
+    const all = shuf([year+'年',...wrongs]);
+    qs.push({q,c:all,a:all.indexOf(year+'年'),g:`🔍 ${keyword}`,level:2});
     usedQ.add(q);
   }
 
-  // ② 数字問題
-  for(const s of sentences) {
-    if(qs.length >= Math.ceil(cnt*0.25)) break;
-    const numM = s.match(/(\d{1,6})(人|個|本|枚|冊|匹|種|回|票|点|万|億|km|cm|m(?!a))/);
-    if(!numM) continue;
-    const n=parseInt(numM[1]); if(n<2||n>99999) continue;
-    const unit=numM[2];
-    // 数字を「何unit」に置換して自然な疑問文を生成
-    const qRaw = s.replace(numM[0], `何${unit}`);
-    const qClean = qRaw.replace(/[、。！？\s]+$/, '').slice(0, 40);
+  // ② 数字問題（改善版：「何unit」形式で自然な疑問文）
+  for(const s of rawSentences) {
+    if(qs.length >= Math.ceil(cnt * 0.35)) break;
+    const m = s.match(/(\d{1,6})(人|個|本|枚|冊|匹|種|回|票|点|万|億|km|cm|m(?!a))/);
+    if(!m) continue;
+    const n = parseInt(m[1]);
+    if(n < 2 || n > 999999) continue;
+    const unit = m[2];
+    // 「何unit」に置換して疑問文を生成
+    const qRaw = s.replace(m[0], `何${unit}`);
+    const qClean = qRaw.replace(/[、。！？\s]+$/,'').slice(0,42);
     const q = qClean.endsWith('？') ? qClean : qClean + '？';
-    if(usedQ.has(q)) continue;
-    const ws=[n+1,n-1,Math.round(n*1.5),Math.round(n*2)].filter(x=>x>0&&x!==n);
-    if(ws.length<3) continue;
-    const all=shuf([n+unit,...ws.slice(0,3).map(x=>x+unit)]);
-    qs.push({q,c:all,a:all.indexOf(n+unit),g:`🔍 ${keyword}`});
+    // ＿が残っている・短すぎる・意味不明なものは除外
+    if(usedQ.has(q) || q.includes('___') || q.includes('＿') || q.length < 8) continue;
+    const ws = [n+1,n-1,Math.round(n*1.5),Math.round(n*2)].filter(x=>x>0&&x!==n);
+    if(ws.length < 3) continue;
+    const all = shuf([n+unit,...ws.slice(0,3).map(x=>x+unit)]);
+    qs.push({q,c:all,a:all.indexOf(n+unit),g:`🔍 ${keyword}`,level:2});
     usedQ.add(q);
   }
 
-  // ③ 正誤問題
-  const pool=shuf([...sentences]);
+  // ③ 事実確認問題（改善版）
+  // タイトルを含む自己完結した文を選択
+  const goodSentences = shuf(rawSentences.filter(s=>{
+    // タイトルや重要人物名を含む文を優先
+    const hasTitle = s.includes(title) || s.includes(keyword);
+    // 固有名詞・数字・動詞を含む完結した文
+    const hasContent = /[A-Za-z゠-ヿ一-鿿]{2,}/.test(s) && s.length >= 20;
+    return hasContent;
+  }));
+
+  const pool = goodSentences.length >= 4 ? goodSentences : shuf([...rawSentences]);
+
   for(const correct of pool) {
-    if(qs.length>=cnt) break;
-    const sh=s=>s.length>38?s.slice(0,38)+'…':s;
-    const correctS=sh(correct);
-    const q=`「${title}」について正しいものはどれか？`;
-    const qKey=q+'|'+correctS;
+    if(qs.length >= cnt) break;
+    const sh = s => s.length > 40 ? s.slice(0,40)+'…' : s;
+    const correctS = sh(correct);
+    const q = '次のうち正しいものはどれか？';
+    const qKey = q+'|'+correctS;
     if(usedQ.has(qKey)) continue;
-    const wrongs=[];
-    for(let t=0;t<20&&wrongs.length<3;t++){const w=makeWrong(correct);if(w&&w!==correct&&!wrongs.includes(sh(w)))wrongs.push(sh(w));}
-    const others=shuf(pool.filter(s=>s!==correct&&s.length>=15));
-    while(wrongs.length<3&&others.length){const o=others.splice(0,1)[0];if(o&&sh(o)!==correctS)wrongs.push(sh(o));}
-    if(wrongs.length<3) continue;
-    const all=shuf([correctS,...wrongs]);
-    if(all.indexOf(correctS)<0) continue;
-    qs.push({q,c:all,a:all.indexOf(correctS),g:`🔍 ${keyword}`});
+    const wrongs = [];
+    for(let t=0;t<20&&wrongs.length<3;t++){
+      const w = makeWrong(correct);
+      if(w && w !== correct && !wrongs.includes(sh(w))) wrongs.push(sh(w));
+    }
+    const others = shuf(pool.filter(s=>s!==correct&&s.length>=15));
+    while(wrongs.length<3&&others.length){
+      const o = others.splice(0,1)[0];
+      if(o && sh(o) !== correctS) wrongs.push(sh(o));
+    }
+    if(wrongs.length < 3) continue;
+    const all = shuf([correctS,...wrongs]);
+    if(all.indexOf(correctS) < 0) continue;
+    qs.push({q,c:all,a:all.indexOf(correctS),g:`🔍 ${keyword}`,level:1});
     usedQ.add(qKey);
   }
-  // ___や＿を含む問題を除外
-  return qs.filter(q=>!q.q.includes('___')&&!q.q.includes('＿')).slice(0,cnt);
-}
 
-// バンクに追加（bankIdを指定すると既存エントリに追記）
+  // 最終フィルター：＿や意味不明な問題を除外
+  return qs.filter(q=>!q.q.includes('___')&&!q.q.includes('＿')&&q.q.length>=5).slice(0,cnt);
+}
 function addFreestyleToBank(keyword, wikiTitle, category, questions, bankId) {
   const bank=loadBank();
   const id=bankId||('free_'+keyword.toLowerCase().replace(/[^\w\u3040-\u9fff]/g,'_').replace(/_+/g,'_'));
