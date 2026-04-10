@@ -1482,7 +1482,7 @@ function buildQuestionsFromText(keyword, title, text, cnt, existingQ) {
     // 数字を「何unit」に置換して自然な疑問文を生成
     const qRaw = s.replace(numM[0], `何${unit}`);
     const qClean = qRaw.replace(/[、。！？\s]+$/, '').slice(0, 40);
-    const q = qClean.endsWith('？') ? qClean : qClean + '？'`;
+    const q = qClean.endsWith('？') ? qClean : qClean + '？';
     if(usedQ.has(q)) continue;
     const ws=[n+1,n-1,Math.round(n*1.5),Math.round(n*2)].filter(x=>x>0&&x!==n);
     if(ws.length<3) continue;
