@@ -603,7 +603,8 @@ function removeGrayBG(src,cb){
     const id=c.getImageData(0,0,cv.width,cv.height);const d=id.data;
     for(let i=0;i<d.length;i+=4){
       const r=d[i],g=d[i+1],b=d[i+2];
-      if(Math.abs(r-g)<28&&Math.abs(g-b)<28&&r>95&&r<180) d[i+3]=0;
+      // グレー系（チェッカー含む）と白を透明化
+      if(Math.abs(r-g)<30&&Math.abs(g-b)<30&&r>95) d[i+3]=0;
     }
     c.putImageData(id,0,0);
     cb(cv.toDataURL('image/png'));
