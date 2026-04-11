@@ -10,22 +10,24 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--gold:#ffd700;--bg:#050818;--pixel:'DotGothic16',sans-serif}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
+#bg-img{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;filter:brightness(0.7);}
 
 /* ピクセルフォント */
 .px{font-family:'DotGothic16',sans-serif;letter-spacing:.05em}
 .px-text{font-family:'DotGothic16',sans-serif;font-size:clamp(14px,3.5vw,20px);color:#d8ceff;line-height:2;text-shadow:2px 2px 0 #000;letter-spacing:.08em}
 
 /* 星背景 */
-#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
-.star{position:absolute;background:#fff;border-radius:50%;animation:twink var(--d,3s) var(--dl,0s) infinite alternate}
-@keyframes twink{from{opacity:.1}to{opacity:.9}}
+/* 星なし（背景画像使用）*/
 
 /* 共通レイアウト */
-#wrap{position:fixed;inset:0;overflow-y:auto;z-index:1;display:flex;flex-direction:column;align-items:center;padding:16px 16px 32px}
+#wrap{position:fixed;inset:0;overflow-y:auto;z-index:2;display:flex;flex-direction:column;align-items:center;padding:16px 16px 32px}
 
 /* スクリーン切り替え */
 .screen{width:100%;max-width:640px;display:none;flex-direction:column;align-items:center;gap:12px}
 .screen.active{display:flex}
+/* 各画面コンテンツを半透明パネルで囲む */
+.screen>*:not(canvas){position:relative;}
+.panel{background:rgba(5,8,24,0.72);backdrop-filter:blur(8px);border:1px solid rgba(124,58,237,0.3);border-radius:14px;padding:14px 16px;width:100%;max-width:600px;}
 
 /* ボタン */
 .btn{font-family:'DotGothic16',sans-serif;font-size:clamp(14px,3.5vw,18px);letter-spacing:.08em;text-shadow:1px 1px 0 #000;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
@@ -92,21 +94,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
 <div id="wrap">
 
 <!-- ① プロローグ -->
-<button id="mute-btn" onclick="toggleVoMute()" title="音声ミュート" style="display:none;position:fixed;top:12px;right:14px;z-index:20;font-family:'DotGothic16',sans-serif;font-size:16px;background:rgba(30,8,60,.7);border:1.5px solid rgba(124,58,237,.5);color:#c4b5fd;width:38px;height:38px;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;backdrop-filter:blur(4px);">🔊</button>
 <div class="screen active" id="s-prologue">
-  <div class="banner"><img src="magit_log_banner.jpg" alt="マギト・ログ"><div class="banner-overlay"></div></div>
-  <div id="prologue-box"></div>
-  <div id="prologue-btns" style="display:none;flex-direction:column;align-items:center;gap:10px;margin-top:8px"></div>
+  <div class="px" style="font-size:clamp(22px,5vw,32px);color:#ffd700;text-shadow:2px 2px 0 #000,0 0 20px #ffd700;letter-spacing:.12em;text-align:center;margin-top:20px">📖 マギト・ログ</div>
+  <div class="px" style="font-size:11px;color:#a78bfa;letter-spacing:.2em;margin-bottom:8px">～ クイズ魔法学園の記憶 ～</div>
+  <div style="background:rgba(5,8,24,0.75);backdrop-filter:blur(10px);border:1px solid rgba(124,58,237,0.35);border-radius:14px;padding:18px 20px;width:100%;max-width:560px">
+    <div id="prologue-box"></div>
+    <div id="prologue-btns" style="display:none;flex-direction:column;align-items:center;gap:10px;margin-top:12px"></div>
+  </div>
 </div>
-
 <!-- ② キャラメイク -->
 <div class="screen" id="s-chara">
-  <div class="px" style="font-size:clamp(18px,4.5vw,26px);color:#ffd700;text-shadow:2px 2px 0 #000,0 0 12px #ffd700;letter-spacing:.1em;text-align:center">📖 主人公を登録せよ</div>
-  <div class="px" style="font-size:12px;color:#7c3aed;letter-spacing:.2em;margin-bottom:4px">— PLAYER CREATION —</div>
+  <div style="background:rgba(5,8,24,0.72);backdrop-filter:blur(8px);border:1px solid rgba(124,58,237,0.3);border-radius:10px;padding:8px 16px;text-align:center;width:100%;max-width:560px">
+    <div class="px" style="font-size:clamp(18px,4.5vw,26px);color:#ffd700;text-shadow:2px 2px 0 #000,0 0 12px #ffd700;letter-spacing:.1em">📖 主人公を登録せよ</div>
+    <div class="px" style="font-size:12px;color:#7c3aed;letter-spacing:.2em">— PLAYER CREATION —</div>
+  </div>
 
   <canvas id="charaCanvas" width="280" height="320" style="width:100%;max-width:280px;border-radius:16px;display:block;margin:0 auto;background:#07051a"></canvas>
 
-  <div style="width:100%;max-width:480px">
+  <div style="background:rgba(5,8,24,0.72);backdrop-filter:blur(8px);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:12px 14px;width:100%;max-width:480px">
     <div class="section-label">▶ 素体を選べ</div>
     <div class="choice-row">
       <button class="cbtn" onclick="pick('gender','boy',this)">👦 男の子</button>
@@ -158,7 +163,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
   <img class="magit-img" id="magit-img" src="" alt="マギト">
   <div class="species-name" id="species-name"></div>
   <div class="species-desc" id="species-desc"></div>
-  <div style="margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+  <div style="background:rgba(5,8,24,0.72);backdrop-filter:blur(8px);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:14px;margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:400px">
     <div class="px" style="font-size:14px;color:#a78bfa;text-shadow:1px 1px 0 #000;letter-spacing:.06em">この子に、君だけの呼び名をあげて。</div>
     <input class="name-input" id="name-input" type="text" maxlength="10" placeholder="呼び名を入力...">
     <button class="btn btn-gold" onclick="confirmName()">📜 契約を結ぶ</button>
@@ -167,7 +172,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
 
 <!-- ⑤ クイズ -->
 <div class="screen" id="s-quiz">
-  <div class="quiz-hdr">
+  <div class="quiz-hdr" style="background:rgba(5,8,24,0.8);backdrop-filter:blur(8px);">
     <div>
       <div class="hdr-label">MY MAGIT</div>
       <div class="hdr-val"><span id="hdr-img" style="font-size:20px"></span> <span id="hdr-name"></span></div>
@@ -182,7 +187,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
     </div>
   </div>
   <div class="px" id="quiz-genre" style="font-size:11px;color:#6d28d9;letter-spacing:.12em;text-align:center"></div>
-  <div class="quiz-q" id="quiz-q">読み込み中...</div>
+  <div class="quiz-q" id="quiz-q" style="background:rgba(5,8,24,0.78);backdrop-filter:blur(8px);">読み込み中...</div>
   <div style="width:100%;max-width:600px;display:flex;flex-direction:column;gap:8px" id="quiz-choices"></div>
   <div id="word-row" style="text-align:center;min-height:30px;margin-top:4px"></div>
   <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center">
@@ -266,15 +271,7 @@ let scores={bit:0,rune:0,pop:0,lore:0,neo:0};
 let qIdx=0,playerName='',nickname='',mySpecies=null;
 let words=[],wordCount=0,combo=1,bank=[],bIdx=0;
 
-// ── 星 ──
-(()=>{
-  const c=document.getElementById('stars');
-  for(let i=0;i<80;i++){
-    const s=document.createElement('div');s.className='star';
-    s.style.cssText='width:'+(Math.random()*2+1)+'px;height:'+(Math.random()*2+1)+'px;left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;--d:'+(Math.random()*3+2)+'s;--dl:'+(Math.random()*3)+'s';
-    c.appendChild(s);
-  }
-})();
+// 背景画像を使用（星なし）
 
 // ── ユーティリティ ──
 const show=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));window.scrollTo(0,0);};
