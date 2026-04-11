@@ -307,6 +307,17 @@ const LINES=[
   'さあ、君だけの記録を綴ろう。',
   '失われた世界の記憶を取り戻すために。',
 ];
+// スタートボタンを表示（スマホautoplay対策：ユーザー操作後に音声解放）
+function showStartBtn(){
+  const btns=document.getElementById('prologue-btns');
+  btns.innerHTML='<button class="btn btn-gold btn-w" onclick="startPrologue()">✦ Logを起動する</button>';
+  btns.style.display='flex';
+}
+function startPrologue(){
+  document.getElementById('prologue-btns').style.display='none';
+  runPrologue();
+}
+
 // 行インデックス→音声番号マップ（空行はnull）
 const VO_MAP=[1,2,3,4,null,5,6,null,7,null,8,9,10,null,11,12];
 const VO_CACHE={};
@@ -515,7 +526,7 @@ window.onload=()=>{
       }
     }catch(e){}
   }
-  runPrologue();
+  showStartBtn();
 };
 </script>
 </body>
