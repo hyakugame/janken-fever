@@ -284,6 +284,10 @@ const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i
 const wo=cb=>{const el=document.createElement('div');el.className='wo';document.body.appendChild(el);setTimeout(()=>{cb();el.remove();},900);};
 const setColor=c=>{document.documentElement.style.setProperty('--mc',c);};
 
+// ── プロローグ音声 ──
+const VO_01 = new Audio('audio/magit_vo_01.wav');
+VO_01.volume = 0.9;
+
 // ── プロローグ ──
 const LINES=[
   'かつて、世界を叡智で彩った',
@@ -305,6 +309,8 @@ const LINES=[
 ];
 async function runPrologue(){
   const box=document.getElementById('prologue-box');
+  // 音声再生
+  try{ VO_01.play().catch(()=>{}); }catch(e){}
   for(let i=0;i<LINES.length;i++){
     const sp=document.createElement('span');
     sp.className='pline px-text';
