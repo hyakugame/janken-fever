@@ -97,7 +97,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0518}
 <div class="screen active" id="s-prologue">
   <div class="px" style="font-size:clamp(22px,5vw,32px);color:#ffd700;text-shadow:2px 2px 0 #000,0 0 20px #ffd700;letter-spacing:.12em;text-align:center;margin-top:20px">📖 マギト・ログ</div>
   <div class="px" style="font-size:11px;color:#a78bfa;letter-spacing:.2em;margin-bottom:8px">～ クイズ魔法学園の記憶 ～</div>
-  <div style="background:rgba(5,8,24,0.78);backdrop-filter:blur(12px);border:1px solid rgba(124,58,237,0.4);border-radius:14px;padding:20px;width:100%;max-width:560px">
+  <button id="mute-btn" onclick="toggleVoMute()" title="音声ミュート" style="display:none;position:fixed;top:12px;right:14px;z-index:20;font-family:'DotGothic16',sans-serif;font-size:16px;background:rgba(30,8,60,.7);border:1.5px solid rgba(124,58,237,.5);color:#c4b5fd;width:38px;height:38px;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;backdrop-filter:blur(4px);">🔊</button>
+<div style="background:rgba(5,8,24,0.78);backdrop-filter:blur(12px);border:1px solid rgba(124,58,237,0.4);border-radius:14px;padding:20px;width:100%;max-width:560px">
     <div id="prologue-box"></div>
     <div id="prologue-btns" style="display:none;flex-direction:column;align-items:center;gap:10px;margin-top:12px"></div>
   </div>
@@ -311,8 +312,8 @@ function showStartBtn(){
 }
 function startPrologue(){
   document.getElementById('prologue-btns').style.display='none';
-  // ミュートボタン表示
-  document.getElementById('mute-btn').style.display='flex';
+  const mb=document.getElementById('mute-btn');
+  if(mb) mb.style.display='flex';
   runPrologue();
 }
 
@@ -370,7 +371,7 @@ function showPrologueBtns(returning){
     div.innerHTML='<button class="btn btn-purple btn-w" onclick="continueGame()">✦ 続きからはじめる</button>'
       +'<button class="btn btn-outline btn-w" onclick="newGame()">🔄 最初からはじめる</button>';
   } else {
-    document.getElementById('mute-btn').style.display='none';
+    const mbh=document.getElementById('mute-btn');if(mbh)mbh.style.display='none';
     div.innerHTML='<button class="btn btn-gold btn-w" onclick="playStartSE();wo(startChara)">✦ Logを起動する</button>';
   }
 }
