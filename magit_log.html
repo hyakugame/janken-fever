@@ -322,12 +322,22 @@ async function runPrologue(){
   for(let i=0;i<LINES.length;i++){
     const sp=document.createElement('span');
     sp.className='pline px-text';
-    sp.style.animationDelay=(i*.55)+'s';
+    sp.style.animationDelay='0s';
     sp.textContent=LINES[i]||'　';
     box.appendChild(sp);
     const vo=getVO(VO_MAP[i]);
-    if(vo){try{vo.currentTime=0;vo.play().catch(()=>{});}catch(e){}}
-    await sleep(600);
+    if(vo){
+      // テキスト表示と同時に音声再生、終わるまで待つ
+      await new Promise(res=>{
+        vo.currentTime=0;
+        vo.onended=()=>{ setTimeout(res,80); };
+        vo.onerror=res;
+        vo.play().catch(res);
+        setTimeout(res,8000); // 保険：最大8秒
+      });
+    } else {
+      await sleep(300); // 空行は短く
+    }
   }
   await sleep(1200);
   showPrologueBtns(false);
