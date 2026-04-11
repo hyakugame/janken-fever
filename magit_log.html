@@ -51,7 +51,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
 .section-label{font-family:'DotGothic16',sans-serif;font-size:13px;color:#a78bfa;letter-spacing:.15em;margin-bottom:6px;text-align:center}
 .choice-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .cbtn{font-family:'DotGothic16',sans-serif;font-size:clamp(12px,3vw,15px);letter-spacing:.06em;background:rgba(124,58,237,.15);border:1.5px solid rgba(124,58,237,.35);color:#c4b5fd;padding:8px 14px;border-radius:20px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
-.cbtn:active,.cbtn.sel{background:rgba(124,58,237,.45);border-color:#a78bfa;color:#fff;box-shadow:0 0 10px rgba(139,92,246,.4)}
+.cbtn:active,.cbtn.sel{background:rgba(139,92,246,.7)!important;border:2.5px solid #c4b5fd!important;color:#fff!important;box-shadow:0 0 14px rgba(167,139,250,.7),inset 0 0 8px rgba(255,255,255,.1)!important}
 
 /* 問答 */
 .q-num{font-family:'DotGothic16',sans-serif;font-size:12px;color:#7c3aed;letter-spacing:.2em}
@@ -332,17 +332,20 @@ function startChara(){show('s-chara');}
 function pick(key,val,el){
   chara[key]=val;
   // 同じ.choice-row内のsel解除→選択ボタンにsel追加
-  const row=el.closest('.choice-row');
-  if(row) row.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('sel'));
+  const parentRow=el.closest('.choice-row');
+  if(parentRow) parentRow.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
   // 髪型を性別に応じて切り替え
   if(key==='gender'){
-    const row=document.getElementById('hair-row');
+    const hairRow=document.getElementById('hair-row');
     const boy=[['tsum','ツンツンヘア'],['mash','マッシュボブ'],['side','七三分け']];
     const girl=[['pony','ポニーテール'],['bob','ボブカット'],['twin','ツインテール']];
     const list=val==='boy'?boy:girl;
-    row.innerHTML=list.map(([id,lbl])=>`<button class="cbtn" onclick="pick('hair','${id}',this)">${lbl}</button>`).join('');
+    hairRow.innerHTML=list.map(([id,lbl])=>`<button class="cbtn" onclick="pick('hair','${id}',this)">${lbl}</button>`).join('');
     chara.hair='';
+    // 創生儀式ボタンは髪型が未選択なので無効化
+    const nb=document.getElementById('chara-next');
+    nb.style.opacity='0.4';nb.style.pointerEvents='none';
   }
   // 全項目選択されたらボタン有効化
   if(chara.gender&&chara.hair&&chara.eyes&&chara.apt){
