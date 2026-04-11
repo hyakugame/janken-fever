@@ -92,6 +92,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
 <div id="wrap">
 
 <!-- ① プロローグ -->
+<button id="mute-btn" onclick="toggleVoMute()" title="音声ミュート" style="display:none;position:fixed;top:12px;right:14px;z-index:20;font-family:'DotGothic16',sans-serif;font-size:16px;background:rgba(30,8,60,.7);border:1.5px solid rgba(124,58,237,.5);color:#c4b5fd;width:38px;height:38px;border-radius:8px;cursor:pointer;align-items:center;justify-content:center;backdrop-filter:blur(4px);">🔊</button>
 <div class="screen active" id="s-prologue">
   <div class="banner"><img src="magit_log_banner.jpg" alt="マギト・ログ"><div class="banner-overlay"></div></div>
   <div id="prologue-box"></div>
@@ -313,8 +314,19 @@ function showStartBtn(){
 }
 function startPrologue(){
   document.getElementById('prologue-btns').style.display='none';
-  try{const se=new Audio('audio/start_sound.mp3');se.volume=0.7;se.play().catch(()=>{});}catch(e){}
+  // ミュートボタン表示
+  document.getElementById('mute-btn').style.display='flex';
   runPrologue();
+}
+
+// ミュート制御
+let _voMuted=false;
+function toggleVoMute(){
+  _voMuted=!_voMuted;
+  const btn=document.getElementById('mute-btn');
+  btn.textContent=_voMuted?'🔇':'🔊';
+  // 現在VO_CACHEにある全音声にミュート反映
+  Object.values(VO_CACHE).forEach(a=>a.muted=_voMuted);
 }
 
 // 行インデックス→音声番号マップ（空行はnull）
@@ -336,17 +348,19 @@ async function runPrologue(){
     sp.textContent=LINES[i]||'　';
     box.appendChild(sp);
     const vo=getVO(VO_MAP[i]);
-    if(vo){
-      // テキスト表示と同時に音声再生、終わるまで待つ
+    if(vo&&!_voMuted){
+      vo.muted=false;
       await new Promise(res=>{
         vo.currentTime=0;
         vo.onended=()=>{ setTimeout(res,80); };
         vo.onerror=res;
         vo.play().catch(res);
-        setTimeout(res,8000); // 保険：最大8秒
+        setTimeout(res,8000);
       });
+    } else if(vo&&_voMuted){
+      await sleep(600); // ミュート時は0.6秒ごとに次行
     } else {
-      await sleep(300); // 空行は短く
+      await sleep(300);
     }
   }
   await sleep(1200);
@@ -359,8 +373,12 @@ function showPrologueBtns(returning){
     div.innerHTML='<button class="btn btn-purple btn-w" onclick="continueGame()">✦ 続きからはじめる</button>'
       +'<button class="btn btn-outline btn-w" onclick="newGame()">🔄 最初からはじめる</button>';
   } else {
-    div.innerHTML='<button class="btn btn-gold btn-w" onclick="wo(startChara)">✦ Logを起動する</button>';
+    document.getElementById('mute-btn').style.display='none';
+    div.innerHTML='<button class="btn btn-gold btn-w" onclick="playStartSE();wo(startChara)">✦ Logを起動する</button>';
   }
+}
+function playStartSE(){
+  try{const se=new Audio('audio/start_sound.mp3');se.volume=0.7;se.play().catch(()=>{});}catch(e){}
 }
 
 // ── キャラメイク ──
