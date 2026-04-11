@@ -595,15 +595,35 @@ function confirmPName(){
 }
 
 // ── マギト誕生 ──
+// グレー背景除去してdata URL化
+function removeGrayBG(src,cb){
+  const img=new Image();img.crossOrigin='anonymous';
+  img.onload=()=>{
+    const cv=document.createElement('canvas');
+    cv.width=img.naturalWidth;cv.height=img.naturalHeight;
+    const c=cv.getContext('2d');c.drawImage(img,0,0);
+    const id=c.getImageData(0,0,cv.width,cv.height);const d=id.data;
+    for(let i=0;i<d.length;i+=4){
+      const r=d[i],g=d[i+1],b=d[i+2];
+      if(Math.abs(r-g)<28&&Math.abs(g-b)<28&&r>95&&r<180) d[i+3]=0;
+    }
+    c.putImageData(id,0,0);
+    cb(cv.toDataURL('image/png'));
+  };
+  img.src=src;
+}
 function birthMagit(){
   const best=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
   mySpecies=SPECIES[best];
   setColor(mySpecies.color);
   document.getElementById('birth-title').textContent=`「${playerName||'君'}」のログから──`;
-  document.getElementById('magit-img').src=mySpecies.img;
   document.getElementById('species-name').textContent=`『${mySpecies.name}』が産まれた！`;
   document.getElementById('species-desc').textContent=mySpecies.desc;
   show('s-birth');
+  // グレー除去してから画像表示
+  removeGrayBG(mySpecies.img,dataUrl=>{
+    document.getElementById('magit-img').src=dataUrl;
+  });
 }
 function confirmName(){
   const v=document.getElementById('name-input').value.trim();
