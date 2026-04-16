@@ -1406,7 +1406,6 @@ function App() {
   const [nameIn,  setNameIn]  = useState("");
   const [showForm,setShowForm]= useState(false);
   const [hideCompleted,setHideCompleted]=useState(false);
-  const [ocrLoading,setOcrLoading]=useState(false);
   const [showPhoto,setShowPhoto]=useState(false);
   const [showSettings,setShowSettings]=useState(false);
   const [svc,     setSvc]     = useState("ubereats");
@@ -1433,20 +1432,6 @@ function App() {
     const total = quests.reduce((s,q)=>s+(q.done||0),0);
     if('setAppBadge' in navigator) navigator.setAppBadge(total).catch(()=>{});
   }, [quests]);
-
-  // URLパラメータからprefill読み取り（OCRウィジェット連携）
-  useEffect(() => {
-    const p = new URLSearchParams(location.search).get('prefill');
-    if(!p) return;
-    try {
-      const data = JSON.parse(decodeURIComponent(p));
-      if(data.service && SVC[data.service]) setSvc(data.service);
-      setPrefill(data);
-      setShowForm(true);
-      history.replaceState(null,'',location.pathname);
-    } catch(e){}
-  }, []);
-
   const reload = useCallback(async () => {
     try {
       const list = await loadQ();
@@ -1520,39 +1505,7 @@ function App() {
     setShowForm(true);
   };
 
-  const handleOcr = async (file) => {
-    const key = localStorage.getItem('hkg_anthropic_key')||'';
-    if(!key){ alert('⚙️設定からAPIキーを入力してください'); return; }
-    setOcrLoading(true);
-    try {
-      const b64 = await new Promise(res=>{
-        const reader=new FileReader();
-        reader.onload=()=>res(reader.result.split(',')[1]);
-        reader.readAsDataURL(file);
-      });
-      const resp = await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':key,
-          'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,
-          messages:[{role:'user',content:[
-            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
-            {type:'text',text:'配達クエスト画像からJSONのみ返してください。\n{"service":"ubereats"|"rocket"|"demae","date":"YYYY-MM-DD","startTime":"HH:MM","endTime":"HH:MM","deadline":"HH:MMまたはnull","completionRate":数値またはnull,"bonusExtra":数値またはnull,"steps":[{"count":件数,"reward":報酷}]}'}
-          ]}]})
-      });
-      const data=await resp.json();
-      if(data.error) throw new Error(data.error.message);
-      const json=JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
-      const bonuses=(json.steps||[]).reduce((acc,st)=>[...acc,{count:(acc.length?acc[acc.length-1].count:0)+st.count,reward:st.reward}],[]);
-      const goal=bonuses.length?bonuses[bonuses.length-1].count:0;
-      if(SVC[json.service]) setSvc(json.service);
-      setPrefill({date:json.date||todayStr(),startTime:json.startTime||'',endTime:json.endTime||'',
-        deadline:json.deadline||'',completionRate:json.completionRate||null,
-        bonusExtra:json.bonusExtra||null,bonuses,goal});
-      setShowForm(true);
-    } catch(e){ alert('OCR失敗: '+e.message); }
-    finally{ setOcrLoading(false); }
-  };
+};
 
   const handleCopy = (src) => {
     if(SVC[src.service]) setSvc(src.service);
@@ -1667,10 +1620,6 @@ function App() {
             borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:14,flexShrink:0,
           }}>⚙️</button>
           <button onClick={() => setHideCompleted(v=>!v)} style={{background:hideCompleted?"#1e3a2f":"#0f1520",border:"1px solid "+(hideCompleted?"#22c55e":"#1e293b"),color:hideCompleted?"#22c55e":"#64748b",borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:12,flexShrink:0,fontWeight:hideCompleted?700:400,}}>{hideCompleted?"✓完了非表示":"完了を隐す"}</button>
-          <label style={{background:"#0f1520",border:"1px solid #1e293b",color:ocrLoading?"#fbbf24":"#64748b",borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:12,flexShrink:0,display:"flex",alignItems:"center",gap:3}}>
-            {ocrLoading?"読込中...":"📷 OCR"}
-            <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>{if(e.target.files[0]){handleOcr(e.target.files[0]);e.target.value='';}}}/>
-          </label>
           <button onClick={() => setShowForm(!showForm)} style={{
             background: showForm
               ? "#374151"
@@ -1695,23 +1644,7 @@ function App() {
               <div style={{fontSize:15,fontWeight:800}}>⚙️ 設定</div>
               <button onClick={()=>setShowSettings(false)} style={{background:"none",border:"none",color:MUTED,fontSize:20,cursor:"pointer"}}>✕</button>
             </div>
-            <div style={{marginBottom:16}}>
-              <div style={{fontSize:12,color:MUTED,fontWeight:700,marginBottom:6}}>Anthropic APIキー (OCR機能)</div>
-              <input
-                type="password"
-                placeholder="sk-ant-..."
-                defaultValue={localStorage.getItem('hkg_anthropic_key')||''}
-                onBlur={e=>{
-                  const v=e.target.value.trim();
-                  if(v) localStorage.setItem('hkg_anthropic_key',v);
-                  else localStorage.removeItem('hkg_anthropic_key');
-                }}
-                style={{width:'100%',background:'#0a0f1a',border:'1px solid #1e293b',
-                  borderRadius:8,padding:'8px 10px',color:'#f1f5f9',fontSize:12,
-                  boxSizing:'border-box',outline:'none'}}
-              />
-              <div style={{fontSize:10,color:'#374151',marginTop:4}}>入力すると📷 OCRボタンが有効になります</div>
-            </div>
+            
             <div style={{fontSize:12,color:MUTED,fontWeight:700,marginBottom:10}}>使用するサービス</div>
             {Object.entries(SVC).map(([key,sv]) => {
               const on = enabledSvc[key];
