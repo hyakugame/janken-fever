@@ -272,7 +272,7 @@ function RewardPanel({ q }) {
 /* ══════════════════════════════════════
    クエストカード
 ══════════════════════════════════════ */
-function QuestCard({ q, me, onUpdate, onDelete }) {
+function QuestCard({ q, me, onUpdate, onDelete, onCopy }) {
   const svc      = SVC[q.service] || SVC.rocket;
   const done     = q.done || 0;
   const rejected = q.rejected || 0;
@@ -337,10 +337,11 @@ function QuestCard({ q, me, onUpdate, onDelete }) {
               textShadow:"0 0 10px #22c55e"}}>✓ 達成！</span>
           )}
           {me===q.owner && !achieved && (
+            <><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:13,cursor:"pointer",padding:"0 3px"}} title="複製">📋</button>
             <button onClick={() => onDelete(q.id)} style={{
               background:"none",border:"none",color:"#475569",
               fontSize:16,cursor:"pointer",padding:"0 4px",
-            }}>✕</button>
+            }}>✕</button></>
           )}
         </div>
       </div>
@@ -1414,6 +1415,17 @@ function App() {
     }));
   };
 
+  const handleCopy = async (src) => {
+    const q = {
+      ...src,
+      id: Date.now().toString(),
+      done: 0, rejected: 0, received: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    await persist([q, ...quests]);
+  };
+
   const handleDelete = async (id) => {
     if(!confirm("削除しますか？")) return;
     const updated = quests.filter(q => q.id !== id);
@@ -1655,7 +1667,7 @@ function App() {
         <div style={{padding:"10px 12px",display:"flex",flexDirection:"column",gap:10}}>
           {quests.map(q => (
             <QuestCard key={q.id} q={q} me={me}
-              onUpdate={handleUpdate} onDelete={handleDelete}/>
+              onUpdate={handleUpdate} onDelete={handleDelete} onCopy={handleCopy}/>
           ))}
         </div>
       )}
