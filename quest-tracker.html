@@ -1482,10 +1482,8 @@ function App() {
       const _cur = q.done || 0;
       const _nextStep = _steps.find(s => s.count > _cur);
       const _prevStep2 = [..._steps].reverse().find(s=>s.count<=_cur);
-      const _achieved2 = (q.done||0) >= q.goal;
-      const _prevMin = _achieved2 ? 0 : (_prevStep2 ? _prevStep2.count : 0);
-      const max = field==="done" ? (_achieved2 ? q.goal : (_nextStep ? _nextStep.count : q.goal)) : 999;
-      const min = field==="done" ? _prevMin : 0;
+        const max = field==="done" ? (_nextStep ? _nextStep.count : q.goal) : 999;
+      const min = 0;
       return {...q, [field]: Math.max(min,Math.min(max,cur+delta)),
         updatedAt: new Date().toISOString()};
     }));
