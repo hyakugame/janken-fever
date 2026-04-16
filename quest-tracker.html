@@ -160,9 +160,9 @@ function EndBadge({ endTime }) {
       minWidth: 0,
     }}>
       <div style={{fontSize:13,fontWeight:900,color:col,lineHeight:1,whiteSpace:"nowrap"}}>
-        {over ? `⚠️${Math.abs(min)}分超` : `残り${min}分`}
+        {over ? `⚠️${Math.abs(min)}分超過` : `終了まで${min}分`}
       </div>
-      <div style={{fontSize:9,color:MUTED,marginTop:3,whiteSpace:"nowrap"}}>〜{endTime}</div>
+      <div style={{fontSize:9,color:MUTED,marginTop:3,whiteSpace:"nowrap"}}>終了 {endTime}</div>
     </div>
   );
 }
@@ -1415,15 +1415,14 @@ function App() {
     }));
   };
 
-  const handleCopy = async (src) => {
-    const q = {
+  const handleCopy = (src) => {
+    if(SVC[src.service]) setSvc(src.service);
+    const p = {
       ...src,
-      id: Date.now().toString(),
-      done: 0, rejected: 0, received: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      bonusBase: src.bonuses?.[0]?.reward ?? null,
     };
-    await persist([q, ...quests]);
+    setPrefill(p);
+    setShowForm(true);
   };
 
   const handleDelete = async (id) => {
