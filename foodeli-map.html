@@ -110,6 +110,33 @@
     .detail-badge[data-c="history"] { background:rgba(34,197,94,0.18);  color:#4ade80; }
     .detail-memo { background:var(--bg); border-radius:10px; padding:12px; font-size:14px; line-height:1.7; white-space:pre-wrap; margin-bottom:10px; min-height:48px; }
     .detail-meta { font-size:12px; color:var(--muted); margin-bottom:14px; }
+    /* 追跡ボタン */
+    .track-btn {
+      position:fixed; bottom:94px; left:20px;
+      background:var(--surface); border:1px solid var(--border);
+      color:var(--text); border-radius:22px;
+      padding:10px 16px; font-size:13px; font-weight:600;
+      cursor:pointer; z-index:500;
+      box-shadow:0 2px 8px rgba(0,0,0,0.3);
+      display:flex; align-items:center; gap:6px;
+    }
+    .track-btn.tracking { background:#22c55e; border-color:#22c55e; color:white; box-shadow:0 2px 12px rgba(34,197,94,0.5); }
+    /* 近接アラート */
+    .near-alert {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--surface); border-top:2px solid var(--danger);
+      border-radius:20px 20px 0 0; padding:16px 18px 28px;
+      z-index:2000; transform:translateY(100%);
+      transition:transform 0.3s ease;
+      box-shadow:0 -4px 24px rgba(239,68,68,0.3);
+    }
+    .near-alert.show { transform:translateY(0); }
+    .near-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+    .near-header > span:first-child { font-size:32px; flex-shrink:0; }
+    .near-name { font-size:16px; font-weight:700; margin-bottom:4px; }
+    .near-sub { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
+    .near-close { margin-left:auto; background:var(--bg); border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:4px 8px; cursor:pointer; flex-shrink:0; }
+    .near-memo { background:var(--bg); border-radius:10px; padding:10px 12px; font-size:13px; line-height:1.7; white-space:pre-wrap; }
     .toast {
       position:fixed; top:72px; left:50%; transform:translateX(-50%);
       background:var(--surface2); border:1px solid var(--border);
@@ -155,6 +182,27 @@
 
 <button class="locate-btn" onclick="locateMe()">📍</button>
 <button class="fab" id="fab" onclick="toggleAddMode()">＋</button>
+<button class="track-btn" id="trackBtn" onclick="toggleTracking()">🚴 追跡開始</button>
+
+<!-- 近接アラート -->
+<div class="near-alert" id="nearAlert">
+  <div class="near-header">
+    <span id="nearIcon" style="font-size:32px">📝</span>
+    <div style="flex:1">
+      <div class="near-name" id="nearName"></div>
+      <div class="near-sub">
+        <span class="detail-badge" id="nearCat" data-c="note" style="margin-bottom:0;padding:2px 8px;font-size:11px"></span>
+        <span id="nearDist" style="color:var(--danger);font-weight:700"></span>
+      </div>
+    </div>
+    <button class="near-close" onclick="document.getElementById('nearAlert').classList.remove('show')">✕</button>
+  </div>
+  <div class="near-memo" id="nearMemo"></div>
+  <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:13px"
+    onclick="openView(document.getElementById('nearAlert').dataset.spotId);document.getElementById('nearAlert').classList.remove('show')">
+    詳細を見る →
+  </button>
+</div>
 
 <div class="overlay" id="addOverlay">
   <div class="sheet">
@@ -247,18 +295,26 @@ window.initMap = function() {
 
 function makeMarker(spot) {
   const c = CATS[spot.category]||CATS.note;
-  const div = document.createElement('div');
-  div.innerHTML = `<div class="gm-pin" style="background:${c.color}"><span>${c.emoji}</span></div>`;
-  const marker = new google.maps.marker.AdvancedMarkerElement({
-    map, position:{lat:spot.lat,lng:spot.lng},
-    content:div, title:spot.name||c.label,
+  const marker = new google.maps.Marker({
+    map,
+    position:{lat:spot.lat,lng:spot.lng},
+    title:spot.name||c.label,
+    icon:{
+      path:google.maps.SymbolPath.CIRCLE,
+      scale:14,
+      fillColor:c.color,
+      fillOpacity:1,
+      strokeColor:'white',
+      strokeWeight:2,
+    },
+    label:{text:c.emoji,fontSize:'13px',color:'white'},
   });
   marker.addListener('click', ()=>openView(spot.id));
   return marker;
 }
 
 function renderMarkers() {
-  markers.forEach(m=>{ m.map=null; });
+  markers.forEach(m=>{ m.setMap(null); });
   markers=[];
   const list = filter==='all' ? spots : spots.filter(s=>s.category===filter);
   list.forEach(spot=>markers.push(makeMarker(spot)));
@@ -423,7 +479,96 @@ function setSyncStatus(s){document.getElementById('syncStatus').textContent=s;}
     if(e.target===this) this.classList.remove('show');
   });
 });
+
+// ===== 近接通知 =====
+const ALERT_RADIUS = 50; // メートル
+let watchId = null;
+let notifiedIds = new Set();
+let trackingMode = false;
+let currentPosMarker = null;
+
+function getDistance(lat1,lng1,lat2,lng2){
+  const R=6371000;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function toggleTracking(){
+  const btn=document.getElementById('trackBtn');
+  if(trackingMode){
+    // 停止
+    navigator.geolocation.clearWatch(watchId);
+    watchId=null; trackingMode=false;
+    notifiedIds.clear();
+    if(currentPosMarker) currentPosMarker.setMap(null);
+    btn.textContent='🚴 追跡開始'; btn.classList.remove('tracking');
+    toast('📴 追跡を停止しました');
+  } else {
+    // 開始
+    if(!navigator.geolocation){toast('位置情報が使えません');return;}
+    Notification.requestPermission();
+    trackingMode=true;
+    btn.textContent='⏹ 追跡中...'; btn.classList.add('tracking');
+    toast('🚴 追跡開始！近くのスポットをお知らせします');
+    watchId=navigator.geolocation.watchPosition(onPosition,
+      ()=>toast('⚠️ 位置情報エラー'),
+      {enableHighAccuracy:true,maximumAge:3000,timeout:10000}
+    );
+  }
+}
+
+function onPosition(pos){
+  const lat=pos.coords.latitude, lng=pos.coords.longitude;
+
+  // 現在地マーカー更新
+  if(currentPosMarker) currentPosMarker.setMap(null);
+  currentPosMarker=new google.maps.Marker({
+    map, position:{lat,lng},
+    icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#3b82f6',fillOpacity:1,strokeColor:'white',strokeWeight:3},
+    zIndex:999,
+  });
+
+  // 近接チェック
+  spots.forEach(spot=>{
+    const dist=getDistance(lat,lng,spot.lat,spot.lng);
+    if(dist<=ALERT_RADIUS && !notifiedIds.has(spot.id)){
+      notifiedIds.add(spot.id);
+      showNearAlert(spot,Math.round(dist));
+    }
+    // 離れたらリセット
+    if(dist>ALERT_RADIUS*2) notifiedIds.delete(spot.id);
+  });
+}
+
+function showNearAlert(spot,dist){
+  const c=CATS[spot.category]||CATS.note;
+  // バイブ
+  if(navigator.vibrate) navigator.vibrate([200,100,200]);
+  // ブラウザ通知
+  if(Notification.permission==='granted'){
+    new Notification(`${c.emoji} ${spot.name||c.label}（${dist}m先）`,{
+      body: spot.memo||'メモなし',
+      icon: '🛵',
+      tag: spot.id,
+    });
+  }
+  // 画面内アラート
+  const alert=document.getElementById('nearAlert');
+  document.getElementById('nearIcon').textContent=c.emoji;
+  document.getElementById('nearName').textContent=spot.name||c.label;
+  document.getElementById('nearDist').textContent=dist+'m先';
+  document.getElementById('nearMemo').textContent=spot.memo||'（メモなし）';
+  document.getElementById('nearCat').textContent=c.label;
+  document.getElementById('nearCat').dataset.c=spot.category;
+  alert.dataset.spotId=spot.id;
+  alert.classList.add('show');
+  // 8秒で自動閉じ
+  clearTimeout(alert._t);
+  alert._t=setTimeout(()=>alert.classList.remove('show'),8000);
+}
 </script>
-<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC18novTnBkqew1_LksoQ9E6MLSqR6a_-8&libraries=marker&callback=initMap&loading=async"></script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC18novTnBkqew1_LksoQ9E6MLSqR6a_-8&callback=initMap&loading=async"></script>
 </body>
 </html>
