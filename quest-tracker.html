@@ -1209,6 +1209,7 @@ function App() {
     const total = quests.reduce((s,q)=>s+(q.done||0),0);
     if('setAppBadge' in navigator) navigator.setAppBadge(total).catch(()=>{});
   }, [quests]);
+
   const reload = useCallback(async () => {
     try {
       const list = await loadQ();
@@ -1281,8 +1282,6 @@ function App() {
     setPrefill({...src, _editId:src.id, bonusBase:src.bonuses?.[0]?.reward??null});
     setShowForm(true);
   };
-
-};
 
   const handleCopy = (src) => {
     if(SVC[src.service]) setSvc(src.service);
@@ -1396,7 +1395,7 @@ function App() {
             background:"#1e293b",border:"none",color:MUTED,
             borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:14,flexShrink:0,
           }}>⚙️</button>
-          <button onClick={() => setHideCompleted(v=>!v)} style={{background:hideCompleted?"#1e3a2f":"#0f1520",border:"1px solid "+(hideCompleted?"#22c55e":"#1e293b"),color:hideCompleted?"#22c55e":"#64748b",borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:12,flexShrink:0,fontWeight:hideCompleted?700:400,}}>{hideCompleted?"✓完了非表示":"完了を隐す"}</button>
+          <button onClick={() => setHideCompleted(v=>!v)} style={{background:hideCompleted?"#1e3a2f":"#0f1520",border:"1px solid "+(hideCompleted?"#22c55e":"#1e293b"),color:hideCompleted?"#22c55e":"#64748b",borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:12,flexShrink:0,fontWeight:hideCompleted?700:400,}}>{hideCompleted?"✓完了非表示":"完了を隠す"}</button>
           <button onClick={() => setShowForm(!showForm)} style={{
             background: showForm
               ? "#374151"
@@ -1421,7 +1420,6 @@ function App() {
               <div style={{fontSize:15,fontWeight:800}}>⚙️ 設定</div>
               <button onClick={()=>setShowSettings(false)} style={{background:"none",border:"none",color:MUTED,fontSize:20,cursor:"pointer"}}>✕</button>
             </div>
-            
             <div style={{fontSize:12,color:MUTED,fontWeight:700,marginBottom:10}}>使用するサービス</div>
             {Object.entries(SVC).map(([key,sv]) => {
               const on = enabledSvc[key];
@@ -1463,7 +1461,6 @@ function App() {
         </div>
       )}
 
-      
       {/* ── 登録フォーム ── */}
       {showForm && (
         <div style={{padding:"10px 12px 4px"}}>
