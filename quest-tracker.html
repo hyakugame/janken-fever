@@ -1131,6 +1131,7 @@ function App() {
   const [me,      setMe]      = useState(() => localStorage.getItem("qt_name")||"");
   const [nameIn,  setNameIn]  = useState("");
   const [showForm,setShowForm]= useState(false);
+  const [hideCompleted,setHideCompleted]=useState(false);
   const [showSettings,setShowSettings]=useState(false);
   const [svc,     setSvc]     = useState("ubereats");
   const [enabledSvc, setEnabledSvc] = useState(() => {
