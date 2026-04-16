@@ -223,10 +223,11 @@ function RewardPanel({ q }) {
           <div style={{flex:1,minWidth:0}}>
             {steps.map((s,i) => {
               const ok = done >= s.count;
+              const stepCount = s.count - (i>0 ? steps[i-1].count : 0);
               return (
                 <div key={i} style={{fontSize:10,color:ok?"#22c55e":MUTED,marginBottom:2,
                   display:"flex",justifyContent:"space-between"}}>
-                  <span>{ok?"✓":"◯"} {s.count}件達成</span>
+                  <span>{ok?"✓":"◯"} {i===0?stepCount:"+"+stepCount}件達成</span>
                   <span style={{fontWeight:700}}>¥{s.reward.toLocaleString()}</span>
                 </div>
               );
@@ -1107,7 +1108,7 @@ function DemaeForm({ onAdd, prefill }) {
 ══════════════════════════════════════ */
 function UEForm({ onAdd, prefill }) {
   const [f,setF] = useState({ date:todayStr(), dateTo:"", isRange:false, start:"17:00", end:"20:30", area:"" });
-  const [steps, setSteps] = useState([{count:"3",reward:"300"},{count:"8",reward:"700"}]);
+  const [steps, setSteps] = useState([{count:"3",reward:"300"},{count:"3",reward:"700"}]);
   const s = (k,v) => setF(p=>({...p,[k]:v}));
   const addStep    = () => setSteps(p=>[...p,{count:"",reward:""}]);
   const removeStep = (i) => setSteps(p=>p.filter((_,idx)=>idx!==i));
