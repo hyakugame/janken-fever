@@ -1021,7 +1021,11 @@ function DemaeForm({ onAdd, prefill }) {
   useEffect(()=>{
     if(!prefill) return;
     setF(p=>({...p, date:prefill.date||p.date, start:prefill.startTime||p.start, end:prefill.endTime||p.end}));
-    if(prefill.goal!=null) setSteps(p=>{const n=[...p]; n[n.length-1]={...n[n.length-1],count:String(prefill.goal)}; return n;});
+    if(prefill.bonuses && prefill.bonuses.length > 0) {
+      setSteps(prefill.bonuses.map(b=>({count:String(b.count),reward:String(b.reward)})));
+    } else if(prefill.goal!=null) {
+      setSteps(p=>{const n=[...p]; n[n.length-1]={...n[n.length-1],count:String(prefill.goal)}; return n;});
+    }
   },[prefill]);
 
   const goal    = parseInt(steps[steps.length-1]?.count||0);
@@ -1085,7 +1089,11 @@ function UEForm({ onAdd, prefill }) {
   useEffect(()=>{
     if(!prefill) return;
     setF(p=>({...p, date:prefill.date||p.date, start:prefill.startTime||p.start, end:prefill.endTime||p.end}));
-    if(prefill.goal!=null) setSteps(p=>{const n=[...p]; n[n.length-1]={...n[n.length-1],count:String(prefill.goal)}; return n;});
+    if(prefill.bonuses && prefill.bonuses.length > 0) {
+      setSteps(prefill.bonuses.map(b=>({count:String(b.count),reward:String(b.reward)})));
+    } else if(prefill.goal!=null) {
+      setSteps(p=>{const n=[...p]; n[n.length-1]={...n[n.length-1],count:String(prefill.goal)}; return n;});
+    }
   },[prefill]);
 
   const goal    = parseInt(steps[steps.length-1]?.count||0);
