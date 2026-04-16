@@ -1183,30 +1183,7 @@ function CounterPanel({ quests, onUpdate }) {
     ubereats: ["完了"],
   };
 
-  function ScrollTopBtn() {
-  const [vis, setVis] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setVis(window.scrollY > 200);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-  if(!vis) return null;
-  return (
-    <button
-      onClick={() => window.scrollTo({top:0, behavior:'smooth'})}
-      style={{
-        position:'fixed', bottom:84, left:16, zIndex:60,
-        background:'#1e293b', border:'1px solid #334155',
-        borderRadius:24, width:44, height:44,
-        color:'#94a3b8', fontSize:20, cursor:'pointer',
-        display:'flex', alignItems:'center', justifyContent:'center',
-        boxShadow:'0 4px 16px rgba(0,0,0,.6)',
-      }}
-    >↑</button>
-  );
-}
-
-  const activeQuests = quests.filter(q => q.done < q.goal);
+    const activeQuests = quests.filter(q => q.done < q.goal);
 
   return (
     <div style={{
@@ -1398,6 +1375,27 @@ const plusBtn = {
 /* ══════════════════════════════════════
    メイン App
 ══════════════════════════════════════ */
+function ScrollTopBtn() {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVis(window.scrollY > 200);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  if(!vis) return null;
+  return (
+    <button onClick={() => window.scrollTo({top:0,behavior:'smooth'})}
+      style={{position:'fixed',bottom:84,left:16,zIndex:60,
+        background:'#1e293b',border:'1px solid #334155',
+        borderRadius:24,width:44,height:44,color:'#94a3b8',
+        fontSize:20,cursor:'pointer',display:'flex',
+        alignItems:'center',justifyContent:'center',
+        boxShadow:'0 4px 16px rgba(0,0,0,.6)'}}>
+      ↑
+    </button>
+  );
+}
+
 function App() {
   const [quests,  setQuests]  = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1756,6 +1754,7 @@ function App() {
       </div>
       <CounterPanel quests={quests} onUpdate={handleUpdate}/>
       <ScrollTopBtn/>
+      {/* TOPへ戻るボタン */}
     </div>
   );
 }
