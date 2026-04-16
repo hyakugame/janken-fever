@@ -272,7 +272,7 @@ function RewardPanel({ q }) {
 /* ══════════════════════════════════════
    クエストカード
 ══════════════════════════════════════ */
-function QuestCard({ q, me, onUpdate, onDelete, onCopy }) {
+function QuestCard({ q, me, onUpdate, onDelete, onCopy, onMove, questIdx, questCount }) {
   const svc      = SVC[q.service] || SVC.rocket;
   const done     = q.done || 0;
   const rejected = q.rejected || 0;
