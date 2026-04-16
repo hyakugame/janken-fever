@@ -397,10 +397,10 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onMove, questIdx, questC
               : left<=2 ? "0 0 24px #ef4444"
               : `0 0 24px ${BLUE}`,
           }}>
-            {achieved ? "✓" : left}
+            {achieved ? "✓" : done}
           </div>
           <div style={{fontSize:10,color:MUTED,marginTop:4}}>
-            {achieved ? "達成" : "件残り"}
+            {achieved ? "達成" : "/" + nextGoal + "件"}
           </div>
           {stepLabel && !achieved && (
             <div style={{
