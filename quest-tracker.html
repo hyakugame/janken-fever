@@ -579,7 +579,7 @@ function Field({ label, type, val, set, placeholder }) {
       <Lbl>{label}</Lbl>
       <input
         type={type}
-        style={INPUT}
+        style={INP}
         value={val}
         onChange={e => set(e.target.value)}
         placeholder={placeholder}
@@ -730,7 +730,7 @@ function RocketForm({ onAdd, prefill }) {
         </Row2>
       ) : (
         <div style={{marginBottom:12}}>
-          <input type="date" style={INPUT} value={f.date} onChange={e=>s("date",e.target.value)}/>
+          <input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/>
         </div>
       )}
       <SecHead>全体の時間</SecHead>
@@ -810,7 +810,7 @@ function DemaeForm({ onAdd, prefill }) {
           <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
         </Row2>
       ) : (
-        <div style={{marginBottom:12}}><input type="date" style={INPUT} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
+        <div style={{marginBottom:12}}><input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
       )}
       <Row2>
         <Field label="開始時刻" type="time" val={f.start} set={v=>s("start",v)}/>
@@ -878,7 +878,7 @@ function UEForm({ onAdd, prefill }) {
           <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
         </Row2>
       ) : (
-        <div style={{marginBottom:12}}><input type="date" style={INPUT} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
+        <div style={{marginBottom:12}}><input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
       )}
       <Row2>
         <Field label="開始時刻" type="time" val={f.start} set={v=>s("start",v)}/>
@@ -1201,7 +1201,7 @@ function App() {
         }}>
           <Lbl>あなたの名前</Lbl>
           <input
-            style={INPUT} value={nameIn}
+            style={INP} value={nameIn}
             onChange={e => setNameIn(e.target.value)}
             onKeyDown={e => e.key==="Enter" && nameIn.trim() &&
               (localStorage.setItem("qt_name",nameIn.trim()), setMe(nameIn.trim()))}
