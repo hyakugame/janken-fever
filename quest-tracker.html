@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="クエスト管理">
+  <meta name="theme-color" content="#080c14">
+  <title>クエスト進捗管理</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { margin: 0; padding: 0; background: #080c14; font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; }
+    input[type="date"], input[type="time"] { -webkit-appearance: none; appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-presets="react">
+const { useState, useEffect, useCallback, useRef } = React;
+
+/* ══════════════════════════════════════
+   定数・カラー
+══════════════════════════════════════ */
+const SVC = {
+  ubereats: { label:"Uber Eats",   icon:"🐸", color:"#22c55e", dark:"#031a07" },
+  rocket:   { label:"ロケットナウ", icon:"🚀", color:"#ff6b35", dark:"#1a0a03" },
+  demae:    { label:"出前館",       icon:"🥫", color:"#ef4444", dark:"#1a0303" },
+};
+const BG    = "#080c14";
+const CARD  = "#0f1520";
+const INPUT = "#0a0e16";
+const BDR   = "#1e293b";
+const TEXT  = "#f1f5f9";
+const MUTED = "#64748b";
+const BLUE  = "#38bdf8";
+const PURP  = "#a78bfa";
+
+/* ══════════════════════════════════════
+   ユーティリティ
+══════════════════════════════════════ */
+const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+
+function remMin(t) {
+  if(!t) return 9999;
+  const [h,m] = t.split(":").map(Number);
+  if(isNaN(h)||isNaN(m)) return 9999;
+  const e = new Date(); e.setHours(h,m,0,0);
+  let diff = Math.floor((e - Date.now()) / 60000);
+  if(diff < -720) diff += 1440;
+  return diff;
+}
+function fmtDate(iso) {
+  if(!iso) return "";
+  const [y,mo,d] = iso.split("-");
+  const dow = ["日","月","火","水","木","金","土"][new Date(`${y}-${mo}-${d}`).getDay()];
+  return `${y}/${mo}/${d}(${dow})`;
+}
+function hhmm(d) {
+  return d.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+}
+function timeAgo(iso) {
+  const s = Math.floor((Date.now()-new Date(iso))/1000);
+  if(s<60) return `${s}秒前`;
+  if(s<3600) return `${Math.floor(s/60)}分前`;
+  return `${Math.floor(s/3600)}時間前`;
+}
+
+/* ══════════════════════════════════════
+   ストレージ（共有）
+══════════════════════════════════════ */
+async function loadQ() {
+  try {
+    const raw = localStorage.getItem("qt5");
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+async function saveQ(list) {
+  localStorage.setItem("qt5", JSON.stringify(list));
+}
+
+/* ══════════════════════════════════════
+   カスタムフック: カウントダウン
+══════════════════════════════════════ */
+function useCountdown(endTime) {
+  const [min, setMin] = useState(() => remMin(endTime));
+  useEffect(() => {
+    const t = setInterval(() => setMin(remMin(endTime)), 10000);
+    return () => clearInterval(t);
+  }, [endTime]);
+  return min;
+}
+
+/* ══════════════════════════════════════
+   締切カウントダウンバッジ
+══════════════════════════════════════ */
+function DeadlineBadge({ time, label, firstOrderDone }) {
+  const min = useCountdown(time);
+  const over   = min < 0;
+  const urgent = !over && min <= 30;
+  const col = over ? "#ef4444" : urgent ? "#fb923c" : "#fbbf24";
+  const bg  = over ? "#1f0505" : urgent ? "#1f1005" : "#1a1a05";
+
+  // 初回受注済みならグレーアウト
+  if(firstOrderDone) return (
+    <div style={{
+      background:"#0a0f1a", border:"1px solid #1e293b",
+      borderRadius:10, padding:"8px 14px", marginBottom:8,
+      display:"flex", justifyContent:"space-between", alignItems:"center",
+    }}>
+      <span style={{fontSize:12,color:"#374151",textDecoration:"line-through"}}>
+        ⚠️ {label}: {time}まで
+      </span>
+      <span style={{fontSize:11,color:"#22c55e",fontWeight:700}}>✓ 受注済み</span>
+    </div>
+  );
+
+  return (
+    <div style={{
+      background: bg,
+      border: `1px solid ${col}`,
+      borderRadius: 10,
+      padding: "10px 14px",
+      marginBottom: 8,
+      boxShadow: `0 0 12px ${col}40`,
+    }}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
+        <span style={{fontSize:12,color:col,fontWeight:700,flexShrink:0}}>
+          ⚠️ {label}: {time}まで
+        </span>
+        <span style={{fontSize:15,fontWeight:900,color:col,whiteSpace:"nowrap"}}>
+          {(() => { const a=Math.abs(min),hh=Math.floor(a/60),mm=a%60; return over?(hh>0?`${hh}h${mm}m超過！`:`${mm}分超過！`):(hh>0?`残${hh}h${mm}m`:`残${mm}分`); })()}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   終了時刻バッジ
+══════════════════════════════════════ */
+function EndBadge({ endTime, startTime }) {
+  const minToEnd   = useCountdown(endTime);
+  const minToStart = useCountdown(startTime);
+  if(!endTime) return null;
+
+  // 開始前
+  if(startTime && minToStart > 0) {
+    const d = Math.floor(minToStart / 1440);
+    const h = Math.floor((minToStart % 1440) / 60);
+    const m = minToStart % 60;
+    const label = d >= 1 ? `${d}日${h}h後` : h >= 1 ? `${h}h${m}m後` : `${m}分後`;
+    return (
+      <div style={{textAlign:"center",background:"#0a0f1a",border:"1px solid #1e293b",
+        borderRadius:8,padding:"8px 6px",minWidth:0}}>
+        <div style={{fontSize:10,color:MUTED,lineHeight:1,whiteSpace:"nowrap"}}>開始まで</div>
+        <div style={{fontSize:12,fontWeight:900,color:"#64748b",whiteSpace:"nowrap",marginTop:2}}>{label}</div>
+        <div style={{fontSize:9,color:"#374151",marginTop:3,whiteSpace:"nowrap"}}>{startTime}〜</div>
+      </div>
+    );
+  }
+
+  // 開始後
+  const over   = minToEnd < 0;
+  const urgent = !over && minToEnd <= 15;
+  const warn   = !over && minToEnd <= 30;
+  const col = over ? "#ef4444" : urgent ? "#fb923c" : warn ? "#fbbf24" : "#34d399";
+  const abs = Math.abs(minToEnd);
+  const dh = Math.floor(abs / 60); const dm = abs % 60;
+  const timeLabel = over
+    ? (dh >= 1 ? `⚠️${dh}h${dm}m超` : `⚠️${abs}分超`)
+    : (dh >= 1 ? `残${dh}h${dm}m` : `残${abs}分`);
+  return (
+    <div style={{textAlign:"center",background:`${col}18`,border:`1px solid ${col}`,
+      borderRadius:8,padding:"8px 6px",boxShadow:`0 0 10px ${col}40`,minWidth:0}}>
+      <div style={{fontSize:12,fontWeight:900,color:col,lineHeight:1,whiteSpace:"nowrap"}}>
+        {timeLabel}
+      </div>
+      <div style={{fontSize:9,color:MUTED,marginTop:3,whiteSpace:"nowrap"}}>終了 {endTime}</div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   報酬パネル
+══════════════════════════════════════ */
+function RewardPanel({ q }) {
+  const done     = q.done || 0;
+  const rejected = q.rejected || 0;
+  const total    = done + rejected;
+  const compRate = total > 0 ? Math.round(done / total * 100) : 100;
+  const rateThreshold = parseInt(q.completionRate || 0);
+  const rateOk   = !rateThreshold || compRate >= rateThreshold;
+
+  // ── マルチステップ対応 ──
+  const steps    = [...(q.bonuses||[])].sort((a,b)=>a.count-b.count);
+  const isMulti  = steps.length > 1;
+  const bonusExt = parseInt(q.bonusExtra || 0);
+
+  // 各ステップの達成確認・累計報酬
+  const earned = steps.filter(s=>done>=s.count).reduce((sum,s)=>sum+s.reward,0)
+                 + (done>=q.goal && bonusExt && rateOk ? bonusExt : 0);
+  const maxBonus = steps.reduce((sum,s)=>sum+s.reward,0) + bonusExt;
+  const allOk    = done >= q.goal;
+
+  if(isMulti) {
+    return (
+      <div style={{
+        background: allOk ? "#051a05" : CARD,
+        border: `1px solid ${allOk ? "#22c55e" : BDR}`,
+        borderRadius: 10, padding: "10px 14px",
+        boxShadow: allOk ? "0 0 20px #22c55e40" : "none",
+        transition: "all 0.4s",
+      }}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
+          <div style={{flex:1,minWidth:0}}>
+            {steps.map((s,i) => {
+              const ok = done >= s.count;
+              const stepCount = s.count - (i>0 ? steps[i-1].count : 0);
+              return (
+                <div key={i} style={{fontSize:10,color:ok?"#22c55e":MUTED,marginBottom:2,
+                  display:"flex",justifyContent:"space-between"}}>
+                  <span>{ok?"✓":"◯"} {i===0?stepCount:"+"+stepCount}件達成</span>
+                  <span style={{fontWeight:700}}>¥{s.reward.toLocaleString()}</span>
+                </div>
+              );
+            })}
+            {bonusExt > 0 && (
+              <div style={{fontSize:10,color:allOk&&rateOk?"#22c55e":MUTED,marginBottom:2,
+                display:"flex",justifyContent:"space-between"}}>
+                <span>{allOk&&rateOk?"✓":"◯"} 完了率{q.completionRate}%↑</span>
+                <span style={{fontWeight:700}}>+¥{bonusExt.toLocaleString()}</span>
+              </div>
+            )}
+          </div>
+          <div style={{textAlign:"right",flexShrink:0}}>
+            <div style={{fontSize:24,fontWeight:900,lineHeight:1,
+              color:allOk?"#22c55e":earned>0?"#fbbf24":MUTED,
+              textShadow:allOk?"0 0 16px #22c55e":earned>0?"0 0 10px #fbbf24":"none"}}>
+              ¥{earned.toLocaleString()}
+            </div>
+            <div style={{fontSize:9,color:MUTED}}>/ ¥{maxBonus.toLocaleString()}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── 単一ステップ（ロケットナウ等）──
+  const bonusBase = parseInt(steps[0]?.reward || 0);
+  const goalOk    = done >= q.goal;
+  const fullOk    = goalOk && (!bonusExt || rateOk);
+  const earnedS   = goalOk ? bonusBase + (rateOk ? bonusExt : 0) : 0;
+
+  return (
+    <div style={{
+      background: fullOk ? "#051a05" : CARD,
+      border: `1px solid ${fullOk ? "#22c55e" : BDR}`,
+      borderRadius: 10, padding: "10px 14px",
+      boxShadow: fullOk ? "0 0 20px #22c55e40" : "none",
+      transition: "all 0.4s",
+    }}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+        <div>
+          <div style={{fontSize:10,color:goalOk?"#22c55e":MUTED,marginBottom:3}}>
+            {goalOk?"✓ ":"◯ "}{q.goal}件達成 → ¥{bonusBase.toLocaleString()}
+          </div>
+          {bonusExt > 0 && (
+            <div style={{fontSize:10,color:fullOk?"#22c55e":MUTED}}>
+              {fullOk?"✓ ":"◯ "}完了率{q.completionRate}%以上 → +¥{bonusExt.toLocaleString()}
+            </div>
+          )}
+        </div>
+        <div style={{textAlign:"right",flexShrink:0}}>
+          <div style={{fontSize:26,fontWeight:900,lineHeight:1,
+            color:fullOk?"#22c55e":MUTED,
+            textShadow:fullOk?"0 0 16px #22c55e":"none"}}>
+            ¥{earnedS.toLocaleString()}
+          </div>
+          <div style={{fontSize:9,color:MUTED}}>/ ¥{(bonusBase+bonusExt).toLocaleString()}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   クエストカード
+══════════════════════════════════════ */
+function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx, questCount }) {
+  const svc      = SVC[q.service] || SVC.rocket;
+  const done     = q.done || 0;
+  const rejected = q.rejected || 0;
+  const goal     = q.goal || 1;
+  const achieved = done >= goal;
+  const total    = done + rejected;
+  const compRate = total > 0 ? Math.round(done / total * 100) : 100;
+  const rateThreshold = parseInt(q.completionRate || 0);
+  const rateOk   = !rateThreshold || compRate >= rateThreshold;
+
+  // ── マルチステップ: 次のステップまでの残り件数 ──
+  const steps       = [...(q.bonuses||[])].sort((a,b)=>a.count-b.count);
+  const currentStep = steps.find(s => s.count > done);       // 次の未達ステップ
+  const prevStep    = [...steps].reverse().find(s=>s.count<=done); // 直前の達成済み
+  const nextGoal    = currentStep ? currentStep.count : goal;
+  const prevCount   = prevStep ? prevStep.count : 0;
+  const left        = Math.max(0, nextGoal - done);
+  // 現在ステップ内の進捗
+  const stepRange   = nextGoal - prevCount;
+  const pct         = stepRange > 0
+    ? Math.min(100, Math.round((done - prevCount) / stepRange * 100))
+    : 100;
+  const stepLabel   = steps.length > 1
+    ? `ステップ${steps.filter(s=>s.count<=done).length+1}/${steps.length}`
+    : null;
+
+  return (
+    <div style={{
+      background: CARD,
+      borderRadius: 16,
+      border: `1px solid ${svc.color}50`,
+      borderLeft: `5px solid ${svc.color}`,
+      boxShadow: `0 4px 24px ${svc.color}18`,
+    }}>
+
+      {/* ─ ヘッダー ─ */}
+      <div style={{
+        padding: "12px 14px 6px",
+        display: "flex", justifyContent: "space-between",
+        alignItems: "center", gap: 8,
+      }}>
+        <div style={{display:"flex",alignItems:"center",gap:8,flex:1,minWidth:0,overflow:"hidden"}}>
+          <span style={{
+            background: svc.dark,
+            color: svc.color,
+            border: `1px solid ${svc.color}`,
+            borderRadius: 6,
+            padding: "3px 8px",
+            fontSize: 12, fontWeight: 800, flexShrink: 0,
+            boxShadow: `0 0 8px ${svc.color}50`,
+          }}>
+            {svc.icon} {svc.label}
+          </span>
+          <span style={{
+            fontSize: 11, color: MUTED,
+            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+          }}>{q.owner}</span>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}>
+          {achieved && (
+            <span style={{fontSize:12,fontWeight:800,color:"#22c55e",
+              textShadow:"0 0 10px #22c55e"}}>✓ 達成！</span>
+          )}
+          <div style={{display:"flex",flexDirection:"column",gap:2,marginLeft:2}}>
+            <button onClick={()=>onMove&&onMove(q.id,-1)} disabled={questIdx==null||questIdx===0}
+              style={{background:"none",border:"none",color:(questIdx==null||questIdx===0)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===0)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>▲</button>
+            <button onClick={()=>onMove&&onMove(q.id,1)} disabled={questIdx==null||questIdx===questCount-1}
+              style={{background:"none",border:"none",color:(questIdx==null||questIdx===questCount-1)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===questCount-1)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>▼</button>
+          </div>
+          {me===q.owner && !achieved && (
+            <><button onClick={() => onEdit && onEdit(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>編集</button><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>コピー</button>
+            <button onClick={() => onDelete(q.id)} style={{
+              background:"none",border:"none",color:"#475569",
+              fontSize:16,cursor:"pointer",padding:"0 4px",
+            }}>✕</button></>
+          )}
+        </div>
+      </div>
+
+      {/* ─ 日付・時間 ─ */}
+      <div style={{
+        padding: "0 14px 10px",
+        fontSize: 14, color: MUTED,
+        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+      }}>
+        {q.date && (
+          <span style={{color:BLUE,marginRight:6,fontWeight:600}}>
+            {fmtDate(q.date)}{q.dateTo ? `〜${fmtDate(q.dateTo)}` : ""}
+          </span>
+        )}
+        🕐 {q.startTime} 〜 {q.endTime}
+        {q.acceptWindow && (
+          <span style={{marginLeft:8,color:"#475569"}}>受諾可: {q.acceptWindow}</span>
+        )}
+      </div>
+
+      {/* ─ 締切アラート ─ */}
+      {q.deadline && (
+        <div style={{padding:"0 14px 4px"}}>
+          <DeadlineBadge time={q.deadline} label="初回受注締切" firstOrderDone={done>=1}/>
+        </div>
+      )}
+
+      {/* ─ メインカウンター ─ */}
+      <div style={{
+        display: "flex", alignItems: "center",
+        background: "#060a10",
+        padding: "16px 14px", gap: 14,
+      }}>
+        {/* 残り件数 */}
+        <div style={{flexShrink:0,textAlign:"center",minWidth:64}}>
+          <div style={{
+            fontSize: achieved ? 38 : 52,
+            fontWeight: 900, lineHeight: 1,
+            color: achieved ? "#22c55e" : left<=2 ? "#ef4444" : BLUE,
+            textShadow: achieved
+              ? "0 0 24px #22c55e"
+              : left<=2 ? "0 0 24px #ef4444"
+              : `0 0 24px ${BLUE}`,
+          }}>
+            {achieved ? "✓" : done - prevCount}
+          </div>
+          <div style={{fontSize:10,color:MUTED,marginTop:4}}>
+            {achieved ? "達成" : "/" + (nextGoal-prevCount) + "件"}
+          </div>
+          {stepLabel && !achieved && (
+            <div style={{
+              fontSize:9,color:svc.color,marginTop:3,fontWeight:700,
+              textShadow:`0 0 6px ${svc.color}`,
+            }}>{stepLabel}</div>
+          )}
+        </div>
+
+        {/* ＋ / － ボタン */}
+        <div style={{flex:1,display:"flex",flexDirection:"column",gap:8,alignItems:"center"}}>
+          <button
+            onClick={() => !achieved && onUpdate(q.id,"done",1)}
+            style={{
+              width: "100%", maxWidth: 110, height: 54,
+              borderRadius: 12, border: "none",
+              background: achieved
+                ? "#1e293b"
+                : "linear-gradient(135deg,#1d4ed8 0%,#6d28d9 100%)",
+              color: "#fff", fontSize: 28, fontWeight: 900,
+              cursor: achieved ? "default" : "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: achieved
+                ? "none"
+                : "0 4px 16px #3b82f660, 0 0 24px #6d28d940",
+            }}
+          >＋</button>
+          <button
+            onClick={() => onUpdate(q.id,"done",-1)}
+            style={{
+              width: 56, height: 32, borderRadius: 8, border: "none",
+              background: "#1e293b", color: MUTED, fontSize: 18,
+              cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+          >－</button>
+        </div>
+
+        {/* 終了まで */}
+        <div style={{flexShrink:0,width:76}}>
+          <EndBadge endTime={q.endTime} startTime={q.startTime}/>
+        </div>
+      </div>
+
+      {/* ─ プログレスバー ─ */}
+      <div style={{height:4,background:"#060a10"}}>
+        <div style={{
+          height: "100%",
+          width: `${pct}%`,
+          background: achieved
+            ? "linear-gradient(90deg,#16a34a,#22c55e)"
+            : `linear-gradient(90deg,${svc.color}80,${svc.color})`,
+          transition: "width 0.5s ease",
+          boxShadow: `0 0 8px ${achieved?"#22c55e":svc.color}`,
+        }}/>
+      </div>
+
+      {/* ─ 完了率 & 拒否件数（ロケットナウ） ─ */}
+      {q.service==="rocket" && q.completionRate && (
+        <div style={{background:"#060a10",padding:"10px 14px"}}>
+          <div style={{
+            display:"flex",alignItems:"center",
+            justifyContent:"space-between",gap:10,flexWrap:"wrap",
+          }}>
+            {/* 拒否カウンター */}
+            <div style={{display:"flex",alignItems:"center",gax:8}}>
+              <span style={{fontSize:11,color:MUTED,flexShrink:0}}>拒否件数</span>
+              <button onClick={() => onUpdate(q.id,"rejected",-1)} style={{
+                background:"#1e293b",border:"none",color:MUTED,
+                borderRadius:6,width:28,height:28,fontSize:14,cursor:"pointer",
+                display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
+              }}>－</button>
+              <span style={{
+                fontSize:18,fontWeight:800,color:"#fb923c",
+                minWidth:24,textAlign:"center",
+                textShadow:"0 0 10px #fb923c70",
+              }}>{rejected}</span>
+              <button onClick={() => onUpdate(q.id,"rejected",1)} style={{
+                background:"#7c2d12",border:"none",color:"#fb923c",
+                borderRadius:6,width:28,height:28,fontSize:14,cursor:"pointer",
+                display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
+              }}>＋</button>
+            </div>
+            {/* 完了率 */}
+            <div style={{display:"flex",alignItems:"center",gap:6}}>
+              <span style={{fontSize:10,color:MUTED,whiteSpace:"nowrap"}}>
+                完了率 (目標{q.completionRate}%↑)
+              </span>
+              <span style={{
+                fontSize:18,fontWeight:900,
+                color: rateOk ? "#22c55e" : "#ef4444",
+                whiteSpace:"nowrap",
+                textShadow: rateOk ? "0 0 12px #22c55e" : "0 0 12px #ef4444",
+              }}>
+                {compRate}%{rateOk?" ✓":" ✗"}
+              </span>
+            </div>
+          </div>
+          {/* 完了率バー */}
+          <div style={{marginTop:8,height:3,background:"#1e293b",borderRadius:4}}>
+            <div style={{
+              height:"100%",
+              width:`${Math.min(100,compRate)}%`,
+              background: rateOk ? "#22c55e" : "#ef4444",
+              borderRadius:4,
+              boxShadow: rateOk ? "0 0 6px #22c55e" : "0 0 6px #ef4444",
+              transition:"width 0.3s",
+            }}/>
+          </div>
+        </div>
+      )}
+
+      {/* ─ 報酬パネル ─ */}
+      {(q.bonusExtra || (q.bonuses && q.bonuses.length > 1)) && (
+        <div style={{padding:"10px 14px 4px"}}>
+          <RewardPanel q={q}/>
+        </div>
+      )}
+
+      {/* ─ フッター ─ */}
+      <div style={{
+        padding:"8px 14px",
+        display:"flex",justifyContent:"space-between",alignItems:"center",
+        borderTop:`1px solid ${BDR}`,
+      }}>
+        <span style={{fontSize:10,color:MUTED}}>{done}/{goal}件 ({Math.min(100,Math.round(done/goal*100))}%)</span>
+        <span style={{fontSize:10,color:"#475569"}}>{timeAgo(q.updatedAt)}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   正規表現パーサー
+══════════════════════════════════════ */
+function parseQuestText(raw) {
+  const t = raw.replace(/,/g,"").replace(/，/g,"").replace(/\s+/g," ");
+  const r = { service:"rocket", date:null, startTime:null, endTime:null,
+    deadline:null, acceptStart:null, acceptEnd:null,
+    goal:null, completionRate:null, bonusBase:null, bonusExtra:null };
+
+  // ── 時刻を全部抽出（順番を保持）──
+  const allTimes = [...t.matchAll(/(\d{1,2}:\d{2})/g)].map(m => {
+    const [h,m2] = m[1].split(":").map(Number);
+    return `${String(h).padStart(2,"0")}:${String(m2).padStart(2,"0")}`;
+  });
+
+  // 典型パターン: 全体時間が 00:00〜23:59 に近い
+  // startTime/endTime = 最初の "00:xx" と "23:xx"
+  const startCand = allTimes.find(t => t.startsWith("00:"));
+  const endCand   = allTimes.find(t => t.startsWith("23:"));
+  if(startCand) r.startTime = startCand;
+  if(endCand)   r.endTime   = endCand;
+
+  // deadline = 時刻の中で15:00や18:00など（全体時間以外の単独時刻）
+  const otherTimes = allTimes.filter(t => t !== startCand && t !== endCand);
+  if(otherTimes.length >= 1) r.deadline    = otherTimes[0];
+  if(otherTimes.length >= 2) r.acceptStart = otherTimes[1];
+  if(otherTimes.length >= 3) r.acceptEnd   = otherTimes[2];
+
+  // ── 日付 (MM.DD) ──
+  const dt = t.match(/(\d{2})\.(\d{2})/);
+  if(dt) r.date = `${new Date().getFullYear()}-${dt[1]}-${dt[2]}`;
+
+  // ── 数字を全部抽出（時刻・日付以外）──
+  // 時刻・日付を除去してから数字を探す
+  const stripped = t.replace(/\d{1,2}:\d{2}/g,"").replace(/\d{2}\.\d{2}/g,"");
+  const nums = [...stripped.matchAll(/\b(\d+)\b/g)]
+    .map(m => parseInt(m[1]))
+    .filter(n => n > 0);
+
+  // goal: 3〜30件の範囲の最初の数
+  const goalCand = nums.find(n => n >= 3 && n <= 30);
+  if(goalCand) r.goal = goalCand;
+
+  // completionRate: 50か60か80など
+  const rateCand = nums.find(n => [50,60,70,80,90,100].includes(n));
+  if(rateCand) r.completionRate = rateCand;
+
+  // bonusExtra: + の後の数（大きい方）
+  const extM = t.match(/\+\s*(\d+)/);
+  if(extM) r.bonusExtra = parseInt(extM[1]);
+
+  // bonusBase: bonusExtra以外で100以上2000未満
+  const bonusNums = nums.filter(n => n >= 100 && n < 2000 && n !== r.bonusExtra);
+  if(bonusNums.length > 0) r.bonusBase = bonusNums[0];
+
+  // ── 日本語パターン（日本語OCRが通った場合のみ有効）──
+  const gJ = t.match(/(\d+)\s*件/);
+  if(gJ) r.goal = parseInt(gJ[1]);
+  const crJ = t.match(/完了率\s*(\d+)/);
+  if(crJ) r.completionRate = parseInt(crJ[1]);
+  const dlJ = t.match(/(\d{2}:\d{2})\s*まで/);
+  if(dlJ) r.deadline = dlJ[1];
+  const awJ = t.match(/(\d{2}:\d{2})[〜～](\d{2}:\d{2})\s*中/);
+  if(awJ) { r.acceptStart = awJ[1]; r.acceptEnd = awJ[2]; }
+  const bbJ = t.match(/達成時[^\d]{0,8}(\d+)/);
+  if(bbJ) r.bonusBase = parseInt(bbJ[1]);
+
+  return r;
+}
+
+/* ══════════════════════════════════════
+   スクショ読み取りモーダル（Tesseract OCR）
+══════════════════════════════════════ */
+function PhotoModal({ onClose, onExtracted }) {
+  const [preview, setPreview] = useState(null);
+  const [status,  setStatus]  = useState("");
+  const [error,   setError]   = useState("");
+  const [parsed,  setParsed]  = useState(null);
+  const [rawResp, setRawResp] = useState("");
+  const canvasRef = useRef(null);
+  const fileRef   = useRef(null);
+
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 400; // 小さくして高速化
+        const scale = img.width > MAX ? MAX / img.width : 1;
+        const canvas = document.createElement("canvas");
+        canvas.width  = Math.round(img.width  * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        setPreview(canvas.toDataURL("image/png"));
+        setError(""); setStatus(""); setParsed(null);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRead = async () => {
+    if(!preview) return;
+    setError(""); setParsed(null); setRawResp("");
+
+    try {
+      setStatus("📤 OCR送信中...");
+
+      const form = new FormData();
+      form.append("apikey", "helloworld");
+      form.append("base64Image", preview); // data:image/jpeg;base64,...
+      form.append("language", "jpn");
+      form.append("OCREngine", "2");
+      form.append("scale", "true");
+      form.append("isTable", "false");
+
+      const res = await fetch("https://api.ocr.space/parse/image", {
+        method: "POST",
+        body: form,
+      });
+
+      const body = await res.text();
+      setRawResp(`HTTP${res.status}: ${body.slice(0,200)}`);
+
+      if(!res.ok) {
+        setError(`OCRサーバーエラー HTTP${res.status}`);
+        setStatus(""); return;
+      }
+
+      const json = JSON.parse(body);
+      if(json.IsErroredOnProcessing) {
+        setError(`OCRエラー: ${json.ErrorMessage?.[0] || "不明"}`);
+        setStatus(""); return;
+      }
+
+      const text = json.ParsedResults?.[0]?.ParsedText || "";
+      if(!text) {
+        setError("文字が読み取れませんでした");
+        setStatus(""); return;
+      }
+
+      setStatus("✅ 解析中...");
+      const data = parseQuestText(text);
+      setParsed({ data, raw: text });
+      setStatus("");
+
+    } catch(e) {
+      setError(`エラー: ${e.message}`);
+      setStatus("");
+    }
+  };
+
+  const fields = parsed ? [
+    { label:"目標件数",   val: parsed.data.goal != null ? `${parsed.data.goal}件` : null },
+    { label:"完了率",     val: parsed.data.completionRate != null ? `${parsed.data.completionRate}%` : null },
+    { label:"日付",       val: parsed.data.date },
+    { label:"全体時間",   val: parsed.data.startTime ? `${parsed.data.startTime}〜${parsed.data.endTime}` : null },
+    { label:"受注締切",   val: parsed.data.deadline },
+    { label:"受諾時間帯", val: parsed.data.acceptStart ? `${parsed.data.acceptStart}〜${parsed.data.acceptEnd}` : null },
+    { label:"基本ボーナス", val: parsed.data.bonusBase != null ? `¥${parsed.data.bonusBase}` : null },
+    { label:"追加ボーナス", val: parsed.data.bonusExtra != null ? `¥${parsed.data.bonusExtra}` : null },
+  ].filter(f => f.val) : [];
+
+  const hasData = fields.length > 0;
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.88)",
+      zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+      <div style={{background:CARD,borderRadius:18,padding:20,width:"100%",
+        maxWidth:420,boxSizing:"border-box",border:`1px solid ${BDR}`,
+        maxHeight:"90vh",overflowY:"auto"}}>
+
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <div style={{fontSize:15,fontWeight:800}}>📷 スクショから読み取り</div>
+          <button onClick={onClose} style={{background:"none",border:"none",color:MUTED,fontSize:20,cursor:"pointer"}}>✕</button>
+        </div>
+
+        {/* 画像選択 */}
+        <div onClick={() => fileRef.current?.click()} style={{
+          border:`2px dashed ${BDR}`,borderRadius:12,padding:16,
+          textAlign:"center",cursor:"pointer",marginBottom:12,
+          background:INPUT,minHeight:100,
+          display:"flex",alignItems:"center",justifyContent:"center",
+        }}>
+          {preview
+            ? <img src={preview} alt="preview" style={{maxWidth:"100%",maxHeight:180,borderRadius:8,objectFit:"contain"}}/>
+            : <div style={{color:MUTED}}>
+                <div style={{fontSize:28,marginBottom:6}}>📸</div>
+                <div style={{fontSize:13}}>タップしてスクショを選択</div>
+              </div>
+          }
+        </div>
+        <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleFile}/>
+
+        {/* ステータス */}
+        {status && (
+          <div style={{background:"#0a1628",border:`1px solid ${BLUE}40`,
+            borderRadius:8,padding:"8px 12px",marginBottom:10,
+            fontSize:12,color:BLUE,textAlign:"center"}}>{status}</div>
+        )}
+
+        {/* エラー */}
+        {error && (
+          <div style={{background:"#1f0505",border:"1px solid #7f1d1d",
+            borderRadius:8,padding:10,marginBottom:10}}>
+            <div style={{color:"#ef4444",fontSize:11,fontWeight:700,marginBottom:3}}>⚠ エラー</div>
+            <div style={{color:"#fca5a5",fontSize:10,wordBreak:"break-all",whiteSpace:"pre-wrap"}}>{error}</div>
+            {rawResp && <div style={{color:"#64748b",fontSize:9,marginTop:4,wordBreak:"break-all"}}>{rawResp}</div>}
+          </div>
+        )}
+
+        {/* 解析結果 */}
+        {hasData && (
+          <div style={{background:"#051a05",border:"1px solid #166534",
+            borderRadius:10,padding:"10px 12px",marginBottom:12}}>
+            <div style={{color:"#22c55e",fontWeight:700,fontSize:11,marginBottom:8}}>✅ 読み取り結果</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4px 10px"}}>
+              {fields.map(({label,val}) => (
+                <div key={label} style={{fontSize:11}}>
+                  <span style={{color:MUTED}}>{label}: </span>
+                  <span style={{color:TEXT,fontWeight:700}}>{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ボタン */}
+        <div style={{display:"flex",gap:8}}>
+          {!hasData ? (
+            <button onClick={handleRead} disabled={!preview||!!status} style={{
+              flex:1,padding:13,borderRadius:11,border:"none",
+              background:(!preview||!!status)?"#1e293b":"linear-gradient(135deg,#7c3aed,#2563eb)",
+              color:(!preview||!!status)?MUTED:"#fff",
+              fontSize:14,fontWeight:700,
+              cursor:(!preview||!!status)?"default":"pointer",
+            }}>
+              {status ? status : "🔍 AIで読み取る"}
+            </button>
+          ) : (
+            <>
+              <button onClick={() => { setParsed(null); setPreview(null); setStatus(""); }} style={{
+                flex:1,padding:13,borderRadius:11,border:"none",
+                background:"#1e293b",color:MUTED,fontSize:13,fontWeight:700,cursor:"pointer",
+              }}>やり直す</button>
+              <button onClick={() => { onExtracted(parsed.data); onClose(); }} style={{
+                flex:2,padding:13,borderRadius:11,border:"none",
+                background:"linear-gradient(135deg,#166534,#15803d)",
+                color:"#fff",fontSize:14,fontWeight:700,cursor:"pointer",
+                boxShadow:"0 4px 16px #22c55e40",
+              }}>✓ この内容で入力</button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   フォーム共通パーツ
+══════════════════════════════════════ */
+const INP = {
+  background: INPUT,
+  border: `1px solid ${BDR}`,
+  color: TEXT,
+  borderRadius: 10,
+  padding: "12px 14px",
+  fontSize: 15,
+  outline: "none",
+  width: "100%",
+  boxSizing: "border-box",
+  display: "block",
+  minWidth: 0,
+};
+
+function Lbl({ children }) {
+  return (
+    <div style={{fontSize:11,color:MUTED,fontWeight:600,marginBottom:6}}>
+      {children}
+    </div>
+  );
+}
+
+function Field({ label, type, val, set, placeholder }) {
+  return (
+    <div style={{minWidth:0,marginBottom:12}}>
+      <Lbl>{label}</Lbl>
+      <input
+        type={type}
+        style={INP}
+        value={val}
+        onChange={e => set(e.target.value)}
+        placeholder={placeholder}
+        min={type==="number" ? 0 : undefined}
+      />
+    </div>
+  );
+}
+
+function Row2({ children }) {
+  return (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: 12,
+      marginBottom: 12,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function SecHead({ children }) {
+  return (
+    <div style={{
+      fontSize:11,fontWeight:700,color:MUTED,
+      margin:"4px 0 8px",letterSpacing:"0.04em",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+/* 数値ステッパー（大きいボタン＋プリセット） */
+function NumStepper({ label, val, set, step=1, min=0, max=9999, presets }) {
+  const n = parseInt(val) || 0;
+  const up   = () => set(String(Math.min(max, n + step)));
+  const down = () => set(String(Math.max(min, n - step)));
+  const SB = { // stepper button
+    border:"none", borderRadius:10, cursor:"pointer",
+    width:44, height:44, fontSize:22, fontWeight:900,
+    display:"flex", alignItems:"center", justifyContent:"center",
+    flexShrink:0,
+  };
+  return (
+    <div style={{minWidth:0, marginBottom:12}}>
+      <Lbl>{label}</Lbl>
+      <div style={{display:"flex", alignItems:"center", gap:8}}>
+        <button onClick={down} style={{...SB, background:"#1e293b", color:"#94a3b8"}}>－</button>
+        <input
+          type="number"
+          value={val}
+          onChange={e => set(e.target.value)}
+          style={{
+            ...INP, marginBottom:0,
+            textAlign:"center", fontSize:22, fontWeight:900,
+            color:TEXT, padding:"10px 6px",
+          }}
+        />
+        <button onClick={up} style={{...SB, background:"linear-gradient(135deg,#1d4ed8,#6d28d9)",
+          color:"#fff", boxShadow:"0 2px 8px #3b82f640"}}>＋</button>
+      </div>
+      {presets && (
+        <div style={{display:"flex", gap:6, marginTop:6, flexWrap:"wrap"}}>
+          {presets.map(p => (
+            <button key={p} onClick={() => set(String(p))} style={{
+              background: parseInt(val)===p ? "#1d4ed8" : "#1e293b",
+              border: parseInt(val)===p ? "1px solid #3b82f6" : `1px solid ${BDR}`,
+              color: parseInt(val)===p ? "#fff" : "#94a3b8",
+              borderRadius:8, padding:"4px 10px",
+              fontSize:12, fontWeight:700, cursor:"pointer",
+              boxShadow: parseInt(val)===p ? "0 0 8px #3b82f640" : "none",
+            }}>{p}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OKBtn({ onClick, disabled, children }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        width:"100%",padding:14,borderRadius:12,border:"none",marginTop:8,
+        background: disabled
+          ? "#1e293b"
+          : "linear-gradient(135deg,#1d4ed8,#6d28d9)",
+        color: disabled ? "#475569" : "#fff",
+        fontSize:15,fontWeight:700,
+        cursor: disabled ? "default" : "pointer",
+        boxShadow: disabled
+          ? "none"
+          : "0 4px 20px #3b82f650, 0 0 30px #6d28d930",
+        letterSpacing:"0.02em",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+/* ══════════════════════════════════════
+   ロケットナウ フォーム
+══════════════════════════════════════ */
+function RocketForm({ onAdd, prefill }) {
+  const [f,setF] = useState({
+    date:todayStr(), dateTo:"", isRange:false,
+    start:"00:00", end:"23:59",
+    deadline:"15:00", acceptStart:"13:30", acceptEnd:"16:30",
+    goal:"9", compRate:"50", bonusBase:"225", bonusExt:"2025",
+  });
+  const s = (k,v) => setF(p => ({...p,[k]:v}));
+  useEffect(() => {
+    if(!prefill) return;
+    setF(p => ({
+      ...p,
+      date:        prefill.date        || p.date,
+      start:       prefill.startTime   || p.start,
+      end:         prefill.endTime     || p.end,
+      deadline:    prefill.deadline    || p.deadline,
+      acceptStart: prefill.acceptStart || p.acceptStart,
+      acceptEnd:   prefill.acceptEnd   || p.acceptEnd,
+      goal:        prefill.goal        != null ? String(prefill.goal)            : p.goal,
+      compRate:    prefill.completionRate != null ? String(prefill.completionRate) : p.compRate,
+      bonusBase:   prefill.bonusBase   != null ? String(prefill.bonusBase)       : p.bonusBase,
+      bonusExt:    prefill.bonusExtra  != null ? String(prefill.bonusExtra)      : p.bonusExt,
+    }));
+  }, [prefill]);
+
+  return (
+    <div>
+      {/* 日付 */}
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+        <Lbl>日付</Lbl>
+        <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:11,color:MUTED}}>
+          <input type="checkbox" checked={f.isRange} onChange={e=>s("isRange",e.target.checked)}
+            style={{width:14,height:14,cursor:"pointer"}}/>
+          期間クエスト
+        </label>
+      </div>
+      {f.isRange ? (
+        <Row2>
+          <Field label="開始日" type="date" val={f.date}  set={v=>s("date",v)}/>
+          <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
+        </Row2>
+      ) : (
+        <div style={{marginBottom:12}}>
+          <input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/>
+        </div>
+      )}
+      <SecHead>全体の時間</SecHead>
+      <Row2>
+        <Field label="開始" type="time" val={f.start} set={v=>s("start",v)}/>
+        <Field label="終了" type="time" val={f.end}   set={v=>s("end",v)}/>
+      </Row2>
+      <SecHead>⚠️ 初回受注（重要）</SecHead>
+      <Field label="受注締切" type="time" val={f.deadline} set={v=>s("deadline",v)}/>
+      <Row2>
+        <Field label="受諾 開始" type="time" val={f.acceptStart} set={v=>s("acceptStart",v)}/>
+        <Field label="受諾 終了" type="time" val={f.acceptEnd}   set={v=>s("acceptEnd",v)}/>
+      </Row2>
+      <SecHead>達成条件</SecHead>
+      <NumStepper label="目標配達件数" val={f.goal} set={v=>s("goal",v)}
+        min={1} max={50} presets={[5,9,10,13,15,20]}/>
+      <NumStepper label="完了率条件 (%)" val={f.compRate} set={v=>s("compRate",v)}
+        min={0} max={100} presets={[50,60,70,80]}/>
+      <SecHead>ボーナス</SecHead>
+      <NumStepper label="件数達成 (円)" val={f.bonusBase} set={v=>s("bonusBase",v)}
+        step={25} min={0} max={9999} presets={[225,260,300,500]}/>
+      <NumStepper label="完了率達成 追加(円)" val={f.bonusExt} set={v=>s("bonusExt",v)}
+        step={100} min={0} max={99999} presets={[2025,2340,3000,5000]}/>
+      <OKBtn
+        disabled={!f.goal||!f.deadline}
+        onClick={() => onAdd({
+          service:"rocket", date:f.date, dateTo:f.isRange?f.dateTo:"",
+          startTime:f.start, endTime:f.end,
+          deadline:f.deadline,
+          acceptWindow:`${f.acceptStart}〜${f.acceptEnd}`,
+          goal:parseInt(f.goal), completionRate:f.compRate,
+          bonusExtra:f.bonusExt,
+          bonuses:[{count:parseInt(f.goal),reward:parseInt(f.bonusBase||0)}],
+          note:"",
+        })}
+      >登録する</OKBtn>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   出前館 フォーム
+══════════════════════════════════════ */
+function DemaeForm({ onAdd, prefill }) {
+  const [f,setF] = useState({ date:todayStr(), dateTo:"", isRange:false, start:"17:00", end:"20:30", area:"" });
+  const [steps, setSteps] = useState([{count:"3",reward:"500"},{count:"3",reward:"1500"}]);
+  const s = (k,v) => setF(p=>({...p,[k]:v}));
+  const addStep    = () => setSteps(p=>[...p,{count:"",reward:""}]);
+  const removeStep = (i) => setSteps(p=>p.filter((_,idx)=>idx!==i));
+  const updStep    = (i,k,v) => setSteps(p=>p.map((st,idx)=>idx===i?{...st,[k]:v}:st));
+
+  useEffect(()=>{
+    if(!prefill) return;
+    setF(p=>({...p, date:prefill.date||p.date, start:prefill.startTime||p.start, end:prefill.endTime||p.end}));
+    if(prefill.bonuses && prefill.bonuses.length > 0) {
+      setSteps(prefill.bonuses.map((b,i,arr)=>({count:String(b.count-(i>0?arr[i-1].count:0)),reward:String(b.reward)})));
+    } else if(prefill.goal!=null) {
+      setSteps(p=>{const n=[...p]; n[n.length-1]={...n[n.length-1],count:String(prefill.goal)}; return n;});
+    }
+  },[prefill]);
+
+  const bonuses = steps.filter(st=>st.count&&st.reward).reduce((acc,st)=>[...acc,{count:(acc.length?acc[acc.length-1].count:0)+parseInt(st.count),reward:parseInt(st.reward)}],[]);
+  const goal    = bonuses.length > 0 ? bonuses[bonuses.length-1].count : 0;
+
+  return (
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+        <Lbl>日付</Lbl>
+        <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:11,color:MUTED}}>
+          <input type="checkbox" checked={f.isRange} onChange={e=>s("isRange",e.target.checked)} style={{width:14,height:14,cursor:"pointer"}}/>
+          期間クエスト
+        </label>
+      </div>
+      {f.isRange ? (
+        <Row2>
+          <Field label="開始日" type="date" val={f.date}  set={v=>s("date",v)}/>
+          <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
+        </Row2>
+      ) : (
+        <div style={{marginBottom:12}}><input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
+      )}
+      <Row2>
+        <Field label="開始時刻" type="time" val={f.start} set={v=>s("start",v)}/>
+        <Field label="終了時刻" type="time" val={f.end}   set={v=>s("end",v)}/>
+      </Row2>
+      <Field label="対象エリア（任意）" type="text" val={f.area} set={v=>s("area",v)} placeholder="例: 東京都 全域"/>
+      <SecHead>達成ステップ</SecHead>
+      {steps.map((st,i) => (
+        <div key={i} style={{background:"#060a10",borderRadius:10,padding:"10px 12px",marginBottom:8,border:`1px solid ${BDR}`}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ステップ {i+1}{i===steps.length-1?" 🎯（目暙）":""}</span>
+            {steps.length>1 && (
+              <button onClick={()=>removeStep(i)} style={{background:"none",border:"none",color:"#ef4444",fontSize:14,cursor:"pointer",padding:"2px 6px"}}>✕</button>
+            )}
+          </div>
+          <NumStepper label="件数（件）" val={st.count} set={v=>updStep(i,"count",v)} min={1} max={200} presets={[3,5,8,10,13,15]}/>
+          <NumStepper label="報酬（円）" val={st.reward} set={v=>updStep(i,"reward",v)} step={100} min={0} max={99999} presets={[300,500,800,1000,1500]}/>
+        </div>
+      ))}
+      <button onClick={addStep} style={{
+        width:"100%",padding:"9px",borderRadius:8,border:`1px dashed ${BDR}`,
+        background:"none",color:MUTED,fontSize:12,cursor:"pointer",marginBottom:12,
+      }}>＋ ステップ追加</button>
+      <OKBtn disabled={!steps[0]?.count} onClick={()=>onAdd({service:"demae",date:f.date,dateTo:f.isRange?f.dateTo:"",startTime:f.start,endTime:f.end,goal,bonuses,note:f.area})}>登録する</OKBtn>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   Uber Eats フォーム
+══════════════════════════════════════ */
+function UEForm({ onAdd, prefill }) {
+  const [f,setF] = useState({ date:todayStr(), dateTo:"", isRange:false, start:"17:00", end:"20:30", area:"" });
+  const [steps, setSteps] = useState([{count:"3",reward:"300"},{count:"3",reward:"700"}]);
+  const s = (k,v) => setF(p=>({...p,[k]:v}));
+  const addStep    = () => setSteps(p=>[...p,{count:"",reward:""}]);
+  const removeStep = (i) => setSteps(p=>p.filter((_,idx)=>idx!==i));
+  const updStep    = (i,k,v) => setSteps(p=>p.map((st,idx)=>idx===i?{...st,[k]:v}:st));
+
+  useEffect(()=>{
+    if(!prefill) return;
+    setF(p=>({...p, date:prefill.date||p.date, start:prefill.startTime||p.start, end:prefill.endTime||p.end}));
+    if(prefill.bonuses && prefill.bonuses.length > 0) {
+      setSteps(prefill.bonuses.map((b,i,arr)=>({count:String(b.count-(i>0?arr[i-1].count:0)),reward:String(b.reward)})));
+    } else if(prefill.goal!=null) {
+      setSteps(p=>{const n=[...p]; n[n.length-1]={...n[n.length-1],count:String(prefill.goal)}; return n;});
+    }
+  },[prefill]);
+
+  const bonuses = steps.filter(st=>st.count&&st.reward).reduce((acc,st)=>[...acc,{count:(acc.length?acc[acc.length-1].count:0)+parseInt(st.count),reward:parseInt(st.reward)}],[]);
+  const goal    = bonuses.length > 0 ? bonuses[bonuses.length-1].count : 0;
+
+  return (
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+        <Lbl>日付</Lbl>
+        <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:11,color:MUTED}}>
+          <input type="checkbox" checked={f.isRange} onChange={e=>s("isRange",e.target.checked)} style={{width:14,height:14,cursor:"pointer"}}/>
+          期間クエスト
+        </label>
+      </div>
+      {f.isRange ? (
+        <Row2>
+          <Field label="開始日" type="date" val={f.date}  set={v=>s("date",v)}/>
+          <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
+        </Row2>
+      ) : (
+        <div style={{marginBottom:12}}><input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
+      )}
+      <Row2>
+        <Field label="開始時刻" type="time" val={f.start} set={v=>s("start",v)}/>
+        <Field label="終了時刻" type="time" val={f.end}   set={v=>s("end",v)}/>
+      </Row2>
+      <Field label="対象エリア（任意）" type="text" val={f.area} set={v=>s("area",v)} placeholder="例: 東京都 全域"/>
+      <SecHead>達成ステップ</SecHead>
+      {steps.map((st,i) => (
+        <div key={i} style={{background:"#060a10",borderRadius:10,padding:"10px 12px",marginBottom:8,border:`1px solid ${BDR}`}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ステップ {i+1}{i===steps.length-1?" 🎯（目標）":""}</span>
+            {steps.length>1 && (
+              <button onClick={()=>removeStep(i)} style={{background:"none",border:"none",color:"#ef4444",fontSize:14,cursor:"pointer",padding:"2px 6px"}}>✕</button>
+            )}
+          </div>
+          <NumStepper label="件数（件）" val={st.count} set={v=>updStep(i,"count",v)} min={1} max={200} presets={[3,5,8,10,13,15]}/>
+          <NumStepper label="報酬（円）" val={st.reward} set={v=>updStep(i,"reward",v)} step={100} min={0} max={99999} presets={[100,200,300,500,700,1000]}/>
+        </div>
+      ))}
+      <button onClick={addStep} style={{
+        width:"100%",padding:"9px",borderRadius:8,border:`1px dashed ${BDR}`,
+        background:"none",color:MUTED,fontSize:12,cursor:"pointer",marginBottom:12,
+      }}>＋ ステップ追加</button>
+      <OKBtn disabled={!steps[0]?.count} onClick={()=>onAdd({service:"ubereats",date:f.date,dateTo:f.isRange?f.dateTo:"",startTime:f.start,endTime:f.end,goal,bonuses,note:f.area})}>登録する</OKBtn>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════
+   カウンターパネル（登録クエスト連動）
+══════════════════════════════════════ */
+function CounterPanel({ quests, onUpdate }) {
+  const [open, setOpen] = useState(false);
+
+  // サービスごとのカウンター設定
+  const counterDefs = {
+    rocket:   ["完了","拒否"],
+    demae:    ["完了"],
+    ubereats: ["完了"],
+  };
+
+    const activeQuests = quests.filter(q => q.done < q.goal);
+
+  return (
+    <div style={{
+      position:"fixed", bottom:20, right:16, zIndex:50,
+      display:"flex", alignItems:"flex-end",
+    }}>
+      {open && (
+        <div style={{
+          background: CARD,
+          borderRadius: 14,
+          border: `1px solid ${BDR}`,
+          marginRight: 8,
+          width: "min(240px, calc(100vw - 84px))",
+          boxSizing: "border-box",
+          boxShadow: "0 8px 40px rgba(0,0,0,.8)",
+          maxHeight: "75vh",
+          overflowY: "auto",
+        }}>
+          <div style={{
+            padding:"12px 14px 8px",
+            fontSize:12, fontWeight:700, color:MUTED,
+            borderBottom:`1px solid ${BDR}`,
+            position:"sticky", top:0, background:CARD,
+          }}>
+            📊 クイックカウンター
+          </div>
+
+          {activeQuests.length === 0 ? (
+            <div style={{padding:16, fontSize:12, color:MUTED, textAlign:"center"}}>
+              クエストを登録してください
+            </div>
+          ) : (
+            activeQuests.map(q => {
+              const svc      = SVC[q.service] || SVC.rocket;
+              const done     = q.done || 0;
+              const rejected = q.rejected || 0;
+              const received = q.received || 0;
+              const total    = done + rejected;
+              const compRate = total > 0 ? Math.round(done/total*100) : 100;
+              const left     = Math.max(0, q.goal - done);
+              const isRocket = q.service === "rocket";
+
+              return (
+                <div key={q.id} style={{
+                  padding:"10px 14px",
+                  borderBottom:`1px solid ${BDR}`,
+                }}>
+                  {/* ヘッダー */}
+                  <div style={{
+                    display:"flex", justifyContent:"space-between",
+                    alignItems:"center", marginBottom:8,
+                  }}>
+                    <span style={{
+                      color:svc.color, fontSize:12, fontWeight:800,
+                      textShadow:`0 0 8px ${svc.color}60`,
+                    }}>
+                      {svc.icon} {svc.label}
+                    </span>
+                    <span style={{fontSize:10, color:MUTED}}>
+                      残り<b style={{color:BLUE}}>{left}</b>件
+                    </span>
+                  </div>
+
+                  {/* 受注カウンター */}
+                  <div style={{marginBottom:6}}>
+                    <div style={{fontSize:10,color:MUTED,marginBottom:4}}>受注</div>
+                    <div style={{display:"flex",alignItems:"center",gap:6}}>
+                      <button onClick={() => onUpdate(q.id,"received",-1)} style={minusBtn}>－</button>
+                      <div style={{
+                        flex:1, textAlign:"center", fontSize:22, fontWeight:900,
+                        color:BLUE, textShadow:`0 0 10px ${BLUE}70`,
+                      }}>{received}</div>
+                      <button onClick={() => onUpdate(q.id,"received",1)} style={{...plusBtn,background:BLUE}}>＋</button>
+                    </div>
+                  </div>
+
+                  {/* 完了カウンター */}
+                  <div style={{marginBottom:6}}>
+                    <div style={{fontSize:10,color:MUTED,marginBottom:4}}>完了</div>
+                    <div style={{display:"flex",alignItems:"center",gap:6}}>
+                      <button onClick={() => onUpdate(q.id,"done",-1)} style={minusBtn}>－</button>
+                      <div style={{
+                        flex:1, textAlign:"center", fontSize:22, fontWeight:900,
+                        color:"#22c55e", textShadow:"0 0 10px #22c55e70",
+                      }}>{done}</div>
+                      <button onClick={() => onUpdate(q.id,"done",1)} style={{...plusBtn,background:"#22c55e"}}>＋</button>
+                    </div>
+                  </div>
+
+                  {/* 拒否カウンター（ロケットナウのみ） */}
+                  {isRocket && (
+                    <div style={{marginBottom:6}}>
+                      <div style={{fontSize:10,color:MUTED,marginBottom:4}}>拒否</div>
+                      <div style={{display:"flex",alignItems:"center",gap:6}}>
+                        <button onClick={() => onUpdate(q.id,"rejected",-1)} style={minusBtn}>－</button>
+                        <div style={{
+                          flex:1, textAlign:"center", fontSize:22, fontWeight:900,
+                          color:"#fb923c", textShadow:"0 0 10px #fb923c70",
+                        }}>{rejected}</div>
+                        <button onClick={() => onUpdate(q.id,"rejected",1)} style={{...plusBtn,background:"#7c2d12",color:"#fb923c"}}>＋</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 完了率（ロケットナウのみ） */}
+                  {isRocket && q.completionRate && (
+                    <div style={{
+                      marginTop:6,
+                      background:"#060a10",
+                      borderRadius:8, padding:"6px 10px",
+                    }}>
+                      <div style={{
+                        display:"flex",
+                        justifyContent:"space-between",
+                        alignItems:"center",
+                      }}>
+                        <span style={{fontSize:10,color:MUTED}}>
+                          完了率 (目標{q.completionRate}%↑)
+                        </span>
+                        <span style={{
+                          fontSize:16, fontWeight:900,
+                          color: compRate>=parseInt(q.completionRate) ? "#22c55e" : "#ef4444",
+                          textShadow: compRate>=parseInt(q.completionRate)
+                            ? "0 0 10px #22c55e"
+                            : "0 0 10px #ef4444",
+                        }}>
+                          {compRate}%
+                        </span>
+                      </div>
+                      <div style={{
+                        marginTop:4,height:3,background:"#1e293b",borderRadius:4,
+                      }}>
+                        <div style={{
+                          height:"100%",
+                          width:`${Math.min(100,compRate)}%`,
+                          borderRadius:4,
+                          background: compRate>=parseInt(q.completionRate) ? "#22c55e" : "#ef4444",
+                          boxShadow: compRate>=parseInt(q.completionRate)
+                            ? "0 0 6px #22c55e" : "0 0 6px #ef4444",
+                          transition:"width 0.3s",
+                        }}/>
+                      </div>
+                      <div style={{
+                        fontSize:9,color:MUTED,marginTop:4,textAlign:"right",
+                      }}>
+                        {done}件完了 / {rejected}件拒否 = {total}件中
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+      )}
+
+      {/* トグルボタン */}
+      <button onClick={() => setOpen(!open)} style={{
+        background: open
+          ? "#1e293b"
+          : "linear-gradient(135deg,#1d4ed8,#6d28d9)",
+        border:"none", color:"#fff", borderRadius:14,
+        width:50, height:50, cursor:"pointer", flexShrink:0,
+        display:"flex", alignItems:"center", justifyContent:"center",
+        fontSize: open ? 16 : 20, fontWeight:700,
+        boxShadow: open
+          ? "none"
+          : "0 4px 20px #3b82f660, 0 0 30px #6d28d940",
+      }}>
+        {open ? "→" : "←"}
+      </button>
+    </div>
+  );
+}
+
+const minusBtn = {
+  background:"#1e293b", border:"none", color:"#fff",
+  borderRadius:7, width:34, height:34, fontSize:18,
+  cursor:"pointer", flexShrink:0,
+  display:"flex", alignItems:"center", justifyContent:"center",
+};
+const plusBtn = {
+  border:"none", color:"#fff",
+  borderRadius:7, width:34, height:34, fontSize:18,
+  cursor:"pointer", flexShrink:0,
+  display:"flex", alignItems:"center", justifyContent:"center",
+};
+
+/* ══════════════════════════════════════
+   メイン App
+══════════════════════════════════════ */
+function ScrollTopBtn() {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVis(window.scrollY > 200);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  if(!vis) return null;
+  return (
+    <button onClick={() => window.scrollTo({top:0,behavior:'smooth'})}
+      style={{position:'fixed',bottom:84,left:16,zIndex:60,
+        background:'#1e293b',border:'1px solid #334155',
+        borderRadius:24,width:44,height:44,color:'#94a3b8',
+        fontSize:20,cursor:'pointer',display:'flex',
+        alignItems:'center',justifyContent:'center',
+        boxShadow:'0 4px 16px rgba(0,0,0,.6)'}}>
+      ↑
+    </button>
+  );
+}
+
+function App() {
+  const [quests,  setQuests]  = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [me,      setMe]      = useState(() => localStorage.getItem("qt_name")||"");
+  const [nameIn,  setNameIn]  = useState("");
+  const [showForm,setShowForm]= useState(false);
+  const [showPhoto,setShowPhoto]=useState(false);
+  const [showSettings,setShowSettings]=useState(false);
+  const [svc,     setSvc]     = useState("ubereats");
+  const [enabledSvc, setEnabledSvc] = useState(() => {
+    try { return {...{rocket:true,demae:true,ubereats:true}, ...JSON.parse(localStorage.getItem("qt_services")||"{}")}; }
+    catch { return {rocket:true,demae:true,ubereats:true}; }
+  });
+  const toggleSvc = (key) => {
+    const count = Object.values(enabledSvc).filter(Boolean).length;
+    if(enabledSvc[key] && count <= 1) return; // 最低1つは残す
+    const updated = {...enabledSvc, [key]: !enabledSvc[key]};
+    setEnabledSvc(updated);
+    localStorage.setItem("qt_services", JSON.stringify(updated));
+    // 無効化されたサービスが選択中なら切り替え
+    if(svc===key && enabledSvc[key]) {
+      const next = Object.entries(updated).find(([k,v])=>v&&k!==key);
+      if(next) setSvc(next[0]);
+    }
+  };
+  const [prefill, setPrefill] = useState(null);
+  const [lastUp,  setLastUp]  = useState(null);
+
+  useEffect(() => {
+    const total = quests.reduce((s,q)=>s+(q.done||0),0);
+    if('setAppBadge' in navigator) navigator.setAppBadge(total).catch(()=>{});
+  }, [quests]);
+
+  const reload = useCallback(async () => {
+    try {
+      const list = await loadQ();
+      setQuests(prev => {
+        // ストレージにないローカルのみのクエストを保持（保存失敗対策）
+        const storageIds = new Set(list.map(q => q.id));
+        const localOnly  = prev.filter(q => !storageIds.has(q.id));
+        return [...list, ...localOnly];
+      });
+      setLastUp(new Date());
+    } catch(e) {
+      console.error("reload error:", e);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    reload();
+    const t = setInterval(reload, 15000);
+    return () => clearInterval(t);
+  }, [reload]);
+
+  const persist = async (list) => {
+    try { await saveQ(list); } catch(e) { console.error("storage error:", e); }
+    setQuests(list); setLastUp(new Date());
+  };
+
+  const handleAdd = async (data) => {
+    if(data._editId) {
+      const {_editId, ...rest} = data;
+      await persist(quests.map(q => q.id===_editId ? {...q,...rest,updatedAt:new Date().toISOString()} : q));
+      setShowForm(false); setPrefill(null); return;
+    }
+    const q = {
+      id: Date.now().toString(), owner: me, done:0, rejected:0,
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+      ...data,
+    };
+    await persist([q, ...quests]);
+    setShowForm(false);
+  };
+
+  const handleUpdate = async (id, field, delta) => {
+    await persist(quests.map(q => {
+      if(q.id !== id) return q;
+      const cur = q[field] || 0;
+      const _steps = [...(q.bonuses||[])].sort((a,b)=>a.count-b.count);
+      const _cur = q.done || 0;
+      const _nextStep = _steps.find(s => s.count > _cur);
+      const max = field==="done" ? (_nextStep ? _nextStep.count : q.goal) : 999;
+      return {...q, [field]: Math.max(0,Math.min(max,cur+delta)),
+        updatedAt: new Date().toISOString()};
+    }));
+  };
+
+  const handleMove = async (id, dir) => {
+    const idx = quests.findIndex(q => q.id === id);
+    if(idx < 0) return;
+    const target = idx + dir;
+    if(target < 0 || target >= quests.length) return;
+    const next = [...quests];
+    [next[idx], next[target]] = [next[target], next[idx]];
+    await persist(next);
+  };
+
+  const handleEdit = (src) => {
+    if(SVC[src.service]) setSvc(src.service);
+    setPrefill({...src, _editId:src.id, bonusBase:src.bonuses?.[0]?.reward??null});
+    setShowForm(true);
+  };
+
+  const handleCopy = (src) => {
+    if(SVC[src.service]) setSvc(src.service);
+    const p = {
+      ...src,
+      bonusBase: src.bonuses?.[0]?.reward ?? null,
+    };
+    setPrefill(p);
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if(!confirm("削除しますか？")) return;
+    const updated = quests.filter(q => q.id !== id);
+    try { await saveQ(updated); } catch(e) { console.error(e); }
+    setQuests(updated); setLastUp(new Date());
+  };
+
+  /* 名前入力画面 */
+  if(!me) return (
+    <div style={{
+      minHeight:"100vh", background:BG, overflowX:"hidden",
+      display:"flex", alignItems:"center", justifyContent:"center", padding:20,
+    }}>
+      <div style={{width:"100%",maxWidth:320,display:"flex",
+        flexDirection:"column",gap:16,alignItems:"center"}}>
+        <div style={{fontSize:48,textShadow:`0 0 30px ${BLUE}`}}>📦</div>
+        <h1 style={{
+          fontSize:22,fontWeight:800,margin:0,color:TEXT,
+          textShadow:`0 0 24px ${BLUE}60`,
+        }}>クエスト進捗管理</h1>
+        <div style={{
+          background:CARD,borderRadius:14,padding:20,
+          width:"100%",boxSizing:"border-box",
+          border:`1px solid ${BDR}`,
+          display:"flex",flexDirection:"column",gap:10,
+        }}>
+          <Lbl>あなたの名前</Lbl>
+          <input
+            style={INP} value={nameIn}
+            onChange={e => setNameIn(e.target.value)}
+            onKeyDown={e => e.key==="Enter" && nameIn.trim() &&
+              (localStorage.setItem("qt_name",nameIn.trim()), setMe(nameIn.trim()))}
+            placeholder="例: たなか" autoFocus
+          />
+          <button
+            disabled={!nameIn.trim()}
+            onClick={() => {
+              localStorage.setItem("qt_name",nameIn.trim());
+              setMe(nameIn.trim());
+            }}
+            style={{
+              padding:12,borderRadius:10,border:"none",
+              background: nameIn.trim()
+                ? "linear-gradient(135deg,#1d4ed8,#6d28d9)"
+                : "#1e293b",
+              color: nameIn.trim() ? "#fff" : "#475569",
+              fontSize:14,fontWeight:700,
+              cursor: nameIn.trim() ? "pointer" : "default",
+              boxShadow: nameIn.trim()
+                ? "0 4px 20px #3b82f650, 0 0 30px #6d28d930"
+                : "none",
+            }}
+          >スタート →</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: BG,
+      color: TEXT,
+      fontFamily: "'Noto Sans JP','Hiragino Sans',sans-serif",
+      paddingBottom: 80,
+      overflowX: "hidden",
+    }}>
+
+      {/* ── ヘッダー ── */}
+      <div style={{
+        background: CARD,
+        padding: "12px 14px",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        borderBottom: `1px solid ${BDR}`,
+        position: "sticky", top: 0, zIndex: 10,
+        boxSizing: "border-box",
+        boxShadow: `0 2px 16px rgba(0,0,0,.6)`,
+      }}>
+        <div style={{flex:1,minWidth:0,marginRight:8,overflow:"hidden"}}>
+          <div style={{
+            fontSize:15,fontWeight:800,
+            whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",
+            textShadow:`0 0 16px ${BLUE}40`,
+          }}>📦 クエスト進捗管理</div>
+          <div style={{fontSize:10,color:MUTED,marginTop:1,whiteSpace:"nowrap"}}>
+            {lastUp ? `更新: ${hhmm(lastUp)}` : "読込中..."} · 自動15秒
+          </div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+          <span style={{
+            background:"#1e293b",borderRadius:20,padding:"3px 10px",
+            fontSize:11,fontWeight:700,
+            maxWidth:70,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",
+          }}>{me}</span>
+          <button onClick={reload} style={{
+            background:"#1e293b",border:"none",color:MUTED,
+            borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:13,flexShrink:0,
+          }}>↻</button>
+          <button onClick={() => setShowSettings(true)} style={{
+            background:"#1e293b",border:"none",color:MUTED,
+            borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:14,flexShrink:0,
+          }}>⚙️</button>
+          <button onClick={() => setShowForm(!showForm)} style={{
+            background: showForm
+              ? "#374151"
+              : "linear-gradient(135deg,#1d4ed8,#6d28d9)",
+            border:"none",color:"#fff",borderRadius:7,
+            padding:"6px 10px",cursor:"pointer",
+            fontSize:12,fontWeight:700,flexShrink:0,whiteSpace:"nowrap",
+            boxShadow: showForm ? "none" : "0 2px 10px #3b82f650",
+          }}>
+            {showForm ? "✕" : "＋ 追加"}
+          </button>
+        </div>
+      </div>
+
+      {/* ── 設定モーダル ── */}
+      {showSettings && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.85)",zIndex:200,
+          display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+          <div style={{background:CARD,borderRadius:18,padding:20,width:"100%",
+            maxWidth:360,boxSizing:"border-box",border:`1px solid ${BDR}`}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+              <div style={{fontSize:15,fontWeight:800}}>⚙️ 設定</div>
+              <button onClick={()=>setShowSettings(false)} style={{background:"none",border:"none",color:MUTED,fontSize:20,cursor:"pointer"}}>✕</button>
+            </div>
+            <div style={{fontSize:12,color:MUTED,fontWeight:700,marginBottom:10}}>使用するサービス</div>
+            {Object.entries(SVC).map(([key,sv]) => {
+              const on = enabledSvc[key];
+              const onlyone = Object.values(enabledSvc).filter(Boolean).length===1;
+              return (
+                <div key={key} onClick={()=>toggleSvc(key)} style={{
+                  display:"flex",alignItems:"center",justifyContent:"space-between",
+                  padding:"12px 14px",borderRadius:12,marginBottom:8,
+                  background: on ? sv.dark : INPUT,
+                  border:`1px solid ${on ? sv.color : BDR}`,
+                  cursor: onlyone&&on ? "not-allowed" : "pointer",
+                  boxShadow: on ? `0 0 12px ${sv.color}30` : "none",
+                  opacity: onlyone&&on ? 0.5 : 1,
+                  transition:"all 0.2s",
+                }}>
+                  <span style={{fontSize:14,fontWeight:700,color:on?sv.color:MUTED}}>
+                    {sv.icon} {sv.label}
+                  </span>
+                  <div style={{
+                    width:42,height:24,borderRadius:12,
+                    background: on ? sv.color : "#374151",
+                    position:"relative",transition:"background 0.2s",
+                    boxShadow: on ? `0 0 8px ${sv.color}60` : "none",
+                  }}>
+                    <div style={{
+                      position:"absolute",top:3,
+                      left: on ? 21 : 3,
+                      width:18,height:18,borderRadius:"50%",
+                      background:"#fff",transition:"left 0.2s",
+                    }}/>
+                  </div>
+                </div>
+              );
+            })}
+            <div style={{fontSize:10,color:MUTED,marginTop:8,textAlign:"center"}}>
+              ※ 最低1つは有効にしてください
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── スクショ読み取りモーダル ── */}
+      {showPhoto && (
+        <PhotoModal
+          onClose={() => setShowPhoto(false)}
+          onExtracted={(data) => {
+            if(data.service && SVC[data.service]) setSvc(data.service);
+            setPrefill(data);
+            setShowForm(true);
+            setShowPhoto(false);
+          }}
+        />
+      )}
+
+      {/* ── 登録フォーム ── */}
+      {showForm && (
+        <div style={{padding:"10px 12px 4px"}}>
+          <div style={{
+            background: CARD,
+            borderRadius: 14, padding: 16,
+            border: `1px solid ${BDR}`,
+            boxSizing: "border-box",
+          }}>
+            {/* スクショ読み取りボタン */}
+            <button
+              onClick={() => setShowPhoto(true)}
+              style={{
+                width:"100%", padding:"10px", borderRadius:10, border:"none",
+                background:"linear-gradient(135deg,#4c1d95,#1e3a8a)",
+                color:"#c4b5fd", fontSize:13, fontWeight:700, cursor:"pointer",
+                marginBottom:14,
+                boxShadow:"0 2px 12px #7c3aed40",
+              }}
+            >
+              📷 スクショから自動読み取り
+            </button>
+            {/* サービス選択 */}
+            <div style={{display:"flex",gap:8,marginBottom:16}}>
+              {Object.entries(SVC).filter(([key])=>enabledSvc[key]).map(([key,sv]) => (
+                <button key={key} onClick={() => setSvc(key)} style={{
+                  flex:1,padding:"10px 4px",borderRadius:10,cursor:"pointer",
+                  fontWeight:700,fontSize:11,minWidth:0,
+                  border:`2px solid ${svc===key ? sv.color : BDR}`,
+                  background: svc===key ? sv.dark : INPUT,
+                  color: svc===key ? sv.color : MUTED,
+                  boxSizing:"border-box",
+                  boxShadow: svc===key ? `0 0 14px ${sv.color}50` : "none",
+                  transition:"all 0.2s",
+                }}>
+                  <div style={{fontSize:18}}>{sv.icon}</div>
+                  <div style={{marginTop:3,fontSize:10,lineHeight:1.3}}>{sv.label}</div>
+                </button>
+              ))}
+            </div>
+            {svc==="rocket"   && <RocketForm onAdd={handleAdd} prefill={prefill}/>}
+            {svc==="demae"    && <DemaeForm  onAdd={handleAdd} prefill={prefill}/>}
+            {svc==="ubereats" && <UEForm     onAdd={handleAdd} prefill={prefill}/>}
+          </div>
+        </div>
+      )}
+
+      {/* ── クエスト一覧 ── */}
+      {loading ? (
+        <div style={{textAlign:"center",padding:"60px 20px",color:MUTED}}>
+          読み込み中...
+        </div>
+      ) : showForm ? null : quests.length===0 ? (
+        <div style={{textAlign:"center",padding:"60px 20px",color:MUTED,lineHeight:2}}>
+          <div style={{fontSize:36,marginBottom:10}}>📋</div>
+          クエストがまだありません。<br/>「＋ 追加」から登録してください。
+        </div>
+      ) : (
+        <div style={{padding:"10px 12px",display:"flex",flexDirection:"column",gap:10}}>
+          {[...quests].sort((a,b)=>{
+            const da=(a.date||'')+(a.startTime||'');
+            const db=(b.date||'')+(b.startTime||'');
+            return da.localeCompare(db);
+          }).map((q,qi) => (
+            <QuestCard key={q.id} q={q} me={me}
+              onUpdate={handleUpdate} onDelete={handleDelete} onCopy={handleCopy} onEdit={handleEdit} onMove={handleMove} questIdx={qi} questCount={quests.length}/>
+          ))}
+        </div>
+      )}
+
+      <div style={{textAlign:"center",padding:"12px 0",fontSize:10,color:"#111827"}}>
+        🌐 みんなで共有中
+      </div>
+      <CounterPanel quests={quests} onUpdate={handleUpdate}/>
+      <ScrollTopBtn/>
+      {/* TOPへ戻るボタン */}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+  </script>
+</body>
+</html>
