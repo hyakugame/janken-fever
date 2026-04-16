@@ -455,7 +455,7 @@ function QuestCard({ q, me, onUpdate, onDelete }) {
             justifyContent:"space-between",gap:10,flexWrap:"wrap",
           }}>
             {/* 拒否カウンター */}
-            <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{display:"flex",alignItems:"center",gax:8}}>
               <span style={{fontSize:11,color:MUTED,flexShrink:0}}>拒否件数</span>
               <button onClick={() => onUpdate(q.id,"rejected",-1)} style={{
                 background:"#1e293b",border:"none",color:MUTED,
@@ -1052,7 +1052,7 @@ function DemaeForm({ onAdd, prefill }) {
       {steps.map((st,i) => (
         <div key={i} style={{background:"#060a10",borderRadius:10,padding:"10px 12px",marginBottom:8,border:`1px solid ${BDR}`}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ステップ {i+1}{i===steps.length-1?" 🎯（目標）":""}</span>
+            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ステップ {i+1}{i===steps.length-1?" 🎯（目暙）":""}</span>
             {steps.length>1 && (
               <button onClick={()=>removeStep(i)} style={{background:"none",border:"none",color:"#ef4444",fontSize:14,cursor:"pointer",padding:"2px 6px"}}>✕</button>
             )}
