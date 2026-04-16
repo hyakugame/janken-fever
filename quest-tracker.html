@@ -935,6 +935,26 @@ function CounterPanel({ quests, onUpdate }) {
             borderBottom:`1px solid ${BDR}`,position:"sticky",top:0,background:CARD,
             display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <span>📊 クイックカウンター</span>
+            <button onClick={async(e)=>{e.stopPropagation();
+              if(!('documentPictureInPicture' in window)){alert('Chrome 120以降/Android Chromeが必要です');return;}
+              try{
+                const pip=await documentPictureInPicture.requestWindow({width:260,height:400});
+                pip.document.body.style.cssText='margin:0;background:#0a0f1a;color:#f1f5f9;font-family:sans-serif;';
+                const update=()=>{
+                  const qs=JSON.parse(localStorage.getItem('qt5')||'[]');
+                  const confirmed=qs.reduce((s,q)=>{const d=q.done||0;const st=[...(q.bonuses||[])].sort((a,b)=>a.count-b.count);const e=[...st].reverse().find(s=>d>=s.count);return s+(e?e.reward:0);},0);
+                  const active=qs.filter(q=>(q.done||0)<q.goal);
+                  const SVC2={ubereats:{l:'Uber Eats',c:'#22c55e'},rocket:{l:'ロケット',c:'#ff6b35'},demae:{l:'出前館',c:'#ef4444'}};
+                  pip.document.body.innerHTML='<div style="padding:8px"><div style="background:#1d4ed8;border-radius:8px;padding:6px 10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><b style="font-size:13px">📊</b><span style="color:#86efac;font-weight:900">¥'+confirmed.toLocaleString()+' 確定</span></div>'+(active.length?active.map(q=>{const sv=SVC2[q.service]||{l:'?',c:'#fff'};const d=q.done||0;const steps=[...(q.bonuses||[])].sort((a,b)=>a.count-b.count);const ns=steps.find(s=>s.count>d);const pc=([...steps].reverse().find(s=>s.count<=d)||{count:0}).count;const mx=ns?ns.count:q.goal;return '<div style="background:#0f1520;border-radius:8px;padding:8px;margin-bottom:6px"><div style="color:'+sv.c+';font-weight:800;font-size:12px;margin-bottom:6px">'+sv.l+'</div><div style="display:flex;align-items:center;gap:8px"><button onclick="(function(){var qs=JSON.parse(localStorage.getItem(\'qt5\')||\'[]\')||[];var idx=qs.findIndex(x=>x.id==\''+q.id+'\');if(idx>=0){qs[idx].done=Math.max(0,(qs[idx].done||0)-1);localStorage.setItem(\'qt5\',JSON.stringify(qs));try{new BroadcastChannel(\'qt_pip\').postMessage(\'u\')}catch(e){}update()}})()" style="background:#1e293b;border:none;color:#fff;border-radius:6px;width:40px;height:40px;font-size:20px;cursor:pointer">－</button><div style="flex:1;text-align:center;font-size:26px;font-weight:900;color:#22c55e">'+Math.max(0,d-pc)+'<div style="font-size:11px;color:#64748b">/'+(ns?ns.count-pc:0)+'件</div></div><button onclick="(function(){var qs=JSON.parse(localStorage.getItem(\'qt5\')||\'[]\')||[];var idx=qs.findIndex(x=>x.id==\''+q.id+'\');if(idx>=0){qs[idx].done=Math.min('+mx+',(qs[idx].done||0)+1);localStorage.setItem(\'qt5\',JSON.stringify(qs));try{new BroadcastChannel(\'qt_pip\').postMessage(\'u\')}catch(e){}update()}})()" style="background:#22c55e;border:none;color:#fff;border-radius:6px;width:40px;height:40px;font-size:20px;cursor:pointer">＋</button></div></div>';}).join(''):'<div style="color:#64748b;text-align:center;padding:16px">クエストなし</div>')+'</div>';
+                };
+                update();
+                const bc2=typeof BroadcastChannel!=='undefined'?new BroadcastChannel('qt_pip'):null;
+                if(bc2)bc2.onmessage=update;
+                pip.addEventListener('pagehide',()=>{if(bc2)bc2.close();});
+              }catch(err){alert('PiPエラー: '+err.message);}
+            }} style={{background:"#1e3a5f",border:"none",color:"#93c5fd",borderRadius:6,padding:"2px 8px",fontSize:11,cursor:"pointer",flexShrink:0}}>
+              🗺️ 地図同時使用
+            </button>
             <span style={{color:"#22c55e",fontWeight:900,fontSize:13}}>
               ¥{confirmedReward.toLocaleString()} 確定
             </span>
@@ -2179,8 +2199,10 @@ function App() {
     return () => clearInterval(t);
   }, [reload]);
 
+  const _bc = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('qt_pip') : null;
   const persist = async (list) => {
     try { await saveQ(list); } catch(e) { console.error("storage error:", e); }
+    if(_bc) _bc.postMessage('update');
     setQuests(list); setLastUp(new Date());
   };
 
