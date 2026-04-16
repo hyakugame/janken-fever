@@ -365,11 +365,13 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
               style={{background:"none",border:"none",color:(questIdx==null||questIdx===questCount-1)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===questCount-1)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>▼</button>
           </div>
           {me===q.owner && !achieved && (
-            <><button onClick={() => onEdit && onEdit(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>編集</button><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>コピー</button>
+            <><button onClick={() => onEdit && onEdit(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>編集</button><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>コピー</button></>
+          )}
+          {me===q.owner && (
             <button onClick={() => onDelete(q.id)} style={{
               background:"none",border:"none",color:"#475569",
               fontSize:16,cursor:"pointer",padding:"0 4px",
-            }}>✕</button></>
+            }}>✕</button>
           )}
         </div>
       </div>
@@ -1480,8 +1482,10 @@ function App() {
       const _cur = q.done || 0;
       const _nextStep = _steps.find(s => s.count > _cur);
       const _prevStep2 = [..._steps].reverse().find(s=>s.count<=_cur);
-      const _prevMin = _prevStep2 ? _prevStep2.count : 0;
-      const max = field==="done" ? (_nextStep ? _nextStep.count : q.goal) : 999;
+      const _achieved2 = (q.done||0) >= q.goal;
+      const _lastPrev = _steps.length > 1 ? _steps[_steps.length-2].count : 0;
+      const _prevMin = _achieved2 ? _lastPrev : (_prevStep2 ? _prevStep2.count : 0);
+      const max = field==="done" ? (_achieved2 ? q.goal : (_nextStep ? _nextStep.count : q.goal)) : 999;
       const min = field==="done" ? _prevMin : 0;
       return {...q, [field]: Math.max(min,Math.min(max,cur+delta)),
         updatedAt: new Date().toISOString()};
