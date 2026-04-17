@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="クエスト管理">
+  <meta name="apple-mobile-web-app-title" content="ã¯ã¨ã¹ãç®¡ç">
   <meta name="theme-color" content="#080c14">
-  <title>クエスト進捗管理</title>  
+  <title>ã¯ã¨ã¹ãé²æç®¡ç</title>  
   <!-- cb:1776368906389 cache-bust: 1776366012405 -->
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -27,13 +27,13 @@
   <script type="text/babel" data-presets="react">
 const { useState, useEffect, useCallback, useRef } = React;
 
-/* ══════════════════════════════════════
-   定数・カラー
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   å®æ°ã»ã«ã©ã¼
+ââââââââââââââââââââââââââââââââââââââ */
 const SVC = {
-  ubereats: { label:"Uber Eats",   icon:"🐸", color:"#22c55e", dark:"#031a07" },
-  rocket:   { label:"ロケットナウ", icon:"🚀", color:"#ff6b35", dark:"#1a0a03" },
-  demae:    { label:"出前館",       icon:"🥫", color:"#ef4444", dark:"#1a0303" },
+  ubereats: { label:"Uber Eats",   icon:"ð¸", color:"#22c55e", dark:"#031a07" },
+  rocket:   { label:"ã­ã±ãããã¦", icon:"ð", color:"#ff6b35", dark:"#1a0a03" },
+  demae:    { label:"åºåé¤¨",       icon:"ð¥«", color:"#ef4444", dark:"#1a0303" },
 };
 const BG    = "#080c14";
 const CARD  = "#0f1520";
@@ -51,9 +51,9 @@ const INP = {
   boxSizing: "border-box", outline: "none",
 };
 
-/* ══════════════════════════════════════
-   ユーティリティ
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ã¦ã¼ãã£ãªãã£
+ââââââââââââââââââââââââââââââââââââââ */
 const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 
 function remMin(t) {
@@ -68,7 +68,7 @@ function remMin(t) {
 function fmtDate(iso) {
   if(!iso) return "";
   const [y,mo,d] = iso.split("-");
-  const dow = ["日","月","火","水","木","金","土"][new Date(`${y}-${mo}-${d}`).getDay()];
+  const dow = ["æ¥","æ","ç«","æ°´","æ¨","é","å"][new Date(`${y}-${mo}-${d}`).getDay()];
   return `${y}/${mo}/${d}(${dow})`;
 }
 function hhmm(d) {
@@ -76,14 +76,14 @@ function hhmm(d) {
 }
 function timeAgo(iso) {
   const s = Math.floor((Date.now()-new Date(iso))/1000);
-  if(s<60) return `${s}秒前`;
-  if(s<3600) return `${Math.floor(s/60)}分前`;
-  return `${Math.floor(s/3600)}時間前`;
+  if(s<60) return `${s}ç§å`;
+  if(s<3600) return `${Math.floor(s/60)}åå`;
+  return `${Math.floor(s/3600)}æéå`;
 }
 
-/* ══════════════════════════════════════
-   ストレージ（共有）
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ã¹ãã¬ã¼ã¸ï¼å±æï¼
+ââââââââââââââââââââââââââââââââââââââ */
 async function loadQ() {
   try {
     const raw = localStorage.getItem("qt5");
@@ -94,9 +94,9 @@ async function saveQ(list) {
   localStorage.setItem("qt5", JSON.stringify(list));
 }
 
-/* ══════════════════════════════════════
-   カスタムフック: カウントダウン
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ã«ã¹ã¿ã ããã¯: ã«ã¦ã³ããã¦ã³
+ââââââââââââââââââââââââââââââââââââââ */
 function useCountdown(endTime) {
   const [min, setMin] = useState(() => remMin(endTime));
   useEffect(() => {
@@ -106,9 +106,9 @@ function useCountdown(endTime) {
   return min;
 }
 
-/* ══════════════════════════════════════
-   締切カウントダウンバッジ
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ç· åã«ã¦ã³ããã¦ã³ããã¸
+ââââââââââââââââââââââââââââââââââââââ */
 function DeadlineBadge({ time, label, firstOrderDone }) {
   const min = useCountdown(time);
   const over   = min < 0;
@@ -116,7 +116,7 @@ function DeadlineBadge({ time, label, firstOrderDone }) {
   const col = over ? "#ef4444" : urgent ? "#fb923c" : "#fbbf24";
   const bg  = over ? "#1f0505" : urgent ? "#1f1005" : "#1a1a05";
 
-  // 初回受注済みならグレーアウト
+  // åååæ³¨æ¸ã¿ãªãã°ã¬ã¼ã¢ã¦ã
   if(firstOrderDone) return (
     <div style={{
       background:"#0a0f1a", border:"1px solid #1e293b",
@@ -124,9 +124,9 @@ function DeadlineBadge({ time, label, firstOrderDone }) {
       display:"flex", justifyContent:"space-between", alignItems:"center",
     }}>
       <span style={{fontSize:12,color:"#374151",textDecoration:"line-through"}}>
-        ⚠️ {label}: {time}まで
+        â ï¸ {label}: {time}ã¾ã§
       </span>
-      <span style={{fontSize:11,color:"#22c55e",fontWeight:700}}>✓ 受注済み</span>
+      <span style={{fontSize:11,color:"#22c55e",fontWeight:700}}>â åæ³¨æ¸ã¿</span>
     </div>
   );
 
@@ -141,41 +141,41 @@ function DeadlineBadge({ time, label, firstOrderDone }) {
     }}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
         <span style={{fontSize:12,color:col,fontWeight:700,flexShrink:0}}>
-          ⚠️ {label}: {time}まで
+          â ï¸ {label}: {time}ã¾ã§
         </span>
         <span style={{fontSize:15,fontWeight:900,color:col,whiteSpace:"nowrap"}}>
-          {(() => { const a=Math.abs(min),hh=Math.floor(a/60),mm=a%60; return over?(hh>0?`${hh}h${mm}m超過！`:`${mm}分超過！`):(hh>0?`残${hh}h${mm}m`:`残${mm}分`); })()}
+          {(() => { const a=Math.abs(min),hh=Math.floor(a/60),mm=a%60; return over?(hh>0?`${hh}h${mm}mè¶éï¼`:`${mm}åè¶éï¼`):(hh>0?`æ®${hh}h${mm}m`:`æ®${mm}å`); })()}
         </span>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════
-   終了時刻バッジ
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   çµäºæå»ããã¸
+ââââââââââââââââââââââââââââââââââââââ */
 function EndBadge({ endTime, startTime }) {
   const minToEnd   = useCountdown(endTime);
   const minToStart = useCountdown(startTime);
   if(!endTime) return null;
 
-  // 開始前
+  // éå§å
   if(startTime && minToStart > 0) {
     const d = Math.floor(minToStart / 1440);
     const h = Math.floor((minToStart % 1440) / 60);
     const m = minToStart % 60;
-    const label = d >= 1 ? `${d}日${h}h後` : h >= 1 ? `${h}h${m}m後` : `${m}分後`;
+    const label = d >= 1 ? `${d}æ¥${h}hå¾` : h >= 1 ? `${h}h${m}må¾` : `${m}åå¾`;
     return (
       <div style={{textAlign:"center",background:"#0a0f1a",border:"1px solid #1e293b",
         borderRadius:8,padding:"8px 6px",minWidth:0}}>
-        <div style={{fontSize:10,color:MUTED,lineHeight:1,whiteSpace:"nowrap"}}>開始まで</div>
+        <div style={{fontSize:10,color:MUTED,lineHeight:1,whiteSpace:"nowrap"}}>éå§ã¾ã§</div>
         <div style={{fontSize:12,fontWeight:900,color:"#64748b",whiteSpace:"nowrap",marginTop:2}}>{label}</div>
-        <div style={{fontSize:9,color:"#374151",marginTop:3,whiteSpace:"nowrap"}}>{startTime}〜</div>
+        <div style={{fontSize:9,color:"#374151",marginTop:3,whiteSpace:"nowrap"}}>{startTime}ã</div>
       </div>
     );
   }
 
-  // 開始後
+  // éå§å¾
   const over   = minToEnd < 0;
   const urgent = !over && minToEnd <= 15;
   const warn   = !over && minToEnd <= 30;
@@ -183,22 +183,22 @@ function EndBadge({ endTime, startTime }) {
   const abs = Math.abs(minToEnd);
   const dh = Math.floor(abs / 60); const dm = abs % 60;
   const timeLabel = over
-    ? (dh >= 1 ? `⚠️${dh}h${dm}m超` : `⚠️${abs}分超`)
-    : (dh >= 1 ? `残${dh}h${dm}m` : `残${abs}分`);
+    ? (dh >= 1 ? `â ï¸${dh}h${dm}mè¶` : `â ï¸${abs}åè¶`)
+    : (dh >= 1 ? `æ®${dh}h${dm}m` : `æ®${abs}å`);
   return (
     <div style={{textAlign:"center",background:`${col}18`,border:`1px solid ${col}`,
       borderRadius:8,padding:"8px 6px",boxShadow:`0 0 10px ${col}40`,minWidth:0}}>
       <div style={{fontSize:12,fontWeight:900,color:col,lineHeight:1,whiteSpace:"nowrap"}}>
         {timeLabel}
       </div>
-      <div style={{fontSize:9,color:MUTED,marginTop:3,whiteSpace:"nowrap"}}>終了 {endTime}</div>
+      <div style={{fontSize:9,color:MUTED,marginTop:3,whiteSpace:"nowrap"}}>çµäº {endTime}</div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════
-   報酬パネル
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   å ±é¬ããã«
+ââââââââââââââââââââââââââââââââââââââ */
 function RewardPanel({ q }) {
   const done     = q.done || 0;
   const rejected = q.rejected || 0;
@@ -207,12 +207,12 @@ function RewardPanel({ q }) {
   const rateThreshold = parseInt(q.completionRate || 0);
   const rateOk   = !rateThreshold || compRate >= rateThreshold;
 
-  // ── マルチステップ対応 ──
+  // ââ ãã«ãã¹ãããå¯¾å¿ ââ
   const steps    = [...(q.bonuses||[])].sort((a,b)=>a.count-b.count);
   const isMulti  = steps.length > 1;
   const bonusExt = parseInt(q.bonusExtra || 0);
 
-  // 各ステップの達成確認・累計報酬
+  // åã¹ãããã®éæç¢ºèªã»ç´¯è¨å ±é¬
   const earned = steps.filter(s=>done>=s.count).reduce((sum,s)=>sum+s.reward,0)
                  + (done>=q.goal && bonusExt && rateOk ? bonusExt : 0);
   const maxBonus = steps.reduce((sum,s)=>sum+s.reward,0) + bonusExt;
@@ -235,16 +235,16 @@ function RewardPanel({ q }) {
               return (
                 <div key={i} style={{fontSize:10,color:ok?"#22c55e":MUTED,marginBottom:2,
                   display:"flex",justifyContent:"space-between"}}>
-                  <span>{ok?"✓":"◯"} {i===0?stepCount:"+"+stepCount}件達成</span>
-                  <span style={{fontWeight:700}}>¥{s.reward.toLocaleString()}</span>
+                  <span>{ok?"â":"â¯"} {i===0?stepCount:"+"+stepCount}ä»¶éæ</span>
+                  <span style={{fontWeight:700}}>Â¥{s.reward.toLocaleString()}</span>
                 </div>
               );
             })}
             {bonusExt > 0 && (
               <div style={{fontSize:10,color:allOk&&rateOk?"#22c55e":MUTED,marginBottom:2,
                 display:"flex",justifyContent:"space-between"}}>
-                <span>{allOk&&rateOk?"✓":"◯"} 完了率{q.completionRate}%↑</span>
-                <span style={{fontWeight:700}}>+¥{bonusExt.toLocaleString()}</span>
+                <span>{allOk&&rateOk?"â":"â¯"} å®äºç{q.completionRate}%â</span>
+                <span style={{fontWeight:700}}>+Â¥{bonusExt.toLocaleString()}</span>
               </div>
             )}
           </div>
@@ -252,16 +252,16 @@ function RewardPanel({ q }) {
             <div style={{fontSize:24,fontWeight:900,lineHeight:1,
               color:allOk?"#22c55e":earned>0?"#fbbf24":MUTED,
               textShadow:allOk?"0 0 16px #22c55e":earned>0?"0 0 10px #fbbf24":"none"}}>
-              ¥{earned.toLocaleString()}
+              Â¥{earned.toLocaleString()}
             </div>
-            <div style={{fontSize:9,color:MUTED}}>/ ¥{maxBonus.toLocaleString()}</div>
+            <div style={{fontSize:9,color:MUTED}}>/ Â¥{maxBonus.toLocaleString()}</div>
           </div>
         </div>
       </div>
     );
   }
 
-  // ── 単一ステップ（ロケットナウ等）──
+  // ââ åä¸ã¹ãããï¼ã­ã±ãããã¦ç­ï¼ââ
   const bonusBase = parseInt(steps[0]?.reward || 0);
   const goalOk    = done >= q.goal;
   const fullOk    = goalOk && (!bonusExt || rateOk);
@@ -278,11 +278,11 @@ function RewardPanel({ q }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
         <div>
           <div style={{fontSize:10,color:goalOk?"#22c55e":MUTED,marginBottom:3}}>
-            {goalOk?"✓ ":"◯ "}{q.goal}件達成 → ¥{bonusBase.toLocaleString()}
+            {goalOk?"â ":"â¯ "}{q.goal}ä»¶éæ â Â¥{bonusBase.toLocaleString()}
           </div>
           {bonusExt > 0 && (
             <div style={{fontSize:10,color:fullOk?"#22c55e":MUTED}}>
-              {fullOk?"✓ ":"◯ "}完了率{q.completionRate}%以上 → +¥{bonusExt.toLocaleString()}
+              {fullOk?"â ":"â¯ "}å®äºç{q.completionRate}%ä»¥ä¸ â +Â¥{bonusExt.toLocaleString()}
             </div>
           )}
         </div>
@@ -290,18 +290,18 @@ function RewardPanel({ q }) {
           <div style={{fontSize:26,fontWeight:900,lineHeight:1,
             color:fullOk?"#22c55e":MUTED,
             textShadow:fullOk?"0 0 16px #22c55e":"none"}}>
-            ¥{earnedS.toLocaleString()}
+            Â¥{earnedS.toLocaleString()}
           </div>
-          <div style={{fontSize:9,color:MUTED}}>/ ¥{(bonusBase+bonusExt).toLocaleString()}</div>
+          <div style={{fontSize:9,color:MUTED}}>/ Â¥{(bonusBase+bonusExt).toLocaleString()}</div>
         </div>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════
-   クエストカード
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ã¯ã¨ã¹ãã«ã¼ã
+ââââââââââââââââââââââââââââââââââââââ */
 function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx, questCount }) {
   const svc      = SVC[q.service] || SVC.rocket;
   const done     = q.done || 0;
@@ -313,20 +313,20 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
   const rateThreshold = parseInt(q.completionRate || 0);
   const rateOk   = !rateThreshold || compRate >= rateThreshold;
 
-  // ── マルチステップ: 次のステップまでの残り件数 ──
+  // ââ ãã«ãã¹ããã: æ¬¡ã®ã¹ãããã¾ã§ã®æ®ãä»¶æ° ââ
   const steps       = [...(q.bonuses||[])].sort((a,b)=>a.count-b.count);
-  const currentStep = steps.find(s => s.count > done);       // 次の未達ステップ
-  const prevStep    = [...steps].reverse().find(s=>s.count<=done); // 直前の達成済み
+  const currentStep = steps.find(s => s.count > done);       // æ¬¡ã®æªéã¹ããã
+  const prevStep    = [...steps].reverse().find(s=>s.count<=done); // ç´åã®éææ¸ã¿
   const nextGoal    = currentStep ? currentStep.count : goal;
   const prevCount   = prevStep ? prevStep.count : 0;
   const left        = Math.max(0, nextGoal - done);
-  // 現在ステップ内の進捗
+  // ç¾å¨ã¹ãããåã®é²æ
   const stepRange   = nextGoal - prevCount;
   const pct         = stepRange > 0
     ? Math.min(100, Math.round((done - prevCount) / stepRange * 100))
     : 100;
   const stepLabel   = steps.length > 1
-    ? `ステップ${steps.filter(s=>s.count<=done).length+1}/${steps.length}`
+    ? `ã¹ããã${steps.filter(s=>s.count<=done).length+1}/${steps.length}`
     : null;
 
   return (
@@ -338,7 +338,7 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
       boxShadow: `0 4px 24px ${svc.color}18`,
     }}>
 
-      {/* ─ ヘッダー ─ */}
+      {/* â ãããã¼ â */}
       <div style={{
         padding: "12px 14px 6px",
         display: "flex", justifyContent: "space-between",
@@ -364,27 +364,27 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
         <div style={{display:"flex",alignItems:"center",gap:4,flexShrink:0}}>
           {achieved && (
             <span style={{fontSize:12,fontWeight:800,color:"#22c55e",
-              textShadow:"0 0 10px #22c55e"}}>✓ 達成！</span>
+              textShadow:"0 0 10px #22c55e"}}>â éæï¼</span>
           )}
           <div style={{display:"flex",flexDirection:"column",gap:2,marginLeft:2}}>
             <button onClick={()=>onMove&&onMove(q.id,-1)} disabled={questIdx==null||questIdx===0}
-              style={{background:"none",border:"none",color:(questIdx==null||questIdx===0)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===0)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>▲</button>
+              style={{background:"none",border:"none",color:(questIdx==null||questIdx===0)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===0)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>â²</button>
             <button onClick={()=>onMove&&onMove(q.id,1)} disabled={questIdx==null||questIdx===questCount-1}
-              style={{background:"none",border:"none",color:(questIdx==null||questIdx===questCount-1)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===questCount-1)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>▼</button>
+              style={{background:"none",border:"none",color:(questIdx==null||questIdx===questCount-1)?"#1e293b":"#94a3b8",fontSize:18,cursor:(questIdx==null||questIdx===questCount-1)?"default":"pointer",padding:"2px 4px",lineHeight:1}}>â¼</button>
           </div>
           {me===q.owner && !achieved && (
-            <><button onClick={() => onEdit && onEdit(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>編集</button><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>コピー</button></>
+            <><button onClick={() => onEdit && onEdit(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>ç·¨é</button><button onClick={() => onCopy && onCopy(q)} style={{background:"none",border:"none",color:"#64748b",fontSize:18,cursor:"pointer",padding:"2px 4px"}} style={{fontSize:13,fontWeight:700}}>ã³ãã¼</button></>
           )}
           {me===q.owner && (
             <button onClick={() => onDelete(q.id)} style={{
               background:"none",border:"none",color:"#475569",
               fontSize:16,cursor:"pointer",padding:"0 4px",
-            }}>✕</button>
+            }}>â</button>
           )}
         </div>
       </div>
 
-      {/* ─ 日付・時間 ─ */}
+      {/* â æ¥ä»ã»æé â */}
       <div style={{
         padding: "0 14px 10px",
         fontSize: 14, color: MUTED,
@@ -392,29 +392,29 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
       }}>
         {q.date && (
           <span style={{color:BLUE,marginRight:6,fontWeight:600}}>
-            {fmtDate(q.date)}{q.dateTo ? `〜${fmtDate(q.dateTo)}` : ""}
+            {fmtDate(q.date)}{q.dateTo ? `ã${fmtDate(q.dateTo)}` : ""}
           </span>
         )}
-        🕐 {q.startTime} 〜 {q.endTime}
+        ð {q.startTime} ã {q.endTime}
         {q.acceptWindow && (
-          <span style={{marginLeft:8,color:"#475569"}}>受諾可: {q.acceptWindow}</span>
+          <span style={{marginLeft:8,color:"#475569"}}>åè«¾å¯: {q.acceptWindow}</span>
         )}
       </div>
 
-      {/* ─ 締切アラート ─ */}
+      {/* â ç· åã¢ã©ã¼ã â */}
       {q.deadline && (
         <div style={{padding:"0 14px 4px"}}>
-          <DeadlineBadge time={q.deadline} label="初回受注締切" firstOrderDone={done>=1}/>
+          <DeadlineBadge time={q.deadline} label="åååæ³¨ç· å" firstOrderDone={done>=1}/>
         </div>
       )}
 
-      {/* ─ メインカウンター ─ */}
+      {/* â ã¡ã¤ã³ã«ã¦ã³ã¿ã¼ â */}
       <div style={{
         display: "flex", alignItems: "center",
         background: "#060a10",
         padding: "16px 14px", gap: 14,
       }}>
-        {/* 残り件数 */}
+        {/* æ®ãä»¶æ° */}
         <div style={{flexShrink:0,textAlign:"center",minWidth:64}}>
           <div style={{
             fontSize: achieved ? 38 : 52,
@@ -425,10 +425,10 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
               : left<=2 ? "0 0 24px #ef4444"
               : `0 0 24px ${BLUE}`,
           }}>
-            {achieved ? "✓" : Math.max(0, done - prevCount)}
+            {achieved ? "â" : Math.max(0, done - prevCount)}
           </div>
           <div style={{fontSize:10,color:MUTED,marginTop:4}}>
-            {achieved ? "達成" : "/" + (nextGoal-prevCount) + "件"}
+            {achieved ? "éæ" : "/" + (nextGoal-prevCount) + "ä»¶"}
           </div>
           {stepLabel && !achieved && (
             <div style={{
@@ -438,7 +438,7 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
           )}
         </div>
 
-        {/* ＋ / － ボタン */}
+        {/* ï¼ / ï¼ ãã¿ã³ */}
         <div style={{flex:1,display:"flex",flexDirection:"column",gap:8,alignItems:"center"}}>
           <button
             onClick={() => !achieved && onUpdate(q.id,"done",1)}
@@ -455,7 +455,7 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
                 ? "none"
                 : "0 4px 16px #3b82f660, 0 0 24px #6d28d940",
             }}
-          >＋</button>
+          >ï¼</button>
           <button
             onClick={() => onUpdate(q.id,"done",-1)}
             style={{
@@ -464,16 +464,16 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
               cursor: "pointer",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}
-          >－</button>
+          >ï¼</button>
         </div>
 
-        {/* 終了まで */}
+        {/* çµäºã¾ã§ */}
         <div style={{flexShrink:0,width:76}}>
           <EndBadge endTime={q.endTime} startTime={q.startTime}/>
         </div>
       </div>
 
-      {/* ─ プログレスバー ─ */}
+      {/* â ãã­ã°ã¬ã¹ãã¼ â */}
       <div style={{height:4,background:"#060a10"}}>
         <div style={{
           height: "100%",
@@ -486,21 +486,21 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
         }}/>
       </div>
 
-      {/* ─ 完了率 & 拒否件数（ロケットナウ） ─ */}
+      {/* â å®äºç & æå¦ä»¶æ°ï¼ã­ã±ãããã¦ï¼ â */}
       {q.service==="rocket" && q.completionRate && (
         <div style={{background:"#060a10",padding:"10px 14px"}}>
           <div style={{
             display:"flex",alignItems:"center",
             justifyContent:"space-between",gap:10,flexWrap:"wrap",
           }}>
-            {/* 拒否カウンター */}
+            {/* æå¦ã«ã¦ã³ã¿ã¼ */}
             <div style={{display:"flex",alignItems:"center",gax:8}}>
-              <span style={{fontSize:11,color:MUTED,flexShrink:0}}>拒否件数</span>
+              <span style={{fontSize:11,color:MUTED,flexShrink:0}}>æå¦ä»¶æ°</span>
               <button onClick={() => onUpdate(q.id,"rejected",-1)} style={{
                 background:"#1e293b",border:"none",color:MUTED,
                 borderRadius:6,width:28,height:28,fontSize:14,cursor:"pointer",
                 display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
-              }}>－</button>
+              }}>ï¼</button>
               <span style={{
                 fontSize:18,fontWeight:800,color:"#fb923c",
                 minWidth:24,textAlign:"center",
@@ -510,12 +510,12 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
                 background:"#7c2d12",border:"none",color:"#fb923c",
                 borderRadius:6,width:28,height:28,fontSize:14,cursor:"pointer",
                 display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,
-              }}>＋</button>
+              }}>ï¼</button>
             </div>
-            {/* 完了率 */}
+            {/* å®äºç */}
             <div style={{display:"flex",alignItems:"center",gap:6}}>
               <span style={{fontSize:10,color:MUTED,whiteSpace:"nowrap"}}>
-                完了率 (目標{q.completionRate}%↑)
+                å®äºç (ç®æ¨{q.completionRate}%â)
               </span>
               <span style={{
                 fontSize:18,fontWeight:900,
@@ -523,11 +523,11 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
                 whiteSpace:"nowrap",
                 textShadow: rateOk ? "0 0 12px #22c55e" : "0 0 12px #ef4444",
               }}>
-                {compRate}%{rateOk?" ✓":" ✗"}
+                {compRate}%{rateOk?" â":" â"}
               </span>
             </div>
           </div>
-          {/* 完了率バー */}
+          {/* å®äºçãã¼ */}
           <div style={{marginTop:8,height:3,background:"#1e293b",borderRadius:4}}>
             <div style={{
               height:"100%",
@@ -541,29 +541,29 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
         </div>
       )}
 
-      {/* ─ 報酬パネル ─ */}
+      {/* â å ±é¬ããã« â */}
       {(q.bonusExtra || (q.bonuses && q.bonuses.length > 1)) && (
         <div style={{padding:"10px 14px 4px"}}>
           <RewardPanel q={q}/>
         </div>
       )}
 
-      {/* ─ フッター ─ */}
+      {/* â ããã¿ã¼ â */}
       <div style={{
         padding:"8px 14px",
         display:"flex",justifyContent:"space-between",alignItems:"center",
         borderTop:`1px solid ${BDR}`,
       }}>
-        <span style={{fontSize:10,color:MUTED}}>{done}/{goal}件 ({Math.min(100,Math.round(done/goal*100))}%)</span>
+        <span style={{fontSize:10,color:MUTED}}>{done}/{goal}ä»¶ ({Math.min(100,Math.round(done/goal*100))}%)</span>
         <span style={{fontSize:10,color:"#475569"}}>{timeAgo(q.updatedAt)}</span>
       </div>
     </div>
   );
 }
 
-/* ══════════════════════════════════════
-   正規表現パーサー
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   æ­£è¦è¡¨ç¾ãã¼ãµã¼
+ââââââââââââââââââââââââââââââââââââââ */
 
 function Lbl({ children }) {
   return (
@@ -613,7 +613,7 @@ function SecHead({ children }) {
   );
 }
 
-/* 数値ステッパー（大きいボタン＋プリセット） */
+/* æ°å¤ã¹ãããã¼ï¼å¤§ãããã¿ã³ï¼ããªã»ããï¼ */
 function NumStepper({ label, val, set, step=1, min=0, max=9999, presets }) {
   const n = parseInt(val) || 0;
   const up   = () => set(String(Math.min(max, n + step)));
@@ -628,7 +628,7 @@ function NumStepper({ label, val, set, step=1, min=0, max=9999, presets }) {
     <div style={{minWidth:0, marginBottom:12}}>
       <Lbl>{label}</Lbl>
       <div style={{display:"flex", alignItems:"center", gap:8}}>
-        <button onClick={down} style={{...SB, background:"#1e293b", color:"#94a3b8"}}>－</button>
+        <button onClick={down} style={{...SB, background:"#1e293b", color:"#94a3b8"}}>ï¼</button>
         <input
           type="number"
           value={val}
@@ -640,7 +640,7 @@ function NumStepper({ label, val, set, step=1, min=0, max=9999, presets }) {
           }}
         />
         <button onClick={up} style={{...SB, background:"linear-gradient(135deg,#1d4ed8,#6d28d9)",
-          color:"#fff", boxShadow:"0 2px 8px #3b82f640"}}>＋</button>
+          color:"#fff", boxShadow:"0 2px 8px #3b82f640"}}>ï¼</button>
       </div>
       {presets && (
         <div style={{display:"flex", gap:6, marginTop:6, flexWrap:"wrap"}}>
@@ -684,9 +684,9 @@ function OKBtn({ onClick, disabled, children }) {
   );
 }
 
-/* ══════════════════════════════════════
-   ロケットナウ フォーム
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ã­ã±ãããã¦ ãã©ã¼ã 
+ââââââââââââââââââââââââââââââââââââââ */
 function RocketForm({ onAdd, prefill }) {
   const [f,setF] = useState({
     date:todayStr(), dateTo:"", isRange:false,
@@ -714,45 +714,45 @@ function RocketForm({ onAdd, prefill }) {
 
   return (
     <div>
-      {/* 日付 */}
+      {/* æ¥ä» */}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-        <Lbl>日付</Lbl>
+        <Lbl>æ¥ä»</Lbl>
         <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:11,color:MUTED}}>
           <input type="checkbox" checked={f.isRange} onChange={e=>s("isRange",e.target.checked)}
             style={{width:14,height:14,cursor:"pointer"}}/>
-          期間クエスト
+          æéã¯ã¨ã¹ã
         </label>
       </div>
       {f.isRange ? (
         <Row2>
-          <Field label="開始日" type="date" val={f.date}  set={v=>s("date",v)}/>
-          <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
+          <Field label="éå§æ¥" type="date" val={f.date}  set={v=>s("date",v)}/>
+          <Field label="çµäºæ¥" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
         </Row2>
       ) : (
         <div style={{marginBottom:12}}>
           <input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/>
         </div>
       )}
-      <SecHead>全体の時間</SecHead>
+      <SecHead>å¨ä½ã®æé</SecHead>
       <Row2>
-        <Field label="開始" type="time" val={f.start} set={v=>s("start",v)}/>
-        <Field label="終了" type="time" val={f.end}   set={v=>s("end",v)}/>
+        <Field label="éå§" type="time" val={f.start} set={v=>s("start",v)}/>
+        <Field label="çµäº" type="time" val={f.end}   set={v=>s("end",v)}/>
       </Row2>
-      <SecHead>⚠️ 初回受注（重要）</SecHead>
-      <Field label="受注締切" type="time" val={f.deadline} set={v=>s("deadline",v)}/>
+      <SecHead>â ï¸ åååæ³¨ï¼éè¦ï¼</SecHead>
+      <Field label="åæ³¨ç· å" type="time" val={f.deadline} set={v=>s("deadline",v)}/>
       <Row2>
-        <Field label="受諾 開始" type="time" val={f.acceptStart} set={v=>s("acceptStart",v)}/>
-        <Field label="受諾 終了" type="time" val={f.acceptEnd}   set={v=>s("acceptEnd",v)}/>
+        <Field label="åè«¾ éå§" type="time" val={f.acceptStart} set={v=>s("acceptStart",v)}/>
+        <Field label="åè«¾ çµäº" type="time" val={f.acceptEnd}   set={v=>s("acceptEnd",v)}/>
       </Row2>
-      <SecHead>達成条件</SecHead>
-      <NumStepper label="目標配達件数" val={f.goal} set={v=>s("goal",v)}
+      <SecHead>éææ¡ä»¶</SecHead>
+      <NumStepper label="ç®æ¨ééä»¶æ°" val={f.goal} set={v=>s("goal",v)}
         min={1} max={50} presets={[5,9,10,13,15,20]}/>
-      <NumStepper label="完了率条件 (%)" val={f.compRate} set={v=>s("compRate",v)}
+      <NumStepper label="å®äºçæ¡ä»¶ (%)" val={f.compRate} set={v=>s("compRate",v)}
         min={0} max={100} presets={[50,60,70,80]}/>
-      <SecHead>ボーナス</SecHead>
-      <NumStepper label="件数達成 (円)" val={f.bonusBase} set={v=>s("bonusBase",v)}
+      <SecHead>ãã¼ãã¹</SecHead>
+      <NumStepper label="ä»¶æ°éæ (å)" val={f.bonusBase} set={v=>s("bonusBase",v)}
         step={25} min={0} max={9999} presets={[225,260,300,500]}/>
-      <NumStepper label="完了率達成 追加(円)" val={f.bonusExt} set={v=>s("bonusExt",v)}
+      <NumStepper label="å®äºçéæ è¿½å (å)" val={f.bonusExt} set={v=>s("bonusExt",v)}
         step={100} min={0} max={99999} presets={[2025,2340,3000,5000]}/>
       <OKBtn
         disabled={!f.goal||!f.deadline}
@@ -760,20 +760,20 @@ function RocketForm({ onAdd, prefill }) {
           service:"rocket", date:f.date, dateTo:f.isRange?f.dateTo:"",
           startTime:f.start, endTime:f.end,
           deadline:f.deadline,
-          acceptWindow:`${f.acceptStart}〜${f.acceptEnd}`,
+          acceptWindow:`${f.acceptStart}ã${f.acceptEnd}`,
           goal:parseInt(f.goal), completionRate:f.compRate,
           bonusExtra:f.bonusExt,
           bonuses:[{count:parseInt(f.goal),reward:parseInt(f.bonusBase||0)}],
           note:"",
         })}
-      >登録する</OKBtn>
+      >ç»é²ãã</OKBtn>
     </div>
   );
 }
 
-/* ══════════════════════════════════════
-   出前館 フォーム
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   åºåé¤¨ ãã©ã¼ã 
+ââââââââââââââââââââââââââââââââââââââ */
 function DemaeForm({ onAdd, prefill }) {
   const [f,setF] = useState({ date:todayStr(), dateTo:"", isRange:false, start:"17:00", end:"20:30", area:"" });
   const [steps, setSteps] = useState([{count:"3",reward:"500"},{count:"3",reward:"1500"}]);
@@ -798,50 +798,50 @@ function DemaeForm({ onAdd, prefill }) {
   return (
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-        <Lbl>日付</Lbl>
+        <Lbl>æ¥ä»</Lbl>
         <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:11,color:MUTED}}>
           <input type="checkbox" checked={f.isRange} onChange={e=>s("isRange",e.target.checked)} style={{width:14,height:14,cursor:"pointer"}}/>
-          期間クエスト
+          æéã¯ã¨ã¹ã
         </label>
       </div>
       {f.isRange ? (
         <Row2>
-          <Field label="開始日" type="date" val={f.date}  set={v=>s("date",v)}/>
-          <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
+          <Field label="éå§æ¥" type="date" val={f.date}  set={v=>s("date",v)}/>
+          <Field label="çµäºæ¥" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
         </Row2>
       ) : (
         <div style={{marginBottom:12}}><input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
       )}
       <Row2>
-        <Field label="開始時刻" type="time" val={f.start} set={v=>s("start",v)}/>
-        <Field label="終了時刻" type="time" val={f.end}   set={v=>s("end",v)}/>
+        <Field label="éå§æå»" type="time" val={f.start} set={v=>s("start",v)}/>
+        <Field label="çµäºæå»" type="time" val={f.end}   set={v=>s("end",v)}/>
       </Row2>
-      <Field label="対象エリア（任意）" type="text" val={f.area} set={v=>s("area",v)} placeholder="例: 東京都 全域"/>
-      <SecHead>達成ステップ</SecHead>
+      <Field label="å¯¾è±¡ã¨ãªã¢ï¼ä»»æï¼" type="text" val={f.area} set={v=>s("area",v)} placeholder="ä¾: æ±äº¬é½ å¨å"/>
+      <SecHead>éæã¹ããã</SecHead>
       {steps.map((st,i) => (
         <div key={i} style={{background:"#060a10",borderRadius:10,padding:"10px 12px",marginBottom:8,border:`1px solid ${BDR}`}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ステップ {i+1}{i===steps.length-1?" 🎯（目暙）":""}</span>
+            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ã¹ããã {i+1}{i===steps.length-1?" ð¯ï¼ç®æï¼":""}</span>
             {steps.length>1 && (
-              <button onClick={()=>removeStep(i)} style={{background:"none",border:"none",color:"#ef4444",fontSize:14,cursor:"pointer",padding:"2px 6px"}}>✕</button>
+              <button onClick={()=>removeStep(i)} style={{background:"none",border:"none",color:"#ef4444",fontSize:14,cursor:"pointer",padding:"2px 6px"}}>â</button>
             )}
           </div>
-          <NumStepper label="件数（件）" val={st.count} set={v=>updStep(i,"count",v)} min={1} max={200} presets={[3,5,8,10,13,15]}/>
-          <NumStepper label="報酬（円）" val={st.reward} set={v=>updStep(i,"reward",v)} step={100} min={0} max={99999} presets={[300,500,800,1000,1500]}/>
+          <NumStepper label="ä»¶æ°ï¼ä»¶ï¼" val={st.count} set={v=>updStep(i,"count",v)} min={1} max={200} presets={[3,5,8,10,13,15]}/>
+          <NumStepper label="å ±é¬ï¼åï¼" val={st.reward} set={v=>updStep(i,"reward",v)} step={100} min={0} max={99999} presets={[300,500,800,1000,1500]}/>
         </div>
       ))}
       <button onClick={addStep} style={{
         width:"100%",padding:"9px",borderRadius:8,border:`1px dashed ${BDR}`,
         background:"none",color:MUTED,fontSize:12,cursor:"pointer",marginBottom:12,
-      }}>＋ ステップ追加</button>
-      <OKBtn disabled={!steps[0]?.count} onClick={()=>onAdd({service:"demae",date:f.date,dateTo:f.isRange?f.dateTo:"",startTime:f.start,endTime:f.end,goal,bonuses,note:f.area})}>登録する</OKBtn>
+      }}>ï¼ ã¹ãããè¿½å </button>
+      <OKBtn disabled={!steps[0]?.count} onClick={()=>onAdd({service:"demae",date:f.date,dateTo:f.isRange?f.dateTo:"",startTime:f.start,endTime:f.end,goal,bonuses,note:f.area})}>ç»é²ãã</OKBtn>
     </div>
   );
 }
 
-/* ══════════════════════════════════════
-   Uber Eats フォーム
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   Uber Eats ãã©ã¼ã 
+ââââââââââââââââââââââââââââââââââââââ */
 function UEForm({ onAdd, prefill }) {
   const [f,setF] = useState({ date:todayStr(), dateTo:"", isRange:false, start:"17:00", end:"20:30", area:"" });
   const [steps, setSteps] = useState([{count:"3",reward:"300"},{count:"3",reward:"700"}]);
@@ -866,55 +866,55 @@ function UEForm({ onAdd, prefill }) {
   return (
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-        <Lbl>日付</Lbl>
+        <Lbl>æ¥ä»</Lbl>
         <label style={{display:"flex",alignItems:"center",gap:5,cursor:"pointer",fontSize:11,color:MUTED}}>
           <input type="checkbox" checked={f.isRange} onChange={e=>s("isRange",e.target.checked)} style={{width:14,height:14,cursor:"pointer"}}/>
-          期間クエスト
+          æéã¯ã¨ã¹ã
         </label>
       </div>
       {f.isRange ? (
         <Row2>
-          <Field label="開始日" type="date" val={f.date}  set={v=>s("date",v)}/>
-          <Field label="終了日" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
+          <Field label="éå§æ¥" type="date" val={f.date}  set={v=>s("date",v)}/>
+          <Field label="çµäºæ¥" type="date" val={f.dateTo} set={v=>s("dateTo",v)}/>
         </Row2>
       ) : (
         <div style={{marginBottom:12}}><input type="date" style={INP} value={f.date} onChange={e=>s("date",e.target.value)}/></div>
       )}
       <Row2>
-        <Field label="開始時刻" type="time" val={f.start} set={v=>s("start",v)}/>
-        <Field label="終了時刻" type="time" val={f.end}   set={v=>s("end",v)}/>
+        <Field label="éå§æå»" type="time" val={f.start} set={v=>s("start",v)}/>
+        <Field label="çµäºæå»" type="time" val={f.end}   set={v=>s("end",v)}/>
       </Row2>
-      <Field label="対象エリア（任意）" type="text" val={f.area} set={v=>s("area",v)} placeholder="例: 東京都 全域"/>
-      <SecHead>達成ステップ</SecHead>
+      <Field label="å¯¾è±¡ã¨ãªã¢ï¼ä»»æï¼" type="text" val={f.area} set={v=>s("area",v)} placeholder="ä¾: æ±äº¬é½ å¨å"/>
+      <SecHead>éæã¹ããã</SecHead>
       {steps.map((st,i) => (
         <div key={i} style={{background:"#060a10",borderRadius:10,padding:"10px 12px",marginBottom:8,border:`1px solid ${BDR}`}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ステップ {i+1}{i===steps.length-1?" 🎯（目標）":""}</span>
+            <span style={{fontSize:11,color:MUTED,fontWeight:700}}>ã¹ããã {i+1}{i===steps.length-1?" ð¯ï¼ç®æ¨ï¼":""}</span>
             {steps.length>1 && (
-              <button onClick={()=>removeStep(i)} style={{background:"none",border:"none",color:"#ef4444",fontSize:14,cursor:"pointer",padding:"2px 6px"}}>✕</button>
+              <button onClick={()=>removeStep(i)} style={{background:"none",border:"none",color:"#ef4444",fontSize:14,cursor:"pointer",padding:"2px 6px"}}>â</button>
             )}
           </div>
-          <NumStepper label="件数（件）" val={st.count} set={v=>updStep(i,"count",v)} min={1} max={200} presets={[3,5,8,10,13,15]}/>
-          <NumStepper label="報酬（円）" val={st.reward} set={v=>updStep(i,"reward",v)} step={100} min={0} max={99999} presets={[100,200,300,500,700,1000]}/>
+          <NumStepper label="ä»¶æ°ï¼ä»¶ï¼" val={st.count} set={v=>updStep(i,"count",v)} min={1} max={200} presets={[3,5,8,10,13,15]}/>
+          <NumStepper label="å ±é¬ï¼åï¼" val={st.reward} set={v=>updStep(i,"reward",v)} step={100} min={0} max={99999} presets={[100,200,300,500,700,1000]}/>
         </div>
       ))}
       <button onClick={addStep} style={{
         width:"100%",padding:"9px",borderRadius:8,border:`1px dashed ${BDR}`,
         background:"none",color:MUTED,fontSize:12,cursor:"pointer",marginBottom:12,
-      }}>＋ ステップ追加</button>
-      <OKBtn disabled={!steps[0]?.count} onClick={()=>onAdd({service:"ubereats",date:f.date,dateTo:f.isRange?f.dateTo:"",startTime:f.start,endTime:f.end,goal,bonuses,note:f.area})}>登録する</OKBtn>
+      }}>ï¼ ã¹ãããè¿½å </button>
+      <OKBtn disabled={!steps[0]?.count} onClick={()=>onAdd({service:"ubereats",date:f.date,dateTo:f.isRange?f.dateTo:"",startTime:f.start,endTime:f.end,goal,bonuses,note:f.area})}>ç»é²ãã</OKBtn>
     </div>
   );
 }
 
-/* ══════════════════════════════════════
-   カウンターパネル（登録クエスト連動）
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ã«ã¦ã³ã¿ã¼ããã«ï¼ç»é²ã¯ã¨ã¹ãé£åï¼
+ââââââââââââââââââââââââââââââââââââââ */
 function CounterPanel({ quests, onUpdate }) {
   const [open, setOpen] = useState(false);
   const activeQuests = quests.filter(q => (q.done||0) < q.goal);
 
-  // 確定報酬計算
+  // ç¢ºå®å ±é¬è¨ç®
   const confirmedReward = quests.reduce((sum, q) => {
     const done = q.done || 0;
     const steps = [...(q.bonuses||[])].sort((a,b)=>a.count-b.count);
@@ -932,13 +932,13 @@ function CounterPanel({ quests, onUpdate }) {
           <div style={{padding:"12px 14px 8px", fontSize:12, fontWeight:700, color:MUTED,
             borderBottom:`1px solid ${BDR}`, position:"sticky", top:0, background:CARD,
             display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-            <span>📊 クイックカウンター</span>
+            <span>ð ã¯ã¤ãã¯ã«ã¦ã³ã¿ã¼</span>
             <span style={{color:"#22c55e", fontWeight:900, fontSize:13}}>
-              ¥{confirmedReward.toLocaleString()} 確定
+              Â¥{confirmedReward.toLocaleString()} ç¢ºå®
             </span>
           </div>
           {activeQuests.length === 0 ? (
-            <div style={{padding:16, fontSize:12, color:MUTED, textAlign:"center"}}>クエストを登録してください</div>
+            <div style={{padding:16, fontSize:12, color:MUTED, textAlign:"center"}}>ã¯ã¨ã¹ããç»é²ãã¦ãã ãã</div>
           ) : activeQuests.map(q => {
             const svc=SVC[q.service]||SVC.rocket;
             const done=q.done||0, rejected=q.rejected||0, received=q.received||0;
@@ -953,38 +953,38 @@ function CounterPanel({ quests, onUpdate }) {
               <div key={q.id} style={{padding:"10px 14px", borderBottom:`1px solid ${BDR}`}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
                   <span style={{color:svc.color,fontSize:12,fontWeight:800,textShadow:`0 0 8px ${svc.color}60`}}>{svc.icon} {svc.label}</span>
-                  <span style={{fontSize:11,color:"#22c55e",fontWeight:700}}>¥{qReward.toLocaleString()} / 残{left}件</span>
+                  <span style={{fontSize:11,color:"#22c55e",fontWeight:700}}>Â¥{qReward.toLocaleString()} / æ®{left}ä»¶</span>
                 </div>
                 <div style={{marginBottom:6}}>
-                  <div style={{fontSize:10,color:MUTED,marginBottom:4}}>受注</div>
+                  <div style={{fontSize:10,color:MUTED,marginBottom:4}}>åæ³¨</div>
                   <div style={{display:"flex",alignItems:"center",gap:6}}>
-                    <button onClick={()=>onUpdate(q.id,"received",-1)} style={minusBtn}>－</button>
+                    <button onClick={()=>onUpdate(q.id,"received",-1)} style={minusBtn}>ï¼</button>
                     <div style={{flex:1,textAlign:"center",fontSize:22,fontWeight:900,color:BLUE,textShadow:`0 0 10px ${BLUE}70`}}>{received}</div>
-                    <button onClick={()=>onUpdate(q.id,"received",1)} style={{...plusBtn,background:BLUE}}>＋</button>
+                    <button onClick={()=>onUpdate(q.id,"received",1)} style={{...plusBtn,background:BLUE}}>ï¼</button>
                   </div>
                 </div>
                 <div style={{marginBottom:6}}>
-                  <div style={{fontSize:10,color:MUTED,marginBottom:4}}>完了</div>
+                  <div style={{fontSize:10,color:MUTED,marginBottom:4}}>å®äº</div>
                   <div style={{display:"flex",alignItems:"center",gap:6}}>
-                    <button onClick={()=>onUpdate(q.id,"done",-1)} style={minusBtn}>－</button>
+                    <button onClick={()=>onUpdate(q.id,"done",-1)} style={minusBtn}>ï¼</button>
                     <div style={{flex:1,textAlign:"center",fontSize:22,fontWeight:900,color:"#22c55e",textShadow:"0 0 10px #22c55e70"}}>{done}</div>
-                    <button onClick={()=>onUpdate(q.id,"done",1)} style={{...plusBtn,background:"#22c55e"}}>＋</button>
+                    <button onClick={()=>onUpdate(q.id,"done",1)} style={{...plusBtn,background:"#22c55e"}}>ï¼</button>
                   </div>
                 </div>
                 {isRocket && (
                   <div style={{marginBottom:6}}>
-                    <div style={{fontSize:10,color:MUTED,marginBottom:4}}>拒否</div>
+                    <div style={{fontSize:10,color:MUTED,marginBottom:4}}>æå¦</div>
                     <div style={{display:"flex",alignItems:"center",gap:6}}>
-                      <button onClick={()=>onUpdate(q.id,"rejected",-1)} style={minusBtn}>－</button>
+                      <button onClick={()=>onUpdate(q.id,"rejected",-1)} style={minusBtn}>ï¼</button>
                       <div style={{flex:1,textAlign:"center",fontSize:22,fontWeight:900,color:"#fb923c",textShadow:"0 0 10px #fb923c70"}}>{rejected}</div>
-                      <button onClick={()=>onUpdate(q.id,"rejected",1)} style={{...plusBtn,background:"#7c2d12",color:"#fb923c"}}>＋</button>
+                      <button onClick={()=>onUpdate(q.id,"rejected",1)} style={{...plusBtn,background:"#7c2d12",color:"#fb923c"}}>ï¼</button>
                     </div>
                   </div>
                 )}
                 {isRocket && q.completionRate && (
                   <div style={{marginTop:6,background:"#060a10",borderRadius:8,padding:"6px 10px"}}>
                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                      <span style={{fontSize:10,color:MUTED}}>完了率(目標{q.completionRate}%↑)</span>
+                      <span style={{fontSize:10,color:MUTED}}>å®äºç(ç®æ¨{q.completionRate}%â)</span>
                       <span style={{fontSize:16,fontWeight:900,color:compRate>=parseInt(q.completionRate)?"#22c55e":"#ef4444"}}>{compRate}%</span>
                     </div>
                   </div>
@@ -994,7 +994,7 @@ function CounterPanel({ quests, onUpdate }) {
           })}
         </div>
       )}
-      {/* ミニバー / トグルボタン */}
+      {/* ãããã¼ / ãã°ã«ãã¿ã³ */}
       <div style={{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4}}>
         {!open && confirmedReward > 0 && (
           <div onClick={()=>setOpen(true)} style={{
@@ -1002,8 +1002,8 @@ function CounterPanel({ quests, onUpdate }) {
             padding:"4px 10px",cursor:"pointer",
             display:"flex",flexDirection:"column",alignItems:"flex-end",gap:1,
           }}>
-            <div style={{fontSize:13,fontWeight:900,color:"#22c55e",lineHeight:1}}>¥{confirmedReward.toLocaleString()}</div>
-            <div style={{fontSize:10,color:MUTED,lineHeight:1}}>完了{totalDone}件</div>
+            <div style={{fontSize:13,fontWeight:900,color:"#22c55e",lineHeight:1}}>Â¥{confirmedReward.toLocaleString()}</div>
+            <div style={{fontSize:10,color:MUTED,lineHeight:1}}>å®äº{totalDone}ä»¶</div>
           </div>
         )}
         <button onClick={()=>setOpen(!open)} style={{
@@ -1013,7 +1013,7 @@ function CounterPanel({ quests, onUpdate }) {
           fontSize:open?16:20,fontWeight:700,
           boxShadow:open?"none":"0 4px 20px #3b82f660, 0 0 30px #6d28d940",
         }}>
-          {open?"→":"←"}
+          {open?"â":"â"}
         </button>
       </div>
     </div>
@@ -1033,9 +1033,9 @@ const plusBtn = {
   display:"flex", alignItems:"center", justifyContent:"center",
 };
 
-/* ══════════════════════════════════════
-   メイン App
-══════════════════════════════════════ */
+/* ââââââââââââââââââââââââââââââââââââââ
+   ã¡ã¤ã³ App
+ââââââââââââââââââââââââââââââââââââââ */
 function ScrollTopBtn() {
   const [vis, setVis] = useState(false);
   useEffect(() => {
@@ -1052,7 +1052,7 @@ function ScrollTopBtn() {
         fontSize:20,cursor:'pointer',display:'flex',
         alignItems:'center',justifyContent:'center',
         boxShadow:'0 4px 16px rgba(0,0,0,.6)'}}>
-      ↑
+      â
     </button>
   );
 }
@@ -1072,11 +1072,11 @@ function App() {
   });
   const toggleSvc = (key) => {
     const count = Object.values(enabledSvc).filter(Boolean).length;
-    if(enabledSvc[key] && count <= 1) return; // 最低1つは残す
+    if(enabledSvc[key] && count <= 1) return; // æä½1ã¤ã¯æ®ã
     const updated = {...enabledSvc, [key]: !enabledSvc[key]};
     setEnabledSvc(updated);
     localStorage.setItem("qt_services", JSON.stringify(updated));
-    // 無効化されたサービスが選択中なら切り替え
+    // ç¡å¹åããããµã¼ãã¹ãé¸æä¸­ãªãåãæ¿ã
     if(svc===key && enabledSvc[key]) {
       const next = Object.entries(updated).find(([k,v])=>v&&k!==key);
       if(next) setSvc(next[0]);
@@ -1094,7 +1094,7 @@ function App() {
     try {
       const list = await loadQ();
       setQuests(prev => {
-        // ストレージにないローカルのみのクエストを保持（保存失敗対策）
+        // ã¹ãã¬ã¼ã¸ã«ãªãã­ã¼ã«ã«ã®ã¿ã®ã¯ã¨ã¹ããä¿æï¼ä¿å­å¤±æå¯¾ç­ï¼
         const storageIds = new Set(list.map(q => q.id));
         const localOnly  = prev.filter(q => !storageIds.has(q.id));
         return [...list, ...localOnly];
@@ -1174,13 +1174,13 @@ function App() {
   };
 
   const handleDelete = async (id) => {
-    if(!confirm("削除しますか？")) return;
+    if(!confirm("åé¤ãã¾ããï¼")) return;
     const updated = quests.filter(q => q.id !== id);
     try { await saveQ(updated); } catch(e) { console.error(e); }
     setQuests(updated); setLastUp(new Date());
   };
 
-  /* 名前入力画面 */
+  /* ååå¥åç»é¢ */
   if(!me) return (
     <div style={{
       minHeight:"100vh", background:BG, overflowX:"hidden",
@@ -1188,24 +1188,24 @@ function App() {
     }}>
       <div style={{width:"100%",maxWidth:320,display:"flex",
         flexDirection:"column",gap:16,alignItems:"center"}}>
-        <div style={{fontSize:48,textShadow:`0 0 30px ${BLUE}`}}>📦</div>
+        <div style={{fontSize:48,textShadow:`0 0 30px ${BLUE}`}}>ð¦</div>
         <h1 style={{
           fontSize:22,fontWeight:800,margin:0,color:TEXT,
           textShadow:`0 0 24px ${BLUE}60`,
-        }}>クエスト進捗管理</h1>
+        }}>ã¯ã¨ã¹ãé²æç®¡ç</h1>
         <div style={{
           background:CARD,borderRadius:14,padding:20,
           width:"100%",boxSizing:"border-box",
           border:`1px solid ${BDR}`,
           display:"flex",flexDirection:"column",gap:10,
         }}>
-          <Lbl>あなたの名前</Lbl>
+          <Lbl>ããªãã®åå</Lbl>
           <input
             style={INP} value={nameIn}
             onChange={e => setNameIn(e.target.value)}
             onKeyDown={e => e.key==="Enter" && nameIn.trim() &&
               (localStorage.setItem("qt_name",nameIn.trim()), setMe(nameIn.trim()))}
-            placeholder="例: たなか" autoFocus
+            placeholder="ä¾: ããªã" autoFocus
           />
           <button
             disabled={!nameIn.trim()}
@@ -1225,7 +1225,7 @@ function App() {
                 ? "0 4px 20px #3b82f650, 0 0 30px #6d28d930"
                 : "none",
             }}
-          >スタート →</button>
+          >ã¹ã¿ã¼ã â</button>
         </div>
       </div>
     </div>
@@ -1241,7 +1241,7 @@ function App() {
       overflowX: "hidden",
     }}>
 
-      {/* ── ヘッダー ── */}
+      {/* ââ ãããã¼ ââ */}
       <div style={{
         background: CARD,
         padding: "12px 14px",
@@ -1256,9 +1256,9 @@ function App() {
             fontSize:15,fontWeight:800,
             whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",
             textShadow:`0 0 16px ${BLUE}40`,
-          }}>📦 クエスト進捗管理</div>
+          }}>ð¦ ã¯ã¨ã¹ãé²æç®¡ç</div>
           <div style={{fontSize:10,color:MUTED,marginTop:1,whiteSpace:"nowrap"}}>
-            {lastUp ? `更新: ${hhmm(lastUp)}` : "読込中..."} · 自動15秒
+            {lastUp ? `æ´æ°: ${hhmm(lastUp)}` : "èª­è¾¼ä¸­..."} Â· èªå15ç§
           </div>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
@@ -1270,12 +1270,12 @@ function App() {
           <button onClick={reload} style={{
             background:"#1e293b",border:"none",color:MUTED,
             borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:13,flexShrink:0,
-          }}>↻</button>
+          }}>â»</button>
           <button onClick={() => setShowSettings(true)} style={{
             background:"#1e293b",border:"none",color:MUTED,
             borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:14,flexShrink:0,
-          }}>⚙️</button>
-          <button onClick={() => setHideCompleted(v=>!v)} style={{background:hideCompleted?"#1e3a2f":"#0f1520",border:"1px solid "+(hideCompleted?"#22c55e":"#1e293b"),color:hideCompleted?"#22c55e":"#64748b",borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:12,flexShrink:0,fontWeight:hideCompleted?700:400,}}>{hideCompleted?"✓完了非表示":"完了を隠す"}</button>
+          }}>âï¸</button>
+          <button onClick={() => setHideCompleted(v=>!v)} style={{background:hideCompleted?"#1e3a2f":"#0f1520",border:"1px solid "+(hideCompleted?"#22c55e":"#1e293b"),color:hideCompleted?"#22c55e":"#64748b",borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:12,flexShrink:0,fontWeight:hideCompleted?700:400,}}>{hideCompleted?"âå®äºéè¡¨ç¤º":"å®äºãé ã"}</button>
           <button onClick={() => setShowForm(!showForm)} style={{
             background: showForm
               ? "#374151"
@@ -1285,22 +1285,22 @@ function App() {
             fontSize:12,fontWeight:700,flexShrink:0,whiteSpace:"nowrap",
             boxShadow: showForm ? "none" : "0 2px 10px #3b82f650",
           }}>
-            {showForm ? "✕" : "＋ 追加"}
+            {showForm ? "â" : "ï¼ è¿½å "}
           </button>
         </div>
       </div>
 
-      {/* ── 設定モーダル ── */}
+      {/* ââ è¨­å®ã¢ã¼ãã« ââ */}
       {showSettings && (
         <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.85)",zIndex:200,
           display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
           <div style={{background:CARD,borderRadius:18,padding:20,width:"100%",
             maxWidth:360,boxSizing:"border-box",border:`1px solid ${BDR}`}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
-              <div style={{fontSize:15,fontWeight:800}}>⚙️ 設定</div>
-              <button onClick={()=>setShowSettings(false)} style={{background:"none",border:"none",color:MUTED,fontSize:20,cursor:"pointer"}}>✕</button>
+              <div style={{fontSize:15,fontWeight:800}}>âï¸ è¨­å®</div>
+              <button onClick={()=>setShowSettings(false)} style={{background:"none",border:"none",color:MUTED,fontSize:20,cursor:"pointer"}}>â</button>
             </div>
-            <div style={{fontSize:12,color:MUTED,fontWeight:700,marginBottom:10}}>使用するサービス</div>
+            <div style={{fontSize:12,color:MUTED,fontWeight:700,marginBottom:10}}>ä½¿ç¨ãããµã¼ãã¹</div>
             {Object.entries(SVC).map(([key,sv]) => {
               const on = enabledSvc[key];
               const onlyone = Object.values(enabledSvc).filter(Boolean).length===1;
@@ -1335,13 +1335,13 @@ function App() {
               );
             })}
             <div style={{fontSize:10,color:MUTED,marginTop:8,textAlign:"center"}}>
-              ※ 最低1つは有効にしてください
+              â» æä½1ã¤ã¯æå¹ã«ãã¦ãã ãã
             </div>
           </div>
         </div>
       )}
 
-      {/* ── 登録フォーム ── */}
+      {/* ââ ç»é²ãã©ã¼ã  ââ */}
       {showForm && (
         <div style={{padding:"10px 12px 4px"}}>
           <div style={{
@@ -1351,7 +1351,7 @@ function App() {
             boxSizing: "border-box",
           }}>
             
-            {/* サービス選択 */}
+            {/* ãµã¼ãã¹é¸æ */}
             <div style={{display:"flex",gap:8,marginBottom:16}}>
               {Object.entries(SVC).filter(([key])=>enabledSvc[key]).map(([key,sv]) => (
                 <button key={key} onClick={() => setSvc(key)} style={{
@@ -1376,15 +1376,15 @@ function App() {
         </div>
       )}
 
-      {/* ── クエスト一覧 ── */}
+      {/* ââ ã¯ã¨ã¹ãä¸è¦§ ââ */}
       {loading ? (
         <div style={{textAlign:"center",padding:"60px 20px",color:MUTED}}>
-          読み込み中...
+          èª­ã¿è¾¼ã¿ä¸­...
         </div>
       ) : showForm ? null : quests.length===0 ? (
         <div style={{textAlign:"center",padding:"60px 20px",color:MUTED,lineHeight:2}}>
-          <div style={{fontSize:36,marginBottom:10}}>📋</div>
-          クエストがまだありません。<br/>「＋ 追加」から登録してください。
+          <div style={{fontSize:36,marginBottom:10}}>ð</div>
+          ã¯ã¨ã¹ããã¾ã ããã¾ããã<br/>ãï¼ è¿½å ãããç»é²ãã¦ãã ããã
         </div>
       ) : (
         <div style={{padding:"10px 12px",display:"flex",flexDirection:"column",gap:10}}>
@@ -1400,11 +1400,11 @@ function App() {
       )}
 
       <div style={{textAlign:"center",padding:"12px 0",fontSize:10,color:"#111827"}}>
-        🌐 みんなで共有中
+        ð ã¿ããªã§å±æä¸­
       </div>
       <CounterPanel quests={quests} onUpdate={handleUpdate}/>
       <ScrollTopBtn/>
-      {/* TOPへ戻るボタン */}
+      {/* TOPã¸æ»ããã¿ã³ */}
     </div>
   );
 }
