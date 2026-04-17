@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -13,7 +14,7 @@
       --note: #3b82f6; --danger: #ef4444; --fav: #f59e0b; --history: #22c55e;
     }
     html, body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', sans-serif;
       background: var(--bg); color: var(--text);
       height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
     }
@@ -22,7 +23,7 @@
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 100;
     }
-    .header-title { font-size: 16px; font-weight: 700; }
+    .header-title { font-size: 18px; font-weight: 700; }
     .icon-btn {
       background: var(--bg); border: 1px solid var(--border);
       color: var(--text); border-radius: 8px; padding: 6px 10px;
@@ -49,7 +50,7 @@
     .stats {
       background: var(--surface); border-top: 1px solid var(--border);
       padding: 5px 16px; display: flex; gap: 14px; flex-shrink: 0;
-      font-size: 12px; color: var(--muted);
+      font-size: 14px; color: var(--muted);
     }
     .stat { display: flex; align-items: center; gap: 4px; }
     .fab {
@@ -72,25 +73,26 @@
     .overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.55);
       z-index: 1000; display: none; align-items: flex-end;
+      padding-bottom: env(keyboard-inset-height, 0px);
     }
     .overlay.show { display: flex; }
     .sheet {
       background: var(--surface); border-radius: 22px 22px 0 0;
-      padding: 18px 20px 28px; width: 100%;
-      max-height: 88dvh; overflow-y: auto;
+      padding: 18px 20px 34px; width: 100%;
+      max-height: 92dvh; overflow-y: auto;
       animation: slideUp 0.22s ease;
     }
     @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
     .handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 16px; }
-    .sheet-title { font-size:17px; font-weight:700; margin-bottom:16px; }
+    .sheet-title { font-size:20px; font-weight:700; margin-bottom:16px; }
     .fgrp { margin-bottom:14px; }
-    .flabel { font-size:11px; color:var(--muted); display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
-    .finput { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:10px; font-size:15px; }
+    .flabel { font-size:13px; color:var(--muted); display:block; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
+    .finput { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:12px 14px; border-radius:10px; font-size:17px; font-family: inherit; }
     .finput:focus { outline:none; border-color:var(--note); }
-    textarea.finput { resize:none; min-height:82px; }
+    textarea.finput { resize:none; min-height:90px; font-family:inherit; }
     .cat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .cat-card { padding:11px 8px; border-radius:12px; border:2px solid var(--border); cursor:pointer; text-align:center; font-size:13px; }
-    .cat-card .ci { font-size:22px; display:block; margin-bottom:3px; }
+    .cat-card { padding:13px 8px; border-radius:12px; border:2px solid var(--border); cursor:pointer; text-align:center; font-size:15px; }
+    .cat-card .ci { font-size:26px; display:block; margin-bottom:4px; }
     .cat-card.sel[data-c="note"]    { border-color:var(--note);    background:rgba(59,130,246,0.15); }
     .cat-card.sel[data-c="danger"]  { border-color:var(--danger);  background:rgba(239,68,68,0.15); }
     .cat-card.sel[data-c="fav"]     { border-color:var(--fav);     background:rgba(245,158,11,0.15); }
@@ -99,7 +101,7 @@
     .star { cursor:pointer; filter:grayscale(1) opacity(0.35); }
     .star.on { filter:none; }
     .btn-row { display:flex; gap:8px; margin-top:16px; }
-    .btn { flex:1; padding:12px 8px; border-radius:12px; border:none; font-size:14px; font-weight:600; cursor:pointer; }
+    .btn { flex:1; padding:14px 8px; border-radius:12px; border:none; font-size:16px; font-weight:600; cursor:pointer; font-family:inherit; }
     .btn-primary { background:var(--note); color:white; }
     .btn-ghost   { background:var(--bg); color:var(--text); border:1px solid var(--border); }
     .btn-delete  { background:transparent; color:var(--danger); border:1px solid var(--danger); }
@@ -108,8 +110,8 @@
     .detail-badge[data-c="danger"]  { background:rgba(239,68,68,0.18);  color:#f87171; }
     .detail-badge[data-c="fav"]     { background:rgba(245,158,11,0.18); color:#fbbf24; }
     .detail-badge[data-c="history"] { background:rgba(34,197,94,0.18);  color:#4ade80; }
-    .detail-memo { background:var(--bg); border-radius:10px; padding:12px; font-size:14px; line-height:1.7; white-space:pre-wrap; margin-bottom:10px; min-height:48px; }
-    .detail-meta { font-size:12px; color:var(--muted); margin-bottom:14px; }
+    .detail-memo { background:var(--bg); border-radius:10px; padding:12px; font-size:16px; line-height:1.8; white-space:pre-wrap; margin-bottom:10px; min-height:48px; }
+    .detail-meta { font-size:14px; color:var(--muted); margin-bottom:14px; }
     /* 追跡ボタン */
     .track-btn {
       position:fixed; bottom:94px; left:20px;
@@ -185,6 +187,7 @@
 <button class="track-btn" id="trackBtn" onclick="toggleTracking()">🚴 追跡開始</button>
 
 <!-- 近接アラート -->
+
 <div class="near-alert" id="nearAlert">
   <div class="near-header">
     <span id="nearIcon" style="font-size:32px">📝</span>
@@ -408,6 +411,10 @@ function openAdd(spot=null) {
     updateStars();
   }
   document.getElementById('addOverlay').classList.add('show');
+  // キーボード表示時に入力欄が見えるようスクロール
+  setTimeout(()=>{
+    document.getElementById('addName').scrollIntoView({behavior:'smooth',block:'center'});
+  }, 350);
 }
 
 function closeAdd() { document.getElementById('addOverlay').classList.remove('show'); }
@@ -473,6 +480,16 @@ function toast(msg){
   clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2600);
 }
 function setSyncStatus(s){document.getElementById('syncStatus').textContent=s;}
+
+// キーボード表示時にシートを押し上げる
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',()=>{
+    const vh = window.visualViewport.height;
+    const sheets = document.querySelectorAll('.sheet');
+    const offset = window.innerHeight - vh;
+    sheets.forEach(s => s.style.paddingBottom = (offset > 50 ? offset + 'px' : '34px'));
+  });
+}
 
 ['addOverlay','viewOverlay'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){
@@ -569,6 +586,8 @@ function showNearAlert(spot,dist){
   alert._t=setTimeout(()=>alert.classList.remove('show'),8000);
 }
 </script>
+
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC18novTnBkqew1_LksoQ9E6MLSqR6a_-8&callback=initMap&loading=async"></script>
+
 </body>
 </html>
