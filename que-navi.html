@@ -1217,7 +1217,37 @@ function App() {
   const [showOcr,setShowOcr]=useState(false);
   const [ocrState,setOcrState]=useState({status:'idle',text:'',progress:0});
   
-  // OCR (Tesseract.js dynamic load)
+  const parseOcrText=(text)=>{
+    if(!text)return {};
+    const t=text.replace(/\s+/g,' ');
+    const out={raw:text};
+    // サービス判定
+    if(/Uber\s*Eats|ウーバー/i.test(t))out.service='ubereats';
+    else if(/ロケット|Rocket\s*Now/i.test(t))out.service='rocket';
+    else if(/出前館|でまえかん/i.test(t))out.service='demae';
+    // 件数目標 (最大件数 件)
+    const countMatches=[...t.matchAll(/(\d+)\s*[件配]/g)].map(m=>parseInt(m[1])).filter(n=>n>0&&n<100);
+    if(countMatches.length>0){
+      out.goalCount=Math.max(...countMatches);
+      out.allCounts=[...new Set(countMatches)].sort((a,b)=>a-b);
+    }
+    // 金額 (¥数字 または 数字円)
+    const yenMatches=[...t.matchAll(/[¥￥]\s*(\d[\d,]*)|(\d[\d,]*)\s*円/g)]
+      .map(m=>parseInt((m[1]||m[2]).replace(/,/g,''))).filter(n=>n>=100&&n<=100000);
+    if(yenMatches.length>0){
+      out.rewards=[...new Set(yenMatches)].sort((a,b)=>a-b);
+      out.totalReward=yenMatches.reduce((s,n)=>s+n,0);
+    }
+    // 時間帯 (HH:MM ~ HH:MM)
+    const timeMatch=t.match(/(\d{1,2}):(\d{2})\s*[-〜~～]\s*(\d{1,2}):(\d{2})/);
+    if(timeMatch){
+      out.startTime=timeMatch[1].padStart(2,'0')+':'+timeMatch[2];
+      out.endTime=timeMatch[3].padStart(2,'0')+':'+timeMatch[4];
+    }
+    return out;
+  };
+  
+    // OCR (Tesseract.js dynamic load)
   const runOcrOnFile=async(file)=>{
     if(!file)return;
     setOcrState({status:'loading',text:'OCRエンジン読込中…',progress:0});
@@ -1240,7 +1270,7 @@ function App() {
       });
       const r=await worker.recognize(file);
       await worker.terminate();
-      setOcrState({status:'done',text:r.data.text||'(認識結果なし)',progress:100});
+      const parsedData=parseOcrText(r.data.text||'');setOcrState({status:'done',text:r.data.text||'(認識結果なし)',progress:100,parsed:parsedData});
     }catch(e){
       setOcrState({status:'error',text:'エラー: '+e.message,progress:0});
     }
@@ -1808,6 +1838,18 @@ function App() {
               <div style={{padding:12,background:'#121826',border:'1px solid #10b981',borderRadius:10,marginBottom:16}}>
                 <div style={{fontSize:12,color:'#10b981',fontWeight:700,marginBottom:8,letterSpacing:'.05em'}}>認識結果</div>
                 <pre style={{fontSize:11,color:'#e7ecf3',whiteSpace:'pre-wrap',wordBreak:'break-all',margin:0,fontFamily:'monospace',maxHeight:200,overflow:'auto'}}>{ocrState.text}</pre>
+                {ocrState.parsed&&Object.keys(ocrState.parsed).length>1&&(
+                  <div style={{padding:12,background:'#0a1525',border:'1px solid #3b82f6',borderRadius:10,marginTop:8,marginBottom:8}}>
+                    <div style={{fontSize:12,color:'#3b82f6',fontWeight:700,marginBottom:8,letterSpacing:'.05em'}}>🔍 自動検出された項目</div>
+                    <div style={{display:'grid',gridTemplateColumns:'auto 1fr',gap:'6px 12px',fontSize:13}}>
+                      {ocrState.parsed.service&&<><div style={{color:'#94a3b8'}}>サービス</div><div style={{color:'#fff',fontWeight:600}}>{({ubereats:'🐸 Uber Eats',rocket:'🚀 ロケットナウ',demae:'📱 出前館'})[ocrState.parsed.service]}</div></>}
+                      {ocrState.parsed.goalCount&&<><div style={{color:'#94a3b8'}}>目標件数</div><div style={{color:'#fff',fontWeight:600}}>{ocrState.parsed.goalCount} 件</div></>}
+                      {ocrState.parsed.startTime&&<><div style={{color:'#94a3b8'}}>時間帯</div><div style={{color:'#fff',fontWeight:600}}>{ocrState.parsed.startTime} 〜 {ocrState.parsed.endTime}</div></>}
+                      {ocrState.parsed.rewards&&ocrState.parsed.rewards.length>0&&<><div style={{color:'#94a3b8'}}>金額</div><div style={{color:'#10b981',fontWeight:700}}>{ocrState.parsed.rewards.map(r=>'¥'+r.toLocaleString()).join(' / ')}</div></>}
+                    </div>
+                    <div style={{fontSize:11,color:'#64748b',marginTop:10,paddingTop:8,borderTop:'1px solid #1f2838'}}>※ この情報を参考に「＋ 追加」から手動で登録してください（自動入力は次バージョン予定）</div>
+                  </div>
+                )}
                 <button onClick={()=>{navigator.clipboard.writeText(ocrState.text);alert('クリップボードにコピーしました');}} style={{marginTop:10,background:'#3b82f6',border:'none',color:'#fff',padding:'8px 14px',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>📋 テキストコピー</button>
               </div>
             )}
