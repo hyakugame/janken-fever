@@ -35,7 +35,7 @@
       padding-bottom: var(--sab);
     }
     /* ☀️/🌙 テーマトグルボタン - 右下円形 */
-    .qdn-btn {
+    #qDayNightBtn {
       position: fixed !important;
       left: calc(14px + var(--sal)) !important;
       right: auto !important;
@@ -63,7 +63,7 @@
     body.light-mode #root {
       background: #f8fafc !important;
     }
-    body.light-mode .qdn-btn {
+    body.light-mode #qDayNightBtn {
       background: #fff !important;
       color: #1e293b !important;
       border-color: #cbd5e1 !important;
@@ -1870,49 +1870,40 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
   if(window.__qneLoaded)return;
   window.__qneLoaded=true;
   
+  // 初期テーマ適用 (localStorage 優先、なければ時刻で判定)
   function applyInitial(){
-    var h=new Date().getHours();
-    var isDay=h>=6&&h<18;
-    if(isDay){
-      document.body.classList.add('light-mode');
-    }else{
-      document.body.classList.remove('light-mode');
-    }
-    return isDay;
-  }
-  
-  function makeToggleBtn(){
-    if(document.querySelector('.qdn-btn'))return;
-    var isLight=document.body.classList.contains('light-mode');
-    var btn=document.createElement('button');
-    btn.className='qdn-btn';
-    btn.setAttribute('type','button');
-    btn.setAttribute('aria-label','ライト/ダーク切替');
-    btn.title='ライト/ダーク切替';
-    btn.textContent=isLight?'🌙':'☀️';
-    btn.onclick=function(){
-      document.body.classList.toggle('light-mode');
-      var nowLight=document.body.classList.contains('light-mode');
-      btn.textContent=nowLight?'🌙':'☀️';
-      try{localStorage.setItem('qne_theme',nowLight?'light':'dark');}catch(e){}
-    };
-    document.body.appendChild(btn);
-  }
-  
-  function init(){
-    // localStorage のユーザー設定を優先
     var saved=null;
     try{saved=localStorage.getItem('qne_theme');}catch(e){}
-    if(saved==='light'){document.body.classList.add('light-mode');}
-    else if(saved==='dark'){document.body.classList.remove('light-mode');}
-    else{applyInitial();}
-    makeToggleBtn();
+    var isLight;
+    if(saved==='light')isLight=true;
+    else if(saved==='dark')isLight=false;
+    else{var h=new Date().getHours();isLight=h>=6&&h<18;}
+    if(isLight)document.body.classList.add('light-mode');
+    else document.body.classList.remove('light-mode');
+  }
+  
+  // patch.js の qDayNightBtn を待ってclick hook
+  function hookBtn(){
+    var btn=document.getElementById('qDayNightBtn');
+    if(!btn){setTimeout(hookBtn,200);return;}
+    if(btn.__lightModeHooked)return;
+    btn.__lightModeHooked=true;
+    btn.onclick=function(){
+      document.body.classList.toggle('light-mode');
+      var isLight=document.body.classList.contains('light-mode');
+      btn.textContent=isLight?'🌙':'☀️';
+      try{document.documentElement.style.filter='';}catch(e){}
+      try{localStorage.setItem('qne_theme',isLight?'light':'dark');}catch(e){}
+    };
+    var isLight=document.body.classList.contains('light-mode');
+    btn.textContent=isLight?'🌙':'☀️';
+    try{document.documentElement.style.filter='';}catch(e){}
   }
   
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',init);
+    document.addEventListener('DOMContentLoaded',function(){applyInitial();hookBtn();});
   }else{
-    init();
+    applyInitial();hookBtn();
   }
 })();</script><script src="patch.js?v=22"></script>
   <script src="toolkit.js?v=3"></script><script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}</script>
