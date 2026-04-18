@@ -1617,6 +1617,7 @@ function App() {
             <div style={{fontSize:18,fontWeight:700,color:'#fff'}}>集計</div>
           </div>
           {(()=>{
+            const calcEarned=q=>{const steps=[...(q.bonuses||[])].sort((a,b)=>a.count-b.count);const done=q.done||0;const se=steps.filter(s=>done>=s.count).reduce((s2,s)=>s2+(s.reward||0),0);const ext=done>=q.goal?(parseInt(q.bonusExtra||0)||0):0;return se+ext;};
             const t=new Date();
             const today=t.toLocaleDateString('sv-SE');
             const ws=new Date(t);ws.setDate(t.getDate()-t.getDay());
@@ -1633,12 +1634,14 @@ function App() {
               const done=pq.filter(q=>(q.done||0)>=q.goal).length;
               const total=pq.length;
               const rate=total>0?Math.round(done/total*100):0;
+              const earned=pq.reduce((sum,q)=>sum+calcEarned(q),0);
               return (<div key={p.label} style={{marginBottom:10,padding:'12px 14px',background:'#121826',border:'1px solid #1f2838',borderRadius:10}}>
                 <div style={{fontSize:11,color:'#94a3b8',fontWeight:600,marginBottom:6,letterSpacing:'.05em'}}>{p.label}</div>
                 <div style={{display:'flex',alignItems:'baseline'}}>
                   <div style={{fontSize:20,fontWeight:700,color:'#fff'}}>{done}<span style={{fontSize:13,color:'#94a3b8',fontWeight:500,marginLeft:2}}>/ {total} 件</span></div>
                   <div style={{marginLeft:'auto',fontSize:13,color:rate>=50?'#10b981':(rate>0?'#f59e0b':'#64748b'),fontWeight:600}}>{rate}%</div>
                 </div>
+                <div style={{marginTop:8,paddingTop:8,borderTop:'1px solid #1f2838',fontSize:12,color:'#64748b'}}>獲得 <span style={{color:earned>0?'#10b981':'#64748b',fontWeight:700,fontSize:14}}>¥{earned.toLocaleString()}</span></div>
               </div>);
             });
           })()}
@@ -1652,11 +1655,13 @@ function App() {
                 const done=svq.filter(q=>(q.done||0)>=q.goal).length;
                 const total=svq.length;
                 const rate=total>0?Math.round(done/total*100):0;
+                const earned=svq.reduce((sum,q)=>sum+calcEarned(q),0);
                 return (<div key={sid} style={{marginBottom:8,padding:'12px 14px',background:'#121826',border:'1px solid #1f2838',borderRadius:10,display:'flex',alignItems:'center',gap:12}}>
                   <span style={{fontSize:22,width:28,textAlign:'center'}}>{s.icon}</span>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontSize:13,color:'#e7ecf3',fontWeight:600}}>{s.label}</div>
                     <div style={{fontSize:11,color:'#94a3b8',marginTop:2}}>{done}/{total}件</div>
+                    <div style={{fontSize:10,color:earned>0?'#10b981':'#64748b',marginTop:2,fontWeight:700}}>¥{earned.toLocaleString()}</div>
                   </div>
                   <div style={{fontSize:14,color:rate>=50?'#10b981':(rate>0?'#f59e0b':'#64748b'),fontWeight:700}}>{rate}%</div>
                 </div>);
