@@ -1363,7 +1363,6 @@ function App() {
             background:"#1e293b",border:"none",color:MUTED,
             borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:17,flexShrink:0,
           }}>⚙️</button>
-          <button onClick={() => setHideCompleted(v=>!v)} style={{background:hideCompleted?"#1e3a2f":"#0f1520",border:"1px solid "+(hideCompleted?"#22c55e":"#1e293b"),color:hideCompleted?"#22c55e":"#64748b",borderRadius:7,padding:"5px 8px",cursor:"pointer",fontSize:17,flexShrink:0,fontWeight:hideCompleted?700:400,}}>{hideCompleted?"✓完了非表示":"完了を隠す"}</button>
           <button onClick={() => setShowForm(!showForm)} style={{
             background: showForm
               ? "#374151"
