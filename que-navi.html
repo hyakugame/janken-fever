@@ -34,20 +34,24 @@
       padding-top: var(--sat);
       padding-bottom: var(--sab);
     }
-    /* ☀️/🌙 テーマトグルボタン - 右下円形 */
-    #qDayNightBtn {
+    /* ☀️/🌙 テーマトグルボタン - 左下、🛠ツールの上 */
+    html body #qDayNightBtn {
       position: fixed !important;
       left: calc(14px + var(--sal)) !important;
       right: auto !important;
-      bottom: calc(120px + var(--sab)) !important;
+      bottom: calc(130px + var(--sab)) !important;
       top: auto !important;
       width: 44px !important;
       height: 44px !important;
+      min-width: 44px !important;
+      min-height: 44px !important;
+      max-width: 44px !important;
+      max-height: 44px !important;
       border-radius: 50% !important;
       border: 1px solid #2b3549 !important;
       background: #121826 !important;
       color: #fff !important;
-      font-size: 20px !important;
+      font-size: 22px !important;
       cursor: pointer !important;
       z-index: 45 !important;
       box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
@@ -55,20 +59,21 @@
       align-items: center !important;
       justify-content: center !important;
       padding: 0 !important;
+      margin: 0 !important;
+      line-height: 1 !important;
     }
-    /* ライトモード全体 */
+    html body.light-mode #qDayNightBtn {
+      background: #fff !important;
+      color: #1e293b !important;
+      border-color: #cbd5e1 !important;
+    }
+    /* ライトモード */
     body.light-mode {
       background: #f8fafc !important;
     }
     body.light-mode #root {
       background: #f8fafc !important;
     }
-    body.light-mode #qDayNightBtn {
-      background: #fff !important;
-      color: #1e293b !important;
-      border-color: #cbd5e1 !important;
-    }
-    /* 透明ブロッカー - ライトモード時のインライン色書き換え */
     body.light-mode [style*="background:#0a0e1a"],
     body.light-mode [style*="background: #0a0e1a"],
     body.light-mode [style*="background: rgb(10, 14, 26)"] { background: #f8fafc !important; }
@@ -83,9 +88,8 @@
     body.light-mode [style*="color:#64748b"] { color: #94a3b8 !important; }
     body.light-mode [style*="border:1px solid #1f2838"],
     body.light-mode [style*="border:1px solid #2b3549"] { border-color: #e2e8f0 !important; }
-    body.light-mode [style*="borderBottom:1px solid #1f2838"],
-    body.light-mode [style*="border-bottom: 1px solid #1f2838"] { border-bottom-color: #e2e8f0 !important; }
-    /* tap highlight を消す */
+    body.light-mode [style*="borderBottom:1px solid #1f2838"] { border-bottom-color: #e2e8f0 !important; }
+    /* tap highlight */
     button, a, label { -webkit-tap-highlight-color: transparent; }
   </style>
 </head>
