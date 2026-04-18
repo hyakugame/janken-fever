@@ -41,12 +41,12 @@
 
   // ===== STYLES =====
   const css = `
-    #qtkit-fab{position:fixed;left:14px;width:48px;height:48px;border-radius:50%;
-      bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+    #qtkit-headbtn{display:inline-flex;align-items:center;gap:3px;padding:5px 9px;
       background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;
-      box-shadow:0 6px 18px rgba(99,102,241,.45);font-size:20px;z-index:9998;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;transition:transform .2s;opacity:.95}
-    #qtkit-fab:active{transform:scale(.92)}
+      border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;
+      box-shadow:0 2px 6px rgba(99,102,241,.35);transition:transform .1s,opacity .15s;
+      line-height:1;letter-spacing:.02em}
+    #qtkit-headbtn:active{transform:scale(.95);opacity:.9}
     #qtkit-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:none;
       align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
     #qtkit-modal.open{display:flex}
@@ -138,10 +138,18 @@
     const style = h('style', { text: css });
     document.head.appendChild(style);
 
-    // FAB
-    const fab = h('button', { id: 'qtkit-fab', text: '🧰', title: 'クイックツール' });
-    fab.addEventListener('click', open);
-    document.body.appendChild(fab);
+    // Header button injection (replaces old fixed FAB)
+    function injectHeadBtn(){
+      if (document.getElementById('qtkit-headbtn')) return;
+      const gear = Array.from(document.querySelectorAll('button')).find(b => (b.textContent||'').trim() === '⚙️');
+      if (!gear || !gear.parentElement) return;
+      const b = h('button', { id: 'qtkit-headbtn', text: '🛠 ツール', title: 'クイックツール' });
+      b.addEventListener('click', open);
+      gear.insertAdjacentElement('afterend', b);
+    }
+    injectHeadBtn();
+    // Re-inject if React re-renders the header
+    setInterval(injectHeadBtn, 1000);
 
     // Modal skeleton
     const modal = h('div', { id: 'qtkit-modal' });
@@ -149,7 +157,7 @@
 
     const sheet = h('div', { id: 'qtkit-sheet' });
     const head = h('div', { id: 'qtkit-head' }, [
-      h('h3', { text: '🧰 クイックツール' }),
+      h('h3', { text: '🛠 クイックツール' }),
       h('button', { id: 'qtkit-close', text: '✕', onclick: close })
     ]);
 
