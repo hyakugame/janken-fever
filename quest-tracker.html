@@ -1142,8 +1142,7 @@ function App() {
       const _prevStep2 = [..._steps].reverse().find(s=>s.count<=_cur);
         const max = field==="done" ? (_nextStep ? _nextStep.count : q.goal) : 999;
       const min = 0;
-      return {...q, [field]: Math.max(min,Math.min(max,cur+delta)),
-        updatedAt: new Date().toISOString()};
+      const newVal=Math.max(min,Math.min(max,cur+delta));const now2=new Date().toISOString();const lg=[...(q.deliveryLog||[])];let ex={};if(field==="done"&&delta>0){lg.push({at:now2,count:newVal});ex={deliveryLog:lg};if(newVal===1&&!q.startedAt)ex.startedAt=now2;if(newVal>=(q.goal||1)&&!q.completedAt)ex.completedAt=now2;}if(field==="done"&&delta<0&&lg.length>0){lg.pop();ex={deliveryLog:lg,completedAt:undefined};}return {...q,[field]:newVal,updatedAt:now2,...ex};
     }));
   };
 
