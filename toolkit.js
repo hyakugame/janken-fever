@@ -343,11 +343,36 @@
       const ymin = fee / min;
       const ykm = fee / km;
       const yhr = (fee / min) * 60;
-      // 判定（業界的な目安: 時給2000円=good, 1500円=mid, それ未満=bad、Km単価200円以上推奨）
+      // 閾値ロード (ユーザー設定優先、デフォルト時給1500/分給25)
+      let thresh = { minYenPerHour: 1500, minYenPerMin: 25, enabled: true, vibrate: true, sound: false };
+      try {
+        const s = localStorage.getItem('alert_threshold_v1');
+        if (s) thresh = Object.assign(thresh, JSON.parse(s));
+      } catch(e) {}
+      const yenPerMin = fee / min;
+      const goodHr = thresh.minYenPerHour * 1.33;  // 良い基準 = 下限x1.33 (1500→2000)
+      const goodKm = 200;
+      const midKm = 150;
+      // 判定（ユーザー閾値ベース）
       let verdict, cls, emoji;
-      if (yhr >= 2000 && ykm >= 200) { verdict = '受諾推奨'; cls = 'good'; emoji = '👍'; }
-      else if (yhr >= 1500 || ykm >= 150) { verdict = 'やや微妙'; cls = 'mid'; emoji = '🤔'; }
+      if (yhr >= goodHr && ykm >= goodKm) { verdict = '受諾推奨'; cls = 'good'; emoji = '👍'; }
+      else if (yhr >= thresh.minYenPerHour || ykm >= midKm) { verdict = 'やや微妙'; cls = 'mid'; emoji = '🤔'; }
       else { verdict = '見送り推奨'; cls = 'bad'; emoji = '👎'; }
+      // 🚨 bad時アラート: 分給が下限以下 かつ enabled
+      if (cls === 'bad' && thresh.enabled) {
+        try {
+          if (thresh.vibrate && navigator.vibrate) { navigator.vibrate([200, 100, 200, 100, 200]); }
+          if (thresh.sound && window.AudioContext) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator(); const g = ctx.createGain();
+            osc.connect(g); g.connect(ctx.destination);
+            osc.frequency.value = 800; osc.type = 'square';
+            g.gain.setValueAtTime(.15, ctx.currentTime);
+            g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .5);
+            osc.start(); osc.stop(ctx.currentTime + .5);
+          }
+        } catch(e) {}
+      }
 
       result.style.display = 'block';
       result.innerHTML = '';
