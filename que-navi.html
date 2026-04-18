@@ -1485,7 +1485,7 @@ function App() {
           display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
           <div style={{background:CARD,borderRadius:18,padding:20,width:"100%",
             maxWidth:360,boxSizing:"border-box",border:`1px solid ${BDR}`}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18,position:"sticky",top:0,background:CARD,padding:"12px 0",marginTop:-20,marginLeft:-20,marginRight:-20,paddingLeft:20,paddingRight:20,zIndex:10,borderBottom:`1px solid ${BDR}`}}>
               <div style={{fontSize:17,fontWeight:800}}>⚙️ 設定</div>
               <button onClick={()=>setShowSettings(false)} style={{background:"none",border:"none",color:MUTED,fontSize:20,cursor:"pointer"}}>✕</button>
             </div>
