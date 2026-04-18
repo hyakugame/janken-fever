@@ -1147,6 +1147,7 @@ function App() {
   const [nameIn,  setNameIn]  = useState("");
   const [showForm,setShowForm]= useState(false);
   const [hideCompleted,setHideCompleted]=useState(false);
+  const [activeTab,setActiveTab]=useState('active');
   const [showSettings,setShowSettings]=useState(false);
   const [showGraph,setShowGraph]=useState(false);
   const [autoReload,setAutoReload]=useState(()=>parseInt(localStorage.getItem("qt_reload")||"15"));
@@ -1598,7 +1599,11 @@ function App() {
         </div>
       ) : (
         <div style={{padding:"10px 12px",display:"flex",flexDirection:"column",gap:10}}>
-          {[...quests].filter(q=>hideCompleted?(q.done||0)<q.goal:true).sort((a,b)=>{
+          <div style={{display:'flex',borderBottom:'1px solid #1f2838',marginBottom:10}}>
+          <button onClick={()=>setActiveTab('active')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='active'?'#fff':'#94a3b8',borderBottom:activeTab==='active'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>稼働中</button>
+          <button onClick={()=>setActiveTab('history')} style={{flex:1,padding:'10px 0',background:'transparent',border:'none',color:activeTab==='history'?'#fff':'#94a3b8',borderBottom:activeTab==='history'?'2px solid #3b82f6':'2px solid transparent',fontSize:14,fontWeight:600,cursor:'pointer'}}>履歴</button>
+        </div>
+        {[...quests].filter(q=>activeTab==='history'?(q.done||0)>=q.goal:(q.done||0)<q.goal).sort((a,b)=>{
             const da=(a.date||'')+(a.startTime||'');
             const db=(b.date||'')+(b.startTime||'');
             return da.localeCompare(db);
