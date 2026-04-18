@@ -1497,40 +1497,6 @@ function App() {
                     {hy>0&&<div style={{fontSize:13,color:"#94a3b8",marginTop:4}}>現在の時給は<span style={{color:"#FFD700",fontWeight:700}}> ￥{hy.toLocaleString()} </span>円/hペース</div>}
                   </div>
                 )}
-      {showOcr&&(
-        <div onClick={()=>setShowOcr(false)} style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.7)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:16}}>
-          <div onClick={e=>e.stopPropagation()} style={{background:'#0a0e1a',border:'1px solid #1f2838',borderRadius:16,padding:20,maxWidth:480,width:'100%',maxHeight:'90vh',overflow:'auto'}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
-              <div style={{fontSize:18,fontWeight:700,color:'#fff'}}>📷 スクショから取込</div>
-              <button onClick={()=>setShowOcr(false)} style={{background:'transparent',border:'none',color:'#94a3b8',fontSize:24,cursor:'pointer',padding:0,lineHeight:1}}>✕</button>
-            </div>
-            <div style={{fontSize:13,color:'#94a3b8',marginBottom:16,lineHeight:1.5}}>Uber Eats / 出前館 / ロケットナウのクエスト画面のスクショを選んでください。OCRで金額・件数・時間帯を認識します（初回は数MB読込、10-20秒）。</div>
-            <label style={{display:'block',padding:'14px 16px',background:'#121826',border:'2px dashed #2b3549',borderRadius:10,cursor:'pointer',textAlign:'center',color:'#94a3b8',fontSize:14,marginBottom:16}}>
-              <input type="file" accept="image/*" style={{display:'none'}} onChange={e=>{const f=e.target.files[0];if(f)runOcrOnFile(f);}}/>
-              📁 画像ファイルを選ぶ
-            </label>
-            {ocrState.status==='loading'&&(
-              <div style={{padding:16,background:'#121826',border:'1px solid #1f2838',borderRadius:10,marginBottom:16}}>
-                <div style={{fontSize:13,color:'#e7ecf3',marginBottom:8}}>⏳ {ocrState.text}</div>
-                <div style={{height:4,background:'#1f2838',borderRadius:2,overflow:'hidden'}}>
-                  <div style={{width:ocrState.progress+'%',height:'100%',background:'#3b82f6',transition:'width .3s'}}></div>
-                </div>
-              </div>
-            )}
-            {ocrState.status==='done'&&(
-              <div style={{padding:12,background:'#121826',border:'1px solid #10b981',borderRadius:10,marginBottom:16}}>
-                <div style={{fontSize:12,color:'#10b981',fontWeight:700,marginBottom:8,letterSpacing:'.05em'}}>認識結果</div>
-                <pre style={{fontSize:11,color:'#e7ecf3',whiteSpace:'pre-wrap',wordBreak:'break-all',margin:0,fontFamily:'monospace',maxHeight:200,overflow:'auto'}}>{ocrState.text}</pre>
-                <button onClick={()=>{navigator.clipboard.writeText(ocrState.text);alert('クリップボードにコピーしました');}} style={{marginTop:10,background:'#3b82f6',border:'none',color:'#fff',padding:'8px 14px',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>📋 テキストコピー</button>
-              </div>
-            )}
-            {ocrState.status==='error'&&(
-              <div style={{padding:12,background:'#1a0303',border:'1px solid #ef4444',borderRadius:10,color:'#fca5a5',fontSize:13,marginBottom:16}}>❌ {ocrState.text}</div>
-            )}
-            <div style={{fontSize:11,color:'#64748b',marginTop:8}}>※ OCR精度は画像解像度に依存します。自動入力機能は次回リリースで対応予定。</div>
-          </div>
-        </div>
-      )}
               </>);
             })()}
           </div>
@@ -1752,6 +1718,40 @@ function App() {
       <CounterPanel quests={quests} onUpdate={handleUpdate}/>
       <ScrollTopBtn/>
       {/* TOPへ戻るボタン */}
+      {showOcr&&(
+        <div onClick={()=>setShowOcr(false)} style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.7)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:16}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:'#0a0e1a',border:'1px solid #1f2838',borderRadius:16,padding:20,maxWidth:480,width:'100%',maxHeight:'90vh',overflow:'auto'}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+              <div style={{fontSize:18,fontWeight:700,color:'#fff'}}>📷 スクショから取込</div>
+              <button onClick={()=>setShowOcr(false)} style={{background:'transparent',border:'none',color:'#94a3b8',fontSize:24,cursor:'pointer',padding:0,lineHeight:1}}>✕</button>
+            </div>
+            <div style={{fontSize:13,color:'#94a3b8',marginBottom:16,lineHeight:1.5}}>Uber Eats / 出前館 / ロケットナウのクエスト画面のスクショを選んでください。OCRで金額・件数・時間帯を認識します（初回は数MB読込、10-20秒）。</div>
+            <label style={{display:'block',padding:'14px 16px',background:'#121826',border:'2px dashed #2b3549',borderRadius:10,cursor:'pointer',textAlign:'center',color:'#94a3b8',fontSize:14,marginBottom:16}}>
+              <input type="file" accept="image/*" style={{display:'none'}} onChange={e=>{const f=e.target.files[0];if(f)runOcrOnFile(f);}}/>
+              📁 画像ファイルを選ぶ
+            </label>
+            {ocrState.status==='loading'&&(
+              <div style={{padding:16,background:'#121826',border:'1px solid #1f2838',borderRadius:10,marginBottom:16}}>
+                <div style={{fontSize:13,color:'#e7ecf3',marginBottom:8}}>⏳ {ocrState.text}</div>
+                <div style={{height:4,background:'#1f2838',borderRadius:2,overflow:'hidden'}}>
+                  <div style={{width:ocrState.progress+'%',height:'100%',background:'#3b82f6',transition:'width .3s'}}></div>
+                </div>
+              </div>
+            )}
+            {ocrState.status==='done'&&(
+              <div style={{padding:12,background:'#121826',border:'1px solid #10b981',borderRadius:10,marginBottom:16}}>
+                <div style={{fontSize:12,color:'#10b981',fontWeight:700,marginBottom:8,letterSpacing:'.05em'}}>認識結果</div>
+                <pre style={{fontSize:11,color:'#e7ecf3',whiteSpace:'pre-wrap',wordBreak:'break-all',margin:0,fontFamily:'monospace',maxHeight:200,overflow:'auto'}}>{ocrState.text}</pre>
+                <button onClick={()=>{navigator.clipboard.writeText(ocrState.text);alert('クリップボードにコピーしました');}} style={{marginTop:10,background:'#3b82f6',border:'none',color:'#fff',padding:'8px 14px',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>📋 テキストコピー</button>
+              </div>
+            )}
+            {ocrState.status==='error'&&(
+              <div style={{padding:12,background:'#1a0303',border:'1px solid #ef4444',borderRadius:10,color:'#fca5a5',fontSize:13,marginBottom:16}}>❌ {ocrState.text}</div>
+            )}
+            <div style={{fontSize:11,color:'#64748b',marginTop:8}}>※ OCR精度は画像解像度に依存します。自動入力機能は次回リリースで対応予定。</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
