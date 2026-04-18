@@ -160,7 +160,8 @@
       { k: 'otsuri', e: '💰', l: 'おつり' },
       { k: 'tmpl', e: '📋', l: '置き配' },
       { k: 'offer', e: '🎯', l: '判定' },
-      { k: 'week', e: '📊', l: 'サマリー' }
+      { k: 'week', e: '📊', l: 'サマリー' },
+      { k: 'setting', e: '⚙️', l: '設定' }
     ];
     tabDefs.forEach((t, i) => {
       const btn = h('button', { 'class': 'qtkit-tab' + (i === 0 ? ' active' : ''), 'data-tab': t.k }, [
@@ -196,6 +197,7 @@
       if (NS._panes[p]) NS._panes[p].classList.toggle('active', p === k);
     });
     if (k === 'week') renderWeek();
+    if (k === 'setting') renderSetting();
   }
 
   // ===== PANE 1: おつり =====
@@ -574,4 +576,63 @@
   NS.open = open;
   NS.close = close;
   console.log('[qtKit] v1 loaded');
+
+  // ===== PANE ⚙️: 設定 (アラート閾値) =====
+  function renderSetting(){
+    const panel = document.querySelector('.qtkit-panel-body');
+    if (!panel) return;
+    let th = { minYenPerHour: 1500, minYenPerMin: 25, enabled: false, vibrate: true, sound: false };
+    try {
+      const s = localStorage.getItem('alert_threshold_v1');
+      if (s) th = Object.assign(th, JSON.parse(s));
+    } catch(e) {}
+    panel.innerHTML = '';
+    const wrap = h('div', { class: 'qtkit-setting' }, [
+      h('h3', null, ['🚨 オファー判定アラート']),
+      h('p', { class: 'qtkit-note' }, ['判定結果が「見送り推奨」の時にバイブ・音で通知します']),
+      
+      h('label', { class: 'qtkit-row' }, [
+        h('span', null, ['アラート有効']),
+        h('input', { type: 'checkbox', id: 'qtk-enabled', checked: th.enabled })
+      ]),
+      h('label', { class: 'qtkit-row' }, [
+        h('span', null, ['下限時給 (¥/h)']),
+        h('input', { type: 'number', id: 'qtk-yhr', value: String(th.minYenPerHour), min: '500', max: '5000', step: '100' })
+      ]),
+      h('label', { class: 'qtkit-row' }, [
+        h('span', null, ['下限分給 (¥/min)']),
+        h('input', { type: 'number', id: 'qtk-ymin', value: String(th.minYenPerMin), min: '10', max: '100', step: '1' })
+      ]),
+      h('label', { class: 'qtkit-row' }, [
+        h('span', null, ['バイブレーション']),
+        h('input', { type: 'checkbox', id: 'qtk-vib', checked: th.vibrate })
+      ]),
+      h('label', { class: 'qtkit-row' }, [
+        h('span', null, ['アラート音']),
+        h('input', { type: 'checkbox', id: 'qtk-snd', checked: th.sound })
+      ]),
+      h('button', { class: 'qtkit-save-btn', onclick: 'window.__qtkSaveSetting()' }, ['💾 保存'])
+    ]);
+    panel.appendChild(wrap);
+  }
+  window.__qtkSaveSetting = function(){
+    const newTh = {
+      enabled: document.getElementById('qtk-enabled').checked,
+      minYenPerHour: parseInt(document.getElementById('qtk-yhr').value) || 1500,
+      minYenPerMin: parseInt(document.getElementById('qtk-ymin').value) || 25,
+      vibrate: document.getElementById('qtk-vib').checked,
+      sound: document.getElementById('qtk-snd').checked
+    };
+    try {
+      localStorage.setItem('alert_threshold_v1', JSON.stringify(newTh));
+      const panel = document.querySelector('.qtkit-panel-body');
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:10px 20px;border-radius:8px;z-index:99999;font-weight:700;';
+      toast.textContent = '✓ 設定を保存しました';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+      if (newTh.vibrate && navigator.vibrate) navigator.vibrate(50);
+    } catch(e) {}
+  };
+  
 })();
