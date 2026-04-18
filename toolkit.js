@@ -43,9 +43,9 @@
   const css = `
     #qtkit-fab{position:fixed;left:14px;display:inline-flex;align-items:center;gap:5px;
       bottom:calc(76px + env(safe-area-inset-bottom, 0px));padding:9px 14px;
-      background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;
+      background:#3b82f6;color:#fff;border:none;
       border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;
-      box-shadow:0 4px 14px rgba(99,102,241,.45);z-index:9998;line-height:1;letter-spacing:.02em;
+      box-shadow:0 4px 14px rgba(59, 130, 246,.45);z-index:9998;line-height:1;letter-spacing:.02em;
       transition:transform .1s,opacity .15s}
     #qtkit-fab:active{transform:scale(.95);opacity:.9}
     #qtkit-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:none;
@@ -61,7 +61,7 @@
     #qtkit-tabs{display:flex;border-bottom:1px solid #2a2f44;background:#15182a;flex-shrink:0}
     .qtkit-tab{flex:1;padding:12px 4px;background:none;border:none;color:#8b92a5;font-size:12px;
       cursor:pointer;border-bottom:3px solid transparent;transition:.15s;font-weight:600}
-    .qtkit-tab.active{color:#fff;border-bottom-color:#8b5cf6;background:#1a1e2e}
+    .qtkit-tab.active{color:#fff;border-bottom-color:#3b82f6;background:#1a1e2e}
     .qtkit-tab-emoji{display:block;font-size:18px;margin-bottom:2px}
     #qtkit-body{padding:16px;overflow-y:auto;flex:1;
       padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
@@ -70,15 +70,15 @@
     .qtkit-label{font-size:12px;color:#9aa3b8;margin-bottom:4px;font-weight:600}
     .qtkit-input{width:100%;padding:11px 12px;background:#242940;border:1px solid #2f3550;
       border-radius:10px;color:#fff;font-size:16px;box-sizing:border-box;-webkit-appearance:none}
-    .qtkit-input:focus{outline:none;border-color:#8b5cf6}
+    .qtkit-input:focus{outline:none;border-color:#3b82f6}
     .qtkit-row{display:flex;gap:8px;margin-bottom:12px}
     .qtkit-row > *{flex:1;min-width:0}
-    .qtkit-btn{padding:10px 14px;background:#6366f1;color:#fff;border:none;border-radius:10px;
+    .qtkit-btn{padding:10px 14px;background:#3b82f6;color:#fff;border:none;border-radius:10px;
       font-size:14px;font-weight:600;cursor:pointer;width:100%}
     .qtkit-btn:active{opacity:.8}
     .qtkit-btn.ghost{background:#2a2f44;color:#c7cbe0}
     .qtkit-result{background:#242940;border-radius:12px;padding:14px;margin-top:12px}
-    .qtkit-result-big{font-size:24px;font-weight:700;color:#a78bfa;margin-bottom:6px}
+    .qtkit-result-big{font-size:24px;font-weight:700;color:#3b82f6;margin-bottom:6px}
     .qtkit-stat{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #2f3550;font-size:14px}
     .qtkit-stat:last-child{border:none}
     .qtkit-stat-label{color:#9aa3b8}
@@ -86,7 +86,7 @@
     .qtkit-tmpl-item{background:#242940;border-radius:10px;padding:11px 12px;margin-bottom:8px;
       display:flex;gap:10px;align-items:flex-start}
     .qtkit-tmpl-text{flex:1;font-size:13px;line-height:1.5;color:#d8dbe8}
-    .qtkit-tmpl-copy{background:#6366f1;color:#fff;border:none;border-radius:8px;padding:7px 11px;
+    .qtkit-tmpl-copy{background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:7px 11px;
       font-size:12px;cursor:pointer;font-weight:600;flex-shrink:0;min-width:52px}
     .qtkit-tmpl-copy.ok{background:#10b981}
     .qtkit-svc-chip{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;
@@ -101,11 +101,11 @@
     .qtkit-verdict.bad{color:#ef4444}
     .qtkit-coins{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
     .qtkit-coin{background:#1a1e2e;padding:6px 4px;border-radius:6px;text-align:center;font-size:11px}
-    .qtkit-coin-n{font-size:15px;font-weight:700;color:#a78bfa;display:block}
+    .qtkit-coin-n{font-size:15px;font-weight:700;color:#3b82f6;display:block}
     .qtkit-bar-row{display:flex;align-items:flex-end;gap:4px;height:90px;margin:14px 0 6px}
     .qtkit-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
     .qtkit-bar-val{font-size:10px;color:#9aa3b8}
-    .qtkit-bar{width:100%;background:linear-gradient(to top,#6366f1,#8b5cf6);
+    .qtkit-bar{width:100%;background:#3b82f6;
       border-radius:4px 4px 0 0;min-height:2px;transition:height .4s}
     .qtkit-bar-lbl{font-size:10px;color:#9aa3b8}
     .qtkit-week-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
