@@ -1650,6 +1650,7 @@ function App() {
             <div style={{marginTop:20}}>
               <div style={{fontSize:11,color:'#94a3b8',fontWeight:600,marginBottom:10,letterSpacing:'.05em',padding:'0 4px'}}>サービス別</div>
               {Object.entries(SVC).map(([sid,s])=>{
+                const calcEarned=q=>{const steps=[...(q.bonuses||[])].sort((a,b)=>a.count-b.count);const done=q.done||0;const se=steps.filter(s=>done>=s.count).reduce((s2,s)=>s2+(s.reward||0),0);const ext=done>=q.goal?(parseInt(q.bonusExtra||0)||0):0;return se+ext;};
                 const svq=quests.filter(q=>q.service===sid);
                 if(svq.length===0) return null;
                 const done=svq.filter(q=>(q.done||0)>=q.goal).length;
