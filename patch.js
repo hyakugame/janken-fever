@@ -2,7 +2,7 @@
 if(window.__qne)return;window.__qne=true;
 var TH={"Uber Eats":"#00FF00","出前館":"#FF0000","ロケットナウ":"#FF8C00"};
 var CL=["#FFD700","#FF6B00","#FF0055","#00FFFF","#FF00FF","#7FFF00"];
-var fd=false,pc=-1;
+var fd=false,pc=-1,busy=false;
 var h=new Date().getHours(),isDay=h>=6&&h<18;
 var btn=document.createElement("button");
 btn.style.cssText="position:fixed;bottom:140px;right:16px;z-index:8000;background:#1a1a2ecc;border:1px solid #555;color:#fff;border-radius:50%;width:46px;height:46px;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center";
@@ -17,8 +17,10 @@ var cs=document.createElement("style");
 cs.textContent="@keyframes qfpop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:1}}@keyframes qffade{0%,65%{opacity:1}100%{opacity:0;transform:translateY(-50px)}}@keyframes qfly{0%{opacity:1}100%{transform:translate(var(--px),var(--py)) rotate(var(--pr));opacity:0}}.qfov{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none;animation:qffade 4s forwards}.qftx{font-size:2.8rem;font-weight:900;color:#FFD700;text-shadow:0 0 20px #FFD700,0 0 60px #FF8C00;font-family:monospace;letter-spacing:.1em;text-align:center;line-height:1.6;animation:qfpop .5s cubic-bezier(.34,1.56,.64,1) forwards}.qpt{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:9998;animation:qfly var(--dur) ease-out forwards}";
 document.head.appendChild(cs);
 function fmt(m){return m<60?m+"分":Math.floor(m/60)+"h"+String(m%60).padStart(2,"0")+"m";}
-function us(){try{
-var raw=localStorage.getItem("qt5");if(!raw)return;
+function us(){
+if(busy)return;busy=true;
+try{
+var raw=localStorage.getItem("qt5");if(!raw){busy=false;return;}
 var qs=JSON.parse(raw);var now=new Date(),td=0,tr=0,aa=[],el=null;
 qs.forEach(function(q){
 var dn=q.done||0;td+=dn;
@@ -32,12 +34,16 @@ var eh=el?(now-el)/3600000:0;
 var hy=eh>0.1?Math.round(tr/eh):0;
 var av=aa.length>0?Math.round(aa.reduce(function(a,b){return a+b;},0)/aa.length):0;
 var s='style="background:#0a1520;border-radius:6px;padding:3px 8px;border:1px solid #1e3a4a"';
-sb.innerHTML='<span '+s+'>合計<b style="color:#FFD700">'+td+'件</b></span>'
+var html='<span '+s+'>合計<b style="color:#FFD700">'+td+'件</b></span>'
 +'<span '+s+'>報酬<b style="color:#FFD700">￥'+tr.toLocaleString()+'</b></span>'
-+(eh>0.1?'<span '+s+'>稼働<b style="color:#FFD700">'+fmt(Math.round(eh*60))+'</b></span>':"")
-+(hy>0?'<span '+s+'>時給<b style="color:#FFD700">￥'+hy.toLocaleString()+'</b></span>':"")
-+(av>0?'<span '+s+'>平均<b style="color:#FFD700">'+av+'分/件</b></span>':"");
-}catch(e){}}
++(eh>0.1?'<span '+s+'>稼働<b style="color:#FFD700">'+fmt(Math.round(eh*60))+'</b></span>':"") 
++(hy>0?'<span '+s+'>時給<b style="color:#FFD700">￥'+hy.toLocaleString()+'</b></span>':"") 
++(av>0?'<span '+s+'>平均<b style="color:#FFD700">'+av+'分/件</b></span>':"")
+;
+if(sb.innerHTML!==html)sb.innerHTML=html;
+}catch(e){}
+busy=false;
+}
 function at(c){
 document.querySelectorAll("button").forEach(function(b){if(b.textContent.trim()==="+"){b.style.setProperty("background",c,"important");b.style.setProperty("box-shadow","0 0 20px "+c+"88","important");}});
 var best=null,ba=0;
@@ -56,12 +62,11 @@ var o=document.createElement("div");o.className="qfov";
 o.innerHTML="<div class='qftx'>🔥 FEVER!! 🔥<br><span style='font-size:1rem;color:#fff;letter-spacing:.25em'>MAX REWARD ACHIEVED!</span></div>";
 document.body.appendChild(o);setTimeout(function(){o.remove();fd=false;},4500);
 }
-setTimeout(function(){
-var txt=document.body.innerText||"",c="#7B2FBE";
-for(var k in TH){if(txt.includes(k)){c=TH[k];break;}}
-at(c);us();
-},600);
-new MutationObserver(function(){
+var debTimer=null;
+var obs=new MutationObserver(function(muts){
+for(var i=0;i<muts.length;i++){if(muts[i].target===sb||sb.contains(muts[i].target))return;}
+clearTimeout(debTimer);
+debTimer=setTimeout(function(){
 us();
 var txt=document.body.innerText||"";
 var gm=txt.match(/\/\s*(\d+)\s*件/);if(!gm)return;
@@ -75,6 +80,13 @@ if(sz>bsz){bsz=sz;best=parseInt(t);}
 });
 if(best!==null&&best===goal&&goal>0&&best!==pc){pc=best;fever();}
 else if(best!==null){pc=best;}
-}).observe(document.body,{childList:true,subtree:true,characterData:true});
+},300);
+});
+obs.observe(document.body,{childList:true,subtree:true});
+setTimeout(function(){
+var txt=document.body.innerText||"",c="#7B2FBE";
+for(var k in TH){if(txt.includes(k)){c=TH[k];break;}}
+at(c);us();
+},800);
 setInterval(us,30000);
 })();
