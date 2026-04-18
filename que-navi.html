@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#080c14">
   <!-- old-cb:1776482914230 -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="クエNavi">
@@ -22,6 +22,71 @@
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     ::-webkit-scrollbar { display: none; }
   @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}</style>
+
+  <style id="polish-styles">
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+    }
+    body { 
+      padding-top: var(--sat);
+      padding-bottom: var(--sab);
+    }
+    /* ☀️/🌙 テーマトグルボタン - 右下円形 */
+    .qdn-btn {
+      position: fixed !important;
+      right: calc(16px + var(--sar)) !important;
+      bottom: calc(70px + var(--sab)) !important;
+      left: auto !important;
+      width: 44px !important;
+      height: 44px !important;
+      border-radius: 50% !important;
+      border: 1px solid #2b3549 !important;
+      background: #121826 !important;
+      color: #fff !important;
+      font-size: 20px !important;
+      cursor: pointer !important;
+      z-index: 45 !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+    }
+    /* ライトモード全体 */
+    body.light-mode {
+      background: #f8fafc !important;
+    }
+    body.light-mode #root {
+      background: #f8fafc !important;
+    }
+    body.light-mode .qdn-btn {
+      background: #fff !important;
+      color: #1e293b !important;
+      border-color: #cbd5e1 !important;
+    }
+    /* 透明ブロッカー - ライトモード時のインライン色書き換え */
+    body.light-mode [style*="background:#0a0e1a"],
+    body.light-mode [style*="background: #0a0e1a"],
+    body.light-mode [style*="background: rgb(10, 14, 26)"] { background: #f8fafc !important; }
+    body.light-mode [style*="background:#121826"],
+    body.light-mode [style*="background: #121826"] { background: #fff !important; border-color: #e2e8f0 !important; }
+    body.light-mode [style*="background:#1f2838"] { background: #f1f5f9 !important; }
+    body.light-mode [style*="color:#fff"],
+    body.light-mode [style*="color: #fff"],
+    body.light-mode [style*="color: rgb(255, 255, 255)"] { color: #0f172a !important; }
+    body.light-mode [style*="color:#e7ecf3"] { color: #1e293b !important; }
+    body.light-mode [style*="color:#94a3b8"] { color: #64748b !important; }
+    body.light-mode [style*="color:#64748b"] { color: #94a3b8 !important; }
+    body.light-mode [style*="border:1px solid #1f2838"],
+    body.light-mode [style*="border:1px solid #2b3549"] { border-color: #e2e8f0 !important; }
+    body.light-mode [style*="borderBottom:1px solid #1f2838"],
+    body.light-mode [style*="border-bottom: 1px solid #1f2838"] { border-bottom-color: #e2e8f0 !important; }
+    /* tap highlight を消す */
+    button, a, label { -webkit-tap-highlight-color: transparent; }
+  </style>
 </head>
 <body>
   <div id="root"></div>
@@ -1758,6 +1823,6 @@ function App() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
   </script>
- <script>(function(){ if(window.__qneLoaded)return;window.__qneLoaded=true; var TH={"Uber Eats":"#00FF00","出前館":"#FF0000","ロケットナウ":"#FF8C00"}; var CL=["#FFD700","#FF6B00","#FF0055","#00FFFF","#FF00FF","#7FFF00"]; var fd=false,prevCount=-1;  // 昼夜ボタン var h=new Date().getHours(),isDay=h>=6&&h<18; var btn=document.createElement("button"); btn.className="qdn-btn"; btn.textContent=isDay?"🌙":"☀️"; document.documentElement.style.filter=isDay?"brightness(1.3)":"brightness(0.75)"; btn.onclick=function(){   var day=btn.textContent==="🌙";   document.documentElement.style.filter=day?"brightness(0.75)":"brightness(1.3)";   btn.textContent=day?"☀️":"🌙"; }; document.body.appendChild(btn);  // テーマ適用（一回だけ） function applyTheme(color){   document.querySelectorAll("button").forEach(function(b){     if(b.className&&b.className.toString().includes("qdn"))return;     if(b.textContent.trim()==="+"){       b.style.setProperty("background",color,"important");       b.style.setProperty("box-shadow","0 0 20px "+color+"88","important");     }   });   var best=null,bestArea=0;   document.querySelectorAll("div,section").forEach(function(el){     var s=getComputedStyle(el);     if(parseFloat(s.borderLeftWidth)<3)return;     var rect=el.getBoundingClientRect(),area=rect.width*rect.height;     if(area>bestArea){bestArea=area;best=el;}   });   if(best){     best.style.setProperty("border-color",color,"important");     best.style.setProperty("box-shadow","0 0 30px "+color+"44","important");   } }  // サービス判定（一回だけ、500ms後） setTimeout(function(){   var txt=document.body.innerText||"";   var color="#7B2FBE";   for(var k in TH){if(txt.includes(k)){color=TH[k];break;}}   applyTheme(color); },500);  // FEVER function fever(){   if(fd)return;fd=true;   for(var i=0;i<80;i++){(function(j){setTimeout(function(){     var p=document.createElement("div");p.className="qpt";     p.style.cssText="left:"+Math.random()*100+"vw;top:-10px;background:"+CL[Math.floor(Math.random()*6)]+";--px:"+Math.round((Math.random()-.5)*200)+"px;--py:"+Math.round(60+Math.random()*110)+"vh;--pr:"+Math.round(Math.random()*720)+"deg;--dur:"+(2+Math.random()*1.5).toFixed(1)+"s";     document.body.appendChild(p);setTimeout(function(){p.remove();},4000);   },j*22);})(i);}   var o=document.createElement("div");o.className="qfov";   o.innerHTML="<div class='qftx'>🔥 FEVER!! 🔥<br><span style='font-size:1rem;color:#fff;letter-spacing:.25em'>MAX REWARD ACHIEVED!</span></div>";   document.body.appendChild(o);   setTimeout(function(){o.remove();fd=false;},4500); }  // カウンター監視（FEVERのみ） new MutationObserver(function(){   var txt=document.body.innerText||"";   var gm=txt.match(//s*(d+)s*件/);   if(!gm)return;   var goal=parseInt(gm[1]);   var best=null,bestSz=0;   document.querySelectorAll("*").forEach(function(el){     if(el.children.length>0)return;     var t=(el.textContent||"").trim();     if(!/^d+$/.test(t))return;     var sz=parseFloat(getComputedStyle(el).fontSize)||0;     if(sz>bestSz){bestSz=sz;best=parseInt(t);}   });   if(best!==null&&best===goal&&goal>0&&best!==prevCount){prevCount=best;fever();}   else if(best!==null){prevCount=best;} }).observe(document.body,{childList:true,subtree:true,characterData:true}); })()</script><script src="patch.js?v=22"></script>
+ <script>(function(){ if(window.__qneLoaded)return;window.__qneLoaded=true; var TH={"Uber Eats":"#00FF00","出前館":"#FF0000","ロケットナウ":"#FF8C00"}; var CL=["#FFD700","#FF6B00","#FF0055","#00FFFF","#FF00FF","#7FFF00"]; var fd=false,prevCount=-1;  // 昼夜ボタン var h=new Date().getHours(),isDay=h>=6&&h<18; var btn=document.createElement("button"); btn.className="qdn-btn"; btn.textContent=isDay?"🌙":"☀️"; if(isDay){document.body.classList.add('light-mode');}else{document.body.classList.remove('light-mode');} btn.onclick=function(){document.body.classList.toggle('light-mode');var isLight=document.body.classList.contains('light-mode');btn.textContent=isLight?"🌙":"☀️";}; document.body.appendChild(btn);  // テーマ適用（一回だけ） function applyTheme(color){   document.querySelectorAll("button").forEach(function(b){     if(b.className&&b.className.toString().includes("qdn"))return;     if(b.textContent.trim()==="+"){       b.style.setProperty("background",color,"important");       b.style.setProperty("box-shadow","0 0 20px "+color+"88","important");     }   });   var best=null,bestArea=0;   document.querySelectorAll("div,section").forEach(function(el){     var s=getComputedStyle(el);     if(parseFloat(s.borderLeftWidth)<3)return;     var rect=el.getBoundingClientRect(),area=rect.width*rect.height;     if(area>bestArea){bestArea=area;best=el;}   });   if(best){     best.style.setProperty("border-color",color,"important");     best.style.setProperty("box-shadow","0 0 30px "+color+"44","important");   } }  // サービス判定（一回だけ、500ms後） setTimeout(function(){   var txt=document.body.innerText||"";   var color="#7B2FBE";   for(var k in TH){if(txt.includes(k)){color=TH[k];break;}}   applyTheme(color); },500);  // FEVER function fever(){   if(fd)return;fd=true;   for(var i=0;i<80;i++){(function(j){setTimeout(function(){     var p=document.createElement("div");p.className="qpt";     p.style.cssText="left:"+Math.random()*100+"vw;top:-10px;background:"+CL[Math.floor(Math.random()*6)]+";--px:"+Math.round((Math.random()-.5)*200)+"px;--py:"+Math.round(60+Math.random()*110)+"vh;--pr:"+Math.round(Math.random()*720)+"deg;--dur:"+(2+Math.random()*1.5).toFixed(1)+"s";     document.body.appendChild(p);setTimeout(function(){p.remove();},4000);   },j*22);})(i);}   var o=document.createElement("div");o.className="qfov";   o.innerHTML="<div class='qftx'>🔥 FEVER!! 🔥<br><span style='font-size:1rem;color:#fff;letter-spacing:.25em'>MAX REWARD ACHIEVED!</span></div>";   document.body.appendChild(o);   setTimeout(function(){o.remove();fd=false;},4500); }  // カウンター監視（FEVERのみ） new MutationObserver(function(){   var txt=document.body.innerText||"";   var gm=txt.match(//s*(d+)s*件/);   if(!gm)return;   var goal=parseInt(gm[1]);   var best=null,bestSz=0;   document.querySelectorAll("*").forEach(function(el){     if(el.children.length>0)return;     var t=(el.textContent||"").trim();     if(!/^d+$/.test(t))return;     var sz=parseFloat(getComputedStyle(el).fontSize)||0;     if(sz>bestSz){bestSz=sz;best=parseInt(t);}   });   if(best!==null&&best===goal&&goal>0&&best!==prevCount){prevCount=best;fever();}   else if(best!==null){prevCount=best;} }).observe(document.body,{childList:true,subtree:true,characterData:true}); })()</script><script src="patch.js?v=22"></script>
   <script src="toolkit.js?v=3"></script><script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}</script>
 </body></html>
