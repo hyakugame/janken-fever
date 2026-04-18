@@ -39,14 +39,14 @@ const SVC = {
   rocket:   { label:"ロケットナウ", icon:"🚀", color:"#ff6b35", dark:"#1a0a03" },
   demae:    { label:"出前館",       icon:"🥫", color:"#ef4444", dark:"#1a0303" },
 };
-const BG    = "#080c14";
-const CARD  = "#0f1520";
-const INPUT = "#0a0e16";
-const BDR   = "#1e293b";
+const BG    = "#0a0e1a";
+const CARD  = "#121826";
+const INPUT = "#0f1525";
+const BDR   = "#1f2838";
 const TEXT  = "#f1f5f9";
-const MUTED = "#64748b";
-const BLUE  = "#38bdf8";
-const PURP  = "#a78bfa";
+const MUTED = "#94a3b8";
+const BLUE  = "#3b82f6";
+const PURP  = "#3b82f6";
 const INP = {
   background: INPUT, color: TEXT,
   border: `1px solid ${BDR}`,
@@ -451,13 +451,13 @@ function QuestCard({ q, me, onUpdate, onDelete, onCopy, onEdit, onMove, questIdx
               borderRadius: 12, border: "none",
               background: achieved
                 ? "#1e293b"
-                : "linear-gradient(135deg,#1d4ed8 0%,#6d28d9 100%)",
+                : "#3b82f6",
               color: "#fff", fontSize: 28, fontWeight: 900,
               cursor: achieved ? "default" : "pointer",
               display: "flex", alignItems: "center", justifyContent: "center",
               boxShadow: achieved
                 ? "none"
-                : "0 4px 16px #3b82f660, 0 0 24px #6d28d940",
+                : "0 4px 16px #3b82f660, 0 0 24px #3b82f640",
             }}
           >＋</button>
           <button
@@ -643,14 +643,14 @@ function NumStepper({ label, val, set, step=1, min=0, max=9999, presets }) {
             color:TEXT, padding:"10px 6px",
           }}
         />
-        <button onClick={up} style={{...SB, background:"linear-gradient(135deg,#1d4ed8,#6d28d9)",
+        <button onClick={up} style={{...SB, background:"#3b82f6",
           color:"#fff", boxShadow:"0 2px 8px #3b82f640"}}>＋</button>
       </div>
       {presets && (
         <div style={{display:"flex", gap:6, marginTop:6, flexWrap:"wrap"}}>
           {presets.map(p => (
             <button key={p} onClick={() => set(String(p))} style={{
-              background: parseInt(val)===p ? "#1d4ed8" : "#1e293b",
+              background: parseInt(val)===p ? "#3b82f6" : "#1e293b",
               border: parseInt(val)===p ? "1px solid #3b82f6" : `1px solid ${BDR}`,
               color: parseInt(val)===p ? "#fff" : "#94a3b8",
               borderRadius:8, padding:"4px 10px",
@@ -673,13 +673,13 @@ function OKBtn({ onClick, disabled, children }) {
         width:"100%",padding:14,borderRadius:12,border:"none",marginTop:8,
         background: disabled
           ? "#1e293b"
-          : "linear-gradient(135deg,#1d4ed8,#6d28d9)",
+          : "#3b82f6",
         color: disabled ? "#475569" : "#fff",
         fontSize:17,fontWeight:700,
         cursor: disabled ? "default" : "pointer",
         boxShadow: disabled
           ? "none"
-          : "0 4px 20px #3b82f650, 0 0 30px #6d28d930",
+          : "0 4px 20px #3b82f650, 0 0 30px #3b82f630",
         letterSpacing:"0.02em",
       }}
     >
@@ -1090,11 +1090,11 @@ function CounterPanel({ quests, onUpdate }) {
         <button onClick={()=>setShowSummary(true)} title="サマリー" style={{background:"rgba(15,25,45,0.95)",border:"1px solid rgba(255,255,255,0.15)",color:"#FFD700",borderRadius:12,width:44,height:44,fontSize:"1.1rem",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 3px 12px rgba(0,0,0,0.4)",marginRight:8,flexShrink:0}}>📈</button>
           {showSummary && <SummaryModal />}
           <button onClick={()=>setOpen(!open)} style={{
-          background:open?"#1e293b":"linear-gradient(135deg,#1d4ed8,#6d28d9)",
+          background:open?"#1e293b":"#3b82f6",
           border:"none",color:"#fff",borderRadius:14,width:50,height:50,
           cursor:"pointer",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",
           fontSize:open?16:20,fontWeight:700,
-          boxShadow:open?"none":"0 4px 20px #3b82f660, 0 0 30px #6d28d940",
+          boxShadow:open?"none":"0 4px 20px #3b82f660, 0 0 30px #3b82f640",
         }}>
           {open?"→":"←"}
         </button>
@@ -1311,13 +1311,13 @@ function App() {
             style={{
               padding:12,borderRadius:10,border:"none",
               background: nameIn.trim()
-                ? "linear-gradient(135deg,#1d4ed8,#6d28d9)"
+                ? "#3b82f6"
                 : "#1e293b",
               color: nameIn.trim() ? "#fff" : "#475569",
               fontSize:17,fontWeight:700,
               cursor: nameIn.trim() ? "pointer" : "default",
               boxShadow: nameIn.trim()
-                ? "0 4px 20px #3b82f650, 0 0 30px #6d28d930"
+                ? "0 4px 20px #3b82f650, 0 0 30px #3b82f630"
                 : "none",
             }}
           >スタート →</button>
@@ -1376,7 +1376,7 @@ function App() {
           <button onClick={() => setShowForm(!showForm)} style={{
             background: showForm
               ? "#374151"
-              : "linear-gradient(135deg,#1d4ed8,#6d28d9)",
+              : "#3b82f6",
             border:"none",color:"#fff",borderRadius:7,
             padding:"6px 10px",cursor:"pointer",
             fontSize:17,fontWeight:700,flexShrink:0,whiteSpace:"nowrap",
