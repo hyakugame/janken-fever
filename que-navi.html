@@ -1849,7 +1849,7 @@ function App() {
             {ocrState.status==='error'&&(
               <div style={{padding:12,background:'#1a0303',border:'1px solid #ef4444',borderRadius:10,color:'#fca5a5',fontSize:13,marginBottom:16}}>❌ {ocrState.text}</div>
             )}
-            <div style={{fontSize:11,color:'#64748b',marginTop:8}}>※ OCR精度は画像解像度に依存します。自動入力機能は次回リリースで対応予定。</div>
+            <div style={{fontSize:11,color:'#64748b',marginTop:8}}>※ OCR精度は画像解像度に依存します。「🚀 このデータで新規追加」でフォーム自動入力！</div>
           </div>
         </div>
       )}
@@ -1874,6 +1874,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(
     if(isLight)document.body.classList.add('light-mode');
     else document.body.classList.remove('light-mode');
   }
+  
+  // アラート閾値 初期化 (分給・時給の下限)
+  try{
+    if(!localStorage.getItem('alert_threshold_v1')){
+      localStorage.setItem('alert_threshold_v1',JSON.stringify({minYenPerHour:1500,minYenPerMin:25,enabled:false,vibrate:true,sound:false}));
+    }
+  }catch(e){}
   
   // patch.js の qDayNightBtn を待ってclick hook
   function hookBtn(){
