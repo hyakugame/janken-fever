@@ -561,10 +561,12 @@
     NS._panes.tmpl = buildTmpl();
     NS._panes.offer = buildOffer();
     NS._panes.week = buildWeek();
+    NS._panes.setting = buildSetting();
     NS._body.appendChild(NS._panes.otsuri);
     NS._body.appendChild(NS._panes.tmpl);
     NS._body.appendChild(NS._panes.offer);
     NS._body.appendChild(NS._panes.week);
+    NS._body.appendChild(NS._panes.setting);
   }
 
   // ===== BOOT =====
@@ -578,82 +580,89 @@
   console.log('[qtKit] v1 loaded');
 
   // ===== PANE ⚙️: 設定 (アラート閾値) =====
+  function buildSetting(){
+    const pane = h('div', { class: 'qtkit-pane' }, []);
+    pane.innerHTML = ''; // 空で開始、renderで埋める
+    return pane;
+  }
   function renderSetting(){
-    // CSS一度だけ注入
+    const pane = NS._panes.setting;
+    if (!pane) return;
+    
+    // CSS 一度だけ注入
     if (!document.getElementById('qtk-setting-css-injected')) {
       const st = document.createElement('style');
       st.id = 'qtk-setting-css-injected';
       st.textContent = `
-        .qtkit-setting { padding: 8px 4px; }
-        .qtkit-setting h3 { font-size: 15px; margin: 0 0 6px; color: #fff; font-weight: 700; }
-        .qtkit-setting .qtkit-note { font-size: 11px; color: #94a3b8; margin: 0 0 14px; line-height: 1.5; }
-        .qtkit-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2a2f44; font-size: 13px; color: #e6e8ef; }
-        .qtkit-row input[type="number"] { width: 80px; padding: 6px 8px; border-radius: 6px; border: 1px solid #2b3549; background: #0a0e1a; color: #fff; font-size: 14px; text-align: right; }
-        .qtkit-row input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: #3b82f6; }
-        .qtkit-save-btn { margin-top: 16px; width: 100%; padding: 12px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
-        .qtkit-save-btn:hover { background: #2563eb; }
-        body.light-mode .qtkit-row { border-bottom-color: #e2e8f0; color: #0f172a; }
-        body.light-mode .qtkit-row input[type="number"] { background: #fff; border-color: #cbd5e1; color: #0f172a; }
-        body.light-mode .qtkit-setting h3 { color: #0f172a; }
-        body.light-mode .qtkit-setting .qtkit-note { color: #64748b; }
+        .qtkit-setting-wrap { padding: 4px; }
+        .qtkit-setting-wrap h3 { font-size: 14px; margin: 0 0 4px; color: #e6e8ef; font-weight: 700; }
+        .qtkit-setting-wrap .note { font-size: 11px; color: #94a3b8; margin: 0 0 12px; line-height: 1.5; }
+        .qtkit-setting-wrap .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2a2f44; font-size: 13px; color: #e6e8ef; }
+        .qtkit-setting-wrap .row:last-of-type { border-bottom: none; }
+        .qtkit-setting-wrap .row input[type="number"] { width: 90px; padding: 8px 10px; border-radius: 6px; border: 1px solid #2b3549; background: #0a0e1a; color: #fff; font-size: 14px; text-align: right; }
+        .qtkit-setting-wrap .row input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: #3b82f6; }
+        .qtkit-setting-wrap .save-btn { margin-top: 14px; width: 100%; padding: 12px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .qtkit-setting-wrap .save-btn:hover { background: #2563eb; }
+        body.light-mode .qtkit-setting-wrap .row { border-bottom-color: #e2e8f0; color: #0f172a; }
+        body.light-mode .qtkit-setting-wrap .row input[type="number"] { background: #fff; border-color: #cbd5e1; color: #0f172a; }
+        body.light-mode .qtkit-setting-wrap h3 { color: #0f172a; }
+        body.light-mode .qtkit-setting-wrap .note { color: #64748b; }
       `;
       document.head.appendChild(st);
     }
-
-    const panel = document.querySelector('.qtkit-panel-body');
-    if (!panel) return;
+    
     let th = { minYenPerHour: 1500, minYenPerMin: 25, enabled: false, vibrate: true, sound: false };
-    try {
-      const s = localStorage.getItem('alert_threshold_v1');
-      if (s) th = Object.assign(th, JSON.parse(s));
-    } catch(e) {}
-    panel.innerHTML = '';
-    const wrap = h('div', { class: 'qtkit-setting' }, [
-      h('h3', null, ['🚨 オファー判定アラート']),
-      h('p', { class: 'qtkit-note' }, ['判定結果が「見送り推奨」の時にバイブ・音で通知します']),
-      
-      h('label', { class: 'qtkit-row' }, [
-        h('span', null, ['アラート有効']),
-        h('input', { type: 'checkbox', id: 'qtk-enabled', checked: th.enabled })
-      ]),
-      h('label', { class: 'qtkit-row' }, [
-        h('span', null, ['下限時給 (¥/h)']),
-        h('input', { type: 'number', id: 'qtk-yhr', value: String(th.minYenPerHour), min: '500', max: '5000', step: '100' })
-      ]),
-      h('label', { class: 'qtkit-row' }, [
-        h('span', null, ['下限分給 (¥/min)']),
-        h('input', { type: 'number', id: 'qtk-ymin', value: String(th.minYenPerMin), min: '10', max: '100', step: '1' })
-      ]),
-      h('label', { class: 'qtkit-row' }, [
-        h('span', null, ['バイブレーション']),
-        h('input', { type: 'checkbox', id: 'qtk-vib', checked: th.vibrate })
-      ]),
-      h('label', { class: 'qtkit-row' }, [
-        h('span', null, ['アラート音']),
-        h('input', { type: 'checkbox', id: 'qtk-snd', checked: th.sound })
-      ]),
-      h('button', { class: 'qtkit-save-btn', onclick: 'window.__qtkSaveSetting()' }, ['💾 保存'])
-    ]);
-    panel.appendChild(wrap);
+    try { const s = localStorage.getItem('alert_threshold_v1'); if (s) th = Object.assign(th, JSON.parse(s)); } catch(e) {}
+    
+    pane.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className = 'qtkit-setting-wrap';
+    wrap.innerHTML = `
+      <h3>🚨 オファー判定アラート</h3>
+      <p class="note">「見送り推奨」判定時にバイブ・音で通知します。判定タブで時給/Km単価を入力した時に発動。</p>
+      <label class="row">
+        <span>アラート有効</span>
+        <input type="checkbox" id="qtk-enabled" ${th.enabled ? 'checked' : ''}>
+      </label>
+      <label class="row">
+        <span>下限時給 (¥/h)</span>
+        <input type="number" id="qtk-yhr" value="${th.minYenPerHour}" min="500" max="5000" step="100">
+      </label>
+      <label class="row">
+        <span>下限分給 (¥/min)</span>
+        <input type="number" id="qtk-ymin" value="${th.minYenPerMin}" min="10" max="100" step="1">
+      </label>
+      <label class="row">
+        <span>バイブレーション</span>
+        <input type="checkbox" id="qtk-vib" ${th.vibrate ? 'checked' : ''}>
+      </label>
+      <label class="row">
+        <span>アラート音</span>
+        <input type="checkbox" id="qtk-snd" ${th.sound ? 'checked' : ''}>
+      </label>
+      <button class="save-btn" id="qtk-save-btn">💾 保存</button>
+    `;
+    pane.appendChild(wrap);
+    
+    pane.querySelector('#qtk-save-btn').addEventListener('click', function(){
+      const newTh = {
+        enabled: document.getElementById('qtk-enabled').checked,
+        minYenPerHour: parseInt(document.getElementById('qtk-yhr').value) || 1500,
+        minYenPerMin: parseInt(document.getElementById('qtk-ymin').value) || 25,
+        vibrate: document.getElementById('qtk-vib').checked,
+        sound: document.getElementById('qtk-snd').checked
+      };
+      try {
+        localStorage.setItem('alert_threshold_v1', JSON.stringify(newTh));
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:10px 20px;border-radius:8px;z-index:99999;font-weight:700;';
+        toast.textContent = '✓ 設定を保存しました';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+        if (newTh.vibrate && navigator.vibrate) navigator.vibrate(50);
+      } catch(e) {}
+    });
   }
-  window.__qtkSaveSetting = function(){
-    const newTh = {
-      enabled: document.getElementById('qtk-enabled').checked,
-      minYenPerHour: parseInt(document.getElementById('qtk-yhr').value) || 1500,
-      minYenPerMin: parseInt(document.getElementById('qtk-ymin').value) || 25,
-      vibrate: document.getElementById('qtk-vib').checked,
-      sound: document.getElementById('qtk-snd').checked
-    };
-    try {
-      localStorage.setItem('alert_threshold_v1', JSON.stringify(newTh));
-      const panel = document.querySelector('.qtkit-panel-body');
-      const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:10px 20px;border-radius:8px;z-index:99999;font-weight:700;';
-      toast.textContent = '✓ 設定を保存しました';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2000);
-      if (newTh.vibrate && navigator.vibrate) navigator.vibrate(50);
-    } catch(e) {}
-  };
+  window.__qtkSaveSetting = function(){}; // backward compat stub
   
 })();
