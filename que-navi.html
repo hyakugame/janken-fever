@@ -99,6 +99,30 @@
     body.light-mode [style*="solid #2b3549"] { border-color:#cbd5e1 !important; }
     body.light-mode #qBar { background:rgba(255,255,255,.98) !important; color:#0f172a !important; border-bottom-color:#e2e8f0 !important; }
     body.light-mode #qBar * { color:#0f172a !important; }
+  
+    /* ========== カード内部の追加色フィックス ========== */
+    /* rgb(6,10,16) 暗色カード内部 → ライトモード対応 */
+    body.light-mode [style*="rgb(6, 10, 16)"],
+    body.light-mode [style*="rgb(6,10,16)"],
+    body.light-mode [style*="#060a10"] { background: #eef2f7 !important; color: #0f172a !important; }
+    body.light-mode [style*="rgb(6, 10, 16)"] *,
+    body.light-mode [style*="#060a10"] * { color: #0f172a !important; }
+    
+    /* その他暗色 */
+    body.light-mode [style*="rgb(15, 25, 45)"], body.light-mode [style*="#0f192d"] { background: #fff !important; color: #0f172a !important; }
+    body.light-mode [style*="rgb(17, 24, 39)"], body.light-mode [style*="#111827"] { background: #fff !important; color: #0f172a !important; }
+    body.light-mode [style*="rgb(30, 41, 59)"], body.light-mode [style*="#1e293b"] { background: #f1f5f9 !important; color: #0f172a !important; }
+    body.light-mode [style*="rgb(51, 65, 85)"], body.light-mode [style*="#334155"] { background: #e2e8f0 !important; color: #0f172a !important; }
+    
+    /* ライトモード:カード共通スタイル強化 */
+    body.light-mode [style*="background: rgb(18, 24, 38)"] { border: 1px solid #e2e8f0 !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important; }
+    
+    /* 中央カウンターセクション(0/3件 ステップ1/2 +- 開始まで) */
+    body.light-mode [style*="rgb(6, 10, 16)"] { 
+      background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%) !important; 
+      color: #1e293b !important; 
+      border-color: #c7d2fe !important;
+    }
   </style>
 </head>
 <body>
