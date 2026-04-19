@@ -25,49 +25,80 @@
 
   <style id="polish-styles">
     :root { --sat:env(safe-area-inset-top,0px); --sar:env(safe-area-inset-right,0px); --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px); }
-    body { padding-top:var(--sat); padding-bottom:var(--sab); }
+    body { padding-top:var(--sat); padding-bottom:calc(var(--sab) + 80px); }
     button, a, label { -webkit-tap-highlight-color: transparent; }
     
-    /* ☀️/🌙 ボタン */
-    html body #qDayNightBtn { position:fixed!important; left:calc(14px + var(--sal))!important; right:auto!important; bottom:calc(130px + var(--sab))!important; top:auto!important; width:44px!important; height:44px!important; min-width:44px!important; min-height:44px!important; max-width:44px!important; max-height:44px!important; border-radius:50%!important; border:1px solid #2b3549!important; background:#121826!important; color:#fff!important; font-size:22px!important; cursor:pointer!important; z-index:45!important; box-shadow:0 4px 12px rgba(0,0,0,.4)!important; display:flex!important; align-items:center!important; justify-content:center!important; padding:0!important; margin:0!important; line-height:1!important; }
-    html body.light-mode #qDayNightBtn { background:#fff!important; color:#1e293b!important; border-color:#cbd5e1!important; }
+    /* ========== フッター3ボタン統一 ========== */
+    html body #qDayNightBtn {
+      position:fixed !important;
+      left: calc(14px + var(--sal)) !important; right: auto !important;
+      bottom: calc(14px + var(--sab)) !important; top: auto !important;
+      width: 40px !important; height: 40px !important;
+      min-width:40px !important; min-height:40px !important;
+      max-width:40px !important; max-height:40px !important;
+      border-radius: 50% !important;
+      border: 1px solid #2b3549 !important;
+      background: #121826 !important; color: #fff !important;
+      font-size: 18px !important;
+      z-index: 45 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.4) !important;
+      display: flex !important; align-items: center !important; justify-content: center !important;
+      padding:0 !important; margin:0 !important; line-height:1 !important; cursor:pointer !important;
+    }
+    html body.light-mode #qDayNightBtn { background:#fff !important; color:#1e293b !important; border-color:#cbd5e1 !important; }
     
-    /* ライトモード徹底カバレッジ - JS による style 属性値はブラウザによってrgb()に変換されるのでCSS両対応 */
-    html body.light-mode { background:#f8fafc!important; color:#0f172a!important; }
-    html body.light-mode #root, html body.light-mode #root > div { background:#f8fafc!important; color:#0f172a!important; }
+    html body #qtkit-fab {
+      position:fixed !important;
+      left: calc(64px + var(--sal)) !important; right: auto !important;
+      bottom: calc(14px + var(--sab)) !important; top: auto !important;
+      height: 40px !important;
+      min-height:40px !important; max-height:40px !important;
+      padding: 0 14px !important;
+      border-radius: 20px !important;
+      border: 1px solid #2b3549 !important;
+      background: #3b82f6 !important; color: #fff !important;
+      font-size: 13px !important; font-weight: 700 !important;
+      z-index: 45 !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.4) !important;
+      display: flex !important; align-items: center !important; justify-content: center !important;
+      margin:0 !important; line-height:1 !important; cursor:pointer !important;
+    }
     
-    /* 背景色 inline 上書き (#0a0e1a / rgb(10,14,26)) */
-    body.light-mode [style*="#0a0e1a"],
-    body.light-mode [style*="rgb(10, 14, 26)"] { background:#f8fafc!important; color:#0f172a!important; }
+    /* カウンター: 右下、ツールと同じピル型。Reactインラインstyleを上書き */
+    html body div[style*="position: fixed"][style*="right: 16px"][style*="bottom: 20px"] {
+      bottom: calc(14px + var(--sab)) !important;
+      right: calc(14px + var(--sar)) !important;
+      z-index: 45 !important;
+    }
+    /* カウンター閉じた状態のボタン (width:50 height:50) → 横長ピル */
+    html body button[style*="width: 50px"][style*="height: 50px"][style*="border-radius: 14px"] {
+      width: auto !important; min-width: 40px !important;
+      height: 40px !important; min-height: 40px !important; max-height: 40px !important;
+      padding: 0 14px !important;
+      border-radius: 20px !important;
+      font-size: 13px !important; font-weight: 700 !important;
+      gap: 6px !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.4) !important;
+    }
+    /* 展開時のカウンターコンテナは右下フッター上に配置 */
+    html body div[style*="flex-direction: column"][style*="align-items: flex-end"] {
+      gap: 8px !important;
+    }
     
-    /* カード (#121826 / rgb(18,24,38)) */
-    body.light-mode [style*="#121826"],
-    body.light-mode [style*="rgb(18, 24, 38)"] { background:#fff!important; color:#0f172a!important; border-color:#e2e8f0!important; }
-    
-    /* 境界線 (#1f2838 / #2b3549) */
-    body.light-mode [style*="#1f2838"],
-    body.light-mode [style*="rgb(31, 40, 56)"] { background:#f1f5f9!important; border-color:#e2e8f0!important; }
-    body.light-mode [style*="#2b3549"],
-    body.light-mode [style*="rgb(43, 53, 73)"] { border-color:#cbd5e1!important; }
-    
-    /* テキスト色 */
-    body.light-mode [style*="color:#fff"],
-    body.light-mode [style*="color: #fff"],
-    body.light-mode [style*="color: rgb(255, 255, 255)"] { color:#0f172a!important; }
-    body.light-mode [style*="color:#e7ecf3"],
-    body.light-mode [style*="color: rgb(231, 236, 243)"] { color:#1e293b!important; }
-    body.light-mode [style*="color:#94a3b8"],
-    body.light-mode [style*="color: rgb(148, 163, 184)"] { color:#475569!important; }
-    body.light-mode [style*="color:#64748b"],
-    body.light-mode [style*="color: rgb(100, 116, 139)"] { color:#64748b!important; }
-    
-    /* borderBottom 等複合プロパティ対応 */
-    body.light-mode [style*="solid #1f2838"] { border-color:#e2e8f0!important; }
-    body.light-mode [style*="solid #2b3549"] { border-color:#cbd5e1!important; }
-    
-    /* qBar もライトモード対応 */
-    body.light-mode #qBar { background:rgba(255,255,255,.98)!important; color:#0f172a!important; border-bottom-color:#e2e8f0!important; }
-    body.light-mode #qBar * { color:#0f172a!important; }
+    /* ========== ライトモード ========== */
+    html body.light-mode { background:#f8fafc !important; color:#0f172a !important; }
+    html body.light-mode #root, html body.light-mode #root > div { background:#f8fafc !important; color:#0f172a !important; }
+    body.light-mode [style*="#0a0e1a"], body.light-mode [style*="rgb(10, 14, 26)"] { background:#f8fafc !important; color:#0f172a !important; }
+    body.light-mode [style*="#121826"], body.light-mode [style*="rgb(18, 24, 38)"] { background:#fff !important; color:#0f172a !important; border-color:#e2e8f0 !important; }
+    body.light-mode [style*="#1f2838"], body.light-mode [style*="rgb(31, 40, 56)"] { background:#f1f5f9 !important; border-color:#e2e8f0 !important; }
+    body.light-mode [style*="#2b3549"] { border-color:#cbd5e1 !important; }
+    body.light-mode [style*="color:#fff"], body.light-mode [style*="color: #fff"], body.light-mode [style*="color: rgb(255, 255, 255)"] { color:#0f172a !important; }
+    body.light-mode [style*="color:#e7ecf3"] { color:#1e293b !important; }
+    body.light-mode [style*="color:#94a3b8"] { color:#475569 !important; }
+    body.light-mode [style*="solid #1f2838"] { border-color:#e2e8f0 !important; }
+    body.light-mode [style*="solid #2b3549"] { border-color:#cbd5e1 !important; }
+    body.light-mode #qBar { background:rgba(255,255,255,.98) !important; color:#0f172a !important; border-bottom-color:#e2e8f0 !important; }
+    body.light-mode #qBar * { color:#0f172a !important; }
   </style>
 </head>
 <body>
@@ -1143,7 +1174,7 @@ function CounterPanel({ quests, onUpdate }) {
           fontSize:open?16:20,fontWeight:700,
           boxShadow:open?"none":"0 4px 20px #3b82f660, 0 0 30px #3b82f640",
         }}>
-          {open?"→":"📊"}
+          {open?"→":"📊 カウンター"}
         </button>
       </div>
     </div>
