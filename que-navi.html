@@ -1263,8 +1263,8 @@ function App() {
       else if(/ロケット\s*ナウ|Rocket\s*Now|ロケナウ/i.test(t))out.service='rocket';
       else if(/出前館|でまえかん|出前\s*館/i.test(t))out.service='demae';
       else if(/\d+\s*回\s*の\s*乗車|回の乗車/.test(t))out.service='ubereats';
-      else if(/ミッション詳細|配達完了率|初回受諾必要|件達成時|残り\s*\d+\s*件/.test(t))out.service='rocket';
-      else if(/対象エリア|対象時間帯|配達件数|都道府県\s*エリア/.test(t))out.service='demae';
+      else if(/ミ\s*ッ\s*シ\s*ョ\s*ン\s*詳\s*細|配\s*達\s*完\s*了\s*率|初\s*回\s*受\s*諾\s*必\s*要|件\s*達\s*成\s*時|残\s*り\s*\d+\s*件/.test(t))out.service='rocket';
+      else if(/対\s*象\s*エリア|対\s*象\s*時\s*間\s*帯|配\s*達\s*件\s*数|都\s*道\s*府\s*県/.test(t))out.service='demae';
       // Count extraction
       const countMatches=[...t.matchAll(/(\d+)\s*[件配回]/g)].map(m=>parseInt(m[1])).filter(n=>n>0&&n<100);
       if(countMatches.length>0){
@@ -1278,7 +1278,7 @@ function App() {
         out.totalReward=Math.max(...yenMatches);
       }
       // Time extraction
-      const timeMatch1=t.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*[-〜~～–…][\s\S]{0,30}?(\d{1,2}):(\d{2})/);
+      const timeMatch1=t.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*[-〜~～–…へ][\s\S]{0,30}?(\d{1,2}):(\d{2})/);
       if(timeMatch1){
         out.startTime=timeMatch1[1].padStart(2,'0')+':'+timeMatch1[2];
         out.endTime=timeMatch1[3].padStart(2,'0')+':'+timeMatch1[4];
